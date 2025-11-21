@@ -1,4 +1,4 @@
-{%- liquid
+{%liquid
   # @description Testimonials section displaying customer reviews and testimonials
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # Supports both grid and carousel layouts with comprehensive customization
@@ -11,7 +11,7 @@
   #   Use blocks mode for dynamic testimonials, settings mode for fixed 6-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
   assign layout_style = section.settings.layout_style | default: 'grid'
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--testimonials">

@@ -99,15 +99,71 @@
     "name": "Typography",
     "settings": [
       {
+        "type": "header",
+        "content": "Custom Fonts"
+      },
+      {
+        "type": "select",
+        "id": "custom_font_heading",
+        "label": "Heading Font (Custom)",
+        "info": "Select a custom font for headings. If 'Use Shopify Font' is selected, the font picker below will be used.",
+        "options": [
+          {
+            "value": "shopify_font",
+            "label": "Use Shopify Font (from picker below)"
+          },
+          {
+            "value": "nohemi",
+            "label": "Nohemi"
+          },
+          {
+            "value": "versailles",
+            "label": "Versailles"
+          },
+          {
+            "value": "myriad",
+            "label": "Myriad Pro"
+          }
+        ],
+        "default": "shopify_font"
+      },
+      {
         "type": "font_picker",
         "id": "font_heading",
-        "label": "Heading Font",
+        "label": "Heading Font (Shopify)",
+        "info": "Only used if 'Use Shopify Font' is selected above",
         "default": "assistant_n4"
+      },
+      {
+        "type": "select",
+        "id": "custom_font_body",
+        "label": "Body Font (Custom)",
+        "info": "Select a custom font for body text. If 'Use Shopify Font' is selected, the font picker below will be used.",
+        "options": [
+          {
+            "value": "shopify_font",
+            "label": "Use Shopify Font (from picker below)"
+          },
+          {
+            "value": "nohemi",
+            "label": "Nohemi"
+          },
+          {
+            "value": "versailles",
+            "label": "Versailles"
+          },
+          {
+            "value": "myriad",
+            "label": "Myriad Pro"
+          }
+        ],
+        "default": "shopify_font"
       },
       {
         "type": "font_picker",
         "id": "font_body",
-        "label": "Body Font",
+        "label": "Body Font (Shopify)",
+        "info": "Only used if 'Use Shopify Font' is selected above",
         "default": "assistant_n4"
       },
       {

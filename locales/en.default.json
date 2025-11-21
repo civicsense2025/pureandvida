@@ -15,6 +15,7 @@
   "accessibility": {
     "skip_to_text": "Skip to content",
     "refresh_page": "Choosing a selection results in a full page refresh.",
+    "close": "Close",
     "link_messages": {
       "new_window": "Opens in a new window."
     }
@@ -28,7 +29,8 @@
     },
     "cart": {
       "cart_error": "There was an error while updating your cart. Please try again.",
-      "cart_quantity_error_html": "You can only add {{ quantity }} of this item to your cart."
+      "cart_quantity_error_html": "You can only add {{ quantity }} of this item to your cart.",
+      "checkout": "Checkout"
     }
   },
   "products": {
@@ -38,6 +40,21 @@
       "unavailable": "Unavailable",
       "value_unavailable": "{{ value }} is unavailable",
       "product_variants": "Product variants",
+      "product_information": "Product Information",
+      "product_images": "Product Images",
+      "badge": {
+        "sale": "Sale"
+      },
+      "save": "Save {{ amount }} ({{ percentage }}%)",
+      "quantity": {
+        "label": "Quantity"
+      },
+      "tabs": {
+        "description": "Description",
+        "ingredients": "Ingredients",
+        "shipping": "Shipping & Returns",
+        "reviews": "Reviews"
+      },
       "price": {
         "regular_price": "Regular price",
         "sale_price": "Sale price"
@@ -56,13 +73,5 @@
     "label": "Email",
     "button_label": "Subscribe",
     "success": "Thanks for subscribing!"
-  },
-  "sections": {
-    "cart": {
-      "checkout": "Checkout"
-    }
-  },
-  "accessibility": {
-    "close": "Close"
   }
 }

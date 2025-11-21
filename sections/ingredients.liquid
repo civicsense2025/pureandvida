@@ -1,4 +1,4 @@
-{%- liquid
+{%liquid
   # @description Ingredients section displaying product ingredients with images and descriptions
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # Supports both grid and carousel layouts
@@ -12,7 +12,7 @@
   #   Use blocks mode for dynamic ingredients, settings mode for fixed 8-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
   assign layout_style = section.settings.layout_style | default: 'grid'
--%}
+%}
 
 <{{ structural_element }} class="ingredients-section{% if layout_style == 'carousel' %} ingredients-section--carousel{% endif %}"
      {% if request.design_mode %}data-section-type="ingredients" data-layout="{{ layout_style }}" data-columns="{{ section.settings.columns_desktop }}" data-items="{{ ingredient_count }}"{% endif %}

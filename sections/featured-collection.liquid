@@ -1,4 +1,4 @@
-{%- liquid
+{%liquid
   # @description Featured collection section displaying products from a single collection
   # Shows collection products in grid or carousel layout with optional "View All" button
   # @settings collection {Collection} - Collection to display
@@ -10,7 +10,7 @@
   # @example
   #   Add to index.json to feature a specific collection on homepage
   assign layout_style = section.settings.layout_style | default: 'grid'
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--featured-collection">

@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Benefits section displaying product benefits in grid or carousel layout
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # Supports both grid and carousel layouts
@@ -11,7 +11,7 @@
   #   Use blocks mode for dynamic add/remove, settings mode for fixed 6-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
   assign layout_style = section.settings.layout_style | default: 'grid'
--%}
+%}
 
 <{{ structural_element }} class="benefits-section{% if layout_style == 'carousel' %} benefits-section--carousel{% endif %}"
      {% if request.design_mode %}data-section-type="benefits" data-layout="{{ layout_style }}" data-columns="{{ section.settings.columns_desktop }}" data-items="{{ benefit_count }}"{% endif %}

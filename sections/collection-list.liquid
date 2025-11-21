@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Collection list section displaying featured collections in grid or carousel layout
   # Supports multiple collection blocks with custom images and titles
   # @settings heading {String} - Section heading
@@ -10,7 +10,7 @@
   # @example
   #   Add to index.json or page.json to showcase featured collections
   assign layout_style = section.settings.layout_style | default: 'grid'
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--collection-list">

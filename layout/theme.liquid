@@ -11,9 +11,18 @@
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
 
-    {%- unless settings.font_heading.system? and settings.font_body.system? -%}
+    {%- liquid
+      assign load_shopify_fonts = false
+      if settings.custom_font_heading == 'shopify_font' and settings.font_heading.system? == false
+        assign load_shopify_fonts = true
+      endif
+      if settings.custom_font_body == 'shopify_font' and settings.font_body.system? == false
+        assign load_shopify_fonts = true
+      endif
+    -%}
+    {%- if load_shopify_fonts -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-    {%- endunless -%}
+    {%- endif -%}
 
     <title>
       {{ page_title }}
@@ -55,17 +64,26 @@
     {{ content_for_header }}
 
     {%- liquid
-      assign body_font_bold = settings.font_body | font_modify: 'weight', 'bold'
-      assign body_font_italic = settings.font_body | font_modify: 'style', 'italic'
-      assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+      if settings.custom_font_body == 'shopify_font'
+        assign body_font_bold = settings.font_body | font_modify: 'weight', 'bold'
+        assign body_font_italic = settings.font_body | font_modify: 'style', 'italic'
+        assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+      endif
+      if settings.custom_font_heading == 'shopify_font'
+        assign heading_font_to_load = settings.font_heading
+      endif
     %}
 
     {% style %}
-      {{ settings.font_body | font_face: font_display: 'swap' }}
-      {{ body_font_bold | font_face: font_display: 'swap' }}
-      {{ body_font_italic | font_face: font_display: 'swap' }}
-      {{ body_font_bold_italic | font_face: font_display: 'swap' }}
-      {{ settings.font_heading | font_face: font_display: 'swap' }}
+      {%- if settings.custom_font_body == 'shopify_font' -%}
+        {{ settings.font_body | font_face: font_display: 'swap' }}
+        {{ body_font_bold | font_face: font_display: 'swap' }}
+        {{ body_font_italic | font_face: font_display: 'swap' }}
+        {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+      {%- endif -%}
+      {%- if settings.custom_font_heading == 'shopify_font' -%}
+        {{ settings.font_heading | font_face: font_display: 'swap' }}
+      {%- endif -%}
 
       /* Custom Fonts from Assets */
       {%- assign nohemi_light = 'Nohemi-Light.otf' | asset_url -%}
@@ -134,16 +152,53 @@
 
       :root {
         /* Typography */
-        --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
-        --font-body-style: {{ settings.font_body.style }};
-        --font-body-weight: {{ settings.font_body.weight }};
-        --font-body-weight-bold: {{ settings.font_body.weight | plus: 300 | at_most: 1000 }};
+        {%- liquid
+          if settings.custom_font_body == 'nohemi'
+            assign body_font_family = 'Nohemi'
+            assign body_font_style = 'normal'
+            assign body_font_weight = 400
+          elsif settings.custom_font_body == 'versailles'
+            assign body_font_family = 'Versailles'
+            assign body_font_style = 'normal'
+            assign body_font_weight = 400
+          elsif settings.custom_font_body == 'myriad'
+            assign body_font_family = 'MyriadPro'
+            assign body_font_style = 'normal'
+            assign body_font_weight = 400
+          else
+            assign body_font_family = settings.font_body.family
+            assign body_font_style = settings.font_body.style
+            assign body_font_weight = settings.font_body.weight
+          endif
+
+          if settings.custom_font_heading == 'nohemi'
+            assign heading_font_family = 'Nohemi'
+            assign heading_font_style = 'normal'
+            assign heading_font_weight = 600
+          elsif settings.custom_font_heading == 'versailles'
+            assign heading_font_family = 'Versailles'
+            assign heading_font_style = 'normal'
+            assign heading_font_weight = 400
+          elsif settings.custom_font_heading == 'myriad'
+            assign heading_font_family = 'MyriadPro'
+            assign heading_font_style = 'normal'
+            assign heading_font_weight = 600
+          else
+            assign heading_font_family = settings.font_heading.family
+            assign heading_font_style = settings.font_heading.style
+            assign heading_font_weight = settings.font_heading.weight
+          endif
+        -%}
+        --font-body-family: {{ body_font_family }}{% if settings.custom_font_body == 'shopify_font' %}, {{ settings.font_body.fallback_families }}{% else %}, sans-serif{% endif %};
+        --font-body-style: {{ body_font_style }};
+        --font-body-weight: {{ body_font_weight }};
+        --font-body-weight-bold: {% if settings.custom_font_body == 'shopify_font' %}{{ settings.font_body.weight | plus: 300 | at_most: 1000 }}{% else %}700{% endif %};
         --font-body-size: {{ settings.font_size_body | default: 16 }}px;
         --font-body-line-height: 1.6;
 
-        --font-heading-family: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
-        --font-heading-style: {{ settings.font_heading.style }};
-        --font-heading-weight: {{ settings.font_heading.weight }};
+        --font-heading-family: {{ heading_font_family }}{% if settings.custom_font_heading == 'shopify_font' %}, {{ settings.font_heading.fallback_families }}{% else %}, sans-serif{% endif %};
+        --font-heading-style: {{ heading_font_style }};
+        --font-heading-weight: {{ heading_font_weight }};
         --font-heading-size: {{ settings.font_size_heading | default: 36 }}px;
         --font-heading-line-height: 1.2;
 
@@ -262,12 +317,12 @@
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'pure-vida.css' | asset_url | stylesheet_tag }}
 
-    {%- unless settings.font_body.system? -%}
+    {%- if settings.custom_font_body == 'shopify_font' and settings.font_body.system? == false -%}
       <link rel="preload" as="font" href="{{ settings.font_body | font_url }}" type="font/woff2" crossorigin>
-    {%- endunless -%}
-    {%- unless settings.font_heading.system? -%}
+    {%- endif -%}
+    {%- if settings.custom_font_heading == 'shopify_font' and settings.font_heading.system? == false -%}
       <link rel="preload" as="font" href="{{ settings.font_heading | font_url }}" type="font/woff2" crossorigin>
-    {%- endunless -%}
+    {%- endif -%}
 
     {%- comment -%} Preload custom fonts from assets {%- endcomment -%}
     <link rel="preload" as="font" href="{{ 'Nohemi-Light.otf' | asset_url }}" type="font/otf" crossorigin>

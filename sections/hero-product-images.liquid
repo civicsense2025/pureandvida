@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Hero product section with images and product info
   # @settings product {Product} - Featured product
   # @settings product_image_1 {Image} - Primary product image
@@ -8,7 +8,7 @@
   #   Add to index.json template for homepage hero product section
   assign structural_element = section.settings.structural_element | default: 'section'
   assign layout_class = section.settings.layout_direction | default: 'images-left'
--%}
+%}
 
 <{{ structural_element }} class="hero-product-section" style="background: transparent;{% if section.settings.background_color != blank %} background-color: {{ section.settings.background_color }};{% endif %}">
   <div class="hero-product-wrapper page-width">

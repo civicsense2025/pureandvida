@@ -8,9 +8,33 @@
   # @example
   #   Use blocks mode for dynamic FAQs, settings mode for fixed 10-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
+
+  # Count FAQ items
+  assign faq_count = 0
+  if section.settings.content_mode == 'blocks'
+    assign faq_count = section.blocks.size
+  else
+    for i in (1..10)
+      assign question_key = 'faq_' | append: i | append: '_question'
+      assign question = section.settings[question_key]
+      if question != blank
+        assign faq_count = faq_count | plus: 1
+      endif
+    endfor
+  endif
 %}
 
-<{{ structural_element }} class="faq-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
+<{{ structural_element }} class="faq-section"
+     {% if request.design_mode %}data-section-type="faq" data-items="{{ faq_count }}" data-mode="{{ section.settings.content_mode }}"{% endif %}
+     style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
+
+  {%- if request.design_mode -%}
+    <div class="editor-controls editor-controls--faq">
+      <span class="editor-label">❓ FAQ</span>
+      <span class="editor-info">{{ faq_count }} questions | {% if section.settings.default_open %}First open{% else %}All closed{% endif %} | Max-width: {{ section.settings.content_width }}px</span>
+    </div>
+  {%- endif -%}
+
   <div class="faq-content page-width" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
     {%- if section.settings.heading != blank -%}
       <h2 class="faq-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
@@ -60,6 +84,78 @@
 </{{ structural_element }}>
 
 <style>
+  {% if request.design_mode %}
+  /* Theme Editor Visual Controls */
+  .faq-section {
+    position: relative;
+    outline: 2px dashed rgba(156, 39, 176, 0.3);
+    outline-offset: -2px;
+  }
+
+  .faq-section:hover {
+    outline-color: rgba(156, 39, 176, 0.6);
+  }
+
+  .editor-controls--faq {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.90);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    pointer-events: none;
+    max-width: 350px;
+  }
+
+  .editor-label {
+    font-weight: 600;
+    color: #ce93d8;
+    font-size: 12px;
+  }
+
+  .editor-info {
+    opacity: 0.85;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  /* FAQ Item Indicators */
+  .faq-item {
+    position: relative;
+    outline: 1px dashed rgba(156, 39, 176, 0.2);
+    outline-offset: -1px;
+  }
+
+  .faq-item:hover {
+    outline-color: rgba(156, 39, 176, 0.5);
+    background: rgba(156, 39, 176, 0.03);
+  }
+
+  /* Typography Preview Indicator */
+  .faq-title::after {
+    content: 'Q: {{ section.settings.question_size }}px / A: {{ section.settings.answer_size }}px';
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    background: rgba(156, 39, 176, 0.9);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 10;
+  }
+  {% endif %}
+
   /* FAQ Section Base Styles */
   .faq-content {
     padding: 0 clamp(20px, 4vw, 0);
@@ -129,23 +225,28 @@
 
 {% schema %}
 {
-  "name": "FAQ Section",
+  "name": "❓ FAQ Section",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Accordion-style FAQ section. Choose between flexible blocks (add/remove questions) or fixed settings (10 pre-defined slots). Live typography preview in theme editor."
+    },
+    {
       "type": "header",
-      "content": "Content Management"
+      "content": "📝 Content Management Mode"
     },
     {
       "type": "select",
       "id": "content_mode",
-      "label": "Content Management",
+      "label": "How to Manage Content",
       "options": [
-        { "value": "blocks", "label": "Use Blocks (Dynamic)" },
-        { "value": "settings", "label": "Use Settings (Fixed)" }
+        { "value": "blocks", "label": "Blocks Mode (Flexible - Add/Remove)" },
+        { "value": "settings", "label": "Settings Mode (Fixed - 10 Slots)" }
       ],
-      "default": "blocks"
+      "default": "blocks",
+      "info": "Blocks: Dynamic, drag-and-drop, unlimited questions. Settings: Fixed 10 slots, simpler for non-technical users."
     },
     {
       "type": "header",
@@ -421,7 +522,7 @@
       "min": 0,
       "max": 1920,
       "step": 20,
-      "default": 632,
+      "default": 640,
       "info": "0 = full width"
     },
     {
@@ -558,8 +659,12 @@
   "blocks": [
     {
       "type": "faq_item",
-      "name": "FAQ Item",
+      "name": "❔ FAQ: {{ block.settings.question }}",
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a single FAQ item with question and answer. Each item can have custom colors."
+        },
         {
           "type": "text",
           "id": "question",
@@ -592,29 +697,109 @@
   ],
   "presets": [
     {
-      "name": "FAQ Section",
+      "name": "FAQ - Standard Style",
+      "settings": {
+        "heading": "Frequently Asked Questions",
+        "heading_alignment": "center",
+        "heading_size": 36,
+        "content_mode": "blocks",
+        "default_open": false,
+        "item_spacing": 10,
+        "item_padding": 15,
+        "item_border_width": 1,
+        "item_border_radius": 0,
+        "content_width": 800,
+        "section_padding_top": 60,
+        "section_padding_bottom": 60
+      },
       "blocks": [
-        {
-          "type": "faq_item",
-          "settings": {
-            "question": "What does MycoMatcha taste like?",
-            "answer": "MycoMatcha has a smooth, earthy taste with subtle umami notes from the ceremonial-grade matcha, complemented by the natural flavors of the adaptogenic mushrooms."
-          }
-        },
-        {
-          "type": "faq_item",
-          "settings": {
-            "question": "How much caffeine is in MycoMatcha?",
-            "answer": "MycoMatcha contains 25-35mg of caffeine per serving, which is less than a cup of coffee but provides sustained energy without the crash."
-          }
-        },
-        {
-          "type": "faq_item",
-          "settings": {
-            "question": "How soon will I feel the benefits?",
-            "answer": "Many users report feeling increased energy and focus within 30-60 minutes of consumption. The adaptogenic benefits may become more noticeable with consistent daily use over 1-2 weeks."
-          }
-        }
+        { "type": "faq_item", "settings": { "question": "What is your shipping policy?", "answer": "We offer free shipping on all orders over $50. Standard shipping takes 5-7 business days." } },
+        { "type": "faq_item", "settings": { "question": "What is your return policy?", "answer": "We accept returns within 30 days of purchase. Items must be unused and in original packaging." } },
+        { "type": "faq_item", "settings": { "question": "Do you ship internationally?", "answer": "Yes, we ship to most countries worldwide. International shipping rates vary by location." } }
+      ]
+    },
+    {
+      "name": "FAQ - Rounded Cards",
+      "settings": {
+        "heading": "Got Questions?",
+        "heading_alignment": "center",
+        "content_mode": "blocks",
+        "default_open": true,
+        "item_spacing": 15,
+        "item_padding": 20,
+        "item_border_width": 1,
+        "item_border_radius": 12,
+        "content_width": 700,
+        "section_padding_top": 50,
+        "section_padding_bottom": 50
+      },
+      "blocks": [
+        { "type": "faq_item", "settings": { "question": "How do I use this product?", "answer": "Detailed usage instructions are included with your purchase." } },
+        { "type": "faq_item", "settings": { "question": "Is it safe for daily use?", "answer": "Yes, our products are designed for daily use and are made with safe, natural ingredients." } }
+      ]
+    },
+    {
+      "name": "FAQ - Minimal",
+      "settings": {
+        "heading": "Questions & Answers",
+        "heading_alignment": "left",
+        "content_mode": "blocks",
+        "default_open": false,
+        "item_spacing": 5,
+        "item_padding": 12,
+        "item_border_width": 0,
+        "item_border_radius": 0,
+        "content_width": 900,
+        "section_padding_top": 40,
+        "section_padding_bottom": 40
+      },
+      "blocks": [
+        { "type": "faq_item", "settings": { "question": "Question 1?", "answer": "Answer 1" } },
+        { "type": "faq_item", "settings": { "question": "Question 2?", "answer": "Answer 2" } }
+      ]
+    },
+    {
+      "name": "FAQ - Compact",
+      "settings": {
+        "heading": "FAQ",
+        "heading_alignment": "center",
+        "heading_size": 28,
+        "content_mode": "blocks",
+        "default_open": false,
+        "item_spacing": 8,
+        "item_padding": 10,
+        "item_border_width": 1,
+        "item_border_radius": 4,
+        "question_size": 16,
+        "answer_size": 14,
+        "content_width": 600,
+        "section_padding_top": 30,
+        "section_padding_bottom": 30
+      },
+      "blocks": [
+        { "type": "faq_item", "settings": { "question": "Quick question?", "answer": "Quick answer" } }
+      ]
+    },
+    {
+      "name": "FAQ - Spacious",
+      "settings": {
+        "heading": "Everything You Need to Know",
+        "heading_alignment": "center",
+        "heading_size": 42,
+        "content_mode": "blocks",
+        "default_open": true,
+        "item_spacing": 20,
+        "item_padding": 25,
+        "item_border_width": 2,
+        "item_border_radius": 8,
+        "question_size": 20,
+        "answer_size": 17,
+        "content_width": 900,
+        "section_padding_top": 80,
+        "section_padding_bottom": 80
+      },
+      "blocks": [
+        { "type": "faq_item", "settings": { "question": "Detailed question here?", "answer": "Comprehensive answer with plenty of detail and context for customers who want to know everything." } }
       ]
     }
   ],

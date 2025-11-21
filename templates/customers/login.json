@@ -9,12 +9,20 @@
  */
 {
   "sections": {
+    "login-header": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "",
+        "heading_alignment": "center"
+      }
+    },
     "main-customer-login": {
       "type": "main-customer-login",
       "settings": {}
     }
   },
   "order": [
+    "login-header",
     "main-customer-login"
   ]
 }

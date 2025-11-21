@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main-page": {
+      "type": "main-page",
+      "settings": {
+        "show_page_title": true,
+        "show_featured_image": true,
+        "content_width": 800,
+        "text_alignment": "center",
+        "title_alignment": "center"
+      }
+    }
+  },
+  "order": [
+    "main-page"
+  ]
+}
+

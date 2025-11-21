@@ -14,11 +14,20 @@
   assign layout_style = section.settings.layout_style | default: 'grid'
 -%}
 
-<{{ structural_element }} class="ingredients-section{% if layout_style == 'carousel' %} ingredients-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+<{{ structural_element }} class="ingredients-section{% if layout_style == 'carousel' %} ingredients-section--carousel{% endif %}"
+     {% if request.design_mode %}data-section-type="ingredients" data-layout="{{ layout_style }}" data-columns="{{ section.settings.columns_desktop }}" data-items="{{ ingredient_count }}"{% endif %}
+     style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   {%- if section.settings.show_gradient -%}
     <div class="ingredients-gradient"></div>
   {%- endif -%}
-  
+
+  {%- if request.design_mode -%}
+    <div class="editor-controls editor-controls--ingredients">
+      <span class="editor-label">🌿 Ingredients</span>
+      <span class="editor-info">{{ layout_style | capitalize }} | {% if layout_style == 'grid' %}{{ section.settings.columns_desktop }} cols{% else %}{{ section.settings.carousel_items_desktop }} per slide{% endif %} | {{ ingredient_count }} items{% if section.settings.show_hero_image %} | Hero Image{% endif %}</span>
+    </div>
+  {%- endif -%}
+
   <div class="ingredients-content page-width">
     <div class="ingredients-header">
       {%- if section.settings.heading != blank -%}
@@ -211,6 +220,148 @@
 </{{ structural_element }}>
 
 <style>
+  {% if request.design_mode %}
+  /* Theme Editor Visual Controls */
+  .ingredients-section {
+    position: relative;
+    outline: 2px dashed rgba(76, 175, 80, 0.3);
+    outline-offset: -2px;
+  }
+
+  .ingredients-section:hover {
+    outline-color: rgba(76, 175, 80, 0.6);
+  }
+
+  .editor-controls--ingredients {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.90);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    pointer-events: none;
+    max-width: 450px;
+  }
+
+  .editor-label {
+    font-weight: 600;
+    color: #a5d6a7;
+    font-size: 12px;
+  }
+
+  .editor-info {
+    opacity: 0.85;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  /* Grid Visualizer */
+  {% if section.settings.layout_style == 'grid' %}
+  .ingredients-grid {
+    position: relative;
+  }
+
+  .ingredients-grid::before {
+    content: '{{ section.settings.columns_desktop }}-Column Ingredient Grid';
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 10;
+  }
+  {% endif %}
+
+  /* Ingredient Card Indicators */
+  .ingredient-card {
+    position: relative;
+    outline: 1px dashed rgba(139, 195, 74, 0.2);
+    outline-offset: -1px;
+  }
+
+  .ingredient-card:hover {
+    outline-color: rgba(139, 195, 74, 0.5);
+    background: rgba(139, 195, 74, 0.05);
+  }
+
+  /* Hero Image Indicator */
+  {% if section.settings.show_hero_image %}
+  .ingredients-image::before {
+    content: 'Hero Ingredient Image';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(46, 125, 50, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .ingredients-image {
+    position: relative;
+  }
+  {% endif %}
+
+  /* Carousel Indicators */
+  {% if section.settings.layout_style == 'carousel' %}
+  .ingredients-carousel__wrapper::before {
+    content: 'Carousel: {{ section.settings.carousel_items_desktop }} items/slide{% if section.settings.carousel_autoplay %} • Autoplay{% endif %}';
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: rgba(255, 152, 0, 0.9);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .ingredients-carousel__wrapper {
+    position: relative;
+  }
+  {% endif %}
+
+  /* Header Section Indicator */
+  .ingredients-header {
+    position: relative;
+  }
+
+  .ingredients-header::before {
+    content: 'Section Header';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    background: rgba(104, 159, 56, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 9px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 5;
+  }
+  {% endif %}
+
   /* Ingredients Section Responsive Styles */
   .ingredients-grid {
     display: grid;
@@ -266,44 +417,52 @@
 
 {% schema %}
 {
-  "name": "Ingredients Section",
+  "name": "🌿 Ingredients Section",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Showcase product ingredients with images and descriptions. Choose between flexible blocks (add/remove/reorder) or fixed settings (8 pre-defined slots). Supports both grid and carousel layouts."
+    },
+    {
       "type": "header",
-      "content": "Content Management"
+      "content": "📝 Content Management Mode"
     },
     {
       "type": "select",
       "id": "content_mode",
-      "label": "Content Management",
+      "label": "How to Manage Content",
       "options": [
-        { "value": "blocks", "label": "Use Blocks (Dynamic)" },
-        { "value": "settings", "label": "Use Settings (Fixed)" }
+        { "value": "blocks", "label": "Blocks Mode (Flexible - Add/Remove)" },
+        { "value": "settings", "label": "Settings Mode (Fixed - 8 Slots)" }
       ],
-      "default": "blocks"
+      "default": "blocks",
+      "info": "Blocks: Dynamic, drag-and-drop, unlimited items. Settings: Fixed 8 ingredient slots, simpler interface."
     },
     {
       "type": "header",
-      "content": "Section Header"
+      "content": "✏️ Section Header & Description"
     },
     {
       "type": "text",
       "id": "heading_small",
-      "label": "Heading Small Text",
-      "default": "What's Inside + "
+      "label": "Small Heading Text",
+      "default": "What's Inside + ",
+      "info": "Optional small text that appears before the main heading. Example: 'What's Inside +', 'Our Ingredients:', 'Made With:'"
     },
     {
       "type": "text",
       "id": "heading",
-      "label": "Heading",
-      "default": "Why It Matters"
+      "label": "Main Heading",
+      "default": "Why It Matters",
+      "info": "Primary section headline. Displays large and prominent. Example: 'Why It Matters', 'Pure Ingredients', 'What's Inside'"
     },
     {
       "type": "color",
       "id": "heading_color",
-      "label": "Heading Color"
+      "label": "Heading Color",
+      "info": "Custom color for both small and main heading text. Leave blank to use theme default."
     },
     {
       "type": "select",
@@ -314,80 +473,102 @@
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
       ],
-      "default": "center"
+      "default": "center",
+      "info": "Horizontal alignment for heading text."
     },
     {
       "type": "textarea",
       "id": "description",
-      "label": "Description",
-      "default": "MycoMatcha pairs ceremonial-grade matcha with Lion's Mane, Reishi, Cordyceps, and Turkey Tail — four adaptogenic mushrooms that support focus, energy, and balance."
+      "label": "Section Description",
+      "default": "MycoMatcha pairs ceremonial-grade matcha with Lion's Mane, Reishi, Cordyceps, and Turkey Tail — four adaptogenic mushrooms that support focus, energy, and balance.",
+      "info": "Introductory paragraph below the heading. Explain what makes your ingredients special. 1-3 sentences recommended."
     },
     {
       "type": "color",
       "id": "description_color",
-      "label": "Description Color"
+      "label": "Description Color",
+      "info": "Custom color for description text. Leave blank to use theme default."
     },
     {
       "type": "header",
-      "content": "Hero Image"
+      "content": "🖼️ Hero Image (Optional)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Display a large featured image above your ingredient list. Great for showing all ingredients together or lifestyle imagery."
     },
     {
       "type": "checkbox",
       "id": "show_hero_image",
       "label": "Show Hero Image",
-      "default": true
+      "default": true,
+      "info": "Display a featured image between the header and ingredient list."
     },
     {
       "type": "image_picker",
       "id": "ingredients_image",
-      "label": "Ingredients Hero Image"
+      "label": "Hero Image",
+      "info": "Recommended: 1200x600px or larger. Shows all ingredients together or lifestyle shot."
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout & Display Style"
     },
     {
       "type": "select",
       "id": "layout_style",
-      "label": "Layout Style",
+      "label": "Display Style",
       "options": [
-        { "value": "grid", "label": "Grid" },
-        { "value": "carousel", "label": "Carousel" }
+        { "value": "grid", "label": "Grid (All ingredients visible)" },
+        { "value": "carousel", "label": "Carousel (Swipeable slides)" }
       ],
-      "default": "grid"
+      "default": "grid",
+      "info": "Grid: Traditional layout, all ingredients visible at once. Carousel: Slides with navigation, great for many items."
+    },
+    {
+      "type": "paragraph",
+      "content": "**Grid Layout Controls:** These settings only apply when Display Style is set to Grid."
     },
     {
       "type": "range",
       "id": "columns_desktop",
-      "label": "Columns (Desktop - Grid Only)",
+      "label": "Desktop Columns",
       "min": 1,
       "max": 5,
       "step": 1,
+      "unit": "col",
       "default": 5,
-      "info": "Only applies when layout style is Grid"
+      "info": "How many ingredients appear side-by-side on desktop. Common: 5 (showcase), 4 (balanced), 3 (detailed)."
     },
     {
       "type": "range",
       "id": "columns_mobile",
-      "label": "Columns (Mobile - Grid Only)",
+      "label": "Mobile Columns",
       "min": 1,
       "max": 3,
       "step": 1,
+      "unit": "col",
       "default": 1,
-      "info": "Only applies when layout style is Grid"
+      "info": "Columns on mobile devices. Usually 1 (vertical stack) or 2 (compact grid)."
     },
     {
       "type": "range",
       "id": "item_spacing",
-      "label": "Item Spacing (px)",
+      "label": "Space Between Items",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 30
+      "unit": "px",
+      "default": 30,
+      "info": "Gap between ingredient cards. Standard: 20-30px (comfortable), 40-50px (spacious), 10-15px (compact)."
     },
     {
       "type": "header",
-      "content": "Carousel Settings"
+      "content": "🎠 Carousel Settings"
+    },
+    {
+      "type": "paragraph",
+      "content": "**Carousel Controls:** These settings only apply when Display Style is set to Carousel."
     },
     {
       "type": "range",
@@ -397,7 +578,7 @@
       "max": 5,
       "step": 1,
       "default": 5,
-      "info": "Only applies when layout style is Carousel"
+      "info": "How many ingredients visible at once on desktop. More items = compact view, fewer = detailed view."
     },
     {
       "type": "range",
@@ -407,72 +588,84 @@
       "max": 3,
       "step": 1,
       "default": 1,
-      "info": "Only applies when layout style is Carousel"
+      "info": "Items visible per slide on mobile. Usually 1 for best readability."
     },
     {
       "type": "checkbox",
       "id": "carousel_show_arrows",
       "label": "Show Navigation Arrows",
-      "default": true
+      "default": true,
+      "info": "Display left/right arrows for manual navigation."
     },
     {
       "type": "checkbox",
       "id": "carousel_show_dots",
       "label": "Show Dot Indicators",
-      "default": true
+      "default": true,
+      "info": "Display dots below carousel showing current slide position."
     },
     {
       "type": "checkbox",
       "id": "carousel_autoplay",
       "label": "Enable Auto-play",
-      "default": false
+      "default": false,
+      "info": "Automatically advance slides. Use carefully - can be distracting for users reading content."
     },
     {
       "type": "range",
       "id": "carousel_autoplay_speed",
-      "label": "Auto-play Speed (ms)",
+      "label": "Auto-play Speed",
       "min": 2000,
-      "max": 10000,
+      "max": 9999,
       "step": 500,
+      "unit": "ms",
       "default": 5000,
-      "info": "Only applies when auto-play is enabled"
+      "info": "Milliseconds between auto-advance. 5000ms = 5 seconds. Give users time to read!"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Styling & Colors"
     },
     {
       "type": "range",
       "id": "section_padding",
-      "label": "Section Padding (px)",
+      "label": "Section Padding",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 40
+      "unit": "px",
+      "default": 40,
+      "info": "Vertical spacing above and below section content. Standard: 40-60px."
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background Color"
+      "label": "Background Color",
+      "info": "Section background color. Leave blank for transparent."
     },
     {
       "type": "checkbox",
       "id": "show_gradient",
-      "label": "Show Gradient Background",
-      "default": true
+      "label": "Enable Gradient Overlay",
+      "default": true,
+      "info": "Adds a subtle gradient effect to the background for visual depth."
     },
     {
       "type": "header",
-      "content": "Structural Elements"
+      "content": "⚙️ Advanced Settings"
     },
     {
       "type": "select",
       "id": "structural_element",
-      "label": "HTML Element",
+      "label": "HTML Semantic Element",
       "options": [
-        { "value": "section", "label": "Section (default)" },
+        { "value": "section", "label": "Section (recommended)" },
         { "value": "article", "label": "Article" },
         { "value": "aside", "label": "Aside" },
         { "value": "div", "label": "Div" }
       ],
       "default": "section",
-      "info": "Choose the semantic HTML element for this section"
+      "info": "Choose semantic HTML element for better SEO and accessibility. Section is recommended for most use cases."
     },
     {
       "type": "header",
@@ -602,89 +795,229 @@
   "blocks": [
     {
       "type": "ingredient",
-      "name": "Ingredient",
+      "name": "🌱 Ingredient: {{ block.settings.name }}",
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a single ingredient with image, name, description, and optional benefit tags."
+        },
+        {
+          "type": "header",
+          "content": "📝 Ingredient Details"
+        },
         {
           "type": "text",
           "id": "name",
           "label": "Ingredient Name",
-          "default": "Ingredient Name"
+          "default": "Ingredient Name",
+          "info": "Name of the ingredient. Examples: 'Organic Lion's Mane', 'Ceremonial Grade Matcha', 'L-Theanine'"
         },
         {
           "type": "textarea",
           "id": "description",
           "label": "Description",
-          "default": "Ingredient description"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image"
-        },
-        {
-          "type": "text",
-          "id": "image_asset",
-          "label": "Image Asset Filename",
-          "info": "Alternative: Enter asset filename if using uploaded asset"
+          "default": "Ingredient description",
+          "info": "Explain what the ingredient does and why it's beneficial. 1-2 sentences recommended. Focus on benefits, not just facts."
         },
         {
           "type": "richtext",
           "id": "benefit_tags",
-          "label": "Benefit Tags",
-          "info": "Optional: Add benefit tags or additional info"
+          "label": "Benefit Tags (Optional)",
+          "info": "Add benefit badges or tags like 'Supports Focus', 'Boosts Energy', 'Rich in Antioxidants'. Displays below description."
+        },
+        {
+          "type": "header",
+          "content": "🖼️ Ingredient Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Photo or illustration of the ingredient. Recommended: 400x400px square, PNG with transparent background works best."
+        },
+        {
+          "type": "text",
+          "id": "image_asset",
+          "label": "Asset Filename (Alternative)",
+          "info": "If you uploaded image to theme assets, enter filename here (e.g., 'lions-mane.png'). Leave blank if using image picker above."
+        },
+        {
+          "type": "header",
+          "content": "🎨 Custom Colors"
         },
         {
           "type": "color",
           "id": "name_color",
-          "label": "Name Color"
+          "label": "Name Color",
+          "info": "Custom color for this ingredient's name. Leave blank to use theme default."
         },
         {
           "type": "color",
           "id": "description_color",
-          "label": "Description Color"
+          "label": "Description Color",
+          "info": "Custom color for description text. Leave blank to use theme default."
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Ingredients Section",
+      "name": "Ingredients - 5 Column Grid",
+      "settings": {
+        "heading": "What's Inside + Why It Matters",
+        "description": "Each ingredient is carefully selected for its unique benefits and backed by traditional wisdom and modern research.",
+        "layout_style": "grid",
+        "columns_desktop": 5,
+        "columns_mobile": 1,
+        "item_spacing": 30,
+        "show_hero_image": true,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 60
+      },
       "blocks": [
         {
           "type": "ingredient",
           "settings": {
-            "name": "Organic Lion Mane Extract",
-            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+            "name": "Lion's Mane",
+            "description": "The 'smart mushroom' traditionally used to support cognitive function, focus, and memory. May support nerve growth factor production."
           }
         },
         {
           "type": "ingredient",
           "settings": {
-            "name": "Organic reishi extract",
-            "description": "The \"mushroom of immortality\" in traditional Chinese medicine. Adaptogen that helps the body manage stress, supports immune function, and promotes calm."
+            "name": "Reishi",
+            "description": "The 'mushroom of immortality' that helps the body manage stress, supports immune function, and promotes calm."
           }
         },
         {
           "type": "ingredient",
           "settings": {
-            "name": "Organic chaga extract",
-            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+            "name": "Cordyceps",
+            "description": "Energy-boosting mushroom that supports athletic performance, stamina, and natural vitality without jitters."
           }
         },
         {
           "type": "ingredient",
           "settings": {
-            "name": "Organic cordyceps extract",
-            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+            "name": "Turkey Tail",
+            "description": "Immune-supporting mushroom rich in antioxidants and polysaccharides for overall wellness."
           }
         },
         {
           "type": "ingredient",
           "settings": {
-            "name": "L-Theanine",
-            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+            "name": "Matcha",
+            "description": "Ceremonial-grade green tea providing clean energy with L-theanine for calm focus."
           }
         }
+      ]
+    },
+    {
+      "name": "Ingredients - 4 Column Compact",
+      "settings": {
+        "heading": "Pure Ingredients",
+        "layout_style": "grid",
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "item_spacing": 20,
+        "show_hero_image": false,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 40
+      },
+      "blocks": [
+        { "type": "ingredient", "settings": { "name": "Ingredient 1", "description": "Brief description of benefits" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 2", "description": "Brief description of benefits" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 3", "description": "Brief description of benefits" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 4", "description": "Brief description of benefits" } }
+      ]
+    },
+    {
+      "name": "Ingredients - 3 Column Detailed",
+      "settings": {
+        "heading": "Key Active Ingredients",
+        "description": "Every ingredient serves a purpose in delivering the perfect balance of energy, focus, and wellness.",
+        "layout_style": "grid",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "item_spacing": 40,
+        "show_hero_image": true,
+        "content_mode": "blocks",
+        "heading_alignment": "left",
+        "section_padding": 80
+      },
+      "blocks": [
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Primary Ingredient",
+            "description": "Detailed explanation of this key ingredient and why it's essential to the formula. Explains the science and benefits clearly."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Supporting Ingredient",
+            "description": "How this ingredient works synergistically with others to enhance overall effectiveness and deliver results."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Complementary Ingredient",
+            "description": "The final piece that brings everything together for a complete, balanced formula that works."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ingredients - Carousel Showcase",
+      "settings": {
+        "heading": "Discover Our Ingredients",
+        "description": "Swipe through to explore each carefully selected ingredient and its unique benefits.",
+        "layout_style": "carousel",
+        "carousel_items_desktop": 4,
+        "carousel_items_mobile": 1,
+        "item_spacing": 25,
+        "carousel_show_arrows": true,
+        "carousel_show_dots": true,
+        "carousel_autoplay": false,
+        "show_hero_image": false,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 50
+      },
+      "blocks": [
+        { "type": "ingredient", "settings": { "name": "Ingredient 1", "description": "First key ingredient" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 2", "description": "Second key ingredient" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 3", "description": "Third key ingredient" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 4", "description": "Fourth key ingredient" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 5", "description": "Fifth key ingredient" } },
+        { "type": "ingredient", "settings": { "name": "Ingredient 6", "description": "Sixth key ingredient" } }
+      ]
+    },
+    {
+      "name": "Ingredients - Auto-Play Carousel",
+      "settings": {
+        "heading": "What Makes Us Different",
+        "layout_style": "carousel",
+        "carousel_items_desktop": 3,
+        "carousel_items_mobile": 1,
+        "item_spacing": 30,
+        "carousel_show_arrows": true,
+        "carousel_show_dots": false,
+        "carousel_autoplay": true,
+        "carousel_autoplay_speed": 4500,
+        "show_hero_image": true,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 60
+      },
+      "blocks": [
+        { "type": "ingredient", "settings": { "name": "Feature 1", "description": "Auto-scrolling ingredient showcase" } },
+        { "type": "ingredient", "settings": { "name": "Feature 2", "description": "Smooth automatic transitions" } },
+        { "type": "ingredient", "settings": { "name": "Feature 3", "description": "Engaging presentation style" } }
       ]
     }
   ],

@@ -1,0 +1,58 @@
+{% liquid
+  # @description Main article section
+  # Displays individual blog article with content, author, and date
+%}
+
+<div class="page-width" style="padding: 40px 20px; max-width: 800px;">
+  <article>
+    {%- if article.image != blank -%}
+      <img src="{{ article.image | image_url: width: 1200 }}" alt="{{ article.title | escape }}" style="width: 100%; margin-bottom: 30px; border-radius: 4px;">
+    {%- endif -%}
+    
+    <h1 class="h1" style="margin-bottom: 20px;">{{ article.title | escape }}</h1>
+    
+    <div style="display: flex; gap: 20px; margin-bottom: 30px; color: #666; font-size: 14px;">
+      <span>{{ article.published_at | date: '%B %d, %Y' }}</span>
+      {%- if article.author != blank -%}
+        <span>by {{ article.author }}</span>
+      {%- endif -%}
+    </div>
+    
+    <div class="article-content" style="line-height: 1.6;">
+      {{ article.content }}
+    </div>
+    
+    {%- if blog.previous_article or blog.next_article -%}
+      <div style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 40px; border-top: 1px solid #eee;">
+        {%- if blog.previous_article -%}
+          <a href="{{ blog.previous_article.url }}" style="color: #000; text-decoration: underline;">← Previous</a>
+        {%- else -%}
+          <span></span>
+        {%- endif -%}
+        
+        <a href="{{ blog.url }}" style="color: #000; text-decoration: underline;">Back to Blog</a>
+        
+        {%- if blog.next_article -%}
+          <a href="{{ blog.next_article.url }}" style="color: #000; text-decoration: underline;">Next →</a>
+        {%- else -%}
+          <span></span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </article>
+</div>
+
+{% schema %}
+{
+  "name": "Article",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Article"
+    }
+  ]
+}
+{% endschema %}
+

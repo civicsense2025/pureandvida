@@ -9,43 +9,22 @@
  */
 {
   "sections": {
-    "header": {
-      "type": "header",
-      "settings": {
-        "logo_width": 200,
-        "logo_height": 50,
-        "logo_text": "PURE + VIDA",
-        "logo_text_size": 24,
-        "logo_text_color": "",
-        "show_plus": true,
-        "menu": "customer-account-main-menu",
-        "menu_text_color": "",
-        "show_cart": true,
-        "cart_button_text": "+ Add to Cart",
-        "cart_button_color": "",
-        "cart_button_text_color": "",
-        "sticky_header": false,
-        "transparent_header": false,
-        "header_height": 80,
-        "background_color": ""
-      }
-    },
     "hero": {
       "type": "hero",
       "settings": {
         "product": "",
-        "title": "MYCOMATCHA",
+        "title": "",
         "title_color": "",
         "show_trademark": true,
         "show_divider": true,
-        "divider_text": "+++++++++",
-        "subtitle": "The magic of matcha meets the wisdom of mushrooms",
+        "divider_text": "",
+        "subtitle": "",
         "subtitle_color": "",
-        "tagline_line_1": "Coffee borrows energy.",
-        "tagline_line_2": "MycoMatcha creates it.",
+        "tagline_line_1": "",
+        "tagline_line_2": "",
         "tagline_color": "",
-        "description_paragraph_1": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently.",
-        "description_paragraph_2": "Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience.",
+        "description_paragraph_1": "",
+        "description_paragraph_2": "",
         "description_color": "",
         "show_pricing": true,
         "show_compare_price": true,
@@ -53,7 +32,7 @@
         "custom_price": "",
         "price_color": "",
         "compare_price_color": "",
-        "button_text": "Add to cart",
+        "button_text": "",
         "button_link": "",
         "button_color": "",
         "button_text_color": "",
@@ -62,7 +41,7 @@
         "min_quantity": 1,
         "max_quantity": 10,
         "show_discount_badge": true,
-        "discount_badge_text": "Get 33% off today!",
+        "discount_badge_text": "",
         "badge_background_color": "",
         "badge_text_color": "",
         "image_position": "row",
@@ -76,7 +55,7 @@
       "type": "benefits",
       "settings": {
         "content_mode": "blocks",
-        "heading": "Benefits",
+        "heading": "",
         "heading_color": "",
         "heading_alignment": "center",
         "columns_desktop": 3,
@@ -102,11 +81,11 @@
       "type": "ingredients",
       "settings": {
         "content_mode": "blocks",
-        "heading_small": "What's Inside +",
-        "heading": "Why It Matters",
+        "heading_small": "",
+        "heading": "",
         "heading_color": "",
         "heading_alignment": "center",
-        "description": "MycoMatcha pairs ceremonial-grade matcha with Lion's Mane, Reishi, Cordyceps, and Turkey Tail — four adaptogenic mushrooms that support focus, energy, and balance.",
+        "description": "",
         "description_color": "",
         "show_hero_image": true,
         "columns_desktop": 5,
@@ -141,7 +120,7 @@
       "type": "faq",
       "settings": {
         "content_mode": "blocks",
-        "heading": "frequently asked questions",
+        "heading": "",
         "heading_color": "",
         "heading_alignment": "center",
         "default_open": false,
@@ -169,37 +148,13 @@
         "faq_10_question": "",
         "faq_10_answer": ""
       }
-    },
-    "footer": {
-      "type": "footer",
-      "settings": {
-        "logo_text": "PURE VIDA",
-        "logo_text_color": "",
-        "show_plus": true,
-        "copyright_text": "<p>Copyright Pura Vida 2025. All rights reserved.</p>",
-        "copyright_color": "",
-        "show_newsletter": false,
-        "newsletter_heading": "Subscribe to our newsletter",
-        "newsletter_heading_color": "",
-        "newsletter_description": "",
-        "newsletter_text_color": "",
-        "newsletter_placeholder": "Enter your email",
-        "newsletter_button_text": "Subscribe",
-        "newsletter_button_color": "",
-        "newsletter_button_text_color": "",
-        "show_social_media": true,
-        "show_payment_icons": true,
-        "background_color": ""
-      }
     }
   },
   "order": [
-    "header",
     "hero",
     "benefits",
     "ingredients",
     "testimonials",
-    "faq",
-    "footer"
+    "faq"
   ]
 }

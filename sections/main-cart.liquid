@@ -1,0 +1,113 @@
+{% liquid
+  # @description Main cart section
+  # Displays shopping cart with items, quantities, and checkout button
+%}
+
+<div class="page-width" style="padding: 40px 20px;">
+  <h1 class="h1" style="margin-bottom: 30px;">{{ 'cart.general.title' | t }}</h1>
+  
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" novalidate>
+      <div class="cart-items">
+        {%- for item in cart.items -%}
+          <div class="cart-item" style="display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid #eee;">
+            <div class="cart-item-image">
+              <img src="{{ item.image | image_url: width: 150 }}" alt="{{ item.title | escape }}" style="width: 100px; height: 100px; object-fit: cover;">
+            </div>
+            <div class="cart-item-details" style="flex: 1;">
+              <h3 style="margin-bottom: 10px;"><a href="{{ item.url }}">{{ item.product.title | escape }}</a></h3>
+              {%- if item.variant.title != 'Default Title' -%}
+                <p style="margin-bottom: 10px; color: #666;">{{ item.variant.title }}</p>
+              {%- endif -%}
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" style="width: 60px; padding: 5px;">
+                  <span style="margin-left: 10px;">x {{ item.final_price | money }}</span>
+                </div>
+                <div>
+                  <strong>{{ item.final_line_price | money }}</strong>
+                </div>
+              </div>
+            </div>
+            <div>
+              <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" style="color: #999; text-decoration: none;">Remove</a>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+      
+      <div class="cart-footer" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #000;">
+        {%- if section.settings.show_cart_note -%}
+          <div style="margin-bottom: 20px;">
+            <label for="cart-note" style="display: block; margin-bottom: 10px;">{{ 'cart.general.note' | t }}</label>
+            <textarea id="cart-note" name="note" style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid #ccc;">{{ cart.note }}</textarea>
+          </div>
+        {%- endif -%}
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <strong>{{ 'cart.general.subtotal' | t }}: {{ cart.total_price | money }}</strong>
+          </div>
+        </div>
+        
+        <button type="submit" name="update" style="padding: 12px 24px; background: #666; color: #fff; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">{{ 'cart.general.update' | t }}</button>
+        <button type="submit" name="checkout" style="padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer;">{{ 'cart.general.checkout' | t }}</button>
+        
+        {%- if section.settings.show_continue_shopping -%}
+          <div style="margin-top: 20px;">
+            <a href="{{ routes.all_products_collection_url }}" style="color: #000; text-decoration: underline;">{{ section.settings.continue_shopping_text | default: 'Continue shopping' | escape }}</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </form>
+  {%- else -%}
+    <div style="text-align: center; padding: 60px 20px;">
+      <p style="margin-bottom: 30px;">{{ section.settings.cart_empty_message | default: 'Your cart is empty' | escape }}</p>
+      <a href="{{ routes.all_products_collection_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; display: inline-block;">{{ 'cart.general.continue_shopping' | t }}</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "Show Cart Note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_calculator",
+      "label": "Show Shipping Calculator",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_continue_shopping",
+      "label": "Show Continue Shopping Link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "continue_shopping_text",
+      "label": "Continue Shopping Text"
+    },
+    {
+      "type": "textarea",
+      "id": "cart_empty_message",
+      "label": "Empty Cart Message"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart"
+    }
+  ]
+}
+{% endschema %}
+

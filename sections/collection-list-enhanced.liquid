@@ -12,16 +12,27 @@
   assign layout_style = section.settings.layout_style | default: 'grid'
 -%}
 
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--collection-list">
+    <span class="editor-label">🏪 Collections</span>
+    <span class="editor-info">
+      Layout: {{ section.settings.layout_style | capitalize }} |
+      {{ section.blocks.size }} collections |
+      {% if layout_style == 'grid' %}{{ section.settings.columns_desktop }}-col grid{% else %}Carousel{% endif %}
+    </span>
+  </div>
+{% endif %}
+
 <section class="collection-list-section{% if layout_style == 'carousel' %} collection-list-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="page-width">
     {%- if section.settings.heading != blank -%}
       <h2 class="collection-list-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
     {%- endif -%}
-    
+
     {%- if section.settings.description != blank -%}
       <p class="collection-list-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: 40px;">{{ section.settings.description | escape }}</p>
     {%- endif -%}
-    
+
     {%- comment -%} Count collection items {%- endcomment -%}
     {%- assign collection_count = 0 -%}
     {%- for block in section.blocks -%}
@@ -29,18 +40,18 @@
         {%- assign collection_count = collection_count | plus: 1 -%}
       {%- endif -%}
     {%- endfor -%}
-    
+
     {%- if collection_count > 0 -%}
       {%- if layout_style == 'carousel' -%}
         {%- comment -%} Carousel Layout {%- endcomment -%}
-        <div class="collection-list-carousel__wrapper" 
+        <div class="collection-list-carousel__wrapper"
              data-carousel-id="collection-list-{{ section.id }}"
              data-items-desktop="{{ section.settings.carousel_items_desktop }}"
              data-items-mobile="{{ section.settings.carousel_items_mobile }}"
              data-autoplay="{{ section.settings.carousel_autoplay }}"
              data-autoplay-speed="{{ section.settings.carousel_autoplay_speed }}"
              data-gap="{{ section.settings.item_spacing }}">
-          
+
           <div class="collection-list-carousel__container" role="region" aria-label="Collections carousel">
             <div class="collection-list-carousel__track" data-carousel-track>
               {%- for block in section.blocks -%}
@@ -58,11 +69,11 @@
                             <img src="{{ block.settings.custom_image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
                           </div>
                         {%- endif -%}
-                        
+
                         {%- if section.settings.show_collection_title -%}
                           <h3 class="collection-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% elsif section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %} text-align: center;">{{ collection.title | escape }}</h3>
                         {%- endif -%}
-                        
+
                         {%- if section.settings.show_product_count -%}
                           <p class="collection-count" style="{% if section.settings.count_color != blank %}color: {{ section.settings.count_color }};{% endif %} text-align: center; margin-top: 5px;">
                             {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
@@ -77,14 +88,14 @@
           </div>
 
           {%- if section.settings.carousel_show_arrows -%}
-            <button class="collection-list-carousel__button collection-list-carousel__button--prev" 
-                    data-carousel-prev 
+            <button class="collection-list-carousel__button collection-list-carousel__button--prev"
+                    data-carousel-prev
                     aria-label="Previous collections"
                     type="button">
               <span aria-hidden="true">‹</span>
             </button>
-            <button class="collection-list-carousel__button collection-list-carousel__button--next" 
-                    data-carousel-next 
+            <button class="collection-list-carousel__button collection-list-carousel__button--next"
+                    data-carousel-next
                     aria-label="Next collections"
                     type="button">
               <span aria-hidden="true">›</span>
@@ -95,8 +106,8 @@
             <div class="collection-list-carousel__dots" data-carousel-dots role="tablist" aria-label="Collections navigation">
               {%- assign total_slides = collection_count | divided_by: section.settings.carousel_items_desktop | ceil -%}
               {%- for i in (1..total_slides) -%}
-                <button class="collection-list-carousel__dot{% if forloop.first %} collection-list-carousel__dot--active{% endif %}" 
-                        data-carousel-dot 
+                <button class="collection-list-carousel__dot{% if forloop.first %} collection-list-carousel__dot--active{% endif %}"
+                        data-carousel-dot
                         data-slide-index="{{ forloop.index0 }}"
                         aria-label="Go to slide {{ forloop.index }}"
                         type="button"
@@ -125,11 +136,11 @@
                       <img src="{{ block.settings.custom_image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
                     </div>
                   {%- endif -%}
-                  
+
                   {%- if section.settings.show_collection_title -%}
                     <h3 class="collection-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% elsif section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %} text-align: center;">{{ collection.title | escape }}</h3>
                   {%- endif -%}
-                  
+
                   {%- if section.settings.show_product_count -%}
                     <p class="collection-count" style="{% if section.settings.count_color != blank %}color: {{ section.settings.count_color }};{% endif %} text-align: center; margin-top: 5px;">
                       {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
@@ -146,6 +157,95 @@
 </section>
 
 <style>
+  {% if request.design_mode %}
+  /* Visual Editor Controls - Teal Theme for Collections */
+  .collection-list-section {
+    position: relative;
+    outline: 2px dashed rgba(0, 150, 136, 0.3);
+    outline-offset: -2px;
+  }
+
+  .editor-controls--collection-list {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.90);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid rgba(0, 150, 136, 0.5);
+  }
+
+  .editor-controls--collection-list .editor-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(0, 150, 136, 1);
+  }
+
+  .editor-controls--collection-list .editor-info {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+  }
+
+  .collection-list-section--carousel::before {
+    content: "CAROUSEL MODE";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 150, 136, 0.95);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    z-index: 999;
+  }
+
+  .collection-list-grid::after {
+    content: "{{ section.settings.columns_desktop }}-COL GRID";
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0, 150, 136, 0.95);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .collection-item {
+    position: relative;
+    outline: 1px dashed rgba(0, 150, 136, 0.25);
+  }
+
+  .collection-item::before {
+    content: "COLLECTION";
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(0, 150, 136, 0.1);
+    color: rgba(0, 150, 136, 0.8);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    z-index: 10;
+  }
+  {% endif %}
+
   /* Collection List Responsive Grid */
   .collection-list-grid {
     display: grid;
@@ -195,23 +295,30 @@
 
 {% schema %}
 {
-  "name": "Collection List",
+  "name": "🏪 Collection List",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Showcase your product collections in a grid or carousel layout. Perfect for featuring multiple collections on your homepage or landing pages."
+    },
+    {
       "type": "header",
-      "content": "Content"
+      "content": "✏️ Section Content"
     },
     {
       "type": "text",
       "id": "heading",
-      "label": "Heading"
+      "label": "Section Heading",
+      "default": "Shop by Collection",
+      "info": "Main title for the collection list section. Example: 'Explore Our Collections' or 'Shop by Category'"
     },
     {
       "type": "color",
       "id": "heading_color",
-      "label": "Heading Color"
+      "label": "Heading Text Color",
+      "info": "Custom color for the heading. Leave blank for theme default."
     },
     {
       "type": "select",
@@ -222,30 +329,34 @@
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
       ],
-      "default": "center"
+      "default": "center",
+      "info": "Text alignment for heading and description."
     },
     {
       "type": "range",
       "id": "heading_spacing",
-      "label": "Heading Bottom Spacing (px)",
+      "label": "Heading Bottom Margin",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 20
+      "default": 20,
+      "info": "Space below heading in pixels. Example: 20 = comfortable spacing between heading and collections."
     },
     {
       "type": "textarea",
       "id": "description",
-      "label": "Description"
+      "label": "Section Description",
+      "info": "Optional description text below heading. Example: 'Discover our curated collections'. Leave blank to hide."
     },
     {
       "type": "color",
       "id": "description_color",
-      "label": "Description Color"
+      "label": "Description Text Color",
+      "info": "Custom color for description text. Leave blank for theme default."
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout Configuration"
     },
     {
       "type": "select",
@@ -255,40 +366,42 @@
         { "value": "grid", "label": "Grid" },
         { "value": "carousel", "label": "Carousel" }
       ],
-      "default": "grid"
+      "default": "grid",
+      "info": "Grid displays all collections in rows. Carousel slides through them with navigation."
     },
     {
       "type": "range",
       "id": "columns_desktop",
-      "label": "Columns (Desktop - Grid Only)",
+      "label": "Grid Columns (Desktop)",
       "min": 2,
       "max": 6,
       "step": 1,
       "default": 4,
-      "info": "Only applies when layout style is Grid"
+      "info": "Number of columns on desktop (1200px+). Only applies to Grid layout. Example: 4 = 4 collections per row."
     },
     {
       "type": "range",
       "id": "columns_mobile",
-      "label": "Columns (Mobile - Grid Only)",
+      "label": "Grid Columns (Mobile/Tablet)",
       "min": 1,
       "max": 3,
       "step": 1,
       "default": 2,
-      "info": "Only applies when layout style is Grid"
+      "info": "Number of columns on mobile/tablet (480-1023px). Only applies to Grid layout. Example: 2 = 2 per row."
     },
     {
       "type": "range",
       "id": "item_spacing",
-      "label": "Item Spacing (px)",
+      "label": "Spacing Between Collections",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 30
+      "default": 30,
+      "info": "Gap between collection items in pixels. Applies to both Grid and Carousel layouts."
     },
     {
       "type": "header",
-      "content": "Carousel Settings"
+      "content": "🎠 Carousel Controls"
     },
     {
       "type": "range",
@@ -298,7 +411,7 @@
       "max": 6,
       "step": 1,
       "default": 4,
-      "info": "Only applies when layout style is Carousel"
+      "info": "How many collections visible at once on desktop. Only applies to Carousel layout. Example: 4 = show 4 side-by-side."
     },
     {
       "type": "range",
@@ -308,124 +421,175 @@
       "max": 3,
       "step": 1,
       "default": 2,
-      "info": "Only applies when layout style is Carousel"
+      "info": "How many collections visible at once on mobile. Only applies to Carousel layout. Recommended: 1-2 for mobile."
     },
     {
       "type": "checkbox",
       "id": "carousel_show_arrows",
       "label": "Show Navigation Arrows",
-      "default": true
+      "default": true,
+      "info": "Display left/right arrow buttons for manual carousel navigation."
     },
     {
       "type": "checkbox",
       "id": "carousel_show_dots",
       "label": "Show Dot Indicators",
-      "default": true
+      "default": true,
+      "info": "Display pagination dots below carousel for progress indication."
     },
     {
       "type": "checkbox",
       "id": "carousel_autoplay",
       "label": "Enable Auto-play",
-      "default": false
+      "default": false,
+      "info": "Automatically advance carousel slides. Speed controlled below."
     },
     {
       "type": "range",
       "id": "carousel_autoplay_speed",
-      "label": "Auto-play Speed (ms)",
+      "label": "Auto-play Speed (milliseconds)",
       "min": 2000,
       "max": 9999,
       "step": 500,
       "default": 5000,
-      "info": "Only applies when auto-play is enabled"
+      "info": "Time between automatic slides. Only applies when auto-play enabled. Example: 5000 = 5 seconds per slide."
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image Settings"
     },
     {
       "type": "select",
       "id": "image_aspect_ratio",
-      "label": "Image Aspect Ratio",
+      "label": "Collection Image Aspect Ratio",
       "options": [
         { "value": "1/1", "label": "Square (1:1)" },
         { "value": "4/3", "label": "Landscape (4:3)" },
         { "value": "3/4", "label": "Portrait (3:4)" },
         { "value": "16/9", "label": "Wide (16:9)" }
       ],
-      "default": "4/3"
+      "default": "4/3",
+      "info": "Aspect ratio for all collection images. Square recommended for uniform grids. Landscape for wide layouts."
     },
     {
       "type": "header",
-      "content": "Collection Info"
+      "content": "📝 Collection Information Display"
     },
     {
       "type": "checkbox",
       "id": "show_collection_title",
-      "label": "Show Collection Title",
-      "default": true
+      "label": "Show Collection Titles",
+      "default": true,
+      "info": "Display the collection name below each image. Recommended for clarity."
     },
     {
       "type": "color",
       "id": "title_color",
-      "label": "Title Color"
+      "label": "Default Title Color",
+      "info": "Default color for collection titles. Can be overridden per collection block. Leave blank for theme default."
     },
     {
       "type": "checkbox",
       "id": "show_product_count",
-      "label": "Show Product Count",
-      "default": false
+      "label": "Show Product Counts",
+      "default": false,
+      "info": "Display number of products in each collection. Example: '24 products'. Helps customers gauge collection size."
     },
     {
       "type": "color",
       "id": "count_color",
-      "label": "Product Count Color"
+      "label": "Product Count Color",
+      "info": "Color for product count text. Only visible if product counts are enabled."
     },
     {
       "type": "header",
-      "content": "Styling"
+      "content": "🎨 Section Styling"
     },
     {
       "type": "range",
       "id": "section_padding",
-      "label": "Section Padding (px)",
+      "label": "Section Vertical Padding",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 40
+      "default": 40,
+      "info": "Padding above and below section content in pixels. Example: 40 = standard section spacing."
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background Color"
+      "label": "Section Background Color",
+      "info": "Background color for entire collection list section. Leave blank for transparent/theme default."
     }
   ],
   "blocks": [
     {
       "type": "collection",
-      "name": "Collection",
+      "name": "🏪 Collection: {{ block.settings.collection.title }}",
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a collection to showcase. Each collection displays its featured image (or custom image), title, and optional product count."
+        },
         {
           "type": "collection",
           "id": "collection",
-          "label": "Collection"
+          "label": "Select Collection",
+          "info": "Choose which collection to display. Uses collection's featured image unless custom image is provided below."
         },
         {
           "type": "image_picker",
           "id": "custom_image",
-          "label": "Custom Image",
-          "info": "Optional: Override collection featured image"
+          "label": "Custom Collection Image (Optional)",
+          "info": "Override the collection's featured image with a custom image. Leave blank to use collection's featured image."
         },
         {
           "type": "color",
           "id": "title_color",
-          "label": "Title Color",
-          "info": "Overrides section default"
+          "label": "Custom Title Color (Optional)",
+          "info": "Override section default title color for this specific collection. Leave blank to use section default."
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Collection List"
+      "name": "🏪 Collection List (4-Column)",
+      "settings": {
+        "heading": "Shop by Collection",
+        "layout_style": "grid",
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "show_collection_title": true,
+        "show_product_count": false
+      }
+    },
+    {
+      "name": "🏪 Collection List (Carousel)",
+      "settings": {
+        "heading": "Explore Collections",
+        "layout_style": "carousel",
+        "carousel_items_desktop": 4,
+        "carousel_items_mobile": 1,
+        "carousel_show_arrows": true,
+        "carousel_show_dots": true,
+        "show_collection_title": true
+      }
+    },
+    {
+      "name": "🏪 Collection List (3-Column Wide)",
+      "settings": {
+        "heading": "Featured Collections",
+        "layout_style": "grid",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "image_aspect_ratio": "16/9",
+        "show_collection_title": true,
+        "show_product_count": true,
+        "item_spacing": 40
+      }
     }
   ],
   "templates": ["index", "page", "product", "collection"]
 }
 {% endschema %}
-

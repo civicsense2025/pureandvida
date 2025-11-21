@@ -1,0 +1,104 @@
+{% liquid
+  # @description 404 error page section
+  # Displays custom 404 page content with search and navigation options
+%}
+
+<div class="page-width" style="padding: 60px 20px; text-align: center;">
+  {%- if section.settings.heading != blank -%}
+    <h1 class="h1" style="margin-bottom: 20px;">{{ section.settings.heading | escape }}</h1>
+  {%- else -%}
+    <h1 class="h1" style="margin-bottom: 20px;">404</h1>
+  {%- endif -%}
+  
+  {%- if section.settings.subheading != blank -%}
+    <h2 class="h2" style="margin-bottom: 20px;">{{ section.settings.subheading | escape }}</h2>
+  {%- endif -%}
+  
+  {%- if section.settings.description != blank -%}
+    <p style="margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">{{ section.settings.description | escape }}</p>
+  {%- endif -%}
+  
+  {%- if section.settings.show_search -%}
+    <div style="max-width: 500px; margin: 0 auto 30px;">
+      <form action="{{ routes.search_url }}" method="get" role="search">
+        <input type="search" name="q" placeholder="Search..." style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+        <button type="submit" style="margin-top: 10px; padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+      </form>
+    </div>
+  {%- endif -%}
+  
+  <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+    {%- if section.settings.show_collections_link -%}
+      <a href="{{ routes.collections_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">Browse Collections</a>
+    {%- endif -%}
+    
+    {%- if section.settings.show_products_link -%}
+      <a href="{{ routes.all_products_collection_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">View All Products</a>
+    {%- endif -%}
+    
+    {%- if section.settings.button_text != blank and section.settings.button_link != blank -%}
+      <a href="{{ section.settings.button_link }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">{{ section.settings.button_text | escape }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "404"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "The page you're looking for doesn't exist."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show Search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collections_link",
+      "label": "Show Collections Link",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_products_link",
+      "label": "Show Products Link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "404"
+    }
+  ]
+}
+{% endschema %}
+

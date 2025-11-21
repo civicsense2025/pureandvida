@@ -1,0 +1,46 @@
+{
+  "sections": {
+    "image-banner": {
+      "type": "image-banner",
+      "settings": {
+        "heading": "About Us",
+        "description": "Learn more about our story",
+        "banner_height": 400,
+        "text_alignment": "center"
+      }
+    },
+    "rich-text": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Our Story",
+        "content": "<p>Add your about page content here using the theme customizer.</p>",
+        "full_width": false,
+        "content_width": 1000,
+        "text_alignment": "left"
+      }
+    },
+    "benefits": {
+      "type": "benefits",
+      "settings": {
+        "heading": "Our Values",
+        "content_mode": "blocks",
+        "columns_desktop": 3
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "heading": "What People Say About Us",
+        "content_mode": "blocks",
+        "columns_desktop": 3
+      }
+    }
+  },
+  "order": [
+    "image-banner",
+    "rich-text",
+    "benefits",
+    "testimonials"
+  ]
+}
+

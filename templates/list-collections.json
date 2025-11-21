@@ -9,35 +9,13 @@
  */
 {
   "sections": {
-    "collections-header": {
-      "type": "rich-text",
-      "settings": {
-        "heading": "Our Collections",
-        "heading_alignment": "center"
-      }
-    },
-    "collections-list": {
-      "type": "collection-list",
-      "settings": {
-        "heading": "",
-        "heading_color": "",
-        "heading_alignment": "center",
-        "description": "",
-        "description_color": "",
-        "columns_desktop": 3,
-        "columns_mobile": 1,
-        "item_spacing": 30,
-        "section_padding": 40,
-        "background_color": "",
-        "show_collection_title": true,
-        "show_product_count": true,
-        "image_aspect_ratio": "1.0"
-      }
+    "main-collections-list": {
+      "type": "main-collections-list",
+      "settings": {}
     }
   },
   "order": [
-    "collections-header",
-    "collections-list"
+    "main-collections-list"
   ]
 }
 

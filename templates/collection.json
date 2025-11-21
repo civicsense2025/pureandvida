@@ -12,14 +12,14 @@
     "collection-header": {
       "type": "rich-text",
       "settings": {
-        "heading": "Collection",
+        "heading": "",
         "heading_alignment": "center"
       }
     },
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
-        "heading": "Products",
+        "heading": "",
         "products_to_show": 12,
         "columns_desktop": 4,
         "columns_mobile": 2,

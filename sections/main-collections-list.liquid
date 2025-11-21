@@ -1,0 +1,49 @@
+{% liquid
+  # @description Main collections list section
+  # Displays all collections in a grid layout
+%}
+
+<div class="page-width" style="padding: 40px 20px;">
+  <h1 class="h1" style="margin-bottom: 30px; text-align: center;">Collections</h1>
+  
+  {%- if collections.size > 0 -%}
+    <div class="collections-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+      {%- for collection in collections -%}
+        <div class="collection-item" style="border: 1px solid #eee; border-radius: 4px; overflow: hidden;">
+          <a href="{{ collection.url }}">
+            {%- if collection.featured_image != blank -%}
+              <img src="{{ collection.featured_image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" style="width: 100%; height: 300px; object-fit: cover;">
+            {%- else -%}
+              <div style="width: 100%; height: 300px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #999;">
+                No image
+              </div>
+            {%- endif -%}
+            <div style="padding: 20px; text-align: center;">
+              <h2 style="margin-bottom: 10px;">
+                <a href="{{ collection.url }}" style="color: #000; text-decoration: none;">{{ collection.title | escape }}</a>
+              </h2>
+              <p style="color: #666; font-size: 14px;">{{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}</p>
+            </div>
+          </a>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- else -%}
+    <p style="text-align: center; padding: 60px 20px;">No collections found.</p>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Collections List",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Collections List"
+    }
+  ]
+}
+{% endschema %}
+

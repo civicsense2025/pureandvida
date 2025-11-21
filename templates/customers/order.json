@@ -9,12 +9,20 @@
  */
 {
   "sections": {
+    "order-header": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "",
+        "heading_alignment": "center"
+      }
+    },
     "main-customer-order": {
       "type": "main-customer-order",
       "settings": {}
     }
   },
   "order": [
+    "order-header",
     "main-customer-order"
   ]
 }

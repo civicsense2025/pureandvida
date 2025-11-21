@@ -12,7 +12,7 @@
     "search-header": {
       "type": "rich-text",
       "settings": {
-        "heading": "Search Results",
+        "heading": "",
         "heading_alignment": "center"
       }
     },

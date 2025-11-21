@@ -1,0 +1,58 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {}
+    },
+    "rich-text": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Welcome",
+        "content": "<p>Add your content here using the theme customizer.</p>",
+        "full_width": false,
+        "content_width": 800
+      }
+    },
+    "image-banner": {
+      "type": "image-banner",
+      "settings": {
+        "heading": "Featured Section",
+        "description": "Add a compelling description here",
+        "button_text": "Learn More",
+        "banner_height": 500
+      }
+    },
+    "benefits": {
+      "type": "benefits",
+      "settings": {
+        "heading": "Why Choose Us",
+        "content_mode": "blocks",
+        "columns_desktop": 3
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "heading": "What Our Customers Say",
+        "content_mode": "blocks",
+        "columns_desktop": 3
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "heading": "Frequently Asked Questions",
+        "content_mode": "blocks"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "rich-text",
+    "image-banner",
+    "benefits",
+    "testimonials",
+    "faq"
+  ]
+}
+

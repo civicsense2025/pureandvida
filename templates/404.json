@@ -12,14 +12,14 @@
     "404-content": {
       "type": "main-404",
       "settings": {
-        "heading": "404",
-        "subheading": "Page not found",
-        "description": "The page you're looking for doesn't exist.",
+        "heading": "",
+        "subheading": "",
+        "description": "",
         "show_search": true,
         "show_collections_link": true,
         "show_products_link": true,
-        "button_text": "Continue Shopping",
-        "button_link": "/collections/all"
+        "button_text": "",
+        "button_link": ""
       }
     }
   },

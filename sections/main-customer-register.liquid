@@ -1,0 +1,57 @@
+{% liquid
+  # @description Customer register section
+  # Displays registration form for new customers
+%}
+
+<div class="page-width" style="padding: 40px 20px; max-width: 500px; margin: 0 auto;">
+  <h1 class="h1" style="margin-bottom: 30px; text-align: center;">Create Account</h1>
+  
+  {%- form 'create_customer', novalidate: 'novalidate' -%}
+    {%- if form.errors -%}
+      <div style="padding: 15px; background: #fee; border: 1px solid #d00; border-radius: 4px; margin-bottom: 20px; color: #d00;">
+        {{ form.errors | default_errors }}
+      </div>
+    {%- endif -%}
+    
+    <div style="margin-bottom: 20px;">
+      <label for="register_first_name" style="display: block; margin-bottom: 5px;">First Name</label>
+      <input type="text" name="customer[first_name]" id="register_first_name" autocomplete="given-name" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+      <label for="register_last_name" style="display: block; margin-bottom: 5px;">Last Name</label>
+      <input type="text" name="customer[last_name]" id="register_last_name" autocomplete="family-name" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+      <label for="register_email" style="display: block; margin-bottom: 5px;">Email</label>
+      <input type="email" name="customer[email]" id="register_email" autocomplete="email" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+      <label for="register_password" style="display: block; margin-bottom: 5px;">Password</label>
+      <input type="password" name="customer[password]" id="register_password" autocomplete="new-password" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+    
+    <button type="submit" style="width: 100%; padding: 12px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 20px;">Create Account</button>
+  {%- endform -%}
+  
+  <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee;">
+    <p style="margin-bottom: 15px;">Already have an account?</p>
+    <a href="{{ routes.account_login_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; display: inline-block;">Login</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer Register",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Customer Register"
+    }
+  ]
+}
+{% endschema %}

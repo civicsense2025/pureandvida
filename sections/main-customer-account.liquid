@@ -1,0 +1,57 @@
+{% liquid
+  # @description Customer account section
+  # Displays customer account dashboard
+%}
+
+<div class="page-width" style="padding: 40px 20px;">
+  <h1 class="h1" style="margin-bottom: 30px;">Account</h1>
+  
+  <div style="display: grid; grid-template-columns: 250px 1fr; gap: 40px;">
+    <nav style="border-right: 1px solid #eee; padding-right: 20px;">
+      <ul style="list-style: none; padding: 0;">
+        <li style="margin-bottom: 15px;"><a href="{{ routes.account_url }}" style="color: #000; text-decoration: none;">Account Overview</a></li>
+        <li style="margin-bottom: 15px;"><a href="{{ routes.account_addresses_url }}" style="color: #000; text-decoration: none;">Addresses</a></li>
+        <li style="margin-bottom: 15px;"><a href="{{ routes.account_logout_url }}" style="color: #000; text-decoration: none;">Logout</a></li>
+      </ul>
+    </nav>
+    
+    <div>
+      <h2 style="margin-bottom: 20px;">Order History</h2>
+      {%- if customer.orders.size > 0 -%}
+        <div class="orders-list">
+          {%- for order in customer.orders -%}
+            <div style="padding: 20px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div>
+                  <strong>Order {{ order.name }}</strong>
+                  <p style="margin: 5px 0; color: #666; font-size: 14px;">{{ order.created_at | date: '%B %d, %Y' }}</p>
+                </div>
+                <div style="text-align: right;">
+                  <strong>{{ order.total_price | money }}</strong>
+                  <p style="margin: 5px 0; color: #666; font-size: 14px;">{{ order.financial_status_label }}</p>
+                </div>
+              </div>
+              <a href="{{ order.customer_url }}" style="color: #000; text-decoration: underline;">View Order</a>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p>You haven't placed any orders yet.</p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer Account",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Customer Account"
+    }
+  ]
+}
+{% endschema %}

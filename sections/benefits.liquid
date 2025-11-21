@@ -13,7 +13,17 @@
   assign layout_style = section.settings.layout_style | default: 'grid'
 -%}
 
-<{{ structural_element }} class="benefits-section{% if layout_style == 'carousel' %} benefits-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+<{{ structural_element }} class="benefits-section{% if layout_style == 'carousel' %} benefits-section--carousel{% endif %}"
+     {% if request.design_mode %}data-section-type="benefits" data-layout="{{ layout_style }}" data-columns="{{ section.settings.columns_desktop }}" data-items="{{ benefit_count }}"{% endif %}
+     style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+
+  {%- if request.design_mode -%}
+    <div class="editor-controls editor-controls--benefits">
+      <span class="editor-label">✨ Benefits Section</span>
+      <span class="editor-info">{{ layout_style | capitalize }} | {% if layout_style == 'grid' %}{{ section.settings.columns_desktop }} cols{% else %}{{ section.settings.carousel_items_desktop }} per slide{% endif %} | {{ benefit_count }} items | Mode: {{ section.settings.content_mode | capitalize }}</span>
+    </div>
+  {%- endif -%}
+
   <div class="benefits-content page-width">
     {%- if section.settings.heading != blank -%}
       <h2 class="benefits-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
@@ -188,6 +198,102 @@
 </{{ structural_element }}>
 
 <style>
+  {% if request.design_mode %}
+  /* Theme Editor Visual Controls */
+  .benefits-section {
+    position: relative;
+    outline: 2px dashed rgba(255, 100, 150, 0.3);
+    outline-offset: -2px;
+  }
+
+  .benefits-section:hover {
+    outline-color: rgba(255, 100, 150, 0.6);
+  }
+
+  .editor-controls--benefits {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.90);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    pointer-events: none;
+    max-width: 400px;
+  }
+
+  .editor-label {
+    font-weight: 600;
+    color: #ffa5c4;
+    font-size: 12px;
+  }
+
+  .editor-info {
+    opacity: 0.85;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  /* Grid Visualizer */
+  {% if section.settings.layout_style == 'grid' %}
+  .benefits-grid {
+    position: relative;
+  }
+
+  .benefits-grid::before {
+    content: '{{ section.settings.columns_desktop }}-Column Grid';
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: rgba(255, 100, 150, 0.9);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 10;
+  }
+  {% endif %}
+
+  /* Block Indicators */
+  .benefit-item {
+    position: relative;
+    outline: 1px dashed rgba(255, 150, 200, 0.2);
+    outline-offset: -1px;
+  }
+
+  .benefit-item:hover {
+    outline-color: rgba(255, 150, 200, 0.5);
+    background: rgba(255, 150, 200, 0.05);
+  }
+
+  /* Carousel Indicators */
+  {% if section.settings.layout_style == 'carousel' %}
+  .benefits-carousel__wrapper::before {
+    content: 'Carousel: {{ section.settings.carousel_items_desktop }} items/slide{% if section.settings.carousel_autoplay %} • Autoplay{% endif %}';
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: rgba(255, 140, 0, 0.9);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 10;
+  }
+  {% endif %}
+  {% endif %}
+
   /* Benefits Section Responsive Styles */
   .benefits-grid {
     display: grid;
@@ -243,70 +349,88 @@
 
 {% schema %}
 {
-  "name": "Benefits Section",
+  "name": "✨ Benefits Section",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Display product benefits in a grid or carousel. Choose between flexible blocks (add/remove/reorder) or fixed settings (6 pre-defined slots)."
+    },
+    {
       "type": "header",
-      "content": "Content Management"
+      "content": "📝 Content Management Mode"
     },
     {
       "type": "select",
       "id": "content_mode",
-      "label": "Content Management",
+      "label": "How to Manage Content",
       "options": [
-        { "value": "blocks", "label": "Use Blocks (Dynamic)" },
-        { "value": "settings", "label": "Use Settings (Fixed)" }
+        { "value": "blocks", "label": "Blocks Mode (Flexible - Add/Remove)" },
+        { "value": "settings", "label": "Settings Mode (Fixed - 6 Slots)" }
       ],
-      "default": "blocks"
+      "default": "blocks",
+      "info": "Blocks: Dynamic, drag-and-drop, unlimited items. Settings: Fixed 6 slots, simpler for non-technical users."
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout & Display Style"
     },
     {
       "type": "select",
       "id": "layout_style",
-      "label": "Layout Style",
+      "label": "Display Style",
       "options": [
-        { "value": "grid", "label": "Grid" },
-        { "value": "carousel", "label": "Carousel" }
+        { "value": "grid", "label": "Grid (All items visible)" },
+        { "value": "carousel", "label": "Carousel (Swipeable slides)" }
       ],
-      "default": "grid"
+      "default": "grid",
+      "info": "Grid: Traditional layout, all benefits visible at once. Carousel: Slides with navigation arrows, great for many items."
+    },
+    {
+      "type": "paragraph",
+      "content": "**Grid Layout Controls:** These settings only apply when Display Style is set to Grid."
     },
     {
       "type": "range",
       "id": "columns_desktop",
-      "label": "Columns (Desktop - Grid Only)",
+      "label": "Desktop Columns",
       "min": 1,
       "max": 6,
       "step": 1,
+      "unit": "col",
       "default": 3,
-      "info": "Only applies when layout style is Grid"
+      "info": "How many benefit items appear side-by-side on desktop. Common: 3 (balanced), 4 (compact), 2 (spacious)."
     },
     {
       "type": "range",
       "id": "columns_mobile",
-      "label": "Columns (Mobile - Grid Only)",
+      "label": "Mobile Columns",
       "min": 1,
       "max": 3,
       "step": 1,
+      "unit": "col",
       "default": 1,
-      "info": "Only applies when layout style is Grid"
+      "info": "Columns on mobile devices. Usually 1 (vertical stack) or 2 (compact grid)."
     },
     {
       "type": "range",
       "id": "item_spacing",
-      "label": "Item Spacing (px)",
+      "label": "Space Between Items",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 30
+      "unit": "px",
+      "default": 30,
+      "info": "Gap between benefit items. Standard: 20-30px (comfortable), 40-50px (spacious), 10-15px (compact)."
     },
     {
       "type": "header",
-      "content": "Carousel Settings"
+      "content": "🎠 Carousel Settings"
+    },
+    {
+      "type": "paragraph",
+      "content": "**Carousel Controls:** These settings only apply when Display Style is set to Carousel."
     },
     {
       "type": "range",
@@ -351,7 +475,7 @@
       "id": "carousel_autoplay_speed",
       "label": "Auto-play Speed (ms)",
       "min": 2000,
-      "max": 10000,
+      "max": 9999,
       "step": 500,
       "default": 5000,
       "info": "Only applies when auto-play is enabled"
@@ -511,69 +635,191 @@
   "blocks": [
     {
       "type": "benefit",
-      "name": "Benefit",
+      "name": "⭐ Benefit: {{ block.settings.title }}",
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a single benefit item. Includes optional icon, title, description, and custom colors."
+        },
         {
           "type": "text",
           "id": "title",
-          "label": "Title",
-          "default": "Benefit Title"
+          "label": "Benefit Title",
+          "default": "Benefit Title",
+          "info": "Short, impactful headline for this benefit. Examples: 'Fast Shipping', 'Organic Ingredients', '30-Day Guarantee'"
         },
         {
           "type": "textarea",
           "id": "description",
-          "label": "Description",
-          "default": "Benefit description"
+          "label": "Benefit Description",
+          "default": "Benefit description",
+          "info": "Explain the benefit in 1-2 sentences. Keep it concise and customer-focused."
+        },
+        {
+          "type": "header",
+          "content": "🎨 Icon & Visuals"
         },
         {
           "type": "image_picker",
           "id": "icon",
-          "label": "Icon (Image)"
+          "label": "Icon Image",
+          "info": "Upload an icon or illustration. Recommended: 100x100px square, PNG with transparency."
         },
         {
           "type": "text",
           "id": "icon_asset",
-          "label": "Icon (Asset Filename)",
-          "info": "Alternative: Enter asset filename if using uploaded asset"
+          "label": "Icon Asset Filename (Alternative)",
+          "info": "If you've uploaded icon to theme assets, enter filename here (e.g., 'shipping-icon.svg'). Leave blank if using image picker above."
+        },
+        {
+          "type": "header",
+          "content": "🎨 Colors"
         },
         {
           "type": "color",
           "id": "title_color",
-          "label": "Title Color"
+          "label": "Title Color",
+          "info": "Custom color for this benefit's title. Leave blank to use theme default."
         },
         {
           "type": "color",
           "id": "description_color",
-          "label": "Description Color"
+          "label": "Description Color",
+          "info": "Custom color for this benefit's description text. Leave blank to use theme default."
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Benefits Section",
+      "name": "Benefits - 3 Column Grid",
+      "settings": {
+        "heading": "Why Choose Us",
+        "layout_style": "grid",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "item_spacing": 30,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 60
+      },
       "blocks": [
         {
           "type": "benefit",
           "settings": {
-            "title": "Natural energy",
-            "description": "+ Energize your body and mind.\nNo jitters, just flow."
+            "title": "Natural Energy",
+            "description": "Energize your body and mind with clean, sustained energy. No jitters, just flow."
           }
         },
         {
           "type": "benefit",
           "settings": {
-            "title": "Elevated mood",
-            "description": "+ Brings a gentle boost to your mood\nand mindset."
+            "title": "Elevated Mood",
+            "description": "Brings a gentle boost to your mood and mindset throughout the day."
           }
         },
         {
           "type": "benefit",
           "settings": {
-            "title": "Focused mind",
-            "description": "+ Keeps distractions low and\nproductivity high."
+            "title": "Focused Mind",
+            "description": "Keeps distractions low and productivity high when you need it most."
           }
         }
+      ]
+    },
+    {
+      "name": "Benefits - 4 Column Compact",
+      "settings": {
+        "heading": "Product Benefits",
+        "layout_style": "grid",
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "item_spacing": 20,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 40
+      },
+      "blocks": [
+        { "type": "benefit", "settings": { "title": "Benefit 1", "description": "Description goes here" } },
+        { "type": "benefit", "settings": { "title": "Benefit 2", "description": "Description goes here" } },
+        { "type": "benefit", "settings": { "title": "Benefit 3", "description": "Description goes here" } },
+        { "type": "benefit", "settings": { "title": "Benefit 4", "description": "Description goes here" } }
+      ]
+    },
+    {
+      "name": "Benefits - 2 Column Spacious",
+      "settings": {
+        "heading": "Key Features",
+        "layout_style": "grid",
+        "columns_desktop": 2,
+        "columns_mobile": 1,
+        "item_spacing": 50,
+        "content_mode": "blocks",
+        "heading_alignment": "left",
+        "section_padding": 80
+      },
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Premium Quality",
+            "description": "Crafted with the finest ingredients and attention to detail for exceptional results."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Sustainable Source",
+            "description": "Ethically sourced and environmentally responsible from start to finish."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Benefits - Carousel",
+      "settings": {
+        "heading": "What Makes Us Special",
+        "layout_style": "carousel",
+        "carousel_items_desktop": 3,
+        "carousel_items_mobile": 1,
+        "item_spacing": 30,
+        "carousel_show_arrows": true,
+        "carousel_show_dots": true,
+        "carousel_autoplay": false,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 60
+      },
+      "blocks": [
+        { "type": "benefit", "settings": { "title": "Benefit 1", "description": "First key benefit" } },
+        { "type": "benefit", "settings": { "title": "Benefit 2", "description": "Second key benefit" } },
+        { "type": "benefit", "settings": { "title": "Benefit 3", "description": "Third key benefit" } },
+        { "type": "benefit", "settings": { "title": "Benefit 4", "description": "Fourth key benefit" } },
+        { "type": "benefit", "settings": { "title": "Benefit 5", "description": "Fifth key benefit" } },
+        { "type": "benefit", "settings": { "title": "Benefit 6", "description": "Sixth key benefit" } }
+      ]
+    },
+    {
+      "name": "Benefits - Auto-Scroll Carousel",
+      "settings": {
+        "heading": "Features That Matter",
+        "layout_style": "carousel",
+        "carousel_items_desktop": 4,
+        "carousel_items_mobile": 1,
+        "item_spacing": 20,
+        "carousel_show_arrows": true,
+        "carousel_show_dots": false,
+        "carousel_autoplay": true,
+        "carousel_autoplay_speed": 4000,
+        "content_mode": "blocks",
+        "heading_alignment": "center",
+        "section_padding": 50
+      },
+      "blocks": [
+        { "type": "benefit", "settings": { "title": "Feature 1", "description": "Auto-scrolling showcase" } },
+        { "type": "benefit", "settings": { "title": "Feature 2", "description": "Continuous rotation" } },
+        { "type": "benefit", "settings": { "title": "Feature 3", "description": "Smooth transitions" } },
+        { "type": "benefit", "settings": { "title": "Feature 4", "description": "Engaging display" } }
       ]
     }
   ],

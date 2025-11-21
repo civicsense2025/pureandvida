@@ -12,7 +12,7 @@
     "cart-header": {
       "type": "rich-text",
       "settings": {
-        "heading": "Shopping Cart",
+        "heading": "",
         "heading_alignment": "center"
       }
     },
@@ -22,8 +22,8 @@
         "show_cart_note": true,
         "show_shipping_calculator": false,
         "show_continue_shopping": true,
-        "continue_shopping_text": "Continue Shopping",
-        "cart_empty_message": "Your cart is empty"
+        "continue_shopping_text": "",
+        "cart_empty_message": ""
       }
     }
   },

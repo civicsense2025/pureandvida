@@ -9,12 +9,20 @@
  */
 {
   "sections": {
+    "activate-header": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "",
+        "heading_alignment": "center"
+      }
+    },
     "main-customer-activate-account": {
       "type": "main-customer-activate-account",
       "settings": {}
     }
   },
   "order": [
+    "activate-header",
     "main-customer-activate-account"
   ]
 }

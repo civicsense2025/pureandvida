@@ -9,12 +9,20 @@
  */
 {
   "sections": {
+    "register-header": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "",
+        "heading_alignment": "center"
+      }
+    },
     "main-customer-register": {
       "type": "main-customer-register",
       "settings": {}
     }
   },
   "order": [
+    "register-header",
     "main-customer-register"
   ]
 }

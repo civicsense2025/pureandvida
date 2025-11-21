@@ -12,7 +12,7 @@
     "blog-header": {
       "type": "rich-text",
       "settings": {
-        "heading": "Blog",
+        "heading": "",
         "heading_alignment": "center"
       }
     },

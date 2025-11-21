@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "rich-text": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Contact Us",
+        "content": "<p>Get in touch with us. We'd love to hear from you!</p>",
+        "full_width": false,
+        "content_width": 800,
+        "text_alignment": "center"
+      }
+    },
+    "main-page": {
+      "type": "main-page",
+      "settings": {
+        "show_page_title": false,
+        "show_featured_image": false,
+        "content_width": 800,
+        "text_alignment": "left"
+      }
+    }
+  },
+  "order": [
+    "rich-text",
+    "main-page"
+  ]
+}
+

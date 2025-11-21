@@ -1,0 +1,360 @@
+{% liquid
+  # @description Premium customer order details section
+  # Displays complete order information with items, addresses, totals, and actions
+  # @settings show_reorder_button {Boolean} - Show reorder functionality
+  # @settings show_print_button {Boolean} - Show print order option
+  # @example
+  #   Used in templates/customers/order.json
+
+  # Extract style logic into variables
+  assign section_bg_style = ''
+  if section.settings.background_color != blank
+    assign section_bg_style = 'background-color: ' | append: section.settings.background_color | append: ';'
+  endif
+
+  assign heading_style = ''
+  if section.settings.heading_color != blank
+    assign heading_style = 'color: ' | append: section.settings.heading_color | append: ';'
+  endif
+
+  assign text_style = ''
+  if section.settings.text_color != blank
+    assign text_style = 'color: ' | append: section.settings.text_color | append: ';'
+  endif
+
+  assign button_style = ''
+  if section.settings.button_background_color != blank
+    assign button_style = 'background-color: ' | append: section.settings.button_background_color | append: ';'
+  endif
+  if section.settings.button_text_color != blank
+    assign button_style = button_style | append: 'color: ' | append: section.settings.button_text_color | append: ';'
+  endif
+%}
+
+<div class="customer-order page-width"{% if section_bg_style != blank %} style="{{ section_bg_style }} padding: {{ section.settings.section_padding }}px 0;"{% else %} style="padding: {{ section.settings.section_padding }}px 0;"{% endif %}>
+  <div class="customer-order__container" style="max-width: {{ section.settings.content_width }}px; margin: 0 auto;">
+    
+    {%- if order -%}
+      {%- comment -%} Order Header {%- endcomment -%}
+      <div class="customer-order__header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 class="customer-order__heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>
+            {%- if section.settings.heading != blank -%}
+              {{ section.settings.heading | replace: '[order_number]', order.name }}
+            {%- else -%}
+              Order {{ order.name }}
+            {%- endif -%}
+          </h1>
+          <p class="customer-order__date"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+            Placed on {{ order.created_at | date: "%B %d, %Y at %I:%M %p" }}
+          </p>
+          <div style="margin-top: 0.5rem;">
+            <span class="customer-order__status" style="display: inline-block; padding: 0.375rem 0.75rem; border-radius: 4px; background: {% if order.financial_status == 'paid' %}#059669{% else %}#D97706{% endif %}; color: white; font-size: 0.875rem; font-weight: 500;">
+              {{ order.financial_status_label }}
+            </span>
+            {%- if order.fulfillment_status_label != blank -%}
+              <span class="customer-order__fulfillment-status" style="display: inline-block; padding: 0.375rem 0.75rem; border-radius: 4px; background: #3B82F6; color: white; font-size: 0.875rem; font-weight: 500; margin-left: 0.5rem;">
+                {{ order.fulfillment_status_label }}
+              </span>
+            {%- endif -%}
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          {%- if section.settings.show_print_button -%}
+            <button type="button" onclick="window.print()" class="customer-order__print-button" style="padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; background: transparent; cursor: pointer; font-size: 0.875rem;"{% if text_style != blank %} style="{{ text_style }} padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; background: transparent; cursor: pointer; font-size: 0.875rem;"{% endif %}>
+              Print Order
+            </button>
+          {%- endif -%}
+          <a href="{{ routes.account_url }}" class="customer-order__back-link" style="padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; text-decoration: none; display: inline-block; font-size: 0.875rem;"{% if text_style != blank %} style="{{ text_style }} padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; text-decoration: none; display: inline-block; font-size: 0.875rem;"{% endif %}>
+            Back to Orders
+          </a>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        {%- comment -%} Order Items {%- endcomment -%}
+        <div class="customer-order__items" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px;">
+          <h2 class="customer-order__subheading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Order Items</h2>
+          
+          <div class="customer-order__items-list" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+            {%- for line_item in order.line_items -%}
+              <div class="customer-order__item" style="display: flex; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                {%- if line_item.image -%}
+                  <div class="customer-order__item-image" style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 4px; overflow: hidden;">
+                    <img src="{{ line_item.image | image_url: width: 160 }}" alt="{{ line_item.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
+                  </div>
+                {%- endif -%}
+                <div style="flex: 1;">
+                  <h3 class="customer-order__item-title"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>
+                    {{ line_item.title }}
+                  </h3>
+                  {%- if line_item.variant.title != 'Default Title' -%}
+                    <p class="customer-order__item-variant"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+                      {{ line_item.variant.title }}
+                    </p>
+                  {%- endif -%}
+                  <p class="customer-order__item-quantity"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+                    Quantity: {{ line_item.quantity }}
+                  </p>
+                </div>
+                <div style="text-align: right;">
+                  <p class="customer-order__item-price"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>
+                    {{ line_item.final_line_price | money }}
+                  </p>
+                  {%- if line_item.original_line_price != line_item.final_line_price -%}
+                    <p class="customer-order__item-original-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.875rem;"{% if text_style != blank %} style="{{ text_style }} text-decoration: line-through; opacity: 0.6; font-size: 0.875rem;"{% endif %}>
+                      {{ line_item.original_line_price | money }}
+                    </p>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment -%} Order Summary {%- endcomment -%}
+        <div>
+          {%- comment -%} Shipping Address {%- endcomment -%}
+          {%- if order.shipping_address -%}
+            <div class="customer-order__address-card" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px; margin-bottom: 1.5rem;">
+              <h3 class="customer-order__address-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Shipping Address</h3>
+              <div class="customer-order__address-content"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+                {{ order.shipping_address | format_address }}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Billing Address {%- endcomment -%}
+          {%- if order.billing_address -%}
+            <div class="customer-order__address-card" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px; margin-bottom: 1.5rem;">
+              <h3 class="customer-order__address-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Billing Address</h3>
+              <div class="customer-order__address-content"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+                {{ order.billing_address | format_address }}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Order Totals {%- endcomment -%}
+          <div class="customer-order__totals" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px;">
+            <h3 class="customer-order__totals-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Order Summary</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+              <div style="display: flex; justify-content: space-between;"{% if text_style != blank %} style="{{ text_style }} display: flex; justify-content: space-between;"{% endif %}>
+                <span>Subtotal</span>
+                <span>{{ order.subtotal_price | money }}</span>
+              </div>
+              
+              {%- if order.shipping_price > 0 -%}
+                <div style="display: flex; justify-content: space-between;"{% if text_style != blank %} style="{{ text_style }} display: flex; justify-content: space-between;"{% endif %}>
+                  <span>Shipping</span>
+                  <span>{{ order.shipping_price | money }}</span>
+                </div>
+              {%- endif -%}
+
+              {%- if order.tax_price > 0 -%}
+                <div style="display: flex; justify-content: space-between;"{% if text_style != blank %} style="{{ text_style }} display: flex; justify-content: space-between;"{% endif %}>
+                  <span>Tax</span>
+                  <span>{{ order.tax_price | money }}</span>
+                </div>
+              {%- endif -%}
+
+              {%- if order.total_discounts > 0 -%}
+                <div style="display: flex; justify-content: space-between; color: #059669;"{% if text_style != blank %} style="{{ text_style }} display: flex; justify-content: space-between; color: #059669;"{% endif %}>
+                  <span>Discount</span>
+                  <span>-{{ order.total_discounts | money }}</span>
+                </div>
+              {%- endif -%}
+
+              <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid rgba(0,0,0,0.1); font-weight: 600; font-size: 1.125rem;"{% if heading_style != blank %} style="{{ heading_style }} display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid rgba(0,0,0,0.1); font-weight: 600; font-size: 1.125rem;"{% endif %}>
+                <span>Total</span>
+                <span>{{ order.total_price | money }}</span>
+              </div>
+            </div>
+          </div>
+
+          {%- comment -%} Reorder Button {%- endcomment -%}
+          {%- if section.settings.show_reorder_button -%}
+            <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" style="margin-top: 1.5rem;">
+              {%- for line_item in order.line_items -%}
+                <input type="hidden" name="id" value="{{ line_item.variant_id }}">
+                <input type="hidden" name="quantity" value="{{ line_item.quantity }}">
+              {%- endfor -%}
+              <button type="submit" class="customer-order__reorder-button"{% if button_style != blank %} style="{{ button_style }} width: 100%; padding: 0.875rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% else %} style="width: 100%; padding: 0.875rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% endif %}>
+                {%- if section.settings.reorder_button_text != blank -%}
+                  {{ section.settings.reorder_button_text }}
+                {%- else -%}
+                  Reorder Items
+                {%- endif -%}
+              </button>
+            </form>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Tracking Information {%- endcomment -%}
+      {%- if order.fulfillments.size > 0 -%}
+        <div class="customer-order__tracking" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px;">
+          <h2 class="customer-order__subheading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Tracking Information</h2>
+          {%- for fulfillment in order.fulfillments -%}
+            <div style="margin-top: 1rem;">
+              {%- if fulfillment.tracking_number -%}
+                <p{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+                  <strong>Tracking Number:</strong> 
+                  {%- if fulfillment.tracking_url -%}
+                    <a href="{{ fulfillment.tracking_url }}" target="_blank" style="text-decoration: underline;">{{ fulfillment.tracking_number }}</a>
+                  {%- else -%}
+                    {{ fulfillment.tracking_number }}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+              {%- if fulfillment.tracking_company -%}
+                <p{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+                  <strong>Carrier:</strong> {{ fulfillment.tracking_company }}
+                </p>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+    {%- else -%}
+      <div class="customer-order__not-found" style="text-align: center; padding: 3rem 1rem;">
+        <p class="customer-order__not-found-text"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
+          Order not found.
+        </p>
+        <a href="{{ routes.account_url }}" class="customer-order__back-link"{% if button_style != blank %} style="{{ button_style }} display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px; margin-top: 1rem;"{% else %} style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px; margin-top: 1rem;"{% endif %}>
+          Back to Orders
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<style>
+  @media print {
+    .customer-order__print-button,
+    .customer-order__back-link,
+    .customer-order__reorder-button {
+      display: none !important;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .customer-order__container > div[style*="grid-template-columns: 2fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Customer Order",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Use [order_number] to insert order number"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reorder_button",
+      "label": "Show Reorder Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "reorder_button_text",
+      "label": "Reorder Button Text"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_print_button",
+      "label": "Show Print Button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width (px)",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Padding (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card Padding (px)",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card Border Radius (px)",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button Background Color"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Order"
+    }
+  ],
+  "templates": ["customers/order"]
+}
+{% endschema %}

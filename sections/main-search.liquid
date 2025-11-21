@@ -1,0 +1,55 @@
+{% liquid
+  # @description Main search section
+  # Displays search results for products, articles, and pages
+%}
+
+<div class="page-width" style="padding: 40px 20px;">
+  <h1 class="h1" style="margin-bottom: 30px;">
+    {%- if search.performed -%}
+      Search results for "{{ search.terms | escape }}"
+    {%- else -%}
+      Search
+    {%- endif -%}
+  </h1>
+  
+  <form action="{{ routes.search_url }}" method="get" role="search" style="margin-bottom: 40px;">
+    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search..." style="width: 100%; max-width: 500px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+    <button type="submit" style="margin-top: 10px; padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+  </form>
+  
+  {%- if search.performed -%}
+    {%- if search.results.size > 0 -%}
+      <div class="search-results">
+        {%- for item in search.results -%}
+          <div class="search-result-item" style="padding: 20px 0; border-bottom: 1px solid #eee;">
+            <h3 style="margin-bottom: 10px;">
+              <a href="{{ item.url }}" style="color: #000; text-decoration: none;">{{ item.title | escape }}</a>
+            </h3>
+            {%- if item.featured_image != blank -%}
+              <img src="{{ item.featured_image | image_url: width: 200 }}" alt="{{ item.title | escape }}" style="width: 150px; height: 150px; object-fit: cover; margin-bottom: 10px;">
+            {%- endif -%}
+            <p style="color: #666; margin-bottom: 10px;">{{ item.content | strip_html | truncate: 200 }}</p>
+            <a href="{{ item.url }}" style="color: #000; text-decoration: underline;">View →</a>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <p style="text-align: center; padding: 60px 20px;">No results found for "{{ search.terms | escape }}".</p>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Search",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Search"
+    }
+  ]
+}
+{% endschema %}
+

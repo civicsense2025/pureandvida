@@ -13,6 +13,17 @@
   assign layout_style = section.settings.layout_style | default: 'grid'
 -%}
 
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--testimonials">
+    <span class="editor-label">💬 Testimonials</span>
+    <span class="editor-info">
+      Mode: {{ section.settings.content_mode | capitalize }} |
+      Layout: {{ section.settings.layout_style | capitalize }} |
+      {% if section.settings.content_mode == 'blocks' %}{{ section.blocks.size }} items{% else %}6 fixed items{% endif %}
+    </span>
+  </div>
+{% endif %}
+
 <{{ structural_element }} class="testimonials-section{% if layout_style == 'carousel' %} testimonials-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
   <div class="testimonials-content page-width" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
     {%- if section.settings.heading != blank -%}
@@ -191,6 +202,94 @@
 </{{ structural_element }}>
 
 <style>
+  {% if request.design_mode %}
+  /* Visual Editor Controls - Orange Theme for Testimonials/Social Proof */
+  .testimonials-section {
+    position: relative;
+    outline: 2px dashed rgba(255, 152, 0, 0.3);
+    outline-offset: -2px;
+  }
+
+  .editor-controls--testimonials {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.90);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid rgba(255, 152, 0, 0.5);
+  }
+
+  .editor-controls--testimonials .editor-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(255, 152, 0, 1);
+  }
+
+  .editor-controls--testimonials .editor-info {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+  }
+
+  .testimonials-section--carousel::before {
+    content: "CAROUSEL MODE";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255, 152, 0, 0.95);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    z-index: 999;
+  }
+
+  .testimonials-grid::after {
+    content: "{{ section.settings.columns_desktop }}-COL GRID";
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(255, 152, 0, 0.95);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .testimonial-card {
+    position: relative;
+    outline: 1px dashed rgba(255, 152, 0, 0.25);
+  }
+
+  .testimonial-card::before {
+    content: "TESTIMONIAL";
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(255, 152, 0, 0.1);
+    color: rgba(255, 152, 0, 0.8);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  {% endif %}
+
   /* Testimonials Section Base Styles */
   .testimonial-card {
     background: {% if section.settings.card_background_color != blank %}{{ section.settings.card_background_color }}{% else %}transparent{% endif %};
@@ -310,27 +409,32 @@
 
 {% schema %}
 {
-  "name": "Testimonials Section",
+  "name": "💬 Testimonials",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Display customer reviews and testimonials in a grid or carousel layout. Choose between dynamic blocks for unlimited testimonials or fixed settings mode for exactly 6 testimonials. Fully customizable styling, typography, and visual presentation."
+    },
+    {
       "type": "header",
-      "content": "Content Management"
+      "content": "📋 Content Management"
     },
     {
       "type": "select",
       "id": "content_mode",
-      "label": "Content Management",
+      "label": "Content Mode",
       "options": [
         { "value": "blocks", "label": "Use Blocks (Dynamic)" },
         { "value": "settings", "label": "Use Settings (Fixed)" }
       ],
-      "default": "blocks"
+      "default": "blocks",
+      "info": "Blocks = unlimited dynamic testimonials with individual controls. Settings = fixed 6 testimonials managed below in this panel."
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout Configuration"
     },
     {
       "type": "select",
@@ -340,40 +444,42 @@
         { "value": "grid", "label": "Grid" },
         { "value": "carousel", "label": "Carousel" }
       ],
-      "default": "grid"
+      "default": "grid",
+      "info": "Grid displays all testimonials in columns. Carousel slides through them with navigation arrows and dots."
     },
     {
       "type": "range",
       "id": "columns_desktop",
-      "label": "Columns (Desktop - Grid Only)",
+      "label": "Grid Columns (Desktop)",
       "min": 1,
       "max": 4,
       "step": 1,
       "default": 3,
-      "info": "Only applies when layout style is Grid"
+      "info": "Number of columns on desktop screens (1200px+). Only applies to Grid layout. Example: 3 = 3 testimonials per row."
     },
     {
       "type": "range",
       "id": "columns_mobile",
-      "label": "Columns (Mobile - Grid Only)",
+      "label": "Grid Columns (Mobile)",
       "min": 1,
-      "max": 2,
+      "max": 3,
       "step": 1,
       "default": 1,
-      "info": "Only applies when layout style is Grid"
+      "info": "Number of columns on mobile/tablet (480px-1023px). Only applies to Grid layout. Example: 1 = stacked single column."
     },
     {
       "type": "range",
       "id": "item_spacing",
-      "label": "Item Spacing (px)",
+      "label": "Spacing Between Items",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 30
+      "default": 30,
+      "info": "Gap between testimonial cards in pixels. Applies to both Grid and Carousel layouts. Example: 30 = comfortable spacing."
     },
     {
       "type": "header",
-      "content": "Carousel Settings"
+      "content": "🎠 Carousel Controls"
     },
     {
       "type": "range",
@@ -383,77 +489,84 @@
       "max": 4,
       "step": 1,
       "default": 3,
-      "info": "Only applies when layout style is Carousel"
+      "info": "How many testimonials visible at once on desktop. Only applies to Carousel layout. Example: 3 = show 3 side-by-side."
     },
     {
       "type": "range",
       "id": "carousel_items_mobile",
       "label": "Items Per Slide (Mobile)",
       "min": 1,
-      "max": 2,
+      "max": 3,
       "step": 1,
       "default": 1,
-      "info": "Only applies when layout style is Carousel"
+      "info": "How many testimonials visible at once on mobile. Only applies to Carousel layout. Recommended: 1 for mobile."
     },
     {
       "type": "checkbox",
       "id": "carousel_show_arrows",
       "label": "Show Navigation Arrows",
-      "default": true
+      "default": true,
+      "info": "Display left/right arrow buttons for manual navigation through carousel slides."
     },
     {
       "type": "checkbox",
       "id": "carousel_show_dots",
       "label": "Show Dot Indicators",
-      "default": true
+      "default": true,
+      "info": "Display pagination dots below carousel to show progress and allow jumping to specific slides."
     },
     {
       "type": "checkbox",
       "id": "carousel_autoplay",
       "label": "Enable Auto-play",
-      "default": false
+      "default": false,
+      "info": "Automatically advance carousel slides without user interaction. Speed controlled by setting below."
     },
     {
       "type": "range",
       "id": "carousel_autoplay_speed",
-      "label": "Auto-play Speed (ms)",
+      "label": "Auto-play Speed (milliseconds)",
       "min": 2000,
-      "max": 10000,
+      "max": 9999,
       "step": 500,
       "default": 5000,
-      "info": "Only applies when auto-play is enabled"
+      "info": "Time in milliseconds between automatic slide changes. Only applies when auto-play is enabled. Example: 5000 = 5 seconds."
     },
     {
       "type": "range",
       "id": "carousel_margin_top",
-      "label": "Carousel Top Margin (px)",
+      "label": "Carousel Top Margin",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 20
+      "default": 20,
+      "info": "Extra spacing above the carousel container in pixels. Useful for separating from heading."
     },
     {
       "type": "header",
-      "content": "Section Content"
+      "content": "✏️ Section Content"
     },
     {
       "type": "text",
       "id": "heading",
-      "label": "Heading"
+      "label": "Section Heading",
+      "default": "What Our Customers Say",
+      "info": "Main title for the testimonials section. Leave blank to hide. Example: 'Real Reviews from Real People'"
     },
     {
       "type": "range",
       "id": "heading_size",
-      "label": "Heading Size (px)",
+      "label": "Heading Font Size",
       "min": 20,
       "max": 72,
       "step": 2,
-      "default": 36
+      "default": 36,
+      "info": "Font size in pixels for the section heading. Example: 36 = large attention-grabbing title, 24 = subtle header."
     },
     {
       "type": "select",
       "id": "heading_weight",
-      "label": "Heading Weight",
+      "label": "Heading Font Weight",
       "options": [
         { "value": "300", "label": "Light" },
         { "value": "400", "label": "Normal" },
@@ -461,12 +574,14 @@
         { "value": "600", "label": "Semi-bold" },
         { "value": "700", "label": "Bold" }
       ],
-      "default": "600"
+      "default": "600",
+      "info": "Font weight for heading. Semi-bold (600) recommended for section titles."
     },
     {
       "type": "color",
       "id": "heading_color",
-      "label": "Heading Color"
+      "label": "Heading Text Color",
+      "info": "Custom color for the heading text. Leave blank to use theme default."
     },
     {
       "type": "select",
@@ -477,104 +592,117 @@
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
       ],
-      "default": "center"
+      "default": "center",
+      "info": "Text alignment for heading and description. Center recommended for testimonial sections."
     },
     {
       "type": "range",
       "id": "heading_spacing",
-      "label": "Heading Bottom Spacing (px)",
+      "label": "Heading Bottom Margin",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 20
+      "default": 20,
+      "info": "Space below heading in pixels. Creates separation from testimonials. Example: 20 = comfortable spacing."
     },
     {
       "type": "textarea",
       "id": "description",
-      "label": "Description"
+      "label": "Section Description",
+      "info": "Optional subheading or introductory text below the heading. Leave blank to hide. Example: 'Join thousands of satisfied customers'"
     },
     {
       "type": "range",
       "id": "description_size",
-      "label": "Description Size (px)",
+      "label": "Description Font Size",
       "min": 12,
       "max": 24,
       "step": 1,
-      "default": 16
+      "default": 16,
+      "info": "Font size in pixels for the description text. Example: 16 = comfortable reading size."
     },
     {
       "type": "color",
       "id": "description_color",
-      "label": "Description Color"
+      "label": "Description Text Color",
+      "info": "Custom color for the description text. Leave blank to use theme default."
     },
     {
       "type": "range",
       "id": "description_spacing",
-      "label": "Description Bottom Spacing (px)",
+      "label": "Description Bottom Margin",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 15
+      "default": 15,
+      "info": "Space below description in pixels. Creates separation from testimonials."
     },
     {
       "type": "header",
-      "content": "Card Styling"
+      "content": "🎨 Card Styling"
     },
     {
       "type": "color",
       "id": "card_background_color",
-      "label": "Card Background Color"
+      "label": "Card Background Color",
+      "info": "Background color for individual testimonial cards. Leave blank for transparent. Example: white for elevated cards."
     },
     {
       "type": "range",
       "id": "card_padding",
-      "label": "Card Padding (px)",
+      "label": "Card Inner Padding",
       "min": 0,
       "max": 60,
       "step": 5,
-      "default": 20
+      "default": 20,
+      "info": "Internal padding inside each testimonial card in pixels. Example: 20 = comfortable breathing room."
     },
     {
       "type": "range",
       "id": "card_border_radius",
-      "label": "Card Border Radius (px)",
+      "label": "Card Corner Radius",
       "min": 0,
       "max": 30,
       "step": 2,
-      "default": 0
+      "default": 0,
+      "info": "Rounded corners for cards in pixels. Example: 0 = sharp corners, 8 = slightly rounded, 20 = very rounded."
     },
     {
       "type": "range",
       "id": "card_border_width",
-      "label": "Card Border Width (px)",
+      "label": "Card Border Thickness",
       "min": 0,
       "max": 5,
       "step": 1,
-      "default": 0
+      "default": 0,
+      "info": "Border width around cards in pixels. Set to 0 to hide borders. Example: 1 = subtle outline."
     },
     {
       "type": "color",
       "id": "card_border_color",
-      "label": "Card Border Color"
+      "label": "Card Border Color",
+      "info": "Color for card borders. Only visible if border thickness is greater than 0."
     },
     {
       "type": "checkbox",
       "id": "card_shadow",
       "label": "Enable Card Shadow",
-      "default": false
+      "default": false,
+      "info": "Add subtle drop shadow to cards for elevated appearance. Creates depth and visual separation."
     },
     {
       "type": "header",
-      "content": "Typography"
+      "content": "📝 Typography Settings"
     },
     {
       "type": "range",
       "id": "text_size",
-      "label": "Text Size (px)",
+      "label": "Testimonial Text Size",
       "min": 12,
       "max": 24,
       "step": 1,
-      "default": 16
+      "default": 16,
+      "info": "Font size for the testimonial quote text in pixels. Example: 16 = standard readable size."
     },
     {
       "type": "range",
@@ -583,151 +711,162 @@
       "min": 1.2,
       "max": 2.0,
       "step": 0.1,
-      "default": 1.6
+      "default": 1.6,
+      "info": "Line spacing for testimonial text. 1.6 recommended for readability. Higher = more space between lines."
     },
     {
       "type": "color",
       "id": "default_text_color",
-      "label": "Default Text Color",
-      "info": "Used in settings mode, can be overridden per block"
+      "label": "Default Quote Text Color",
+      "info": "Used in settings mode, can be overridden per block in blocks mode. Leave blank for theme default."
     },
     {
       "type": "range",
       "id": "text_spacing",
-      "label": "Text Bottom Spacing (px)",
+      "label": "Quote Bottom Margin",
       "min": 0,
       "max": 40,
       "step": 5,
-      "default": 15
+      "default": 15,
+      "info": "Space below testimonial quote text in pixels. Separates quote from author info."
     },
     {
       "type": "range",
       "id": "author_size",
-      "label": "Author Name Size (px)",
+      "label": "Author Name Font Size",
       "min": 12,
       "max": 20,
       "step": 1,
-      "default": 14
+      "default": 14,
+      "info": "Font size for customer name in pixels. Example: 14 = slightly smaller than quote for hierarchy."
     },
     {
       "type": "select",
       "id": "author_weight",
-      "label": "Author Name Weight",
+      "label": "Author Name Font Weight",
       "options": [
         { "value": "400", "label": "Normal" },
         { "value": "500", "label": "Medium" },
         { "value": "600", "label": "Semi-bold" },
         { "value": "700", "label": "Bold" }
       ],
-      "default": "500"
+      "default": "500",
+      "info": "Font weight for author name. Medium (500) or Semi-bold (600) recommended for emphasis."
     },
     {
       "type": "color",
       "id": "default_author_color",
-      "label": "Default Author Color",
-      "info": "Used in settings mode, can be overridden per block"
+      "label": "Default Author Name Color",
+      "info": "Used in settings mode, can be overridden per block in blocks mode. Leave blank for theme default."
     },
     {
       "type": "range",
       "id": "date_size",
-      "label": "Date Size (px)",
+      "label": "Date Font Size",
       "min": 10,
       "max": 16,
       "step": 1,
-      "default": 12
+      "default": 12,
+      "info": "Font size for testimonial date in pixels. Example: 12 = small supporting text."
     },
     {
       "type": "color",
       "id": "default_date_color",
-      "label": "Default Date Color",
-      "info": "Used in settings mode, can be overridden per block"
+      "label": "Default Date Text Color",
+      "info": "Used in settings mode, can be overridden per block in blocks mode. Typically subtle/lighter."
     },
     {
       "type": "header",
-      "content": "Stars & Avatar"
+      "content": "⭐ Stars & Avatar"
     },
     {
       "type": "range",
       "id": "stars_spacing",
-      "label": "Stars Bottom Spacing (px)",
+      "label": "Stars Bottom Margin",
       "min": 0,
       "max": 30,
       "step": 5,
-      "default": 10
+      "default": 10,
+      "info": "Space below star rating in pixels. Separates rating from testimonial quote."
     },
     {
       "type": "color",
       "id": "stars_color",
       "label": "Stars Color",
-      "info": "For text stars (★★★★★)"
+      "info": "Color for text-based stars (★★★★★). Only applies if using text stars instead of images."
     },
     {
       "type": "range",
       "id": "avatar_size",
-      "label": "Avatar Size (px)",
+      "label": "Avatar Image Size",
       "min": 30,
       "max": 100,
       "step": 5,
-      "default": 50
+      "default": 50,
+      "info": "Diameter of circular avatar images in pixels. Example: 50 = medium profile photo size."
     },
     {
       "type": "range",
       "id": "author_gap",
-      "label": "Author Info Gap (px)",
+      "label": "Avatar-to-Name Gap",
       "min": 0,
       "max": 30,
       "step": 5,
-      "default": 12
+      "default": 10,
+      "info": "Horizontal space between avatar image and author name/date in pixels."
     },
     {
       "type": "header",
-      "content": "Section Spacing"
+      "content": "📏 Section Spacing"
     },
     {
       "type": "range",
       "id": "section_padding_top",
-      "label": "Section Padding Top (px)",
+      "label": "Top Section Padding",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 40
+      "default": 40,
+      "info": "Padding above section content in pixels. Creates vertical breathing room. Example: 40 = standard section spacing."
     },
     {
       "type": "range",
       "id": "section_padding_bottom",
-      "label": "Section Padding Bottom (px)",
+      "label": "Bottom Section Padding",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 40
+      "default": 40,
+      "info": "Padding below section content in pixels. Creates vertical breathing room. Example: 40 = standard section spacing."
     },
     {
       "type": "range",
       "id": "content_width",
-      "label": "Content Max Width (px)",
+      "label": "Maximum Content Width",
       "min": 0,
       "max": 1920,
       "step": 20,
       "default": 0,
-      "info": "0 = full width"
+      "info": "Maximum width for section content in pixels. 0 = full width (constrained by theme). Example: 1200 = contained width."
     },
     {
       "type": "header",
-      "content": "Colors"
+      "content": "🎨 Section Colors"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background Color"
+      "label": "Section Background Color",
+      "info": "Background color for entire testimonials section. Leave blank for transparent/theme default."
     },
     {
       "type": "header",
-      "content": "Structural Elements"
+      "content": "🏗️ Semantic HTML"
     },
     {
       "type": "select",
       "id": "structural_element",
-      "label": "HTML Element",
+      "label": "HTML Container Element",
       "options": [
         { "value": "section", "label": "Section (default)" },
         { "value": "article", "label": "Article" },
@@ -735,21 +874,25 @@
         { "value": "div", "label": "Div" }
       ],
       "default": "section",
-      "info": "Choose the semantic HTML element for this section"
+      "info": "Semantic HTML element for accessibility and SEO. Section recommended for testimonials. Article for blog-style, Aside for sidebars."
     },
     {
       "type": "header",
-      "content": "Default Stars Image (Settings Mode)"
+      "content": "⭐ Default Stars Image (Settings Mode Only)"
     },
     {
       "type": "image_picker",
       "id": "stars_image",
       "label": "Default Stars Image",
-      "info": "Used in settings mode when no individual star image is set"
+      "info": "Default star rating image used for all testimonials when in Settings mode. Ignored in Blocks mode. Upload a 5-star graphic."
     },
     {
       "type": "header",
-      "content": "Fixed Testimonials (Settings Mode)"
+      "content": "📝 Fixed Testimonials (Settings Mode Only)"
+    },
+    {
+      "type": "paragraph",
+      "content": "**Settings Mode:** Configure up to 6 fixed testimonials below. These fields are ignored when Content Mode is set to 'Blocks'. Use blocks mode for more flexibility and unlimited testimonials."
     },
     {
       "type": "textarea",
@@ -875,94 +1018,313 @@
   "blocks": [
     {
       "type": "testimonial",
-      "name": "Testimonial",
+      "name": "⭐ Testimonial: {{ block.settings.author_name }}",
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Individual testimonial block with customer review, rating, and author information. Customize colors per testimonial for emphasis."
+        },
+        {
+          "type": "header",
+          "content": "💬 Testimonial Content"
+        },
         {
           "type": "textarea",
           "id": "text",
-          "label": "Testimonial Text",
-          "default": "Testimonial text here"
+          "label": "Customer Quote",
+          "default": "This product exceeded my expectations! Highly recommend.",
+          "info": "The testimonial text/review. Keep concise and authentic. Example: 'This changed my morning routine completely!'"
         },
         {
           "type": "text",
           "id": "author_name",
-          "label": "Author Name",
-          "default": "Customer Name"
-        },
-        {
-          "type": "image_picker",
-          "id": "avatar",
-          "label": "Avatar (Image)"
-        },
-        {
-          "type": "text",
-          "id": "avatar_asset",
-          "label": "Avatar (Asset Filename)",
-          "info": "Alternative: Enter asset filename if using uploaded asset"
+          "label": "Customer Name",
+          "default": "Happy Customer",
+          "info": "Name of the customer who provided this testimonial. Example: 'Sarah M.' or 'John from NYC'"
         },
         {
           "type": "text",
           "id": "date",
-          "label": "Date"
+          "label": "Review Date",
+          "info": "Optional date for the review. Example: 'March 2025' or '3 weeks ago'. Leave blank to hide."
+        },
+        {
+          "type": "header",
+          "content": "⭐ Star Rating"
         },
         {
           "type": "checkbox",
           "id": "show_stars",
-          "label": "Show Stars",
-          "default": true
+          "label": "Show Star Rating",
+          "default": true,
+          "info": "Display star rating above testimonial. Uncheck to hide stars for this testimonial."
         },
         {
           "type": "image_picker",
           "id": "stars_image",
-          "label": "Stars Image"
+          "label": "Stars Image (Recommended)",
+          "info": "Upload custom star rating graphic for this testimonial. Leave blank to use default stars from section settings."
         },
         {
           "type": "text",
           "id": "stars_asset",
-          "label": "Stars Asset Filename",
-          "info": "Alternative: Enter asset filename if using uploaded asset"
+          "label": "Stars Asset Filename (Alternative)",
+          "info": "Alternative method: Enter filename of star image uploaded to theme assets folder. Example: '5-stars.png'"
+        },
+        {
+          "type": "header",
+          "content": "👤 Customer Avatar"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Avatar Image (Recommended)",
+          "info": "Profile photo of the customer. Square images work best. Will be displayed as circular."
+        },
+        {
+          "type": "text",
+          "id": "avatar_asset",
+          "label": "Avatar Asset Filename (Alternative)",
+          "info": "Alternative method: Enter filename of avatar uploaded to theme assets folder. Example: 'customer-photo.jpg'"
+        },
+        {
+          "type": "header",
+          "content": "🎨 Custom Colors (Optional)"
         },
         {
           "type": "color",
           "id": "text_color",
-          "label": "Text Color"
+          "label": "Quote Text Color",
+          "info": "Override default testimonial text color for this block. Leave blank to use section default."
         },
         {
           "type": "color",
           "id": "author_color",
-          "label": "Author Name Color"
+          "label": "Author Name Color",
+          "info": "Override default author name color for this block. Leave blank to use section default."
         },
         {
           "type": "color",
           "id": "date_color",
-          "label": "Date Color"
+          "label": "Date Text Color",
+          "info": "Override default date color for this block. Leave blank to use section default."
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Testimonials Section",
+      "name": "💬 Testimonials (Standard Grid)",
+      "settings": {
+        "heading": "What Our Customers Say",
+        "layout_style": "grid",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "item_spacing": 30,
+        "card_padding": 20,
+        "section_padding_top": 40,
+        "section_padding_bottom": 40
+      },
       "blocks": [
         {
           "type": "testimonial",
           "settings": {
-            "text": "I started drinking this before my morning runs and noticed a real difference. I don't get winded as quickly, and I can push myself further. I didn't expect Cordyceps to work this fast, but it's become my favorite pre-workout",
-            "author_name": "Michael F."
+            "text": "I started drinking this before my morning runs and noticed a real difference. I don't get winded as quickly, and I can push myself further. I didn't expect Cordyceps to work this fast, but it's become my favorite pre-workout.",
+            "author_name": "Michael F.",
+            "show_stars": true
           }
         },
         {
           "type": "testimonial",
           "settings": {
             "text": "MycoMatcha has completely replaced my morning coffee. I feel mentally sharp, energized, and focused without the jittery crash I used to get. I love knowing that Lion's Mane and L-theanine are actually supporting my brain, not just stimulating it.",
-            "author_name": "Michael F."
+            "author_name": "Sarah K.",
+            "show_stars": true
           }
         },
         {
           "type": "testimonial",
           "settings": {
             "text": "I used to have trouble falling asleep when I drank coffee, even early in the day. I switched to MycoMatcha and now I still get that energy boost, but I sleep like a baby. My mood during the day is way better too.",
-            "author_name": "Michael F."
+            "author_name": "James T.",
+            "show_stars": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Testimonials (Carousel)",
+      "settings": {
+        "heading": "Real Reviews from Real People",
+        "layout_style": "carousel",
+        "carousel_items_desktop": 3,
+        "carousel_items_mobile": 1,
+        "carousel_show_arrows": true,
+        "carousel_show_dots": true,
+        "carousel_autoplay": false,
+        "item_spacing": 25,
+        "card_padding": 25,
+        "card_shadow": true,
+        "section_padding_top": 50,
+        "section_padding_bottom": 50
+      },
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Absolutely love this product! The quality is outstanding and it has made such a difference in my daily routine.",
+            "author_name": "Emily R.",
+            "date": "2 weeks ago",
+            "show_stars": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Best purchase I've made all year. The customer service was excellent and the product exceeded expectations.",
+            "author_name": "David M.",
+            "date": "1 month ago",
+            "show_stars": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "I was skeptical at first, but this truly delivers on its promises. Highly recommend to anyone considering it!",
+            "author_name": "Lisa P.",
+            "date": "3 weeks ago",
+            "show_stars": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Testimonials (Minimal)",
+      "settings": {
+        "heading": "Customer Reviews",
+        "layout_style": "grid",
+        "columns_desktop": 2,
+        "columns_mobile": 1,
+        "item_spacing": 40,
+        "card_background_color": "",
+        "card_padding": 0,
+        "card_border_width": 0,
+        "card_shadow": false,
+        "section_padding_top": 30,
+        "section_padding_bottom": 30
+      },
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Clean, effective, and exactly what I needed. The minimalist approach really works.",
+            "author_name": "Alex W.",
+            "show_stars": false
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Simple yet powerful. No unnecessary fluff, just results. That's what matters.",
+            "author_name": "Morgan B.",
+            "show_stars": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Testimonials (Card Style)",
+      "settings": {
+        "heading": "Why Customers Love Us",
+        "description": "Join thousands of satisfied customers",
+        "layout_style": "grid",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "item_spacing": 20,
+        "card_background_color": "#ffffff",
+        "card_padding": 30,
+        "card_border_radius": 12,
+        "card_border_width": 1,
+        "card_border_color": "#e5e5e5",
+        "card_shadow": true,
+        "section_padding_top": 60,
+        "section_padding_bottom": 60
+      },
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "The card design makes these testimonials really stand out. Professional and trustworthy presentation.",
+            "author_name": "Rachel G.",
+            "date": "March 2025",
+            "show_stars": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Love the elevated look with the shadows and borders. Makes the whole section feel premium.",
+            "author_name": "Tom H.",
+            "date": "February 2025",
+            "show_stars": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "The rounded corners and clean layout give this such a modern feel. Exactly what we needed!",
+            "author_name": "Nina S.",
+            "date": "January 2025",
+            "show_stars": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Testimonials (Compact)",
+      "settings": {
+        "heading": "Quick Reviews",
+        "layout_style": "grid",
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "item_spacing": 15,
+        "card_padding": 15,
+        "text_size": 14,
+        "author_size": 12,
+        "section_padding_top": 30,
+        "section_padding_bottom": 30
+      },
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Great product, fast shipping!",
+            "author_name": "Chris",
+            "show_stars": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Exactly as described. Very happy!",
+            "author_name": "Sam",
+            "show_stars": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Will definitely order again.",
+            "author_name": "Jordan",
+            "show_stars": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "Outstanding quality!",
+            "author_name": "Taylor",
+            "show_stars": true
           }
         }
       ]

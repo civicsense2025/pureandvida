@@ -31,11 +31,19 @@
   #   Add to product.json template for product page layout
 %}
 
-<div class="product page-width{% if section.settings.sticky_product_info %} product--sticky-info{% endif %}" 
-     id="ProductSection-{{ section.id }}" 
+<div class="product page-width{% if section.settings.sticky_product_info %} product--sticky-info{% endif %}"
+     id="ProductSection-{{ section.id }}"
      data-section="{{ section.id }}"
+     {% if request.design_mode %}data-section-type="main-product" data-gallery-style="{{ section.settings.gallery_style }}" data-info-position="{{ section.settings.info_position }}"{% endif %}
      role="region"
      aria-label="{{ 'products.product.product_information' | t | default: 'Product Information' }}">
+
+  {%- if request.design_mode -%}
+    <div class="editor-controls editor-controls--product">
+      <span class="editor-label">🛍️ Product Page</span>
+      <span class="editor-info">Gallery: {{ section.settings.gallery_style | capitalize }} | Info: {{ section.settings.info_position | capitalize }} | Blocks: {{ section.blocks.size }}</span>
+    </div>
+  {%- endif -%}
   {% liquid
     assign layout_position = section.settings.info_position
     assign gallery_style = section.settings.gallery_style
@@ -546,149 +554,191 @@
 
 {% schema %}
 {
-  "name": "Product information",
+  "name": "🛍️ Product Information",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** This product section supports 20+ customizable blocks. Drag and drop blocks to reorder them. Each block has its own settings for complete design control."
+    },
+    {
       "type": "header",
-      "content": "Media"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_video_looping",
-      "default": false,
-      "label": "Enable video looping"
-    },
-    {
-      "type": "checkbox",
-      "id": "hide_variants",
-      "default": false,
-      "label": "Hide variant images"
+      "content": "🖼️ Media Gallery Settings"
     },
     {
       "type": "select",
       "id": "gallery_style",
-      "label": "Gallery Style",
+      "label": "Gallery Display Style",
       "options": [
-        { "value": "grid", "label": "Grid" },
-        { "value": "carousel", "label": "Carousel" },
-        { "value": "stacked", "label": "Stacked" }
+        { "value": "grid", "label": "Grid (Multiple images in a grid)" },
+        { "value": "carousel", "label": "Carousel (Swipeable slider)" },
+        { "value": "stacked", "label": "Stacked (Vertical scroll)" }
       ],
-      "default": "stacked"
+      "default": "stacked",
+      "info": "How product images are displayed. Grid: All visible. Carousel: Swipe through. Stacked: Scroll vertically."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": "Enable Video Looping",
+      "default": false,
+      "info": "Automatically loop product videos. Useful for demo videos or animations."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_variants",
+      "label": "Hide Variant-Specific Images",
+      "default": false,
+      "info": "Don't update gallery when variant is selected. Use when variants don't have unique images."
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout & Structure"
     },
     {
       "type": "select",
       "id": "info_position",
       "label": "Product Info Position",
       "options": [
-        { "value": "right", "label": "Right of Images" },
-        { "value": "left", "label": "Left of Images" },
-        { "value": "below", "label": "Below Images" }
+        { "value": "right", "label": "Right Side (Gallery left, info right)" },
+        { "value": "left", "label": "Left Side (Info left, gallery right)" },
+        { "value": "below", "label": "Below Gallery (Full-width info)" }
       ],
-      "default": "right"
+      "default": "right",
+      "info": "Where product information appears relative to images. Most common: Right side."
     },
     {
       "type": "checkbox",
       "id": "sticky_product_info",
-      "label": "Sticky Product Info",
+      "label": "Enable Sticky Product Info",
       "default": false,
-      "info": "Make product info sticky on scroll"
+      "info": "Product info (price, add to cart) stays visible while scrolling through images. Great for long galleries."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Block Management"
+    },
+    {
+      "type": "paragraph",
+      "content": "**Add blocks below** to customize your product page. Available blocks: Title, Price, Variants, Quantity, Add to Cart, Description, Tabs, Trust Badges, Social Proof, Stock, Shipping, Size Guide, Videos, 3D Models, Bundles, Subscriptions, Gift Options, and more."
     }
   ],
   "blocks": [
     {
       "type": "product_title",
-      "name": "Product Title",
+      "name": "📝 Product Title",
       "limit": 1,
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Display the product name. This pulls directly from your product title in the admin."
+        },
         {
           "type": "checkbox",
           "id": "show_title",
           "label": "Show Title",
-          "default": true
+          "default": true,
+          "info": "Uncheck to hide the product title (rare, but useful for custom layouts)."
         },
         {
           "type": "color",
           "id": "title_color",
-          "label": "Title Color"
+          "label": "Title Color",
+          "info": "Custom color for product title. Leave blank to use theme default."
         },
         {
           "type": "checkbox",
           "id": "show_badges",
-          "label": "Show Badges",
-          "default": false
+          "label": "Show Product Badges",
+          "default": false,
+          "info": "Display badges like 'New', 'Sale', 'Best Seller' next to title (requires Product Badges block)."
         }
       ]
     },
     {
       "type": "product_price",
-      "name": "Product Price",
+      "name": "💰 Product Price",
       "limit": 1,
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Display product pricing. Automatically shows sale prices and calculates savings when compare-at price is set."
+        },
         {
           "type": "checkbox",
           "id": "show_price",
           "label": "Show Price",
-          "default": true
+          "default": true,
+          "info": "Display the product price. Turn off for 'Contact for Price' scenarios."
         },
         {
           "type": "color",
           "id": "price_color",
-          "label": "Price Color"
+          "label": "Regular Price Color",
+          "info": "Color for the current product price."
         },
         {
           "type": "color",
           "id": "sale_price_color",
-          "label": "Sale Price Color"
+          "label": "Sale Price Color",
+          "info": "Color when product is on sale. Often red or green to highlight the discount."
         },
         {
           "type": "checkbox",
           "id": "show_savings",
-          "label": "Show Savings",
-          "default": true
+          "label": "Show Savings Amount",
+          "default": true,
+          "info": "Display 'Save $X (Y%)' when product is on sale. Great for highlighting deals."
         }
       ]
     },
     {
       "type": "variant_picker",
-      "name": "Variant Picker",
+      "name": "🎨 Variant Picker",
       "limit": 1,
       "settings": [
         {
+          "type": "paragraph",
+          "content": "Let customers select product options like Size, Color, Material. Style options range from simple dropdowns to visual color/image swatches."
+        },
+        {
           "type": "select",
           "id": "picker_style",
-          "label": "Picker Style",
+          "label": "Picker Display Style",
           "options": [
-            { "value": "dropdown", "label": "Dropdown" },
-            { "value": "buttons", "label": "Buttons" },
-            { "value": "swatches", "label": "Color Swatches" },
-            { "value": "images", "label": "Image Swatches" }
+            { "value": "dropdown", "label": "Dropdown (Compact, space-saving)" },
+            { "value": "buttons", "label": "Buttons (Clear, easy to tap)" },
+            { "value": "swatches", "label": "Color Swatches (Visual color circles)" },
+            { "value": "images", "label": "Image Swatches (Product variant images)" }
           ],
-          "default": "dropdown"
+          "default": "dropdown",
+          "info": "How variant options are displayed. Dropdowns are compact. Buttons/swatches are more visual and easier to use on mobile."
         },
         {
           "type": "checkbox",
           "id": "show_unavailable",
-          "label": "Show Unavailable Variants",
-          "default": false
+          "label": "Show Sold Out Variants",
+          "default": false,
+          "info": "Display out-of-stock options (crossed out/disabled). Helpful for showing full range even when items are temporarily unavailable."
         }
       ]
     },
     {
       "type": "quantity_selector",
-      "name": "Quantity Selector",
+      "name": "🔢 Quantity Selector",
       "limit": 1,
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Allow customers to select quantity with +/- buttons. Great for wholesale, bundles, or products typically bought in multiples."
+        },
         {
           "type": "checkbox",
           "id": "show_quantity",
           "label": "Show Quantity Selector",
-          "default": true
+          "default": true,
+          "info": "Display quantity picker with +/- buttons. Hide for single-item only products."
         },
         {
           "type": "range",
@@ -697,7 +747,8 @@
           "min": 1,
           "max": 10,
           "step": 1,
-          "default": 1
+          "default": 1,
+          "info": "Starting quantity when page loads."
         },
         {
           "type": "range",
@@ -706,7 +757,8 @@
           "min": 1,
           "max": 10,
           "step": 1,
-          "default": 1
+          "default": 1,
+          "info": "Lowest quantity customers can purchase. Use for minimum order requirements."
         },
         {
           "type": "range",
@@ -715,67 +767,83 @@
           "min": 1,
           "max": 99,
           "step": 1,
-          "default": 99
+          "default": 99,
+          "info": "Highest quantity per order. Use to prevent bulk buying or inventory issues."
         }
       ]
     },
     {
       "type": "add_to_cart",
-      "name": "Add to Cart",
+      "name": "🛒 Add to Cart Button",
       "limit": 1,
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "The main call-to-action button that adds products to cart. Automatically shows 'Sold Out' when unavailable."
+        },
         {
           "type": "text",
           "id": "button_text",
           "label": "Button Text",
-          "default": "Add to cart"
+          "default": "Add to cart",
+          "info": "Button label. Examples: 'Add to cart', 'Buy Now', 'Add to Bag', 'Purchase'"
         },
         {
           "type": "color",
           "id": "button_color",
-          "label": "Button Background Color"
+          "label": "Button Background Color",
+          "info": "Button fill color. Should stand out and contrast with page background."
         },
         {
           "type": "color",
           "id": "button_text_color",
-          "label": "Button Text Color"
+          "label": "Button Text Color",
+          "info": "Text color inside button. Must be readable against button background color."
         }
       ]
     },
     {
       "type": "product_description",
-      "name": "Product Description",
+      "name": "📄 Product Description",
       "limit": 1,
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Display the full product description from your product admin. Can show full text or truncated with 'Read More' button."
+        },
         {
           "type": "checkbox",
           "id": "show_description",
           "label": "Show Description",
-          "default": true
+          "default": true,
+          "info": "Display product description. Turn off if using tabs or custom content blocks instead."
         },
         {
           "type": "select",
           "id": "description_style",
-          "label": "Description Style",
+          "label": "Display Style",
           "options": [
-            { "value": "full", "label": "Full Description" },
-            { "value": "truncated", "label": "Truncated with Read More" }
+            { "value": "full", "label": "Full (Show all text)" },
+            { "value": "truncated", "label": "Truncated (with 'Read More' button)" }
           ],
-          "default": "full"
+          "default": "full",
+          "info": "Full: All text visible. Truncated: Shows preview with expandable button (better for long descriptions)."
         },
         {
           "type": "range",
           "id": "truncate_length",
-          "label": "Truncate Length",
+          "label": "Preview Length (characters)",
           "min": 100,
           "max": 500,
           "step": 50,
-          "default": 200
+          "default": 200,
+          "info": "How much text to show before 'Read More' button. Only applies when style is 'Truncated'."
         },
         {
           "type": "color",
           "id": "description_color",
-          "label": "Description Color"
+          "label": "Text Color",
+          "info": "Custom color for description text. Leave blank for theme default."
         }
       ]
     },
@@ -1155,26 +1223,94 @@
   ],
   "presets": [
     {
-      "name": "Product information",
+      "name": "Product Page - Standard",
+      "settings": {
+        "gallery_style": "stacked",
+        "info_position": "right",
+        "sticky_product_info": false
+      },
       "blocks": [
-        {
-          "type": "product_title"
-        },
-        {
-          "type": "product_price"
-        },
-        {
-          "type": "variant_picker"
-        },
-        {
-          "type": "quantity_selector"
-        },
-        {
-          "type": "add_to_cart"
-        },
-        {
-          "type": "product_description"
-        }
+        { "type": "product_title" },
+        { "type": "product_price" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "add_to_cart" },
+        { "type": "product_description" },
+        { "type": "trust_badges" }
+      ]
+    },
+    {
+      "name": "Product Page - Minimal",
+      "settings": {
+        "gallery_style": "carousel",
+        "info_position": "right",
+        "sticky_product_info": false
+      },
+      "blocks": [
+        { "type": "product_title" },
+        { "type": "product_price" },
+        { "type": "variant_picker" },
+        { "type": "add_to_cart" },
+        { "type": "product_description" }
+      ]
+    },
+    {
+      "name": "Product Page - Detailed",
+      "settings": {
+        "gallery_style": "grid",
+        "info_position": "right",
+        "sticky_product_info": true
+      },
+      "blocks": [
+        { "type": "product_title" },
+        { "type": "product_badges" },
+        { "type": "product_price" },
+        { "type": "social_proof" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "add_to_cart" },
+        { "type": "trust_badges" },
+        { "type": "product_tabs" },
+        { "type": "shipping_calculator" }
+      ]
+    },
+    {
+      "name": "Product Page - Full-Width",
+      "settings": {
+        "gallery_style": "carousel",
+        "info_position": "below",
+        "sticky_product_info": false
+      },
+      "blocks": [
+        { "type": "product_title" },
+        { "type": "product_price" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "add_to_cart" },
+        { "type": "product_description" },
+        { "type": "product_tabs" }
+      ]
+    },
+    {
+      "name": "Product Page - E-commerce Pro",
+      "settings": {
+        "gallery_style": "stacked",
+        "info_position": "right",
+        "sticky_product_info": true
+      },
+      "blocks": [
+        { "type": "product_badges" },
+        { "type": "product_title" },
+        { "type": "social_proof" },
+        { "type": "product_price" },
+        { "type": "stock_indicator" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "add_to_cart" },
+        { "type": "trust_badges" },
+        { "type": "product_description" },
+        { "type": "shipping_calculator" },
+        { "type": "product_tabs" }
       ]
     }
   ],
@@ -1184,7 +1320,102 @@
 
 <style>
   /* Product Page Responsive Styles */
-  
+
+  {% if request.design_mode %}
+  /* Theme Editor Visual Controls */
+  .product {
+    position: relative;
+    outline: 2px dashed rgba(130, 80, 255, 0.3);
+    outline-offset: -2px;
+  }
+
+  .product:hover {
+    outline-color: rgba(130, 80, 255, 0.6);
+  }
+
+  .editor-controls--product {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.90);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    pointer-events: none;
+    max-width: 300px;
+  }
+
+  .editor-label {
+    font-weight: 600;
+    color: #a78bfa;
+    font-size: 12px;
+  }
+
+  .editor-info {
+    opacity: 0.85;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  /* Block Visual Indicators */
+  .product__info-wrapper > div[data-shopify-editor-block] {
+    position: relative;
+    outline: 1px dashed rgba(100, 200, 255, 0.25);
+    outline-offset: -1px;
+    margin-bottom: 8px;
+  }
+
+  .product__info-wrapper > div[data-shopify-editor-block]:hover {
+    outline-color: rgba(100, 200, 255, 0.5);
+    background: rgba(100, 200, 255, 0.03);
+  }
+
+  .product__info-wrapper > div[data-shopify-editor-block]::before {
+    content: attr(data-block-type);
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: rgba(100, 200, 255, 0.9);
+    color: white;
+    padding: 2px 6px;
+    font-size: 9px;
+    font-weight: 600;
+    border-radius: 2px;
+    text-transform: capitalize;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .product__info-wrapper > div[data-shopify-editor-block]:hover::before {
+    opacity: 1;
+  }
+
+  /* Gallery Style Indicators */
+  .product__media-wrapper::after {
+    content: 'Gallery: {{ section.settings.gallery_style | capitalize }}';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255, 140, 0, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+    z-index: 10;
+  }
+  {% endif %}
+
   /* Product Media Gallery Responsive */
   .product__media-wrapper {
     width: 100%;

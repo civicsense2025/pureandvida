@@ -7,9 +7,10 @@
   # @blocks testimonial_item - Individual testimonial with stars, text, author, avatar, and date
   # @example
   #   Use blocks mode for dynamic testimonials, settings mode for fixed 6-item layout
+  assign structural_element = section.settings.structural_element | default: 'section'
 -%}
 
-<section class="testimonials-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+<{{ structural_element }} class="testimonials-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="testimonials-content page-width">
     {%- if section.settings.heading != blank -%}
       <h2 class="testimonials-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
@@ -90,7 +91,7 @@
       {%- endif -%}
     </div>
   </div>
-</section>
+</{{ structural_element }}>
 
 <style>
   /* Testimonials Section Responsive Styles */
@@ -220,6 +221,23 @@
       "type": "color",
       "id": "background_color",
       "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "Structural Elements"
+    },
+    {
+      "type": "select",
+      "id": "structural_element",
+      "label": "HTML Element",
+      "options": [
+        { "value": "section", "label": "Section (default)" },
+        { "value": "article", "label": "Article" },
+        { "value": "aside", "label": "Aside" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "section",
+      "info": "Choose the semantic HTML element for this section"
     },
     {
       "type": "checkbox",

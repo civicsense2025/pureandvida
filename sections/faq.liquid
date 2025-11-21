@@ -7,9 +7,10 @@
   # @blocks faq_item - Individual FAQ with question and answer
   # @example
   #   Use blocks mode for dynamic FAQs, settings mode for fixed 10-item layout
+  assign structural_element = section.settings.structural_element | default: 'section'
 -%}
 
-<section class="faq-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+<{{ structural_element }} class="faq-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="faq-content page-width">
     {%- if section.settings.heading != blank -%}
       <h2 class="faq-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
@@ -50,7 +51,7 @@
       {%- endif -%}
     </div>
   </div>
-</section>
+</{{ structural_element }}>
 
 <style>
   /* FAQ Section Responsive Styles */
@@ -159,6 +160,23 @@
       "type": "color",
       "id": "background_color",
       "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "Structural Elements"
+    },
+    {
+      "type": "select",
+      "id": "structural_element",
+      "label": "HTML Element",
+      "options": [
+        { "value": "section", "label": "Section (default)" },
+        { "value": "article", "label": "Article" },
+        { "value": "aside", "label": "Aside" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "section",
+      "info": "Choose the semantic HTML element for this section"
     },
     {
       "type": "header",

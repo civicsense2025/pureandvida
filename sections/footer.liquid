@@ -11,23 +11,23 @@
   #   Section is automatically included in theme.liquid layout
 -%}
 
-<footer class="footer pure-vida-footer" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
-  <div class="footer__content page-width">
-    <div class="footer__left">
-      <div class="footer__logo">
-        <span class="footer__logo-text" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">{{ section.settings.logo_text | default: "PURE VIDA" }}</span>
-        {%- if section.settings.show_plus -%}
-          <span class="footer__plus" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">+</span>
-        {%- endif -%}
-      </div>
-      {%- if section.settings.copyright_text != blank -%}
-        <p class="footer__copyright" style="{% if section.settings.copyright_color != blank %}color: {{ section.settings.copyright_color }};{% endif %}">{{ section.settings.copyright_text }}</p>
-      {%- else -%}
-        <p class="footer__copyright" style="{% if section.settings.copyright_color != blank %}color: {{ section.settings.copyright_color }};{% endif %}">Copyright Pura Vida 2025. All rights reserved.</p>
-      {%- endif -%}
-    </div>
+{%- liquid
+  assign column_layout = section.settings.column_layout | default: 'auto'
+  assign columns_count = section.blocks.size
+  if column_layout == '2'
+    assign columns_count = 2
+  elsif column_layout == '3'
+    assign columns_count = 3
+  elsif column_layout == '4'
+    assign columns_count = 4
+  endif
+  assign structural_element = section.settings.structural_element | default: 'footer'
+-%}
 
-    <div class="footer__middle">
+<{{ structural_element }} class="footer pure-vida-footer" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
+  <div class="footer__content page-width" style="display: grid; grid-template-columns: {% if section.settings.layout_style == 'columns' %}repeat({{ columns_count }}, 1fr){% else %}auto 1fr auto{% endif %}; gap: {{ section.settings.column_gap | default: 40 }}px; align-items: start;">
+    {%- if section.settings.layout_style == 'columns' -%}
+      {%- comment -%} Equal Columns Layout {%- endcomment -%}
       {%- for block in section.blocks -%}
         {%- if block.type == 'link_list' -%}
           <div class="footer__column" {{ block.shopify_attributes }}>
@@ -51,56 +51,136 @@
           </div>
         {%- endif -%}
       {%- endfor -%}
-    </div>
+    {%- else -%}
+      {%- comment -%} Three Column Layout {%- endcomment -%}
+      <div class="footer__left">
+        <div class="footer__logo">
+          <span class="footer__logo-text" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">{{ section.settings.logo_text | default: "PURE VIDA" }}</span>
+          {%- if section.settings.show_plus -%}
+            <span class="footer__plus" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">+</span>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.copyright_text != blank -%}
+          <p class="footer__copyright" style="{% if section.settings.copyright_color != blank %}color: {{ section.settings.copyright_color }};{% endif %}">{{ section.settings.copyright_text }}</p>
+        {%- else -%}
+          <p class="footer__copyright" style="{% if section.settings.copyright_color != blank %}color: {{ section.settings.copyright_color }};{% endif %}">Copyright Pura Vida 2025. All rights reserved.</p>
+        {%- endif -%}
+      </div>
 
-    <div class="footer__right">
-      {%- if section.settings.show_newsletter -%}
-        <div class="footer__newsletter">
-          {%- if section.settings.newsletter_heading != blank -%}
-            <h3 class="footer__heading" style="{% if section.settings.newsletter_heading_color != blank %}color: {{ section.settings.newsletter_heading_color }};{% endif %}">{{ section.settings.newsletter_heading | escape }}</h3>
+      <div class="footer__middle">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'link_list' -%}
+            <div class="footer__column" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}
+                <h3 class="footer__heading" style="{% if block.settings.heading_color != blank %}color: {{ block.settings.heading_color }};{% endif %}">{{ block.settings.heading | escape }}</h3>
+              {%- endif -%}
+              {%- if block.settings.menu != blank -%}
+                {%- for link in block.settings.menu.links -%}
+                  <a href="{{ link.url }}" class="footer__link" style="{% if block.settings.link_color != blank %}color: {{ block.settings.link_color }};{% endif %}">{{ link.title | escape }}</a>
+                {%- endfor -%}
+              {%- endif -%}
+              {%- if block.settings.custom_links != blank -%}
+                {%- assign links = block.settings.custom_links | newline_to_br | split: '<br />' -%}
+                {%- for link_line in links -%}
+                  {%- assign link_parts = link_line | split: '|' -%}
+                  {%- if link_parts.size == 2 -%}
+                    <a href="{{ link_parts[0] | strip }}" class="footer__link" style="{% if block.settings.link_color != blank %}color: {{ block.settings.link_color }};{% endif %}">{{ link_parts[1] | strip | escape }}</a>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
           {%- endif -%}
-          {%- if section.settings.newsletter_description != blank -%}
-            <p style="{% if section.settings.newsletter_text_color != blank %}color: {{ section.settings.newsletter_text_color }};{% endif %}">{{ section.settings.newsletter_description }}</p>
-          {%- endif -%}
-          {%- form 'customer', class: 'footer__newsletter-form' -%}
-            <input type="hidden" name="contact[tags]" value="newsletter">
-            <input type="email" name="contact[email]" placeholder="{{ section.settings.newsletter_placeholder | default: 'Enter your email' }}" required>
-            <button type="submit" style="{% if section.settings.newsletter_button_color != blank %}background-color: {{ section.settings.newsletter_button_color }};{% endif %}{% if section.settings.newsletter_button_text_color != blank %}color: {{ section.settings.newsletter_button_text_color }};{% endif %}">
-              {{ section.settings.newsletter_button_text | default: "Subscribe" }}
-            </button>
-          {%- endform -%}
-        </div>
-      {%- endif -%}
-      
-      {%- if section.settings.show_social_media -%}
-        <div class="footer__social">
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'social_media' and block.settings.url != blank -%}
-              <a href="{{ block.settings.url }}" target="_blank" rel="noopener noreferrer" class="footer__social-link" {{ block.shopify_attributes }}>
-                {%- if block.settings.icon != blank -%}
-                  <img src="{{ block.settings.icon | image_url: width: 24 }}" alt="{{ block.settings.platform | escape }}">
-                {%- else -%}
-                  {{ block.settings.platform | escape }}
-                {%- endif -%}
-              </a>
+        {%- endfor -%}
+      </div>
+
+      <div class="footer__right">
+        {%- if section.settings.show_newsletter -%}
+          <div class="footer__newsletter">
+            {%- if section.settings.newsletter_heading != blank -%}
+              <h3 class="footer__heading" style="{% if section.settings.newsletter_heading_color != blank %}color: {{ section.settings.newsletter_heading_color }};{% endif %}">{{ section.settings.newsletter_heading | escape }}</h3>
             {%- endif -%}
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
-      
-      {%- if section.settings.show_payment_icons -%}
-        <div class="footer__payment-methods">
-          {% render 'payment-icons' %}
-        </div>
-      {%- endif -%}
-    </div>
+            {%- if section.settings.newsletter_description != blank -%}
+              <p style="{% if section.settings.newsletter_text_color != blank %}color: {{ section.settings.newsletter_text_color }};{% endif %}">{{ section.settings.newsletter_description }}</p>
+            {%- endif -%}
+            {%- form 'customer', class: 'footer__newsletter-form' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <input type="email" name="contact[email]" placeholder="{{ section.settings.newsletter_placeholder | default: 'Enter your email' }}" required>
+              <button type="submit" style="{% if section.settings.newsletter_button_color != blank %}background-color: {{ section.settings.newsletter_button_color }};{% endif %}{% if section.settings.newsletter_button_text_color != blank %}color: {{ section.settings.newsletter_button_text_color }};{% endif %}">
+                {{ section.settings.newsletter_button_text | default: "Subscribe" }}
+              </button>
+            {%- endform -%}
+          </div>
+        {%- endif -%}
+        
+        {%- if section.settings.show_social_media -%}
+          <div class="footer__social">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'social_media' and block.settings.url != blank -%}
+                <a href="{{ block.settings.url }}" target="_blank" rel="noopener noreferrer" class="footer__social-link" {{ block.shopify_attributes }}>
+                  {%- if block.settings.icon != blank -%}
+                    <img src="{{ block.settings.icon | image_url: width: 24 }}" alt="{{ block.settings.platform | escape }}">
+                  {%- else -%}
+                    {{ block.settings.platform | escape }}
+                  {%- endif -%}
+                </a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+        
+        {%- if section.settings.show_payment_icons -%}
+          <div class="footer__payment-methods">
+            {% render 'payment-icons' %}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
   </div>
-</footer>
+</{{ structural_element }}>
 
 {% schema %}
 {
   "name": "Footer",
+  "tag": "footer",
+  "class": "section-footer",
   "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout Style",
+      "options": [
+        { "value": "three-column", "label": "Three Column (Left/Middle/Right)" },
+        { "value": "columns", "label": "Equal Columns" }
+      ],
+      "default": "three-column",
+      "info": "Three Column: Logo left, links middle, newsletter/social right. Equal Columns: All link lists in equal columns."
+    },
+    {
+      "type": "select",
+      "id": "column_layout",
+      "label": "Number of Columns",
+      "options": [
+        { "value": "auto", "label": "Auto (Based on blocks)" },
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" },
+        { "value": "4", "label": "4 Columns" }
+      ],
+      "default": "auto",
+      "info": "Only applies when Layout Style is set to 'Equal Columns'"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column Gap (px)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
     {
       "type": "header",
       "content": "Logo"
@@ -209,6 +289,22 @@
       "id": "show_payment_icons",
       "label": "Show Payment Icons",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Structural Elements"
+    },
+    {
+      "type": "select",
+      "id": "structural_element",
+      "label": "HTML Element",
+      "options": [
+        { "value": "footer", "label": "Footer (default)" },
+        { "value": "section", "label": "Section" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "footer",
+      "info": "Choose the semantic HTML element for this section"
     },
     {
       "type": "header",

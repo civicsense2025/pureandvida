@@ -9,7 +9,7 @@
 
 <cart-notification>
   <div class="cart-notification-wrapper page-width">
-    <div class="cart-notification focus-inset" aria-modal="true" aria-label="{{ 'general.cart.item_added' | t }}" role="dialog" tabindex="-1">
+    <div class="cart-notification focus-inset" aria-modal="true" aria-label="{{ 'general.cart.item_added' | t }}" role="dialog" tabindex="-1" aria-hidden="true">
       <div class="cart-notification__header">
         <h2 class="cart-notification__heading caption-large">{{ 'general.cart.item_added' | t }}</h2>
         <button type="button" class="cart-notification__close" aria-label="{{ 'accessibility.close' | t }}">
@@ -35,6 +35,14 @@
     width: 100%;
     pointer-events: none;
     z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .cart-notification-wrapper.active {
+    opacity: 1;
+    visibility: visible;
   }
 
   .cart-notification {
@@ -46,6 +54,12 @@
     max-width: 36rem;
     margin: 2rem auto;
     box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.1);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+  }
+
+  .cart-notification-wrapper.active .cart-notification {
+    transform: translateY(0);
   }
 
   .cart-notification__header {

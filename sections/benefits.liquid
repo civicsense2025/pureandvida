@@ -7,9 +7,10 @@
   # @blocks benefit_item - Individual benefit with icon, title, and description
   # @example
   #   Use blocks mode for dynamic add/remove, settings mode for fixed 6-item layout
+  assign structural_element = section.settings.structural_element | default: 'section'
 -%}
 
-<section class="benefits-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+<{{ structural_element }} class="benefits-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="benefits-content page-width">
     {%- if section.settings.heading != blank -%}
       <h2 class="benefits-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
@@ -64,7 +65,7 @@
       {%- endif -%}
     </div>
   </div>
-</section>
+</{{ structural_element }}>
 
 <style>
   /* Benefits Section Responsive Styles */
@@ -289,6 +290,23 @@
       "type": "image_picker",
       "id": "benefit_6_icon",
       "label": "Benefit 6 - Icon"
+    },
+    {
+      "type": "header",
+      "content": "Structural Elements"
+    },
+    {
+      "type": "select",
+      "id": "structural_element",
+      "label": "HTML Element",
+      "options": [
+        { "value": "section", "label": "Section (default)" },
+        { "value": "article", "label": "Article" },
+        { "value": "aside", "label": "Aside" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "section",
+      "info": "Choose the semantic HTML element for this section"
     }
   ],
   "blocks": [

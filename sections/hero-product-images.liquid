@@ -1,0 +1,93 @@
+{%- liquid
+  # @description Hero product images section
+  # @settings product_image_1 {Image} - Primary product image
+  # @settings product_image_2 {Image} - Secondary product image
+  # @example
+  #   Add to index.json template for homepage hero product images
+  assign structural_element = section.settings.structural_element | default: 'section'
+-%}
+
+<{{ structural_element }} class="hero-product-images-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
+  <div class="hero-product-images-wrapper page-width">
+    <div class="hero-product-images" style="flex-direction: {{ section.settings.image_position }};">
+      {%- if section.settings.product_image_1 != blank -%}
+        <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
+      {%- else -%}
+        <img src="{{ '0a5553f60213dd436dd5e60b282c6b7cbec1de3a.png' | asset_url }}" alt="MycoMatcha Product" class="hero-product-img-1">
+      {%- endif -%}
+      
+      {%- if section.settings.product_image_2 != blank -%}
+        <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+      {%- else -%}
+        <img src="{{ 'f713d8714eed491eeccc4f7f9c3589229c1b0783.png' | asset_url }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+      {%- endif -%}
+    </div>
+  </div>
+</{{ structural_element }}>
+
+{% schema %}
+{
+  "name": "Hero Product Images",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_1",
+      "label": "Product Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_2",
+      "label": "Product Image 2 (Pouch)"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image Position",
+      "options": [
+        { "value": "row", "label": "Left" },
+        { "value": "row-reverse", "label": "Right" }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "Structural Elements"
+    },
+    {
+      "type": "select",
+      "id": "structural_element",
+      "label": "HTML Element",
+      "options": [
+        { "value": "section", "label": "Section (default)" },
+        { "value": "article", "label": "Article" },
+        { "value": "aside", "label": "Aside" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "section",
+      "info": "Choose the semantic HTML element for this section"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Product Images"
+    }
+  ],
+  "templates": ["index", "page", "collection"]
+}
+{% endschema %}
+

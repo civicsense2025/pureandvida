@@ -1,0 +1,125 @@
+{%- liquid
+  # @description Hero title section with title, subtitle, and divider
+  # @settings title {String} - Main hero title
+  # @settings subtitle {String} - Hero subtitle text
+  # @example
+  #   Add to index.json template for homepage hero title section
+  assign structural_element = section.settings.structural_element | default: 'section'
+-%}
+
+<{{ structural_element }} class="hero-title-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
+  <div class="hero-title-content page-width" style="text-align: {{ section.settings.text_alignment }};">
+    {%- if section.settings.title != blank -%}
+      <h1 class="hero-main-title" style="{% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}">
+        <span class="hero-title-line1">{{ section.settings.title | escape }}</span>
+        {%- if section.settings.show_trademark -%}
+          <span class="hero-trademark">™</span>
+        {%- endif -%}
+      </h1>
+    {%- endif -%}
+    {%- if section.settings.show_divider -%}
+      <div class="hero-divider">{{ section.settings.divider_text }}</div>
+    {%- endif -%}
+    {%- if section.settings.subtitle != blank -%}
+      <p class="hero-subtitle" style="{% if section.settings.subtitle_color != blank %}color: {{ section.settings.subtitle_color }};{% endif %}">{{ section.settings.subtitle | escape }}</p>
+    {%- endif -%}
+  </div>
+</{{ structural_element }}>
+
+{% schema %}
+{
+  "name": "Hero Title",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "MYCOMATCHA"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trademark",
+      "label": "Show Trademark (™)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show Divider",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "divider_text",
+      "label": "Divider Text",
+      "default": "+++++++++"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "The magic of matcha meets the wisdom of mushrooms"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "Structural Elements"
+    },
+    {
+      "type": "select",
+      "id": "structural_element",
+      "label": "HTML Element",
+      "options": [
+        { "value": "section", "label": "Section (default)" },
+        { "value": "article", "label": "Article" },
+        { "value": "aside", "label": "Aside" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "section",
+      "info": "Choose the semantic HTML element for this section"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Title"
+    }
+  ],
+  "templates": ["index", "page", "collection"]
+}
+{% endschema %}
+

@@ -538,6 +538,8 @@ class CartNotification extends HTMLElement {
   }
 
   open() {
+    this.setAttribute('aria-hidden', 'false');
+    this.classList.add('active');
     this.notification?.setAttribute('aria-hidden', 'false');
     this.notification?.classList.add('cart-notification--active');
     document.body.style.overflow = 'hidden';
@@ -560,6 +562,8 @@ class CartNotification extends HTMLElement {
   }
 
   close() {
+    this.setAttribute('aria-hidden', 'true');
+    this.classList.remove('active');
     this.notification?.setAttribute('aria-hidden', 'true');
     this.notification?.classList.remove('cart-notification--active');
     document.body.style.overflow = '';

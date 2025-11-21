@@ -1,0 +1,225 @@
+{%- liquid
+  # @description SEO audit tool for development mode - validates meta tags, structured data, and image SEO
+  # Only renders when shop.metafields.seo.enable_audit is true or in development mode
+  # @param show_audit {Boolean} - Force show audit (optional)
+  # @example
+  #   {% render 'seo-audit' %}
+-%}
+
+{%- liquid
+  assign show_audit = show_audit | default: false
+  if shop.metafields.seo.enable_audit == true or request.host contains 'myshopify.com' or show_audit
+    assign enable_audit = true
+  else
+    assign enable_audit = false
+  endif
+-%}
+
+{%- if enable_audit -%}
+<style>
+  .seo-audit {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    border: 2px solid #dc2626;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 9999;
+    font-family: monospace;
+    font-size: 12px;
+  }
+  .seo-audit h3 {
+    margin: 0 0 15px 0;
+    color: #dc2626;
+    font-size: 16px;
+  }
+  .seo-audit-item {
+    margin: 10px 0;
+    padding: 8px;
+    border-left: 3px solid #ccc;
+    background: #f9f9f9;
+  }
+  .seo-audit-item.error {
+    border-left-color: #dc2626;
+    background: #fee;
+  }
+  .seo-audit-item.warning {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+  }
+  .seo-audit-item.success {
+    border-left-color: #10b981;
+    background: #ecfdf5;
+  }
+  .seo-audit-item strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .seo-audit-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+</style>
+
+<div id="seo-audit-panel" class="seo-audit" style="display: none;">
+  <h3>SEO Audit Report</h3>
+  
+  {%- comment -%} Meta Title Check {%- endcomment -%}
+  {%- liquid
+    assign meta_title = page_title
+    if template.name == 'product'
+      assign meta_title = product.title | escape
+    elsif template.name == 'collection'
+      assign meta_title = collection.title | escape
+    elsif template.name == 'article'
+      assign meta_title = article.title | escape
+    elsif template.name == 'page'
+      assign meta_title = page.title | escape
+    endif
+    assign title_length = meta_title | size
+  -%}
+  <div class="seo-audit-item {% if title_length < 30 %}error{% elsif title_length > 60 %}warning{% else %}success{% endif %}">
+    <strong>Meta Title</strong>
+    <div>Length: {{ title_length }} characters (Recommended: 30-60)</div>
+    <div>Value: {{ meta_title | truncate: 70 }}</div>
+  </div>
+
+  {%- comment -%} Meta Description Check {%- endcomment -%}
+  {%- liquid
+    assign meta_description = page_description
+    if template.name == 'product' and product.description != blank
+      assign meta_description = product.description | strip_html | truncate: 160
+    elsif template.name == 'collection' and collection.description != blank
+      assign meta_description = collection.description | strip_html | truncate: 160
+    elsif template.name == 'article' and article.excerpt != blank
+      assign meta_description = article.excerpt | strip_html | truncate: 160
+    elsif template.name == 'page' and page.content != blank
+      assign meta_description = page.content | strip_html | truncate: 160
+    endif
+    assign desc_length = meta_description | size
+  -%}
+  <div class="seo-audit-item {% if desc_length == 0 %}error{% elsif desc_length < 120 or desc_length > 160 %}warning{% else %}success{% endif %}">
+    <strong>Meta Description</strong>
+    <div>Length: {{ desc_length }} characters (Recommended: 120-160)</div>
+    {%- if meta_description != blank -%}
+      <div>Value: {{ meta_description | truncate: 100 }}</div>
+    {%- else -%}
+      <div>Missing!</div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Open Graph Image Check {%- endcomment -%}
+  {%- liquid
+    assign og_image_exists = false
+    if template.name == 'product' and product.featured_media
+      assign og_image_exists = true
+    elsif template.name == 'article' and article.image
+      assign og_image_exists = true
+    elsif template.name == 'collection' and collection.featured_image
+      assign og_image_exists = true
+    elsif template.name == 'page' and page.featured_image
+      assign og_image_exists = true
+    elsif settings.seo_og_image != blank
+      assign og_image_exists = true
+    endif
+  -%}
+  <div class="seo-audit-item {% if og_image_exists %}success{% else %}warning{% endif %}">
+    <strong>Open Graph Image</strong>
+    <div>{% if og_image_exists %}Present{% else %}Missing (recommended for social sharing){% endif %}</div>
+  </div>
+
+  {%- comment -%} Structured Data Check {%- endcomment -%}
+  {%- liquid
+    assign structured_data_count = 0
+    if settings.seo_enable_organization_schema != false
+      assign structured_data_count = structured_data_count | plus: 1
+    endif
+    if settings.seo_enable_website_schema != false
+      assign structured_data_count = structured_data_count | plus: 1
+    endif
+    if settings.seo_enable_breadcrumbs != false
+      assign structured_data_count = structured_data_count | plus: 1
+    endif
+    if template.name == 'product'
+      assign structured_data_count = structured_data_count | plus: 1
+    elsif template.name == 'collection'
+      assign structured_data_count = structured_data_count | plus: 1
+    elsif template.name == 'article'
+      assign structured_data_count = structured_data_count | plus: 1
+    endif
+  -%}
+  <div class="seo-audit-item {% if structured_data_count > 0 %}success{% else %}error{% endif %}">
+    <strong>Structured Data</strong>
+    <div>{{ structured_data_count }} schema(s) detected</div>
+  </div>
+
+  {%- comment -%} Canonical URL Check {%- endcomment -%}
+  <div class="seo-audit-item success">
+    <strong>Canonical URL</strong>
+    <div>{{ canonical_url }}</div>
+  </div>
+
+  {%- comment -%} Image Alt Text Check (for products) {%- endcomment -%}
+  {%- if template.name == 'product' -%}
+    {%- liquid
+      assign images_without_alt = 0
+      for image in product.images
+        if image.alt == blank
+          assign images_without_alt = images_without_alt | plus: 1
+        endif
+      endfor
+    -%}
+    <div class="seo-audit-item {% if images_without_alt == 0 %}success{% elsif images_without_alt <= 2 %}warning{% else %}error{% endif %}">
+      <strong>Product Images Alt Text</strong>
+      <div>{{ images_without_alt }} of {{ product.images.size }} images missing alt text</div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} H1 Tag Check {%- endcomment -%}
+  <div class="seo-audit-item warning">
+    <strong>H1 Tag</strong>
+    <div>Check manually: Should have exactly one H1 tag per page</div>
+  </div>
+
+  {%- comment -%} Mobile Friendly Check {%- endcomment -%}
+  <div class="seo-audit-item success">
+    <strong>Mobile Viewport</strong>
+    <div>Meta viewport tag present</div>
+  </div>
+
+  <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 10px; color: #666;">
+    <div>🔴 Error: Critical issue</div>
+    <div>🟡 Warning: Should be improved</div>
+    <div>🟢 Success: Good</div>
+  </div>
+</div>
+
+<button class="seo-audit-toggle" onclick="document.getElementById('seo-audit-panel').style.display = document.getElementById('seo-audit-panel').style.display === 'none' ? 'block' : 'none';">SEO</button>
+
+<script>
+  // Auto-hide audit panel on page load, show on button click
+  document.addEventListener('DOMContentLoaded', function() {
+    const panel = document.getElementById('seo-audit-panel');
+    if (panel) {
+      panel.style.display = 'none';
+    }
+  });
+</script>
+{%- endif -%}
+

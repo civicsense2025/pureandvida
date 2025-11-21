@@ -1,40 +1,207 @@
-{%- comment -%}
-  Header section with navigation and cart - Pure Vida Design
-{%- endcomment -%}
+{%- liquid
+  # @description Header section with navigation, logo, and cart functionality
+  # Supports sticky header, transparent header, custom logo, menu navigation, and cart button
+  # @settings logo_image {Image} - Logo image (optional, falls back to text logo)
+  # @settings logo_text {String} - Logo text if no image provided
+  # @settings menu {LinkList} - Main navigation menu
+  # @settings sticky_header {Boolean} - Enable sticky header on scroll
+  # @settings transparent_header {Boolean} - Make header transparent
+  # @settings show_cart {Boolean} - Display cart button
+  # @example
+  #   Section is automatically included in theme.liquid layout
+-%}
 
-<header class="header-wrapper pure-vida-header">
-  <header class="header page-width">
-    <a href="{{ routes.root_url }}" class="header__heading-link">
-      <span class="header__logo-text">PURE<span class="header__logo-spacing"> </span>VIDA</span>
-      <span class="header__plus">+</span>
-    </a>
+<header class="header-wrapper pure-vida-header{% if section.settings.sticky_header %} sticky-header{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.transparent_header %}background-color: transparent;{% endif %}">
+  <header class="header page-width" style="height: {{ section.settings.header_height }}px;">
+    {%- if section.settings.logo_image != blank -%}
+      <a href="{{ routes.root_url }}" class="header__heading-link">
+        <img src="{{ section.settings.logo_image | image_url: width: section.settings.logo_width }}" alt="{{ shop.name }}" style="max-height: {{ section.settings.logo_height }}px;">
+      </a>
+    {%- else -%}
+      <a href="{{ routes.root_url }}" class="header__heading-link">
+        <span class="header__logo-text" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %} font-size: {{ section.settings.logo_text_size }}px;">{{ section.settings.logo_text | default: "PURE VIDA" }}</span>
+        {%- if section.settings.show_plus -%}
+          <span class="header__plus" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">+</span>
+        {%- endif -%}
+      </a>
+    {%- endif -%}
 
     <nav class="header__inline-menu">
-      <ul class="list-menu list-menu--inline" role="list">
-        <li>
-          <a href="{{ routes.collections_url }}" class="header__menu-item">MycoMatcha</a>
-        </li>
-        <li>
-          <a href="{{ routes.root_url }}/pages/order-tracking" class="header__menu-item">Order Tracking</a>
-        </li>
-        <li>
-          <a href="{{ routes.root_url }}/pages/about" class="header__menu-item">About</a>
-        </li>
-        <li>
-          <a href="{{ routes.cart_url }}" class="header__cta-button">
-            +Add to Cart
-          </a>
-        </li>
-      </ul>
+      {%- if section.settings.menu != blank -%}
+        <ul class="list-menu list-menu--inline" role="list">
+          {%- for link in section.settings.menu.links -%}
+            <li>
+              <a href="{{ link.url }}" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">{{ link.title | escape }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <ul class="list-menu list-menu--inline" role="list">
+          <li>
+            <a href="{{ routes.collections_url }}" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">MycoMatcha</a>
+          </li>
+          <li>
+            <a href="{{ routes.root_url }}/pages/order-tracking" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">Order Tracking</a>
+          </li>
+          <li>
+            <a href="{{ routes.root_url }}/pages/about" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">About</a>
+          </li>
+        </ul>
+      {%- endif -%}
+      
+      {%- if section.settings.show_cart -%}
+        <a href="{{ routes.cart_url }}" class="header__cta-button" style="{% if section.settings.cart_button_color != blank %}background-color: {{ section.settings.cart_button_color }};{% endif %}{% if section.settings.cart_button_text_color != blank %}color: {{ section.settings.cart_button_text_color }};{% endif %}">
+          {{ section.settings.cart_button_text | default: "+Add to Cart" }}
+        </a>
+      {%- endif -%}
     </nav>
-
   </header>
 </header>
+
+<style>
+  {%- if section.settings.sticky_header -%}
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+  {%- endif -%}
+</style>
 
 {% schema %}
 {
   "name": "Header",
   "class": "section-header",
-  "settings": []
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "Logo Image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo Width (px)",
+      "min": 50,
+      "max": 500,
+      "step": 10,
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo Height (px)",
+      "min": 20,
+      "max": 200,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo Text",
+      "default": "PURE VIDA",
+      "info": "Used if no logo image is uploaded"
+    },
+    {
+      "type": "range",
+      "id": "logo_text_size",
+      "label": "Logo Text Size (px)",
+      "min": 12,
+      "max": 72,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "logo_text_color",
+      "label": "Logo Text Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_plus",
+      "label": "Show Plus Sign (+)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "color",
+      "id": "menu_text_color",
+      "label": "Menu Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Cart Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show Cart Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cart_button_text",
+      "label": "Cart Button Text",
+      "default": "+Add to Cart"
+    },
+    {
+      "type": "color",
+      "id": "cart_button_color",
+      "label": "Cart Button Background Color"
+    },
+    {
+      "type": "color",
+      "id": "cart_button_text_color",
+      "label": "Cart Button Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Header Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Sticky Header",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header",
+      "label": "Transparent Header",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "header_height",
+      "label": "Header Height (px)",
+      "min": 40,
+      "max": 150,
+      "step": 5,
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    }
+  ]
 }
 {% endschema %}

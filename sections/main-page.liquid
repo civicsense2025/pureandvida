@@ -1,18 +1,195 @@
-{%- comment -%}
-  Main page section - customizable homepage content
-{%- endcomment -%}
+{%- liquid
+  # @description Main page section for displaying page content with customizable title, featured image, and styling
+  # Used for custom pages with full content customization options
+  # @settings show_page_title {Boolean} - Display page title
+  # @settings show_featured_image {Boolean} - Display page featured image
+  # @settings content_width {Number} - Maximum content width in pixels
+  # @settings text_alignment {String} - Text alignment: 'left', 'center', 'right', 'justify'
+  # @example
+  #   Add to page.json template for custom page layouts
+-%}
 
-<div class="page-width">
-  <div class="rte">
+<div class="page-width{% if section.settings.custom_css_class != blank %} {{ section.settings.custom_css_class }}{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+  {%- if section.settings.show_page_title and page.title != blank -%}
+    <h1 class="page-title" style="{% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %} text-align: {{ section.settings.title_alignment }};">{{ page.title | escape }}</h1>
+  {%- endif -%}
+  
+  {%- if section.settings.show_featured_image and page.featured_image != blank -%}
+    <div class="page-featured-image" style="text-align: {{ section.settings.image_alignment }}; margin-bottom: {{ section.settings.image_spacing }}px;">
+      <img src="{{ page.featured_image | image_url: width: 1200 }}" alt="{{ page.title | escape }}">
+    </div>
+  {%- endif -%}
+  
+  <div class="rte" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}{% if section.settings.text_color != blank %}color: {{ section.settings.text_color }};{% endif %} text-align: {{ section.settings.text_alignment }};">
     {{ page.content }}
   </div>
 </div>
+
+{%- comment -%} Page Structured Data {%- endcomment -%}
+{%- if section.settings.enable_structured_data -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "{{ page.title | escape }}",
+  "url": "{{ shop.url }}{{ page.url }}",
+  {%- if page.description != blank -%}
+  "description": "{{ page.description | strip_html | escape }}",
+  {%- elsif page.content != blank -%}
+  "description": "{{ page.content | strip_html | truncate: 160 | escape }}",
+  {%- endif -%}
+  {%- if page.featured_image -%}
+  "image": "https:{{ page.featured_image | image_url: width: 1200 }}",
+  {%- endif -%}
+  "mainEntity": {
+    "@type": "Article",
+    "headline": "{{ page.title | escape }}",
+    "author": {
+      "@type": "Organization",
+      "name": "{{ shop.name | escape }}"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "{{ shop.name | escape }}"
+    }
+  }
+}
+</script>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Page",
   "tag": "section",
   "class": "section",
-  "settings": []
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page Title"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_page_title",
+      "label": "Show Page Title",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Featured Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_featured_image",
+      "label": "Show Featured Image",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "image_alignment",
+      "label": "Image Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "image_spacing",
+      "label": "Image Bottom Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width (px)",
+      "min": 400,
+      "max": 1600,
+      "step": 50,
+      "default": 800,
+      "info": "Leave blank for full width"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "justify", "label": "Justify" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Padding (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "text",
+      "id": "custom_css_class",
+      "label": "Custom CSS Class"
+    },
+    {
+      "type": "header",
+      "content": "SEO Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_structured_data",
+      "label": "Enable Structured Data",
+      "default": true,
+      "info": "Adds JSON-LD structured data for better search engine understanding"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page"
+    }
+  ],
+  "templates": ["page"]
 }
 {% endschema %}

@@ -1,18 +1,95 @@
-{%- comment -%}
-  Product recommendations section
-{%- endcomment -%}
+{%- liquid
+  # @description Product recommendations section displaying related or complementary products
+  # Uses Shopify's recommendation engine with lazy loading via Intersection Observer
+  # @settings heading {String} - Section heading
+  # @settings products_to_show {Number} - Maximum number of products to display (2-10)
+  # @settings columns_desktop {Number} - Number of columns on desktop (2-5)
+  # @settings enable_carousel {Boolean} - Enable carousel slider
+  # @example
+  #   Add to product.json template to show related products below main product
+-%}
 
-{%- if recommendations.performed and recommendations.products_count > 0 -%}
-  <div class="product-recommendations page-width" data-base-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ section.settings.products_to_show }}">
+{%- liquid
+  assign recommendation_type = section.settings.recommendation_type | default: 'related'
+  assign products_to_show = section.settings.products_to_show | default: 4
+  assign display_style = section.settings.display_style | default: 'grid'
+  assign products_list = null
+
+  case recommendation_type
+    when 'related'
+      if recommendations.performed and recommendations.products_count > 0
+        assign products_list = recommendations.products
+      endif
+    when 'manual'
+      if product.metafields.custom.related_products != blank
+        assign related_product_ids = product.metafields.custom.related_products | split: ','
+        assign products_list = collections.all.products | where: 'id', related_product_ids[0]
+        for product_id in related_product_ids
+          assign related_product = all_products[product_id]
+          if related_product != blank
+            if products_list == null
+              assign products_list = related_product
+            else
+              assign products_list = products_list | concat: related_product
+            endif
+          endif
+        endfor
+      endif
+    when 'collection'
+      if section.settings.collection != blank
+        assign products_list = section.settings.collection.products
+      endif
+    when 'same_tags'
+      assign product_tags = product.tags
+      assign products_list = collections.all.products | where: 'tags', product_tags[0] | limit: products_to_show
+    when 'bestsellers'
+      assign products_list = collections.all.products | sort: 'best-selling' | limit: products_to_show
+    when 'new_arrivals'
+      assign products_list = collections.all.products | sort: 'created' | reverse | limit: products_to_show
+  endcase
+-%}
+
+{%- if products_list != null and products_list.size > 0 -%}
+  <div class="product-recommendations page-width product-recommendations--{{ display_style }}" 
+       data-base-url="{{ routes.product_recommendations_url }}" 
+       data-product-id="{{ product.id }}" 
+       data-limit="{{ products_to_show }}"
+       data-recommendation-type="{{ recommendation_type }}"
+       style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
     {%- if section.settings.heading != blank -%}
-      <h2 class="product-recommendations__heading">{{ section.settings.heading | escape }}</h2>
+      <h2 class="product-recommendations__heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
     {%- endif -%}
-    <ul class="grid product-grid grid--{{ section.settings.products_to_show }}-col-desktop grid--2-col-tablet-down" role="list">
-      {%- for product in recommendations.products -%}
-        <li class="grid__item">
-          {% render 'product-card', product: product %}
-        </li>
-      {%- endfor -%}
+    
+    {%- if display_style == 'carousel' -%}
+      <div class="product-recommendations__carousel" data-product-carousel>
+        <div class="product-recommendations__carousel-track">
+          {%- for product in products_list limit: products_to_show -%}
+            <div class="product-recommendations__carousel-slide">
+              {% render 'product-card', product: product %}
+            </div>
+          {%- endfor -%}
+        </div>
+        <button class="product-recommendations__carousel-prev" aria-label="Previous products">‹</button>
+        <button class="product-recommendations__carousel-next" aria-label="Next products">›</button>
+      </div>
+    {%- else -%}
+      <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
+        {%- for product in products_list limit: products_to_show -%}
+          <li class="grid__item">
+            {% render 'product-card', product: product %}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+{%- elsif recommendation_type == 'related' -%}
+  {%- comment -%} Fallback to Shopify recommendations API {%- endcomment -%}
+  <div class="product-recommendations page-width" data-base-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ products_to_show }}">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="product-recommendations__heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
+      {%- comment -%} Will be populated by JavaScript {%- endcomment -%}
     </ul>
   </div>
 {%- endif -%}
@@ -56,10 +133,58 @@
       "content": "Product recommendations are based on the product's metafields. [Learn more](https://help.shopify.com/en/themes/development/themes-by-shopify/dawn#product-recommendations)"
     },
     {
+      "type": "header",
+      "content": "Content"
+    },
+    {
       "type": "text",
       "id": "heading",
       "default": "You may also like",
       "label": "Heading"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Recommendation Type"
+    },
+    {
+      "type": "select",
+      "id": "recommendation_type",
+      "label": "Recommendation Type",
+      "options": [
+        { "value": "related", "label": "Related Products (Shopify AI)" },
+        { "value": "manual", "label": "Manual (via Metafields)" },
+        { "value": "collection", "label": "From Collection" },
+        { "value": "same_tags", "label": "Same Tags" },
+        { "value": "bestsellers", "label": "Bestsellers" },
+        { "value": "new_arrivals", "label": "New Arrivals" }
+      ],
+      "default": "related"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Only used when Recommendation Type is 'From Collection'"
+    },
+    {
+      "type": "header",
+      "content": "Products"
     },
     {
       "type": "range",
@@ -69,7 +194,69 @@
       "step": 1,
       "default": 4,
       "label": "Maximum products to show"
+    },
+    {
+      "type": "select",
+      "id": "display_style",
+      "label": "Display Style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (Mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_carousel",
+      "label": "Enable Carousel",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Padding (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
     }
-  ]
+  ],
+  "presets": [
+    {
+      "name": "Product recommendations"
+    }
+  ],
+  "templates": ["product", "index", "page", "collection"]
 }
 {% endschema %}

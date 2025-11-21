@@ -1,3 +1,10 @@
-<svg aria-hidden="true" focusable="false" class="icon icon-caret" viewBox="0 0 10 6" fill="none">
+{%- liquid
+  # @description Renders a caret/dropdown arrow icon SVG (downward-pointing)
+  # @param class {String} - Additional CSS classes (optional)
+  # @param size {Number} - Icon size in pixels (optional, default: 10)
+  # @example
+  #   {% render 'icon-caret', class: 'select-icon', size: 12 %}
+-%}
+<svg aria-hidden="true" focusable="false" class="icon icon-caret{% if class != blank %} {{ class }}{% endif %}" viewBox="0 0 10 6" fill="none"{% if size != blank %} width="{{ size }}" height="{{ size }}"{% endif %}>
   <path fill-rule="evenodd" clip-rule="evenodd" d="m9.354.646a.5.5 0 0 0-.708 0L5 4.293 1.354.646a.5.5 0 0 0-.708.708l4 4a.5.5 0 0 0 .708 0l4-4a.5.5 0 0 0 0-.708z" fill="currentColor"/>
 </svg>

@@ -1,0 +1,27 @@
+{
+  "sections": {
+    "collection-header": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Collection",
+        "heading_alignment": "center"
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Products",
+        "products_to_show": 12,
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "show_view_all": true,
+        "view_all_text": "View All Products"
+      }
+    }
+  },
+  "order": [
+    "collection-header",
+    "featured-collection"
+  ]
+}
+

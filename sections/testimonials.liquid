@@ -1,47 +1,458 @@
-{%- comment -%}
-  Testimonials section
-{%- endcomment -%}
+{%- liquid
+  # @description Testimonials section displaying customer reviews and testimonials
+  # Supports dual content management: blocks (dynamic) or settings (fixed fields)
+  # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
+  # @settings heading {String} - Section heading
+  # @settings columns_desktop {Number} - Number of columns on desktop
+  # @blocks testimonial_item - Individual testimonial with stars, text, author, avatar, and date
+  # @example
+  #   Use blocks mode for dynamic testimonials, settings mode for fixed 6-item layout
+-%}
 
-<section class="testimonials-section">
+<section class="testimonials-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="testimonials-content page-width">
-    <div class="testimonial-card">
-      <div class="testimonial-stars">
-        <img src="{{ '60a916eaf79acd1bbd27ac953b76a1185c5ab0e4.svg' | asset_url }}" alt="5 Stars">
-      </div>
-      <p class="testimonial-text">"I started drinking this before my morning runs and noticed a real difference. I don't get winded as quickly, and I can push myself further. I didn't expect Cordyceps to work this fast, but it's become my favorite pre-workout"</p>
-      <div class="testimonial-author">
-        <img src="{{ '225302497f6aff11e874ccb561046fe17eb63a34.svg' | asset_url }}" alt="Customer" class="testimonial-avatar">
-        <span class="testimonial-name">—Michael F.</span>
-      </div>
-    </div>
-
-    <div class="testimonial-card">
-      <div class="testimonial-stars">
-        <img src="{{ '60a916eaf79acd1bbd27ac953b76a1185c5ab0e4.svg' | asset_url }}" alt="5 Stars">
-      </div>
-      <p class="testimonial-text">"MycoMatcha has completely replaced my morning coffee. I feel mentally sharp, energized, and focused without the jittery crash I used to get. I love knowing that Lion's Mane and L-theanine are actually supporting my brain, not just stimulating it."</p>
-      <div class="testimonial-author">
-        <img src="{{ '225302497f6aff11e874ccb561046fe17eb63a34.svg' | asset_url }}" alt="Customer" class="testimonial-avatar">
-        <span class="testimonial-name">—Michael F.</span>
-      </div>
-    </div>
-
-    <div class="testimonial-card">
-      <div class="testimonial-stars">
-        <img src="{{ '60a916eaf79acd1bbd27ac953b76a1185c5ab0e4.svg' | asset_url }}" alt="5 Stars">
-      </div>
-      <p class="testimonial-text">"I used to have trouble falling asleep when I drank coffee, even early in the day. I switched to MycoMatcha and now I still get that energy boost, but I sleep like a baby. My mood during the day is way better too."</p>
-      <div class="testimonial-author">
-        <img src="{{ '225302497f6aff11e874ccb561046fe17eb63a34.svg' | asset_url }}" alt="Customer" class="testimonial-avatar">
-        <span class="testimonial-name">—Michael F.</span>
-      </div>
+    {%- if section.settings.heading != blank -%}
+      <h2 class="testimonials-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    
+    <div class="testimonials-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
+      {%- if section.settings.content_mode == 'blocks' -%}
+        {%- for block in section.blocks -%}
+          <div class="testimonial-card" {{ block.shopify_attributes }}>
+            {%- if block.settings.show_stars -%}
+              <div class="testimonial-stars">
+                {%- if block.settings.stars_image != blank -%}
+                  <img src="{{ block.settings.stars_image | image_url: width: 100 }}" alt="5 Stars">
+                {%- elsif block.settings.stars_asset != blank -%}
+                  <img src="{{ block.settings.stars_asset | asset_url }}" alt="5 Stars">
+                {%- else -%}
+                  <span>★★★★★</span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <p class="testimonial-text" style="{% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}">{{ block.settings.text }}</p>
+            {%- endif -%}
+            <div class="testimonial-author">
+              {%- if block.settings.avatar != blank -%}
+                <img src="{{ block.settings.avatar | image_url: width: 50 }}" alt="{{ block.settings.author_name | escape }}" class="testimonial-avatar">
+              {%- elsif block.settings.avatar_asset != blank -%}
+                <img src="{{ block.settings.avatar_asset | asset_url }}" alt="{{ block.settings.author_name | escape }}" class="testimonial-avatar">
+              {%- endif -%}
+              {%- if block.settings.author_name != blank -%}
+                <span class="testimonial-name" style="{% if block.settings.author_color != blank %}color: {{ block.settings.author_color }};{% endif %}">—{{ block.settings.author_name | escape }}</span>
+              {%- endif -%}
+              {%- if block.settings.date != blank -%}
+                <span class="testimonial-date" style="{% if block.settings.date_color != blank %}color: {{ block.settings.date_color }};{% endif %}">{{ block.settings.date | escape }}</span>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
+        {%- for i in (1..6) -%}
+          {%- assign text_key = 'testimonial_' | append: i | append: '_text' -%}
+          {%- assign author_key = 'testimonial_' | append: i | append: '_author' -%}
+          {%- assign avatar_key = 'testimonial_' | append: i | append: '_avatar' -%}
+          {%- assign date_key = 'testimonial_' | append: i | append: '_date' -%}
+          {%- assign text = section.settings[text_key] -%}
+          {%- assign author = section.settings[author_key] -%}
+          {%- assign avatar = section.settings[avatar_key] -%}
+          {%- assign date = section.settings[date_key] -%}
+          {%- if text != blank or author != blank -%}
+            <div class="testimonial-card">
+              <div class="testimonial-stars">
+                {%- if section.settings.stars_image != blank -%}
+                  <img src="{{ section.settings.stars_image | image_url: width: 100 }}" alt="5 Stars">
+                {%- else -%}
+                  <img src="{{ '60a916eaf79acd1bbd27ac953b76a1185c5ab0e4.svg' | asset_url }}" alt="5 Stars">
+                {%- endif -%}
+              </div>
+              {%- if text != blank -%}
+                <p class="testimonial-text">{{ text }}</p>
+              {%- endif -%}
+              <div class="testimonial-author">
+                {%- if avatar != blank -%}
+                  <img src="{{ avatar | image_url: width: 50 }}" alt="{{ author | escape }}" class="testimonial-avatar">
+                {%- else -%}
+                  <img src="{{ '225302497f6aff11e874ccb561046fe17eb63a34.svg' | asset_url }}" alt="{{ author | escape }}" class="testimonial-avatar">
+                {%- endif -%}
+                {%- if author != blank -%}
+                  <span class="testimonial-name">—{{ author | escape }}</span>
+                {%- endif -%}
+                {%- if date != blank -%}
+                  <span class="testimonial-date">{{ date | escape }}</span>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
     </div>
   </div>
 </section>
 
+<style>
+  /* Testimonials Section Responsive Styles */
+  .testimonials-grid {
+    display: grid;
+    gap: clamp(20px, 4vw, {{ section.settings.item_spacing }}px);
+  }
+  
+  /* Mobile Portrait (max-width: 479px) */
+  @media screen and (max-width: 479px) {
+    .testimonials-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  
+  /* Mobile Landscape (480px - 767px) */
+  @media screen and (min-width: 480px) and (max-width: 767px) {
+    .testimonials-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 1 }}, 1fr) !important;
+    }
+  }
+  
+  /* Tablet Portrait (768px - 1023px) */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .testimonials-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr) !important;
+    }
+  }
+  
+  /* Tablet Landscape (1024px - 1199px) */
+  @media screen and (min-width: 1024px) and (max-width: 1199px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+  
+  /* Desktop (1200px+) */
+  @media screen and (min-width: 1200px) {
+    .testimonials-grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop | default: 3 }}, 1fr) !important;
+    }
+  }
+</style>
+
 {% schema %}
 {
   "name": "Testimonials Section",
-  "settings": []
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Management"
+    },
+    {
+      "type": "select",
+      "id": "content_mode",
+      "label": "Content Management",
+      "options": [
+        { "value": "blocks", "label": "Use Blocks (Dynamic)" },
+        { "value": "settings", "label": "Use Settings (Fixed)" }
+      ],
+      "default": "blocks"
+    },
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop)",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (Mobile)",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Padding (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_carousel",
+      "label": "Enable Carousel",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "stars_image",
+      "label": "Default Stars Image (Settings Mode)"
+    },
+    {
+      "type": "header",
+      "content": "Fixed Testimonials (Settings Mode)"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_1_text",
+      "label": "Testimonial 1 - Text"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_1_author",
+      "label": "Testimonial 1 - Author Name"
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_1_avatar",
+      "label": "Testimonial 1 - Avatar"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_1_date",
+      "label": "Testimonial 1 - Date"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_2_text",
+      "label": "Testimonial 2 - Text"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_2_author",
+      "label": "Testimonial 2 - Author Name"
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_2_avatar",
+      "label": "Testimonial 2 - Avatar"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_2_date",
+      "label": "Testimonial 2 - Date"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_3_text",
+      "label": "Testimonial 3 - Text"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_3_author",
+      "label": "Testimonial 3 - Author Name"
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_3_avatar",
+      "label": "Testimonial 3 - Avatar"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_3_date",
+      "label": "Testimonial 3 - Date"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_4_text",
+      "label": "Testimonial 4 - Text"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_4_author",
+      "label": "Testimonial 4 - Author Name"
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_4_avatar",
+      "label": "Testimonial 4 - Avatar"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_4_date",
+      "label": "Testimonial 4 - Date"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_5_text",
+      "label": "Testimonial 5 - Text"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_5_author",
+      "label": "Testimonial 5 - Author Name"
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_5_avatar",
+      "label": "Testimonial 5 - Avatar"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_5_date",
+      "label": "Testimonial 5 - Date"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_6_text",
+      "label": "Testimonial 6 - Text"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_6_author",
+      "label": "Testimonial 6 - Author Name"
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_6_avatar",
+      "label": "Testimonial 6 - Avatar"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_6_date",
+      "label": "Testimonial 6 - Date"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Testimonial Text",
+          "default": "Testimonial text here"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author Name",
+          "default": "Customer Name"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Avatar (Image)"
+        },
+        {
+          "type": "text",
+          "id": "avatar_asset",
+          "label": "Avatar (Asset Filename)",
+          "info": "Alternative: Enter asset filename if using uploaded asset"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_stars",
+          "label": "Show Stars",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "stars_image",
+          "label": "Stars Image"
+        },
+        {
+          "type": "text",
+          "id": "stars_asset",
+          "label": "Stars Asset Filename",
+          "info": "Alternative: Enter asset filename if using uploaded asset"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color"
+        },
+        {
+          "type": "color",
+          "id": "author_color",
+          "label": "Author Name Color"
+        },
+        {
+          "type": "color",
+          "id": "date_color",
+          "label": "Date Color"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials Section",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "I started drinking this before my morning runs and noticed a real difference. I don't get winded as quickly, and I can push myself further. I didn't expect Cordyceps to work this fast, but it's become my favorite pre-workout",
+            "author_name": "Michael F."
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "MycoMatcha has completely replaced my morning coffee. I feel mentally sharp, energized, and focused without the jittery crash I used to get. I love knowing that Lion's Mane and L-theanine are actually supporting my brain, not just stimulating it.",
+            "author_name": "Michael F."
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "text": "I used to have trouble falling asleep when I drank coffee, even early in the day. I switched to MycoMatcha and now I still get that energy boost, but I sleep like a baby. My mood during the day is way better too.",
+            "author_name": "Michael F."
+          }
+        }
+      ]
+    }
+  ],
+  "templates": ["index", "page", "product", "collection"]
 }
 {% endschema %}

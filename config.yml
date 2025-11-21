@@ -1,7 +1,8 @@
 # Shopify Theme Configuration
 # This file defines your theme's metadata and settings
 
-name: "Custom Theme"
-version: "1.0.0"
+name: "Pure Vida Theme"
+version: "2.0.0"
+author: "Pure Vida"
 settings:
   # Theme settings will be defined in config/settings_schema.json

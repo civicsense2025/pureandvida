@@ -1,0 +1,68 @@
+{%- liquid
+  # @description Bundle-focused product layout - Optimized for product bundles and upsells
+  # Alternative product page layout optimized for bundles
+  # This is a preset configuration of main-product with bundle-focused defaults
+  # @example
+  #   Add to product.json template for bundle-focused product page layout
+-%}
+
+{%- comment -%} Note: This layout section uses the same blocks as main-product. 
+     For full functionality, use main-product.liquid with bundle_builder block enabled.
+     This section serves as a preset template. {%- endcomment -%}
+
+<div class="product-layout-bundle">
+  <p style="padding: 2rem; text-align: center; color: #666;">
+    This is a layout preset. Use the main "Product information" section and enable the "Bundle Builder" block for the bundle-focused layout.
+  </p>
+</div>
+
+{% schema %}
+{
+  "name": "Product Layout - Bundle",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "info_position",
+      "label": "Product Info Position",
+      "options": [
+        { "value": "right", "label": "Right of Images" },
+        { "value": "below", "label": "Below Images" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "gallery_style",
+      "label": "Gallery Style",
+      "options": [
+        { "value": "stacked", "label": "Stacked" },
+        { "value": "grid", "label": "Grid" }
+      ],
+      "default": "stacked"
+    },
+    {
+      "type": "header",
+      "content": "Bundle Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "highlight_bundle_savings",
+      "label": "Highlight Bundle Savings",
+      "default": true
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Product Layout - Bundle"
+    }
+  ]
+}
+{% endschema %}
+

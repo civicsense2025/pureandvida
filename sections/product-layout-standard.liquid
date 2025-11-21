@@ -1,0 +1,59 @@
+{%- liquid
+  # @description Standard product layout - Image left, info right (traditional layout)
+  # Alternative product page layout with standard side-by-side arrangement
+  # This is a preset configuration of main-product with standard layout defaults
+  # @example
+  #   Add to product.json template for standard product page layout
+-%}
+
+{%- comment -%} Note: This layout section uses the same blocks as main-product. 
+     For full functionality, use main-product.liquid with info_position set to 'right'.
+     This section serves as a preset template. {%- endcomment -%}
+
+<div class="product-layout-standard">
+  <p style="padding: 2rem; text-align: center; color: #666;">
+    This is a layout preset. Use the main "Product information" section and set "Product Info Position" to "Right of Images" for the standard layout.
+  </p>
+</div>
+
+{% schema %}
+{
+  "name": "Product Layout - Standard",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "info_position",
+      "label": "Product Info Position",
+      "options": [
+        { "value": "right", "label": "Right of Images" },
+        { "value": "left", "label": "Left of Images" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "gallery_style",
+      "label": "Gallery Style",
+      "options": [
+        { "value": "stacked", "label": "Stacked" },
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel" }
+      ],
+      "default": "stacked"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Product Layout - Standard"
+    }
+  ]
+}
+{% endschema %}
+

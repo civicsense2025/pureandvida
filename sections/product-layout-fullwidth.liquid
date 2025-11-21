@@ -1,0 +1,58 @@
+{%- liquid
+  # @description Full-width product layout - Full-width gallery with info overlay or below
+  # Alternative product page layout with full-width gallery
+  # This is a preset configuration of main-product with full-width defaults
+  # @example
+  #   Add to product.json template for full-width product page layout
+-%}
+
+{%- comment -%} Note: This layout section uses the same blocks as main-product. 
+     For full functionality, use main-product.liquid with gallery_style set to 'carousel' and info_position to 'below'.
+     This section serves as a preset template. {%- endcomment -%}
+
+<div class="product-layout-fullwidth">
+  <p style="padding: 2rem; text-align: center; color: #666;">
+    This is a layout preset. Use the main "Product information" section with "Gallery Style" set to "Carousel" and "Product Info Position" to "Below Images" for the full-width layout.
+  </p>
+</div>
+
+{% schema %}
+{
+  "name": "Product Layout - Full Width",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "info_position",
+      "label": "Product Info Position",
+      "options": [
+        { "value": "below", "label": "Below Images" },
+        { "value": "overlay", "label": "Overlay on Images" }
+      ],
+      "default": "below"
+    },
+    {
+      "type": "select",
+      "id": "gallery_style",
+      "label": "Gallery Style",
+      "options": [
+        { "value": "carousel", "label": "Carousel" },
+        { "value": "grid", "label": "Grid" }
+      ],
+      "default": "carousel"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Product Layout - Full Width"
+    }
+  ]
+}
+{% endschema %}
+

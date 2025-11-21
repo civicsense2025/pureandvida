@@ -1,0 +1,56 @@
+{%- liquid
+  # @description Minimal product layout - Clean, minimal design with essential elements only
+  # Alternative product page layout with minimal design
+  # This is a preset configuration of main-product with minimal defaults
+  # @example
+  #   Add to product.json template for minimal product page layout
+-%}
+
+{%- comment -%} Note: This layout section uses the same blocks as main-product. 
+     For full functionality, use main-product.liquid with minimal block configuration.
+     This section serves as a preset template. {%- endcomment -%}
+
+<div class="product-layout-minimal">
+  <p style="padding: 2rem; text-align: center; color: #666;">
+    This is a layout preset. Use the main "Product information" section with minimal blocks enabled for the minimal layout.
+  </p>
+</div>
+
+{% schema %}
+{
+  "name": "Product Layout - Minimal",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "info_position",
+      "label": "Product Info Position",
+      "options": [
+        { "value": "below", "label": "Below Images" }
+      ],
+      "default": "below"
+    },
+    {
+      "type": "select",
+      "id": "gallery_style",
+      "label": "Gallery Style",
+      "options": [
+        { "value": "stacked", "label": "Stacked" }
+      ],
+      "default": "stacked"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Product Layout - Minimal"
+    }
+  ]
+}
+{% endschema %}
+

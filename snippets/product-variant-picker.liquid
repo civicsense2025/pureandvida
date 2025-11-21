@@ -1,0 +1,233 @@
+{%- liquid
+  # @description Renders product variant picker with multiple style options (dropdown, buttons, swatches, images)
+  # @param product {Product} - The product object
+  # @param section {Section} - The section object for IDs
+  # @param block {Block} - The block object for settings
+  # @param picker_style {String} - Style: 'dropdown', 'buttons', 'swatches', 'images' (from block settings)
+  # @param show_unavailable {Boolean} - Show unavailable variants (from block settings)
+  # @example
+  #   {% render 'product-variant-picker', product: product, section: section, block: block %}
+-%}
+
+{%- liquid
+  assign picker_style = block.settings.picker_style | default: 'dropdown'
+  assign show_unavailable = block.settings.show_unavailable | default: false
+-%}
+
+<variant-selects class="no-js-hidden product-variant-picker product-variant-picker--{{ picker_style }}" 
+                 data-section="{{ section.id }}" 
+                 data-url="{{ product.url }}" 
+                 role="group"
+                 aria-label="{{ 'products.product.variant_selection' | t | default: 'Variant Selection' }}"
+                 {{ block.shopify_attributes }}>
+  {%- for option in product.options_with_values -%}
+    <div class="product-form__input product-form__input--{{ picker_style }}" 
+         role="group"
+         aria-labelledby="OptionLabel-{{ section.id }}-{{ forloop.index0 }}">
+      <label class="form__label" 
+             id="OptionLabel-{{ section.id }}-{{ forloop.index0 }}"
+             for="Option-{{ section.id }}-{{ forloop.index0 }}">
+        {{ option.name }}
+      </label>
+
+      {%- case picker_style -%}
+        {%- when 'dropdown' -%}
+          <div class="select">
+            <select 
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="select__select"
+              name="options[{{ option.name | escape }}]"
+              form="product-form-{{ section.id }}"
+            >
+              {%- for value in option.values -%}
+                {%- liquid
+                  assign variant_available = false
+                  for variant in product.variants
+                    if variant.options[forloop.parentloop.index0] == value
+                      if variant.available
+                        assign variant_available = true
+                        break
+                      endif
+                    endif
+                  endfor
+                -%}
+                {%- if variant_available or show_unavailable -%}
+                  <option 
+                    value="{{ value | escape }}" 
+                    {% if option.selected_value == value %}selected="selected"{% endif %}
+                    {% unless variant_available %}disabled{% endunless %}
+                  >
+                    {{ value }}{% unless variant_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}
+                  </option>
+                {%- endif -%}
+              {%- endfor -%}
+            </select>
+            {% render 'icon-caret' %}
+          </div>
+
+        {%- when 'buttons' -%}
+          <div class="variant-picker-buttons" role="radiogroup" aria-labelledby="OptionLabel-{{ section.id }}-{{ forloop.index0 }}">
+            {%- for value in option.values -%}
+              {%- liquid
+                assign variant_available = false
+                for variant in product.variants
+                  if variant.options[forloop.parentloop.index0] == value
+                    if variant.available
+                      assign variant_available = true
+                      break
+                    endif
+                  endif
+                endfor
+              -%}
+              {%- if variant_available or show_unavailable -%}
+                <button
+                  type="button"
+                  class="variant-picker-button{% if option.selected_value == value %} variant-picker-button--selected{% endif %}{% unless variant_available %} variant-picker-button--unavailable{% endunless %}"
+                  data-value="{{ value | escape }}"
+                  data-option-index="{{ forloop.parentloop.index0 }}"
+                  {% unless variant_available %}disabled{% endunless %}
+                  role="radio"
+                  aria-checked="{% if option.selected_value == value %}true{% else %}false{% endif %}"
+                  aria-label="{{ option.name }}: {{ value }}{% unless variant_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}"
+                >
+                  {{ value }}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <input 
+            type="hidden" 
+            name="options[{{ option.name | escape }}]" 
+            value="{{ option.selected_value | escape }}"
+            form="product-form-{{ section.id }}"
+            data-option-input="{{ forloop.index0 }}"
+          >
+
+        {%- when 'swatches' -%}
+          {%- if option.name == 'Color' or option.name == 'Colour' -%}
+            <div class="variant-picker-swatches">
+              {%- for value in option.values -%}
+                {%- liquid
+                  assign variant_available = false
+                  assign swatch_color = value | handleize | prepend: 'color-' | append: '.png'
+                  for variant in product.variants
+                    if variant.options[forloop.parentloop.index0] == value
+                      if variant.available
+                        assign variant_available = true
+                        break
+                      endif
+                    endif
+                  endfor
+                -%}
+                {%- if variant_available or show_unavailable -%}
+                  <button
+                    type="button"
+                    class="variant-picker-swatch{% if option.selected_value == value %} variant-picker-swatch--selected{% endif %}{% unless variant_available %} variant-picker-swatch--unavailable{% endunless %}"
+                    data-value="{{ value | escape }}"
+                    data-option-index="{{ forloop.parentloop.index0 }}"
+                    style="background-color: {{ value | handleize }};"
+                    title="{{ value }}"
+                    {% unless variant_available %}disabled{% endunless %}
+                    aria-label="{{ value }}{% unless variant_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}"
+                  >
+                    <span class="visually-hidden">{{ value }}</span>
+                  </button>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+            <input 
+              type="hidden" 
+              name="options[{{ option.name | escape }}]" 
+              value="{{ option.selected_value | escape }}"
+              form="product-form-{{ section.id }}"
+              data-option-input="{{ forloop.index0 }}"
+            >
+          {%- else -%}
+            {%- comment -%} Fallback to buttons for non-color options {%- endcomment -%}
+            <div class="variant-picker-buttons">
+              {%- for value in option.values -%}
+                {%- liquid
+                  assign variant_available = false
+                  for variant in product.variants
+                    if variant.options[forloop.parentloop.index0] == value
+                      if variant.available
+                        assign variant_available = true
+                        break
+                      endif
+                    endif
+                  endfor
+                -%}
+                {%- if variant_available or show_unavailable -%}
+                  <button
+                    type="button"
+                    class="variant-picker-button{% if option.selected_value == value %} variant-picker-button--selected{% endif %}{% unless variant_available %} variant-picker-button--unavailable{% endunless %}"
+                    data-value="{{ value | escape }}"
+                    data-option-index="{{ forloop.parentloop.index0 }}"
+                    {% unless variant_available %}disabled{% endunless %}
+                  >
+                    {{ value }}
+                  </button>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+            <input 
+              type="hidden" 
+              name="options[{{ option.name | escape }}]" 
+              value="{{ option.selected_value | escape }}"
+              form="product-form-{{ section.id }}"
+              data-option-input="{{ forloop.index0 }}"
+            >
+          {%- endif -%}
+
+        {%- when 'images' -%}
+          <div class="variant-picker-images">
+            {%- for value in option.values -%}
+              {%- liquid
+                assign variant_available = false
+                assign variant_image = null
+                for variant in product.variants
+                  if variant.options[forloop.parentloop.index0] == value
+                    if variant.available
+                      assign variant_available = true
+                    endif
+                    if variant.featured_media
+                      assign variant_image = variant.featured_media
+                      break
+                    endif
+                  endif
+                endfor
+              -%}
+              {%- if variant_available or show_unavailable -%}
+                <button
+                  type="button"
+                  class="variant-picker-image{% if option.selected_value == value %} variant-picker-image--selected{% endif %}{% unless variant_available %} variant-picker-image--unavailable{% endunless %}"
+                  data-value="{{ value | escape }}"
+                  data-option-index="{{ forloop.parentloop.index0 }}"
+                  {% unless variant_available %}disabled{% endunless %}
+                  aria-label="{{ value }}{% unless variant_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}"
+                >
+                  {%- if variant_image != null -%}
+                    <img src="{{ variant_image | image_url: width: 100 }}" alt="{{ value }}" loading="lazy">
+                  {%- else -%}
+                    <span>{{ value }}</span>
+                  {%- endif -%}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <input 
+            type="hidden" 
+            name="options[{{ option.name | escape }}]" 
+            value="{{ option.selected_value | escape }}"
+            form="product-form-{{ section.id }}"
+            data-option-input="{{ forloop.index0 }}"
+          >
+      {%- endcase -%}
+    </div>
+  {%- endfor -%}
+
+  <script type="application/json">
+    {{ product.variants | json }}
+  </script>
+</variant-selects>
+

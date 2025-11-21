@@ -1,6 +1,11 @@
-{%- comment -%}
-  Payment method icons
-{%- endcomment -%}
+{%- liquid
+  # @description Renders payment method icons (Visa, Mastercard, PayPal, etc.) for footer or checkout
+  # Displays accepted payment methods as visual icons
+  # @param show_label {Boolean} - Display payment method labels (default: false)
+  # @param icon_size {String} - Size of icons: 'small', 'medium', 'large' (default: 'medium')
+  # @example
+  #   {% render 'payment-icons', show_label: false, icon_size: 'medium' %}
+-%}
 
 <div class="payment-icons">
   <div class="payment-icon">

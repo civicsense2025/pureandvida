@@ -1,47 +1,365 @@
-{%- comment -%}
-  Benefits section - Natural energy, Elevated mood, Focused mind
-{%- endcomment -%}
+{%- liquid
+  # @description Benefits section displaying product benefits in a grid layout
+  # Supports dual content management: blocks (dynamic) or settings (fixed fields)
+  # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
+  # @settings heading {String} - Section heading
+  # @settings columns_desktop {Number} - Number of columns on desktop
+  # @blocks benefit_item - Individual benefit with icon, title, and description
+  # @example
+  #   Use blocks mode for dynamic add/remove, settings mode for fixed 6-item layout
+-%}
 
-<section class="benefits-section">
+<section class="benefits-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="benefits-content page-width">
-    <div class="benefit-item">
-      <div class="benefit-icon">
-        <img src="{{ 'ecd7e6b1a92867614a6360a85d60e31ca8032f27.svg' | asset_url }}" alt="Natural Energy">
-      </div>
-      <h3 class="benefit-title">Natural energy</h3>
-      <p class="benefit-description">
-        + Energize your body and mind.<br>
-        No jitters, just flow.
-      </p>
-    </div>
-
-    <div class="benefit-item">
-      <div class="benefit-icon">
-        <img src="{{ '1a1f02fd7f7aca93b064c1a3d150475f9933c6aa.svg' | asset_url }}" alt="Elevated Mood">
-      </div>
-      <h3 class="benefit-title">Elevated mood</h3>
-      <p class="benefit-description">
-        + Brings a gentle boost to your mood<br>
-        and mindset.
-      </p>
-    </div>
-
-    <div class="benefit-item">
-      <div class="benefit-icon">
-        <img src="{{ '3bc9a1211025a52f8a365c399d199d6efc6bc6ae.svg' | asset_url }}" alt="Focused Mind">
-      </div>
-      <h3 class="benefit-title">Focused mind</h3>
-      <p class="benefit-description">
-        + Keeps distractions low and<br>
-        productivity high.
-      </p>
+    {%- if section.settings.heading != blank -%}
+      <h2 class="benefits-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    
+    <div class="benefits-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
+      {%- if section.settings.content_mode == 'blocks' -%}
+        {%- for block in section.blocks -%}
+          <div class="benefit-item" {{ block.shopify_attributes }}>
+            {%- if block.settings.icon != blank -%}
+              <div class="benefit-icon">
+                <img src="{{ block.settings.icon | image_url: width: 100 }}" alt="{{ block.settings.title | escape }}">
+              </div>
+            {%- elsif block.settings.icon_asset != blank -%}
+              <div class="benefit-icon">
+                <img src="{{ block.settings.icon_asset | asset_url }}" alt="{{ block.settings.title | escape }}">
+              </div>
+            {%- endif -%}
+            {%- if block.settings.title != blank -%}
+              <h3 class="benefit-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% endif %}">{{ block.settings.title | escape }}</h3>
+            {%- endif -%}
+            {%- if block.settings.description != blank -%}
+              <p class="benefit-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
+        {%- for i in (1..6) -%}
+          {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
+          {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
+          {%- assign icon_key = 'benefit_' | append: i | append: '_icon' -%}
+          {%- assign title = section.settings[title_key] -%}
+          {%- assign desc = section.settings[desc_key] -%}
+          {%- assign icon = section.settings[icon_key] -%}
+          {%- if title != blank or desc != blank -%}
+            <div class="benefit-item">
+              {%- if icon != blank -%}
+                <div class="benefit-icon">
+                  <img src="{{ icon | image_url: width: 100 }}" alt="{{ title | escape }}">
+                </div>
+              {%- endif -%}
+              {%- if title != blank -%}
+                <h3 class="benefit-title">{{ title | escape }}</h3>
+              {%- endif -%}
+              {%- if desc != blank -%}
+                <p class="benefit-description">{{ desc }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
     </div>
   </div>
 </section>
 
+<style>
+  /* Benefits Section Responsive Styles */
+  .benefits-grid {
+    display: grid;
+    gap: clamp(20px, 4vw, {{ section.settings.item_spacing }}px);
+  }
+  
+  /* Mobile Portrait (max-width: 479px) */
+  @media screen and (max-width: 479px) {
+    .benefits-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  
+  /* Mobile Landscape (480px - 767px) */
+  @media screen and (min-width: 480px) and (max-width: 767px) {
+    .benefits-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+  
+  /* Tablet Portrait (768px - 1023px) */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .benefits-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr) !important;
+    }
+  }
+  
+  /* Tablet Landscape (1024px - 1199px) */
+  @media screen and (min-width: 1024px) and (max-width: 1199px) {
+    .benefits-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+  
+  /* Desktop (1200px+) */
+  @media screen and (min-width: 1200px) {
+    .benefits-grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, 1fr) !important;
+    }
+  }
+</style>
+
 {% schema %}
 {
   "name": "Benefits Section",
-  "settings": []
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Management"
+    },
+    {
+      "type": "select",
+      "id": "content_mode",
+      "label": "Content Management",
+      "options": [
+        { "value": "blocks", "label": "Use Blocks (Dynamic)" },
+        { "value": "settings", "label": "Use Settings (Fixed)" }
+      ],
+      "default": "blocks"
+    },
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Benefits"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (Mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Padding (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "Fixed Benefits (Settings Mode)"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1_title",
+      "label": "Benefit 1 - Title"
+    },
+    {
+      "type": "textarea",
+      "id": "benefit_1_description",
+      "label": "Benefit 1 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_1_icon",
+      "label": "Benefit 1 - Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2_title",
+      "label": "Benefit 2 - Title"
+    },
+    {
+      "type": "textarea",
+      "id": "benefit_2_description",
+      "label": "Benefit 2 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_2_icon",
+      "label": "Benefit 2 - Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3_title",
+      "label": "Benefit 3 - Title"
+    },
+    {
+      "type": "textarea",
+      "id": "benefit_3_description",
+      "label": "Benefit 3 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_3_icon",
+      "label": "Benefit 3 - Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_4_title",
+      "label": "Benefit 4 - Title"
+    },
+    {
+      "type": "textarea",
+      "id": "benefit_4_description",
+      "label": "Benefit 4 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_4_icon",
+      "label": "Benefit 4 - Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_5_title",
+      "label": "Benefit 5 - Title"
+    },
+    {
+      "type": "textarea",
+      "id": "benefit_5_description",
+      "label": "Benefit 5 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_5_icon",
+      "label": "Benefit 5 - Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_6_title",
+      "label": "Benefit 6 - Title"
+    },
+    {
+      "type": "textarea",
+      "id": "benefit_6_description",
+      "label": "Benefit 6 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_6_icon",
+      "label": "Benefit 6 - Icon"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Benefit Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Benefit description"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon (Image)"
+        },
+        {
+          "type": "text",
+          "id": "icon_asset",
+          "label": "Icon (Asset Filename)",
+          "info": "Alternative: Enter asset filename if using uploaded asset"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title Color"
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Description Color"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits Section",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Natural energy",
+            "description": "+ Energize your body and mind.\nNo jitters, just flow."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Elevated mood",
+            "description": "+ Brings a gentle boost to your mood\nand mindset."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Focused mind",
+            "description": "+ Keeps distractions low and\nproductivity high."
+          }
+        }
+      ]
+    }
+  ],
+  "templates": ["index", "page", "product", "collection"]
 }
 {% endschema %}

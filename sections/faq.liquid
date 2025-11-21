@@ -1,88 +1,333 @@
-{%- comment -%}
-  FAQ Accordion section
-{%- endcomment -%}
+{%- liquid
+  # @description FAQ accordion section with expandable questions and answers
+  # Supports dual content management: blocks (dynamic) or settings (fixed fields)
+  # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
+  # @settings heading {String} - Section heading
+  # @settings default_open {Boolean} - Open first item by default
+  # @blocks faq_item - Individual FAQ with question and answer
+  # @example
+  #   Use blocks mode for dynamic FAQs, settings mode for fixed 10-item layout
+-%}
 
-<section class="faq-section">
+<section class="faq-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="faq-content page-width">
-    <h2 class="faq-title">frequently asked questions</h2>
+    {%- if section.settings.heading != blank -%}
+      <h2 class="faq-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
     
     <div class="faq-list">
-      <details class="faq-item">
-        <summary class="faq-question">
-          <span>What does MycoMatcha taste like?</span>
-          <span class="faq-icon">+</span>
-        </summary>
-        <div class="faq-answer">
-          <p>MycoMatcha has a smooth, earthy taste with subtle umami notes from the ceremonial-grade matcha, complemented by the natural flavors of the adaptogenic mushrooms.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary class="faq-question">
-          <span>How much caffeine is in MycoMatcha?</span>
-          <span class="faq-icon">+</span>
-        </summary>
-        <div class="faq-answer">
-          <p>MycoMatcha contains 25-35mg of caffeine per serving, which is less than a cup of coffee but provides sustained energy without the crash.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary class="faq-question">
-          <span>How soon will I feel the benefits?</span>
-          <span class="faq-icon">+</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Many users report feeling increased energy and focus within 30-60 minutes of consumption. The adaptogenic benefits may become more noticeable with consistent daily use over 1-2 weeks.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary class="faq-question">
-          <span>Is it safe to drink everyday?</span>
-          <span class="faq-icon">+</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Yes, MycoMatcha is safe for daily consumption. The ingredients are all-natural and have been used safely in traditional medicine for thousands of years.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary class="faq-question">
-          <span>What benefits do the mushrooms have?</span>
-          <span class="faq-icon">+</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Lion's Mane supports cognitive function and memory. Reishi helps manage stress and supports immune function. Cordyceps enhances energy and endurance. Turkey Tail supports immune health.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary class="faq-question">
-          <span>How do I prepare MycoMatcha?</span>
-          <span class="faq-icon">+</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Mix one serving (1 scoop) with 8-12oz of hot water (175°F). Whisk or shake until fully dissolved. You can also add it to smoothies, lattes, or your favorite beverages.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary class="faq-question">
-          <span>Is it vegan, gluten-free, and made with clean ingredients?</span>
-          <span class="faq-icon">+</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Yes! MycoMatcha is 100% vegan, gluten-free, and made with only organic, clean ingredients. No artificial flavors, colors, or preservatives.</p>
-        </div>
-      </details>
+      {%- if section.settings.content_mode == 'blocks' -%}
+        {%- for block in section.blocks -%}
+          <details class="faq-item" {% if section.settings.default_open and forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
+            <summary class="faq-question" style="{% if block.settings.question_color != blank %}color: {{ block.settings.question_color }};{% endif %}">
+              <span>{{ block.settings.question | escape }}</span>
+              <span class="faq-icon" style="{% if block.settings.icon_color != blank %}color: {{ block.settings.icon_color }};{% endif %}">{{ section.settings.icon_text }}</span>
+            </summary>
+            <div class="faq-answer" style="{% if block.settings.answer_color != blank %}color: {{ block.settings.answer_color }};{% endif %}">
+              <p>{{ block.settings.answer }}</p>
+            </div>
+          </details>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
+        {%- for i in (1..10) -%}
+          {%- assign question_key = 'faq_' | append: i | append: '_question' -%}
+          {%- assign answer_key = 'faq_' | append: i | append: '_answer' -%}
+          {%- assign question = section.settings[question_key] -%}
+          {%- assign answer = section.settings[answer_key] -%}
+          {%- if question != blank or answer != blank -%}
+            <details class="faq-item" {% if section.settings.default_open and forloop.first %}open{% endif %}>
+              <summary class="faq-question">
+                <span>{{ question | escape }}</span>
+                <span class="faq-icon">{{ section.settings.icon_text }}</span>
+              </summary>
+              <div class="faq-answer">
+                <p>{{ answer }}</p>
+              </div>
+            </details>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
     </div>
   </div>
 </section>
 
+<style>
+  /* FAQ Section Responsive Styles */
+  .faq-content {
+    max-width: 632px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 0);
+  }
+  
+  .faq-question {
+    min-height: 44px;
+    font-size: clamp(16px, 2vw, 19.719px);
+    padding: clamp(10px, 1.2vw, 11.99px);
+  }
+  
+  .faq-answer {
+    font-size: clamp(14px, 1.6vw, 16px);
+    padding: clamp(10px, 1.2vw, 11.99px);
+  }
+  
+  .faq-icon {
+    font-size: clamp(20px, 2.4vw, 24px);
+    min-width: 24px;
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Mobile adjustments */
+  @media screen and (max-width: 767px) {
+    .faq-content {
+      max-width: 100%;
+    }
+  }
+</style>
+
 {% schema %}
 {
   "name": "FAQ Section",
-  "settings": []
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Management"
+    },
+    {
+      "type": "select",
+      "id": "content_mode",
+      "label": "Content Management",
+      "options": [
+        { "value": "blocks", "label": "Use Blocks (Dynamic)" },
+        { "value": "settings", "label": "Use Settings (Fixed)" }
+      ],
+      "default": "blocks"
+    },
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "frequently asked questions"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "default_open",
+      "label": "Open First Item by Default",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "icon_text",
+      "label": "Icon Text",
+      "default": "+"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Padding (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "Fixed FAQs (Settings Mode)"
+    },
+    {
+      "type": "text",
+      "id": "faq_1_question",
+      "label": "FAQ 1 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_1_answer",
+      "label": "FAQ 1 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_2_question",
+      "label": "FAQ 2 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_2_answer",
+      "label": "FAQ 2 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_3_question",
+      "label": "FAQ 3 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_3_answer",
+      "label": "FAQ 3 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_4_question",
+      "label": "FAQ 4 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_4_answer",
+      "label": "FAQ 4 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_5_question",
+      "label": "FAQ 5 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_5_answer",
+      "label": "FAQ 5 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_6_question",
+      "label": "FAQ 6 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_6_answer",
+      "label": "FAQ 6 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_7_question",
+      "label": "FAQ 7 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_7_answer",
+      "label": "FAQ 7 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_8_question",
+      "label": "FAQ 8 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_8_answer",
+      "label": "FAQ 8 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_9_question",
+      "label": "FAQ 9 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_9_answer",
+      "label": "FAQ 9 - Answer"
+    },
+    {
+      "type": "text",
+      "id": "faq_10_question",
+      "label": "FAQ 10 - Question"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_10_answer",
+      "label": "FAQ 10 - Answer"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Question text here?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Answer text here."
+        },
+        {
+          "type": "color",
+          "id": "question_color",
+          "label": "Question Color"
+        },
+        {
+          "type": "color",
+          "id": "answer_color",
+          "label": "Answer Color"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon Color"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Section",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What does MycoMatcha taste like?",
+            "answer": "MycoMatcha has a smooth, earthy taste with subtle umami notes from the ceremonial-grade matcha, complemented by the natural flavors of the adaptogenic mushrooms."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How much caffeine is in MycoMatcha?",
+            "answer": "MycoMatcha contains 25-35mg of caffeine per serving, which is less than a cup of coffee but provides sustained energy without the crash."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How soon will I feel the benefits?",
+            "answer": "Many users report feeling increased energy and focus within 30-60 minutes of consumption. The adaptogenic benefits may become more noticeable with consistent daily use over 1-2 weeks."
+          }
+        }
+      ]
+    }
+  ],
+  "templates": ["index", "page", "product", "collection"]
 }
 {% endschema %}

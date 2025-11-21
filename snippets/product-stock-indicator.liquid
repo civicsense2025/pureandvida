@@ -1,0 +1,64 @@
+{%- liquid
+  # @description Renders stock status indicator with low stock alerts
+  # @param product {Product} - The product object
+  # @param variant {Variant} - The variant object to check stock for
+  # @param block {Block} - The block object for settings
+  # @example
+  #   {% render 'product-stock-indicator', product: product, variant: product.selected_or_first_available_variant, block: block %}
+-%}
+
+{%- liquid
+  assign low_stock_threshold = block.settings.low_stock_threshold | default: 10
+  assign inventory_quantity = variant.inventory_quantity
+  assign inventory_policy = variant.inventory_policy
+  assign inventory_management = variant.inventory_management
+-%}
+
+{%- if inventory_management != null and inventory_management != '' -%}
+  <div class="product-stock-indicator">
+    {%- if variant.available -%}
+      {%- if inventory_quantity > 0 -%}
+        {%- if inventory_quantity <= low_stock_threshold -%}
+          <div class="stock-indicator stock-indicator--low">
+            <span class="stock-indicator__icon">⚠️</span>
+            <span class="stock-indicator__text">
+              {{ 'products.product.stock.low_stock' | t: count: inventory_quantity | default: 'Only {{ count }} left in stock' }}
+            </span>
+          </div>
+        {%- else -%}
+          <div class="stock-indicator stock-indicator--in-stock">
+            <span class="stock-indicator__icon">✓</span>
+            <span class="stock-indicator__text">
+              {{ 'products.product.stock.in_stock' | t | default: 'In Stock' }}
+              {%- if block.settings.show_stock_count -%}
+                ({{ inventory_quantity }})
+              {%- endif -%}
+            </span>
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="stock-indicator stock-indicator--out-of-stock">
+          <span class="stock-indicator__icon">✗</span>
+          <span class="stock-indicator__text">
+            {{ 'products.product.stock.out_of_stock' | t | default: 'Out of Stock' }}
+          </span>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="stock-indicator stock-indicator--unavailable">
+        <span class="stock-indicator__text">
+          {{ 'products.product.stock.unavailable' | t | default: 'Unavailable' }}
+        </span>
+      </div>
+    {%- endif -%}
+  </div>
+{%- elsif inventory_policy == 'continue' -%}
+  <div class="product-stock-indicator">
+    <div class="stock-indicator stock-indicator--available">
+      <span class="stock-indicator__text">
+        {{ 'products.product.stock.available' | t | default: 'Available' }}
+      </span>
+    </div>
+  </div>
+{%- endif -%}
+

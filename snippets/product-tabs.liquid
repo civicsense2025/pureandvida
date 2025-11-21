@@ -1,0 +1,185 @@
+{%- liquid
+  # @description Renders tabbed product information with lazy loading support
+  # @param product {Product} - The product object
+  # @param block {Block} - The block object for settings
+  # @example
+  #   {% render 'product-tabs', product: product, block: block %}
+-%}
+
+{%- liquid
+  assign tabs = ''
+  if block.settings.tab_description
+    assign tabs = tabs | append: 'description,'
+  endif
+  if block.settings.tab_specifications and product.metafields.custom.specifications != blank
+    assign tabs = tabs | append: 'specifications,'
+  endif
+  if block.settings.tab_ingredients and product.metafields.custom.ingredients != blank
+    assign tabs = tabs | append: 'ingredients,'
+  endif
+  if block.settings.tab_benefits and product.metafields.custom.benefits != blank
+    assign tabs = tabs | append: 'benefits,'
+  endif
+  if block.settings.tab_reviews
+    assign tabs = tabs | append: 'reviews,'
+  endif
+  if block.settings.tab_faq and product.metafields.custom.faq != blank
+    assign tabs = tabs | append: 'faq,'
+  endif
+  assign tabs_array = tabs | split: ','
+-%}
+
+{%- if tabs_array.size > 0 -%}
+  <div class="product-tabs" data-product-tabs role="tablist" aria-label="{{ 'products.product.product_information_tabs' | t | default: 'Product Information' }}">
+    <div class="product-tabs__header" role="tablist">
+      {%- if block.settings.tab_description -%}
+        <button 
+          type="button" 
+          class="product-tabs__tab{% if forloop.first %} product-tabs__tab--active{% endif %}" 
+          role="tab" 
+          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          data-tab="description"
+        >
+          {{ 'products.product.tabs.description' | t | default: 'Description' }}
+        </button>
+      {%- endif -%}
+      {%- if block.settings.tab_specifications and product.metafields.custom.specifications != blank -%}
+        <button 
+          type="button" 
+          class="product-tabs__tab" 
+          role="tab" 
+          aria-selected="false"
+          data-tab="specifications"
+        >
+          {{ 'products.product.tabs.specifications' | t | default: 'Specifications' }}
+        </button>
+      {%- endif -%}
+      {%- if block.settings.tab_ingredients and product.metafields.custom.ingredients != blank -%}
+        <button 
+          type="button" 
+          class="product-tabs__tab" 
+          role="tab" 
+          aria-selected="false"
+          data-tab="ingredients"
+        >
+          {{ 'products.product.tabs.ingredients' | t | default: 'Ingredients' }}
+        </button>
+      {%- endif -%}
+      {%- if block.settings.tab_benefits and product.metafields.custom.benefits != blank -%}
+        <button 
+          type="button" 
+          class="product-tabs__tab" 
+          role="tab" 
+          aria-selected="false"
+          data-tab="benefits"
+        >
+          {{ 'products.product.tabs.benefits' | t | default: 'Benefits' }}
+        </button>
+      {%- endif -%}
+      {%- if block.settings.tab_reviews -%}
+        <button 
+          type="button" 
+          class="product-tabs__tab" 
+          role="tab" 
+          aria-selected="false"
+          data-tab="reviews"
+        >
+          {{ 'products.product.tabs.reviews' | t | default: 'Reviews' }}
+        </button>
+      {%- endif -%}
+      {%- if block.settings.tab_faq and product.metafields.custom.faq != blank -%}
+        <button 
+          type="button" 
+          class="product-tabs__tab" 
+          role="tab" 
+          aria-selected="false"
+          data-tab="faq"
+        >
+          {{ 'products.product.tabs.faq' | t | default: 'FAQ' }}
+        </button>
+      {%- endif -%}
+    </div>
+
+    <div class="product-tabs__content">
+      {%- if block.settings.tab_description -%}
+        <div 
+          class="product-tabs__panel{% if forloop.first %} product-tabs__panel--active{% endif %}" 
+          role="tabpanel" 
+          data-tab-panel="description"
+          {% unless forloop.first %}hidden{% endunless %}
+        >
+          <div class="rte">
+            {{ product.description }}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.settings.tab_specifications and product.metafields.custom.specifications != blank -%}
+        <div 
+          class="product-tabs__panel" 
+          role="tabpanel" 
+          data-tab-panel="specifications"
+          hidden
+          data-lazy-load
+        >
+          <div class="rte">
+            {{ product.metafields.custom.specifications }}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.settings.tab_ingredients and product.metafields.custom.ingredients != blank -%}
+        <div 
+          class="product-tabs__panel" 
+          role="tabpanel" 
+          data-tab-panel="ingredients"
+          hidden
+          data-lazy-load
+        >
+          <div class="rte">
+            {{ product.metafields.custom.ingredients }}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.settings.tab_benefits and product.metafields.custom.benefits != blank -%}
+        <div 
+          class="product-tabs__panel" 
+          role="tabpanel" 
+          data-tab-panel="benefits"
+          hidden
+          data-lazy-load
+        >
+          <div class="rte">
+            {{ product.metafields.custom.benefits }}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.settings.tab_reviews -%}
+        <div 
+          class="product-tabs__panel" 
+          role="tabpanel" 
+          data-tab-panel="reviews"
+          hidden
+          data-lazy-load
+        >
+          <div class="product-reviews">
+            {%- comment -%} Reviews integration placeholder - integrate with review app {%- endcomment -%}
+            <p>{{ 'products.product.reviews_coming_soon' | t | default: 'Reviews coming soon' }}</p>
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.settings.tab_faq and product.metafields.custom.faq != blank -%}
+        <div 
+          class="product-tabs__panel" 
+          role="tabpanel" 
+          data-tab-panel="faq"
+          hidden
+          data-lazy-load
+        >
+          <div class="rte">
+            {{ product.metafields.custom.faq }}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+

@@ -10,19 +10,55 @@
     },
     "benefits": {
       "type": "benefits",
-      "settings": {}
+      "settings": {
+        "content_mode": "blocks"
+      },
+      "blocks": {
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "title": "Natural energy",
+            "description": "+ Energize your body and mind.\nNo jitters, just flow."
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Elevated mood",
+            "description": "+ Brings a gentle boost to your mood\nand mindset."
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Focused mind",
+            "description": "+ Keeps distractions low and\nproductivity high."
+          }
+        }
+      },
+      "block_order": [
+        "benefit_1",
+        "benefit_2",
+        "benefit_3"
+      ]
     },
     "ingredients": {
       "type": "ingredients",
-      "settings": {}
+      "settings": {
+        "content_mode": "blocks"
+      }
     },
     "testimonials": {
       "type": "testimonials",
-      "settings": {}
+      "settings": {
+        "content_mode": "blocks"
+      }
     },
     "faq": {
       "type": "faq",
-      "settings": {}
+      "settings": {
+        "content_mode": "blocks"
+      }
     },
     "footer": {
       "type": "footer",

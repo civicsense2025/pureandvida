@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,viewport-fit=cover">
     <meta name="theme-color" content="{{ settings.color_primary }}">
     <link rel="canonical" href="{{ canonical_url }}">
 
@@ -26,9 +26,31 @@
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
 
+    {%- comment -%} Enhanced Meta Tags {%- endcomment -%}
     {% render 'meta-tags' %}
+    {% render 'seo-meta-advanced' %}
+
+    {%- comment -%} Site Verification Codes {%- endcomment -%}
+    {%- if settings.seo_google_verification != blank -%}
+      <meta name="google-site-verification" content="{{ settings.seo_google_verification }}">
+    {%- endif -%}
+    {%- if settings.seo_bing_verification != blank -%}
+      <meta name="msvalidate.01" content="{{ settings.seo_bing_verification }}">
+    {%- endif -%}
+    {%- if settings.seo_pinterest_verification != blank -%}
+      <meta name="p:domain_verify" content="{{ settings.seo_pinterest_verification }}">
+    {%- endif -%}
+
+    {%- comment -%} Structured Data {%- endcomment -%}
+    {%- if settings.seo_enable_organization_schema != false -%}
+      {% render 'structured-data', include_organization: true, include_website: settings.seo_enable_website_schema != false, include_breadcrumbs: settings.seo_enable_breadcrumbs != false %}
+    {%- else -%}
+      {% render 'structured-data', include_organization: false, include_website: settings.seo_enable_website_schema != false, include_breadcrumbs: settings.seo_enable_breadcrumbs != false %}
+    {%- endif -%}
 
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'product-gallery.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'product-tabs.js' | asset_url }}" defer="defer"></script>
     {{ content_for_header }}
 
     {%- liquid
@@ -45,19 +67,27 @@
       {{ settings.font_heading | font_face: font_display: 'swap' }}
 
       :root {
+        /* Typography */
         --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
         --font-body-style: {{ settings.font_body.style }};
         --font-body-weight: {{ settings.font_body.weight }};
         --font-body-weight-bold: {{ settings.font_body.weight | plus: 300 | at_most: 1000 }};
+        --font-body-size: {{ settings.font_size_body | default: 16 }}px;
+        --font-body-line-height: 1.6;
 
         --font-heading-family: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
         --font-heading-style: {{ settings.font_heading.style }};
         --font-heading-weight: {{ settings.font_heading.weight }};
+        --font-heading-size: {{ settings.font_size_heading | default: 36 }}px;
+        --font-heading-line-height: 1.2;
 
+        /* Colors */
         --color-primary: {{ settings.color_primary }};
         --color-secondary: {{ settings.color_secondary }};
+        --color-accent: {{ settings.color_accent }};
         --color-background: {{ settings.color_background }};
         --color-text: {{ settings.color_text }};
+        --color-text-secondary: {{ settings.color_text_secondary }};
         --color-base-text: {{ settings.color_text }};
         --color-base-background-1: {{ settings.color_background }};
         --color-base-solid-button-labels: {{ settings.color_background }};
@@ -65,7 +95,67 @@
         --color-base-accent-1: {{ settings.color_primary }};
         --color-base-accent-2: {{ settings.color_secondary }};
 
+        /* Product-specific colors */
+        --color-product-badge-sale: {{ settings.color_product_badge_sale | default: '#DC2626' }};
+        --color-product-badge-new: {{ settings.color_product_badge_new | default: '#059669' }};
+        --color-product-badge-featured: {{ settings.color_product_badge_featured | default: '#3B82F6' }};
+        --color-product-price: {{ settings.color_product_price | default: settings.color_text }};
+        --color-product-price-sale: {{ settings.color_product_price_sale | default: '#DC2626' }};
+        --color-product-button: {{ settings.color_product_button | default: settings.color_primary }};
+        --color-product-button-text: {{ settings.color_product_button_text | default: settings.color_background }};
+
+        /* Spacing */
+        --spacing-xs: {{ settings.spacing_xs | default: 4 }}px;
+        --spacing-sm: {{ settings.spacing_sm | default: 8 }}px;
+        --spacing-md: {{ settings.spacing_md | default: 16 }}px;
+        --spacing-lg: {{ settings.spacing_lg | default: 24 }}px;
+        --spacing-xl: {{ settings.spacing_xl | default: 32 }}px;
+        --spacing-2xl: {{ settings.spacing_2xl | default: 48 }}px;
+        --spacing-3xl: {{ settings.spacing_3xl | default: 64 }}px;
+        --section-spacing: {{ settings.section_spacing | default: 40 }}px;
+
+        /* Border Radius */
+        --radius-xs: {{ settings.radius_xs | default: 2 }}px;
+        --radius-sm: {{ settings.radius_sm | default: 4 }}px;
+        --radius-md: {{ settings.radius_md | default: 8 }}px;
+        --radius-lg: {{ settings.radius_lg | default: 12 }}px;
+        --radius-xl: {{ settings.radius_xl | default: 16 }}px;
+        --radius-full: 9999px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+        /* Transitions & Animations */
+        --transition-fast: {{ settings.transition_fast | default: 150 }}ms ease;
+        --transition-base: {{ settings.transition_base | default: 250 }}ms ease;
+        --transition-slow: {{ settings.transition_slow | default: 350 }}ms ease;
+        --animation-duration: {{ settings.animation_duration | default: 300 }}ms;
+
+        /* Layout */
         --page-width: {{ settings.container_width }}px;
+        --page-width-padding: {{ settings.page_width_padding | default: 20 }}px;
+
+        /* Responsive Breakpoints */
+        --breakpoint-mobile-portrait: 480px;
+        --breakpoint-mobile-landscape: 768px;
+        --breakpoint-tablet-portrait: 768px;
+        --breakpoint-tablet-landscape: 1024px;
+        --breakpoint-desktop-small: 1200px;
+        --breakpoint-desktop-medium: 1440px;
+        --breakpoint-desktop-large: 1920px;
+        
+        /* Legacy breakpoints for backward compatibility */
+        --breakpoint-mobile: 768px;
+        --breakpoint-tablet: 1024px;
+        --breakpoint-desktop: 1440px;
+
+        /* Product-specific spacing */
+        --product-gallery-gap: {{ settings.product_gallery_gap | default: 16 }}px;
+        --product-info-gap: {{ settings.product_info_gap | default: 24 }}px;
+        --product-badge-size: {{ settings.product_badge_size | default: 12 }}px;
       }
 
       *,

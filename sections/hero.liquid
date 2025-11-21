@@ -1,21 +1,41 @@
-{%- comment -%}
-  Hero section - MycoMatcha product showcase
-{%- endcomment -%}
+{%- liquid
+  # @description Hero section for homepage with product showcase, customizable text, pricing, and CTAs
+  # Supports dual product images, taglines, pricing display, discount badges, and multiple layout options
+  # @settings title {String} - Main hero title
+  # @settings subtitle {String} - Hero subtitle text
+  # @settings product_image_1 {Image} - Primary product image
+  # @settings product_image_2 {Image} - Secondary product image
+  # @settings show_pricing {Boolean} - Display product pricing
+  # @settings background_image {Image} - Background image
+  # @settings background_color {Color} - Background color
+  # @example
+  #   Add to index.json template for homepage hero section
+-%}
 
-<section class="hero-section">
-  <div class="hero-gradient"></div>
+<section class="hero-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.background_image != blank %}background-image: url('{{ section.settings.background_image | image_url: width: 1920 }}'); background-size: cover; background-position: center;{% endif %}">
+  {%- if section.settings.show_gradient -%}
+    <div class="hero-gradient"></div>
+  {%- endif -%}
   
-  <div class="hero-content page-width">
+  <div class="hero-content page-width" style="text-align: {{ section.settings.text_alignment }};">
     <div class="hero-title-section">
-      <h1 class="hero-main-title">
-        <span class="hero-title-line1">MYCOMATCHA</span>
-        <span class="hero-trademark">™</span>
-      </h1>
-      <div class="hero-divider">+++++++++</div>
-      <p class="hero-subtitle">The magic of matcha meets the wisdom of mushrooms</p>
+      {%- if section.settings.title != blank -%}
+        <h1 class="hero-main-title" style="{% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}">
+          <span class="hero-title-line1">{{ section.settings.title | escape }}</span>
+          {%- if section.settings.show_trademark -%}
+            <span class="hero-trademark">™</span>
+          {%- endif -%}
+        </h1>
+      {%- endif -%}
+      {%- if section.settings.show_divider -%}
+        <div class="hero-divider">{{ section.settings.divider_text }}</div>
+      {%- endif -%}
+      {%- if section.settings.subtitle != blank -%}
+        <p class="hero-subtitle" style="{% if section.settings.subtitle_color != blank %}color: {{ section.settings.subtitle_color }};{% endif %}">{{ section.settings.subtitle | escape }}</p>
+      {%- endif -%}
     </div>
 
-    <div class="hero-product-section">
+    <div class="hero-product-section" style="flex-direction: {{ section.settings.image_position }};">
       <div class="hero-product-images">
         {%- if section.settings.product_image_1 != blank -%}
           <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
@@ -32,54 +52,90 @@
 
       <div class="hero-product-info">
         <div class="hero-tagline">
-          <p class="hero-tagline-line1">Coffee borrows energy.</p>
-          <p class="hero-tagline-line2">MycoMatcha creates it.</p>
+          {%- if section.settings.tagline_line_1 != blank -%}
+            <p class="hero-tagline-line1" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_1 | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.tagline_line_2 != blank -%}
+            <p class="hero-tagline-line2" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_2 | escape }}</p>
+          {%- endif -%}
         </div>
 
-        <div class="hero-pricing">
-          <div class="hero-price-compare">
-            <span class="hero-price-old">$45</span>
+        {%- if section.settings.show_pricing -%}
+          <div class="hero-pricing">
+            {%- if section.settings.show_compare_price -%}
+              <div class="hero-price-compare">
+                <span class="hero-price-old" style="{% if section.settings.compare_price_color != blank %}color: {{ section.settings.compare_price_color }};{% endif %}">
+                  {%- if section.settings.custom_compare_price != blank -%}
+                    {{ section.settings.custom_compare_price }}
+                  {%- elsif section.settings.product != blank -%}
+                    {{ section.settings.product.selected_or_first_available_variant.compare_at_price | money }}
+                  {%- else -%}
+                    $45
+                  {%- endif -%}
+                </span>
+              </div>
+            {%- endif -%}
+            <div class="hero-price-current">
+              <span class="hero-price-currency" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">$</span>
+              <span class="hero-price-amount" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">
+                {%- if section.settings.custom_price != blank -%}
+                  {{ section.settings.custom_price }}
+                {%- elsif section.settings.product != blank -%}
+                  {{ section.settings.product.selected_or_first_available_variant.price | money | remove: '$' }}
+                {%- else -%}
+                  34.99
+                {%- endif -%}
+              </span>
+            </div>
           </div>
-          <div class="hero-price-current">
-            <span class="hero-price-currency">$</span>
-            <span class="hero-price-amount">34.99</span>
-          </div>
-        </div>
+        {%- endif -%}
 
-        <div class="hero-description">
-          <p>Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently.</p>
-          <p>Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience.</p>
-        </div>
+        {%- if section.settings.description_paragraph_1 != blank or section.settings.description_paragraph_2 != blank -%}
+          <div class="hero-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}">
+            {%- if section.settings.description_paragraph_1 != blank -%}
+              <p>{{ section.settings.description_paragraph_1 }}</p>
+            {%- endif -%}
+            {%- if section.settings.description_paragraph_2 != blank -%}
+              <p>{{ section.settings.description_paragraph_2 }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
 
         <div class="hero-cta-section">
-          <div class="hero-quantity-selector">
-            <button type="button" class="quantity-btn" data-action="decrease">-</button>
-            <input type="number" class="quantity-input" value="1" min="1" id="hero-quantity">
-            <button type="button" class="quantity-btn" data-action="increase">+</button>
-          </div>
+          {%- if section.settings.show_quantity_selector -%}
+            <div class="hero-quantity-selector">
+              <button type="button" class="quantity-btn" data-action="decrease">-</button>
+              <input type="number" class="quantity-input" value="{{ section.settings.default_quantity }}" min="{{ section.settings.min_quantity }}" max="{{ section.settings.max_quantity }}" id="hero-quantity">
+              <button type="button" class="quantity-btn" data-action="increase">+</button>
+            </div>
+          {%- endif -%}
           {%- if section.settings.product != blank -%}
             {%- assign featured_product = section.settings.product -%}
             <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="hero-add-to-cart-form">
               <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
-              <input type="hidden" name="quantity" value="1" id="cart-quantity">
-              <button type="submit" class="hero-add-to-cart-btn">
-                Add to cart
+              <input type="hidden" name="quantity" value="{{ section.settings.default_quantity }}" id="cart-quantity">
+              <button type="submit" class="hero-add-to-cart-btn" style="{% if section.settings.button_color != blank %}background-color: {{ section.settings.button_color }};{% endif %}{% if section.settings.button_text_color != blank %}color: {{ section.settings.button_text_color }};{% endif %}">
+                {{ section.settings.button_text | default: "Add to cart" }}
               </button>
             </form>
           {%- else -%}
-            <a href="{{ routes.collections_url }}" class="hero-add-to-cart-btn" style="text-decoration: none; display: inline-block;">
-              Add to cart
+            <a href="{{ section.settings.button_link | default: routes.collections_url }}" class="hero-add-to-cart-btn" style="{% if section.settings.button_color != blank %}background-color: {{ section.settings.button_color }};{% endif %}{% if section.settings.button_text_color != blank %}color: {{ section.settings.button_text_color }};{% endif %} text-decoration: none; display: inline-block;">
+              {{ section.settings.button_text | default: "Add to cart" }}
             </a>
           {%- endif -%}
         </div>
 
-        <div class="hero-payment-methods">
-          {% render 'payment-icons' %}
-        </div>
+        {%- if section.settings.show_payment_methods -%}
+          <div class="hero-payment-methods">
+            {% render 'payment-icons' %}
+          </div>
+        {%- endif -%}
 
-        <div class="hero-discount-badge">
-          Get 33% off today!
-        </div>
+        {%- if section.settings.show_discount_badge and section.settings.discount_badge_text != blank -%}
+          <div class="hero-discount-badge" style="{% if section.settings.badge_background_color != blank %}background-color: {{ section.settings.badge_background_color }};{% endif %}{% if section.settings.badge_text_color != blank %}color: {{ section.settings.badge_text_color }};{% endif %}">
+            {{ section.settings.discount_badge_text | escape }}
+          </div>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -91,32 +147,48 @@
     const cartQuantityInput = document.getElementById('cart-quantity');
     const quantityBtns = document.querySelectorAll('.quantity-btn');
 
-    quantityBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const action = this.dataset.action;
-        let currentValue = parseInt(quantityInput.value) || 1;
-        
-        if (action === 'increase') {
-          currentValue++;
-        } else if (action === 'decrease' && currentValue > 1) {
-          currentValue--;
-        }
-        
-        quantityInput.value = currentValue;
-        cartQuantityInput.value = currentValue;
+    if (quantityInput && cartQuantityInput) {
+      quantityBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const action = this.dataset.action;
+          const min = parseInt(quantityInput.min) || 1;
+          const max = parseInt(quantityInput.max) || 999;
+          let currentValue = parseInt(quantityInput.value) || min;
+          
+          if (action === 'increase' && currentValue < max) {
+            currentValue++;
+          } else if (action === 'decrease' && currentValue > min) {
+            currentValue--;
+          }
+          
+          quantityInput.value = currentValue;
+          if (cartQuantityInput) {
+            cartQuantityInput.value = currentValue;
+          }
+        });
       });
-    });
+    }
   });
 </script>
 
 {% schema %}
 {
   "name": "Hero Section",
+  "tag": "section",
+  "class": "section",
   "settings": [
+    {
+      "type": "header",
+      "content": "Product"
+    },
     {
       "type": "product",
       "id": "product",
       "label": "Featured Product"
+    },
+    {
+      "type": "header",
+      "content": "Images"
     },
     {
       "type": "image_picker",
@@ -127,7 +199,265 @@
       "type": "image_picker",
       "id": "product_image_2",
       "label": "Product Image 2 (Pouch)"
+    },
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "MYCOMATCHA"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trademark",
+      "label": "Show Trademark (™)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show Divider",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "divider_text",
+      "label": "Divider Text",
+      "default": "+++++++++"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "The magic of matcha meets the wisdom of mushrooms"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color"
+    },
+    {
+      "type": "text",
+      "id": "tagline_line_1",
+      "label": "Tagline Line 1",
+      "default": "Coffee borrows energy."
+    },
+    {
+      "type": "text",
+      "id": "tagline_line_2",
+      "label": "Tagline Line 2",
+      "default": "MycoMatcha creates it."
+    },
+    {
+      "type": "color",
+      "id": "tagline_color",
+      "label": "Tagline Color"
+    },
+    {
+      "type": "textarea",
+      "id": "description_paragraph_1",
+      "label": "Description Paragraph 1",
+      "default": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently."
+    },
+    {
+      "type": "textarea",
+      "id": "description_paragraph_2",
+      "label": "Description Paragraph 2",
+      "default": "Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience."
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "header",
+      "content": "Pricing"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pricing",
+      "label": "Show Pricing",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_price",
+      "label": "Show Compare Price",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "custom_compare_price",
+      "label": "Custom Compare Price",
+      "info": "Leave blank to use product price"
+    },
+    {
+      "type": "text",
+      "id": "custom_price",
+      "label": "Custom Price",
+      "info": "Leave blank to use product price (enter number only, e.g. 34.99)"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price Color"
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare Price Color"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Add to cart"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "info": "Only used if no product is selected"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Background Color"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Quantity Selector"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": "Show Quantity Selector",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "default_quantity",
+      "label": "Default Quantity",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "min_quantity",
+      "label": "Minimum Quantity",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "max_quantity",
+      "label": "Maximum Quantity",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Discount Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount_badge",
+      "label": "Show Discount Badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "discount_badge_text",
+      "label": "Discount Badge Text",
+      "default": "Get 33% off today!"
+    },
+    {
+      "type": "color",
+      "id": "badge_background_color",
+      "label": "Badge Background Color"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Layout & Styling"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image Position",
+      "options": [
+        { "value": "row", "label": "Left" },
+        { "value": "row-reverse", "label": "Right" }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gradient",
+      "label": "Show Gradient Overlay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_methods",
+      "label": "Show Payment Methods",
+      "default": true
     }
-  ]
+  ],
+  "presets": [
+    {
+      "name": "Hero Section"
+    }
+  ],
+  "templates": ["index", "page", "collection"]
 }
 {% endschema %}

@@ -1,117 +1,481 @@
-{%- comment -%}
-  Ingredients section - What's Inside + Why It Matters
-{%- endcomment -%}
+{%- liquid
+  # @description Ingredients section displaying product ingredients with images and descriptions
+  # Supports dual content management: blocks (dynamic) or settings (fixed fields)
+  # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
+  # @settings heading {String} - Section heading
+  # @settings show_hero_image {Boolean} - Display hero ingredients image
+  # @settings columns_desktop {Number} - Number of columns on desktop
+  # @blocks ingredient_item - Individual ingredient with image, name, and description
+  # @example
+  #   Use blocks mode for dynamic ingredients, settings mode for fixed 8-item layout
+-%}
 
-<section class="ingredients-section">
-  <div class="ingredients-gradient"></div>
+<section class="ingredients-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+  {%- if section.settings.show_gradient -%}
+    <div class="ingredients-gradient"></div>
+  {%- endif -%}
   
   <div class="ingredients-content page-width">
     <div class="ingredients-header">
-      <h2 class="ingredients-title">
-        <span class="ingredients-title-small">What's Inside + </span>
-        <span class="ingredients-title-large">Why It Matters</span>
-      </h2>
-      <p class="ingredients-description">
-        MycoMatcha pairs ceremonial-grade matcha with Lion's Mane, Reishi, Cordyceps, and Turkey Tail — four adaptogenic mushrooms that support focus, energy, and balance.
-      </p>
-    </div>
-
-    <div class="ingredients-image">
-      {%- if section.settings.ingredients_image != blank -%}
-        <img src="{{ section.settings.ingredients_image | image_url: width: 548 }}" alt="MycoMatcha Ingredients">
-      {%- else -%}
-        <img src="{{ '55839acdac0cccc8f69f297d49bbcfde60b91904.png' | asset_url }}" alt="MycoMatcha Ingredients">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="ingredients-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">
+          {%- if section.settings.heading_small != blank -%}
+            <span class="ingredients-title-small">{{ section.settings.heading_small | escape }}</span>
+          {%- endif -%}
+          <span class="ingredients-title-large">{{ section.settings.heading | escape }}</span>
+        </h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <p class="ingredients-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}">{{ section.settings.description }}</p>
       {%- endif -%}
     </div>
 
-    <div class="ingredients-grid">
-      <div class="ingredient-card">
-        {%- if section.settings.ingredient_1_image != blank -%}
-          <img src="{{ section.settings.ingredient_1_image | image_url: width: 400 }}" alt="Lion's Mane">
+    {%- if section.settings.show_hero_image -%}
+      <div class="ingredients-image">
+        {%- if section.settings.ingredients_image != blank -%}
+          <img src="{{ section.settings.ingredients_image | image_url: width: 548 }}" alt="MycoMatcha Ingredients">
         {%- else -%}
-          <img src="{{ 'a5f417e0a5a6fe47d414aa6efb17d2ab4887894e.png' | asset_url }}" alt="Lion's Mane">
+          <img src="{{ '55839acdac0cccc8f69f297d49bbcfde60b91904.png' | asset_url }}" alt="MycoMatcha Ingredients">
         {%- endif -%}
-        <h3 class="ingredient-name">Organic Lion Mane Extract</h3>
-        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
       </div>
+    {%- endif -%}
 
-      <div class="ingredient-card">
-        {%- if section.settings.ingredient_2_image != blank -%}
-          <img src="{{ section.settings.ingredient_2_image | image_url: width: 400 }}" alt="Reishi">
-        {%- else -%}
-          <img src="{{ '3caf666b6c4857e2167302690fc1dceb7c99c210.png' | asset_url }}" alt="Reishi">
-        {%- endif -%}
-        <h3 class="ingredient-name">Organic reishi extract</h3>
-        <p class="ingredient-description">The "mushroom of immortality" in traditional Chinese medicine. Adaptogen that helps the body manage stress, supports immune function, and promotes calm.</p>
-      </div>
-
-      <div class="ingredient-card">
-        {%- if section.settings.ingredient_3_image != blank -%}
-          <img src="{{ section.settings.ingredient_3_image | image_url: width: 400 }}" alt="Chaga">
-        {%- else -%}
-          <img src="{{ '8546b78bf42a8d3b60447c859cc41729a1d184f5.png' | asset_url }}" alt="Chaga">
-        {%- endif -%}
-        <h3 class="ingredient-name">Organic chaga extract</h3>
-        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
-      </div>
-
-      <div class="ingredient-card">
-        {%- if section.settings.ingredient_4_image != blank -%}
-          <img src="{{ section.settings.ingredient_4_image | image_url: width: 400 }}" alt="Cordyceps">
-        {%- else -%}
-          <img src="{{ '114c3dbc10e553c4e04ef1102ac975f43f1e3117.png' | asset_url }}" alt="Cordyceps">
-        {%- endif -%}
-        <h3 class="ingredient-name">Organic cordyceps extract</h3>
-        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
-      </div>
-
-      <div class="ingredient-card">
-        {%- if section.settings.ingredient_5_image != blank -%}
-          <img src="{{ section.settings.ingredient_5_image | image_url: width: 400 }}" alt="L-Theanine">
-        {%- else -%}
-          <img src="{{ '07a71be2c9b5fcf237dca281d8830dc65bcd52ab.png' | asset_url }}" alt="L-Theanine">
-        {%- endif -%}
-        <h3 class="ingredient-name">L-Theanine</h3>
-        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
-      </div>
+    <div class="ingredients-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
+      {%- if section.settings.content_mode == 'blocks' -%}
+        {%- for block in section.blocks -%}
+          <div class="ingredient-card" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              <img src="{{ block.settings.image | image_url: width: 400 }}" alt="{{ block.settings.name | escape }}">
+            {%- elsif block.settings.image_asset != blank -%}
+              <img src="{{ block.settings.image_asset | asset_url }}" alt="{{ block.settings.name | escape }}">
+            {%- endif -%}
+            {%- if block.settings.name != blank -%}
+              <h3 class="ingredient-name" style="{% if block.settings.name_color != blank %}color: {{ block.settings.name_color }};{% endif %}">{{ block.settings.name | escape }}</h3>
+            {%- endif -%}
+            {%- if block.settings.description != blank -%}
+              <p class="ingredient-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
+            {%- endif -%}
+            {%- if block.settings.benefit_tags != blank -%}
+              <div class="ingredient-benefits">
+                {{ block.settings.benefit_tags }}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
+        {%- for i in (1..8) -%}
+          {%- assign name_key = 'ingredient_' | append: i | append: '_name' -%}
+          {%- assign desc_key = 'ingredient_' | append: i | append: '_description' -%}
+          {%- assign image_key = 'ingredient_' | append: i | append: '_image' -%}
+          {%- assign name = section.settings[name_key] -%}
+          {%- assign desc = section.settings[desc_key] -%}
+          {%- assign image = section.settings[image_key] -%}
+          {%- if name != blank or desc != blank -%}
+            <div class="ingredient-card">
+              {%- if image != blank -%}
+                <img src="{{ image | image_url: width: 400 }}" alt="{{ name | escape }}">
+              {%- endif -%}
+              {%- if name != blank -%}
+                <h3 class="ingredient-name">{{ name | escape }}</h3>
+              {%- endif -%}
+              {%- if desc != blank -%}
+                <p class="ingredient-description">{{ desc }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
     </div>
   </div>
 </section>
 
+<style>
+  /* Ingredients Section Responsive Styles */
+  .ingredients-grid {
+    display: grid;
+    gap: clamp(20px, 4vw, {{ section.settings.item_spacing }}px);
+  }
+  
+  /* Mobile Portrait (max-width: 479px) */
+  @media screen and (max-width: 479px) {
+    .ingredients-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  
+  /* Mobile Landscape (480px - 767px) */
+  @media screen and (min-width: 480px) and (max-width: 767px) {
+    .ingredients-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+  
+  /* Tablet Portrait (768px - 1023px) */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .ingredients-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr) !important;
+    }
+  }
+  
+  /* Tablet Landscape (1024px - 1199px) */
+  @media screen and (min-width: 1024px) and (max-width: 1199px) {
+    .ingredients-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+  
+  /* Desktop (1200px+) */
+  @media screen and (min-width: 1200px) {
+    .ingredients-grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, 1fr) !important;
+    }
+  }
+</style>
+
 {% schema %}
 {
   "name": "Ingredients Section",
+  "tag": "section",
+  "class": "section",
   "settings": [
+    {
+      "type": "header",
+      "content": "Content Management"
+    },
+    {
+      "type": "select",
+      "id": "content_mode",
+      "label": "Content Management",
+      "options": [
+        { "value": "blocks", "label": "Use Blocks (Dynamic)" },
+        { "value": "settings", "label": "Use Settings (Fixed)" }
+      ],
+      "default": "blocks"
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "heading_small",
+      "label": "Heading Small Text",
+      "default": "What's Inside + "
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why It Matters"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "MycoMatcha pairs ceremonial-grade matcha with Lion's Mane, Reishi, Cordyceps, and Turkey Tail — four adaptogenic mushrooms that support focus, energy, and balance."
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "header",
+      "content": "Hero Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero_image",
+      "label": "Show Hero Image",
+      "default": true
+    },
     {
       "type": "image_picker",
       "id": "ingredients_image",
       "label": "Ingredients Hero Image"
     },
     {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop)",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (Mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Padding (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gradient",
+      "label": "Show Gradient Background",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Fixed Ingredients (Settings Mode)"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_1_name",
+      "label": "Ingredient 1 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_1_description",
+      "label": "Ingredient 1 - Description"
+    },
+    {
       "type": "image_picker",
       "id": "ingredient_1_image",
-      "label": "Lion's Mane Image"
+      "label": "Ingredient 1 - Image"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_2_name",
+      "label": "Ingredient 2 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_2_description",
+      "label": "Ingredient 2 - Description"
     },
     {
       "type": "image_picker",
       "id": "ingredient_2_image",
-      "label": "Reishi Image"
+      "label": "Ingredient 2 - Image"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_3_name",
+      "label": "Ingredient 3 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_3_description",
+      "label": "Ingredient 3 - Description"
     },
     {
       "type": "image_picker",
       "id": "ingredient_3_image",
-      "label": "Chaga Image"
+      "label": "Ingredient 3 - Image"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_4_name",
+      "label": "Ingredient 4 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_4_description",
+      "label": "Ingredient 4 - Description"
     },
     {
       "type": "image_picker",
       "id": "ingredient_4_image",
-      "label": "Cordyceps Image"
+      "label": "Ingredient 4 - Image"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_5_name",
+      "label": "Ingredient 5 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_5_description",
+      "label": "Ingredient 5 - Description"
     },
     {
       "type": "image_picker",
       "id": "ingredient_5_image",
-      "label": "L-Theanine Image"
+      "label": "Ingredient 5 - Image"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_6_name",
+      "label": "Ingredient 6 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_6_description",
+      "label": "Ingredient 6 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_6_image",
+      "label": "Ingredient 6 - Image"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_7_name",
+      "label": "Ingredient 7 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_7_description",
+      "label": "Ingredient 7 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_7_image",
+      "label": "Ingredient 7 - Image"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_8_name",
+      "label": "Ingredient 8 - Name"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_8_description",
+      "label": "Ingredient 8 - Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_8_image",
+      "label": "Ingredient 8 - Image"
     }
-  ]
+  ],
+  "blocks": [
+    {
+      "type": "ingredient",
+      "name": "Ingredient",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Ingredient Name",
+          "default": "Ingredient Name"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Ingredient description"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_asset",
+          "label": "Image Asset Filename",
+          "info": "Alternative: Enter asset filename if using uploaded asset"
+        },
+        {
+          "type": "richtext",
+          "id": "benefit_tags",
+          "label": "Benefit Tags",
+          "info": "Optional: Add benefit tags or additional info"
+        },
+        {
+          "type": "color",
+          "id": "name_color",
+          "label": "Name Color"
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Description Color"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ingredients Section",
+      "blocks": [
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Organic Lion Mane Extract",
+            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Organic reishi extract",
+            "description": "The \"mushroom of immortality\" in traditional Chinese medicine. Adaptogen that helps the body manage stress, supports immune function, and promotes calm."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Organic chaga extract",
+            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Organic cordyceps extract",
+            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "L-Theanine",
+            "description": "Known as the \"smart mushroom.\" Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production."
+          }
+        }
+      ]
+    }
+  ],
+  "templates": ["index", "page", "product", "collection"]
 }
 {% endschema %}

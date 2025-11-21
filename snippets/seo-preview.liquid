@@ -1,0 +1,132 @@
+{%- liquid
+  # @description SEO preview snippets showing how content appears in search results and social media
+  # Displays Google, Facebook, and Twitter previews
+  # @param title {String} - Preview title (optional)
+  # @param description {String} - Preview description (optional)
+  # @param url {String} - Preview URL (optional)
+  # @param image {Object} - Preview image (optional)
+  # @example
+  #   {% render 'seo-preview' %}
+-%}
+
+{%- liquid
+  assign preview_title = title
+  assign preview_description = description
+  assign preview_url = url
+  assign preview_image = image
+  
+  if preview_title == blank
+    if template.name == 'product'
+      assign preview_title = product.title | escape
+    elsif template.name == 'collection'
+      assign preview_title = collection.title | escape
+    elsif template.name == 'article'
+      assign preview_title = article.title | escape
+    elsif template.name == 'page'
+      assign preview_title = page.title | escape
+    else
+      assign preview_title = page_title | default: shop.name
+    endif
+  endif
+  
+  if preview_description == blank
+    if template.name == 'product' and product.description != blank
+      assign preview_description = product.description | strip_html | truncate: 160
+    elsif template.name == 'collection' and collection.description != blank
+      assign preview_description = collection.description | strip_html | truncate: 160
+    elsif template.name == 'article' and article.excerpt != blank
+      assign preview_description = article.excerpt | strip_html | truncate: 160
+    elsif template.name == 'page' and page.content != blank
+      assign preview_description = page.content | strip_html | truncate: 160
+    else
+      assign preview_description = page_description
+    endif
+  endif
+  
+  if preview_url == blank
+    assign preview_url = canonical_url
+  endif
+  
+  if preview_image == blank
+    if template.name == 'product' and product.featured_media
+      assign preview_image = product.featured_media
+    elsif template.name == 'article' and article.image
+      assign preview_image = article.image
+    elsif template.name == 'collection' and collection.featured_image
+      assign preview_image = collection.featured_image
+    elsif template.name == 'page' and page.featured_image
+      assign preview_image = page.featured_image
+    elsif settings.seo_og_image != blank
+      assign preview_image = settings.seo_og_image
+    endif
+  endif
+-%}
+
+{%- if settings.seo_enable_preview -%}
+<div class="seo-preview" style="max-width: 600px; margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+  <h3 style="margin-top: 0;">SEO Preview</h3>
+  
+  {%- comment -%} Google Search Preview {%- endcomment -%}
+  <div style="margin-bottom: 30px;">
+    <h4 style="margin-bottom: 10px; font-size: 14px; color: #666;">Google Search Result</h4>
+    <div style="border: 1px solid #e0e0e0; padding: 15px; background: white; border-radius: 4px;">
+      <div style="color: #1a0dab; font-size: 20px; line-height: 1.3; margin-bottom: 3px; cursor: pointer;">
+        {{ preview_title | truncate: 60 }}
+      </div>
+      <div style="color: #006621; font-size: 14px; line-height: 1.5;">
+        {{ preview_url | replace: 'https://', '' | replace: 'http://', '' | truncate: 60 }}
+      </div>
+      <div style="color: #545454; font-size: 14px; line-height: 1.57; margin-top: 3px;">
+        {{ preview_description | default: 'No description available' | truncate: 160 }}
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Facebook Preview {%- endcomment -%}
+  <div style="margin-bottom: 30px;">
+    <h4 style="margin-bottom: 10px; font-size: 14px; color: #666;">Facebook Share Preview</h4>
+    <div style="border: 1px solid #dadde1; border-radius: 8px; overflow: hidden; background: white; max-width: 500px;">
+      {%- if preview_image -%}
+      <div style="width: 100%; height: 262px; background: #f2f3f5; overflow: hidden;">
+        <img src="{{ preview_image | image_url: width: 500 }}" alt="{{ preview_title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      {%- endif -%}
+      <div style="padding: 10px 12px;">
+        <div style="color: #606770; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+          {{ shop.url | replace: 'https://', '' | replace: 'http://', '' | truncate: 30 }}
+        </div>
+        <div style="color: #1d2129; font-size: 16px; font-weight: 600; line-height: 1.38; margin-bottom: 3px;">
+          {{ preview_title | truncate: 100 }}
+        </div>
+        <div style="color: #606770; font-size: 14px; line-height: 1.33;">
+          {{ preview_description | default: 'No description available' | truncate: 200 }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Twitter Preview {%- endcomment -%}
+  <div>
+    <h4 style="margin-bottom: 10px; font-size: 14px; color: #666;">Twitter Card Preview</h4>
+    <div style="border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: white; max-width: 500px;">
+      {%- if preview_image -%}
+      <div style="width: 100%; height: 262px; background: #e1e8ed; overflow: hidden;">
+        <img src="{{ preview_image | image_url: width: 500 }}" alt="{{ preview_title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      {%- endif -%}
+      <div style="padding: 12px;">
+        <div style="color: #1da1f2; font-size: 15px; font-weight: 700; line-height: 1.3125; margin-bottom: 2px;">
+          {{ preview_title | truncate: 70 }}
+        </div>
+        <div style="color: #657786; font-size: 15px; line-height: 1.3125; margin-bottom: 2px;">
+          {{ preview_description | default: 'No description available' | truncate: 200 }}
+        </div>
+        <div style="color: #657786; font-size: 13px; margin-top: 2px;">
+          {{ preview_url | replace: 'https://', '' | replace: 'http://', '' | truncate: 30 }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+

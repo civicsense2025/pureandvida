@@ -12,9 +12,16 @@
   #   Add to index.json template for homepage hero section
 %}
 
-<section class="hero-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.background_image != blank %}background-image: url('{{ section.settings.background_image | image_url: width: 1920 }}'); background-size: cover; background-position: center;{% endif %}">
+<section class="hero-section" {% if request.design_mode %}data-section-type="hero" data-section-id="{{ section.id }}"{% endif %} style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.background_image != blank %}background-image: url('{{ section.settings.background_image | image_url: width: 1920 }}'); background-size: {{ section.settings.background_size }}; background-position: {{ section.settings.background_position }};{% endif %}padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
   {%- if section.settings.show_gradient -%}
-    <div class="hero-gradient"></div>
+    <div class="hero-gradient" style="opacity: {{ section.settings.gradient_opacity }}%;"></div>
+  {%- endif -%}
+
+  {%- if request.design_mode -%}
+    <div class="editor-controls">
+      <span class="editor-label">Hero Section</span>
+      <span class="editor-layout-indicator">Layout: {{ section.settings.image_position | replace: 'row', 'Image Left' | replace: 'row-reverse', 'Image Right' }}</span>
+    </div>
   {%- endif -%}
   
   <div class="hero-content page-width" style="text-align: {{ section.settings.text_alignment }};">
@@ -175,10 +182,93 @@
   /* Hero Section Responsive Layout */
   .hero-section {
     position: relative;
-    min-height: 500px;
+    min-height: {{ section.settings.min_height }}px;
     display: flex;
-    align-items: center;
+    align-items: {{ section.settings.vertical_alignment }};
   }
+
+  {% if request.design_mode %}
+  /* Theme Editor Visual Controls */
+  .hero-section {
+    outline: 2px dashed rgba(0, 120, 255, 0.3);
+    outline-offset: -2px;
+  }
+
+  .hero-section:hover {
+    outline-color: rgba(0, 120, 255, 0.6);
+  }
+
+  .editor-controls {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .editor-label {
+    font-weight: 600;
+    color: #00d4ff;
+  }
+
+  .editor-layout-indicator {
+    opacity: 0.8;
+  }
+
+  .hero-title-section,
+  .hero-product-section,
+  .hero-product-info {
+    position: relative;
+  }
+
+  .hero-title-section::before,
+  .hero-product-info::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    border: 1px dashed rgba(0, 200, 255, 0.2);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .hero-title-section:hover::before,
+  .hero-product-info:hover::before {
+    border-color: rgba(0, 200, 255, 0.5);
+  }
+
+  /* Spacing Guides */
+  .hero-content {
+    position: relative;
+  }
+
+  .hero-content::after {
+    content: 'Section Padding: {{ section.settings.padding_top }}px / {{ section.settings.padding_bottom }}px';
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 165, 0, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  {% endif %}
 
   .hero-content {
     display: flex;
@@ -255,184 +345,221 @@
 
 {% schema %}
 {
-  "name": "Hero Section",
+  "name": "🎯 Hero Section",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** This section has been enhanced with visual editing guides and comprehensive customization options. Changes preview in real-time in the theme editor."
+    },
+    {
       "type": "header",
-      "content": "Product"
+      "content": "📦 Product Settings"
     },
     {
       "type": "product",
       "id": "product",
-      "label": "Featured Product"
+      "label": "Featured Product",
+      "info": "Select a product to enable Add to Cart functionality. Leave blank to use a custom link instead."
     },
     {
       "type": "header",
-      "content": "Images"
+      "content": "🖼️ Images & Media"
     },
     {
       "type": "image_picker",
       "id": "product_image_1",
-      "label": "Product Image 1"
+      "label": "Product Image 1",
+      "info": "Primary product image. Recommended: 800x800px or larger, square aspect ratio."
     },
     {
       "type": "image_picker",
       "id": "product_image_2",
-      "label": "Product Image 2 (Pouch)"
+      "label": "Product Image 2",
+      "info": "Secondary product image (e.g., packaging, lifestyle shot). Same size as Image 1 recommended."
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image",
+      "info": "Optional background image. Recommended: 1920x600px or larger. Works best with gradient overlay enabled."
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Background Image Size",
+      "options": [
+        { "value": "cover", "label": "Cover (fill entire area)" },
+        { "value": "contain", "label": "Contain (show full image)" },
+        { "value": "auto", "label": "Original size" }
+      ],
+      "default": "cover",
+      "info": "How the background image should fit the section."
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Background Image Position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "info": "Where to position the background image."
     },
     {
       "type": "header",
-      "content": "Text Content"
+      "content": "✏️ Title & Headline"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "Title",
-      "default": "MYCOMATCHA"
+      "label": "Main Title",
+      "default": "MYCOMATCHA",
+      "info": "Primary headline. Displays large and bold at the top of the section."
     },
     {
       "type": "color",
       "id": "title_color",
-      "label": "Title Color"
+      "label": "Title Color",
+      "info": "Leave blank to use theme default text color."
     },
     {
       "type": "checkbox",
       "id": "show_trademark",
-      "label": "Show Trademark (™)",
-      "default": true
+      "label": "Show Trademark Symbol (™)",
+      "default": true,
+      "info": "Displays a small ™ symbol after the title."
     },
     {
       "type": "checkbox",
       "id": "show_divider",
-      "label": "Show Divider",
-      "default": true
+      "label": "Show Divider Line",
+      "default": true,
+      "info": "Decorative line between title and subtitle."
     },
     {
       "type": "text",
       "id": "divider_text",
-      "label": "Divider Text",
-      "default": "+++++++++"
+      "label": "Divider Text/Pattern",
+      "default": "+++++++++",
+      "info": "Text or symbols to use as divider. Examples: +++, ---, •••"
     },
     {
       "type": "text",
       "id": "subtitle",
       "label": "Subtitle",
-      "default": "The magic of matcha meets the wisdom of mushrooms"
+      "default": "The magic of matcha meets the wisdom of mushrooms",
+      "info": "Supporting headline below the title. Keep it concise and compelling."
     },
     {
       "type": "color",
       "id": "subtitle_color",
-      "label": "Subtitle Color"
+      "label": "Subtitle Color",
+      "info": "Leave blank to use theme default text color."
+    },
+    {
+      "type": "header",
+      "content": "💬 Tagline & Description"
     },
     {
       "type": "text",
       "id": "tagline_line_1",
       "label": "Tagline Line 1",
-      "default": "Coffee borrows energy."
+      "default": "Coffee borrows energy.",
+      "info": "First line of your value proposition tagline."
     },
     {
       "type": "text",
       "id": "tagline_line_2",
       "label": "Tagline Line 2",
-      "default": "MycoMatcha creates it."
+      "default": "MycoMatcha creates it.",
+      "info": "Second line of your tagline. Creates a comparison or contrast."
     },
     {
       "type": "color",
       "id": "tagline_color",
-      "label": "Tagline Color"
+      "label": "Tagline Color",
+      "info": "Color for both tagline lines."
     },
     {
       "type": "textarea",
       "id": "description_paragraph_1",
-      "label": "Description Paragraph 1",
-      "default": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently."
+      "label": "Description - Paragraph 1",
+      "default": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently.",
+      "info": "First paragraph of detailed product description. Explain the problem or key benefit."
     },
     {
       "type": "textarea",
       "id": "description_paragraph_2",
-      "label": "Description Paragraph 2",
-      "default": "Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience."
+      "label": "Description - Paragraph 2",
+      "default": "Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience.",
+      "info": "Second paragraph. Provide details, science, or social proof."
     },
     {
       "type": "color",
       "id": "description_color",
-      "label": "Description Color"
+      "label": "Description Text Color",
+      "info": "Color for both description paragraphs."
     },
     {
       "type": "header",
-      "content": "Pricing"
+      "content": "💰 Pricing Display"
     },
     {
       "type": "checkbox",
       "id": "show_pricing",
       "label": "Show Pricing",
-      "default": true
+      "default": true,
+      "info": "Display price information. Pulls from selected product or uses custom values below."
     },
     {
       "type": "checkbox",
       "id": "show_compare_price",
-      "label": "Show Compare Price",
-      "default": true
+      "label": "Show Compare-At Price",
+      "default": true,
+      "info": "Show crossed-out original price to highlight discount."
     },
     {
       "type": "text",
       "id": "custom_compare_price",
-      "label": "Custom Compare Price",
-      "info": "Leave blank to use product price"
+      "label": "Custom Compare-At Price",
+      "placeholder": "$45.00",
+      "info": "Override product's compare price. Format: $45 or $45.00. Leave blank to use product's compare_at_price."
     },
     {
       "type": "text",
       "id": "custom_price",
-      "label": "Custom Price",
-      "info": "Leave blank to use product price (enter number only, e.g. 34.99)"
+      "label": "Custom Current Price",
+      "placeholder": "34.99",
+      "info": "Override product price. Enter number only (e.g., 34.99). Leave blank to use product's actual price."
     },
     {
       "type": "color",
       "id": "price_color",
-      "label": "Price Color"
+      "label": "Current Price Color",
+      "info": "Color for the current/sale price."
     },
     {
       "type": "color",
       "id": "compare_price_color",
-      "label": "Compare Price Color"
+      "label": "Compare-At Price Color",
+      "info": "Color for the crossed-out original price. Typically gray or lighter."
     },
     {
       "type": "header",
-      "content": "Call to Action"
-    },
-    {
-      "type": "text",
-      "id": "button_text",
-      "label": "Button Text",
-      "default": "Add to cart"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Button Link",
-      "info": "Only used if no product is selected"
-    },
-    {
-      "type": "color",
-      "id": "button_color",
-      "label": "Button Background Color"
-    },
-    {
-      "type": "color",
-      "id": "button_text_color",
-      "label": "Button Text Color"
-    },
-    {
-      "type": "header",
-      "content": "Quantity Selector"
+      "content": "🔢 Quantity Selector"
     },
     {
       "type": "checkbox",
       "id": "show_quantity_selector",
-      "label": "Show Quantity Selector",
-      "default": true
+      "label": "Enable Quantity Selector",
+      "default": true,
+      "info": "Show +/- buttons to let customers select quantity before adding to cart."
     },
     {
       "type": "range",
@@ -441,7 +568,8 @@
       "min": 1,
       "max": 10,
       "step": 1,
-      "default": 1
+      "default": 1,
+      "info": "Initial quantity when page loads."
     },
     {
       "type": "range",
@@ -450,7 +578,8 @@
       "min": 1,
       "max": 10,
       "step": 1,
-      "default": 1
+      "default": 1,
+      "info": "Lowest quantity customers can select."
     },
     {
       "type": "range",
@@ -459,85 +588,276 @@
       "min": 1,
       "max": 100,
       "step": 1,
-      "default": 10
+      "default": 10,
+      "info": "Highest quantity customers can select."
     },
     {
       "type": "header",
-      "content": "Discount Badge"
+      "content": "🛒 Call-to-Action Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Add to cart",
+      "info": "Text displayed on the CTA button. Examples: 'Add to cart', 'Buy Now', 'Shop Now'"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link (if no product)",
+      "info": "Where the button goes if no product is selected. Examples: /collections/all, /products/your-product"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Background Color",
+      "info": "Button fill color. Should contrast with button text color."
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "info": "Color of text inside button. Should be readable against button background."
+    },
+    {
+      "type": "header",
+      "content": "🎫 Discount Badge"
     },
     {
       "type": "checkbox",
       "id": "show_discount_badge",
       "label": "Show Discount Badge",
-      "default": true
+      "default": true,
+      "info": "Display a promotional badge/label (e.g., '30% OFF', 'Limited Time')."
     },
     {
       "type": "text",
       "id": "discount_badge_text",
-      "label": "Discount Badge Text",
-      "default": "Get 33% off today!"
+      "label": "Badge Text",
+      "default": "Get 33% off today!",
+      "info": "Text inside the promotional badge. Keep it short and action-oriented."
     },
     {
       "type": "color",
       "id": "badge_background_color",
-      "label": "Badge Background Color"
+      "label": "Badge Background Color",
+      "info": "Background color of the badge. Bright colors work well (red, orange, green)."
     },
     {
       "type": "color",
       "id": "badge_text_color",
-      "label": "Badge Text Color"
+      "label": "Badge Text Color",
+      "info": "Text color inside badge. Should contrast strongly with badge background."
     },
     {
       "type": "header",
-      "content": "Layout & Styling"
+      "content": "💳 Additional Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_methods",
+      "label": "Show Payment Method Icons",
+      "default": true,
+      "info": "Display icons for accepted payment methods (Visa, Mastercard, PayPal, etc.) to build trust."
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout & Structure"
     },
     {
       "type": "select",
       "id": "image_position",
-      "label": "Image Position",
+      "label": "Product Images Position",
       "options": [
-        { "value": "row", "label": "Left" },
-        { "value": "row-reverse", "label": "Right" }
+        { "value": "row", "label": "Left Side" },
+        { "value": "row-reverse", "label": "Right Side" }
       ],
-      "default": "row"
+      "default": "row",
+      "info": "Position product images on left or right. Product info appears on opposite side."
     },
     {
       "type": "select",
       "id": "text_alignment",
-      "label": "Text Alignment",
+      "label": "Title & Text Alignment",
       "options": [
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
       ],
-      "default": "left"
+      "default": "left",
+      "info": "Horizontal alignment for title and subtitle at top of section."
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical Content Alignment",
+      "options": [
+        { "value": "flex-start", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Bottom" }
+      ],
+      "default": "center",
+      "info": "Vertical positioning of content within the section height."
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Minimum Section Height",
+      "min": 300,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 500,
+      "info": "Minimum height of the hero section. Increase for more dramatic appearance."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Background & Colors"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background Color"
-    },
-    {
-      "type": "image_picker",
-      "id": "background_image",
-      "label": "Background Image"
+      "label": "Background Color",
+      "info": "Solid background color. Appears behind background image if one is set."
     },
     {
       "type": "checkbox",
       "id": "show_gradient",
-      "label": "Show Gradient Overlay",
-      "default": true
+      "label": "Enable Gradient Overlay",
+      "default": true,
+      "info": "Adds a subtle gradient overlay over the background for better text contrast."
     },
     {
-      "type": "checkbox",
-      "id": "show_payment_methods",
-      "label": "Show Payment Methods",
-      "default": true
+      "type": "range",
+      "id": "gradient_opacity",
+      "label": "Gradient Overlay Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Transparency of gradient overlay. 0% = invisible, 100% = fully visible."
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing & Padding"
+    },
+    {
+      "type": "paragraph",
+      "content": "Control the white space around your content. Larger values create more breathing room."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 60,
+      "info": "Space above content. Standard spacing: 40px (tight), 60px (comfortable), 80px+ (spacious)."
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 60,
+      "info": "Space below content. Should typically match top padding for symmetry."
     }
   ],
   "presets": [
     {
-      "name": "Hero Section"
+      "name": "Hero - Product Launch",
+      "settings": {
+        "title": "MYCOMATCHA",
+        "subtitle": "The magic of matcha meets the wisdom of mushrooms",
+        "show_pricing": true,
+        "show_compare_price": true,
+        "show_discount_badge": true,
+        "discount_badge_text": "Launch Special - 33% Off!",
+        "image_position": "row",
+        "text_alignment": "left",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "min_height": 500
+      }
+    },
+    {
+      "name": "Hero - Minimal Centered",
+      "settings": {
+        "title": "Your Product Name",
+        "subtitle": "Simple, elegant product showcase",
+        "show_pricing": true,
+        "show_compare_price": false,
+        "show_discount_badge": false,
+        "show_quantity_selector": false,
+        "image_position": "row",
+        "text_alignment": "center",
+        "vertical_alignment": "center",
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "min_height": 600,
+        "show_gradient": false
+      }
+    },
+    {
+      "name": "Hero - Bold Promotional",
+      "settings": {
+        "title": "FLASH SALE",
+        "subtitle": "Limited time offer on best sellers",
+        "show_pricing": true,
+        "show_compare_price": true,
+        "show_discount_badge": true,
+        "discount_badge_text": "50% OFF - TODAY ONLY",
+        "image_position": "row-reverse",
+        "text_alignment": "center",
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "min_height": 500,
+        "show_gradient": true,
+        "gradient_opacity": 80
+      }
+    },
+    {
+      "name": "Hero - Lifestyle Image",
+      "settings": {
+        "title": "Live Better Daily",
+        "subtitle": "Transform your morning routine",
+        "show_pricing": false,
+        "show_discount_badge": false,
+        "button_text": "Discover More",
+        "image_position": "row",
+        "text_alignment": "left",
+        "vertical_alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "min_height": 700,
+        "show_gradient": true,
+        "gradient_opacity": 60
+      }
+    },
+    {
+      "name": "Hero - Clean & Simple",
+      "settings": {
+        "title": "New Product",
+        "show_divider": false,
+        "show_pricing": true,
+        "show_compare_price": false,
+        "show_discount_badge": false,
+        "show_quantity_selector": true,
+        "show_payment_methods": false,
+        "image_position": "row",
+        "text_alignment": "left",
+        "vertical_alignment": "flex-start",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "min_height": 400
+      }
     }
   ],
   "templates": ["index", "page", "collection"]

@@ -1,68 +1,196 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "logo_width": 200,
+        "logo_height": 50,
+        "logo_text": "PURE + VIDA",
+        "logo_text_size": 24,
+        "logo_text_color": "",
+        "show_plus": true,
+        "menu": "customer-account-main-menu",
+        "menu_text_color": "",
+        "show_cart": true,
+        "cart_button_text": "+ Add to Cart",
+        "cart_button_color": "",
+        "cart_button_text_color": "",
+        "sticky_header": false,
+        "transparent_header": false,
+        "header_height": 80,
+        "background_color": ""
+      }
     },
     "hero": {
       "type": "hero",
-      "settings": {}
+      "settings": {
+        "product": "",
+        "title": "MYCOMATCHA",
+        "title_color": "",
+        "show_trademark": true,
+        "show_divider": true,
+        "divider_text": "+++++++++",
+        "subtitle": "The magic of matcha meets the wisdom of mushrooms",
+        "subtitle_color": "",
+        "tagline_line_1": "Coffee borrows energy.",
+        "tagline_line_2": "MycoMatcha creates it.",
+        "tagline_color": "",
+        "description_paragraph_1": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently.",
+        "description_paragraph_2": "Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience.",
+        "description_color": "",
+        "show_pricing": true,
+        "show_compare_price": true,
+        "custom_compare_price": "",
+        "custom_price": "",
+        "price_color": "",
+        "compare_price_color": "",
+        "button_text": "Add to cart",
+        "button_link": "",
+        "button_color": "",
+        "button_text_color": "",
+        "show_quantity_selector": true,
+        "default_quantity": 1,
+        "min_quantity": 1,
+        "max_quantity": 10,
+        "show_discount_badge": true,
+        "discount_badge_text": "Get 33% off today!",
+        "badge_background_color": "",
+        "badge_text_color": "",
+        "image_position": "row",
+        "text_alignment": "left",
+        "background_color": "",
+        "show_gradient": true,
+        "show_payment_methods": true
+      }
     },
     "benefits": {
       "type": "benefits",
       "settings": {
-        "content_mode": "blocks"
-      },
-      "blocks": {
-        "benefit_1": {
-          "type": "benefit",
-          "settings": {
-            "title": "Natural energy",
-            "description": "+ Energize your body and mind.\nNo jitters, just flow."
-          }
-        },
-        "benefit_2": {
-          "type": "benefit",
-          "settings": {
-            "title": "Elevated mood",
-            "description": "+ Brings a gentle boost to your mood\nand mindset."
-          }
-        },
-        "benefit_3": {
-          "type": "benefit",
-          "settings": {
-            "title": "Focused mind",
-            "description": "+ Keeps distractions low and\nproductivity high."
-          }
-        }
-      },
-      "block_order": [
-        "benefit_1",
-        "benefit_2",
-        "benefit_3"
-      ]
+        "content_mode": "blocks",
+        "heading": "Benefits",
+        "heading_color": "",
+        "heading_alignment": "center",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "item_spacing": 30,
+        "section_padding": 40,
+        "background_color": "",
+        "benefit_1_title": "",
+        "benefit_1_description": "",
+        "benefit_2_title": "",
+        "benefit_2_description": "",
+        "benefit_3_title": "",
+        "benefit_3_description": "",
+        "benefit_4_title": "",
+        "benefit_4_description": "",
+        "benefit_5_title": "",
+        "benefit_5_description": "",
+        "benefit_6_title": "",
+        "benefit_6_description": ""
+      }
     },
     "ingredients": {
       "type": "ingredients",
       "settings": {
-        "content_mode": "blocks"
+        "content_mode": "blocks",
+        "heading_small": "What's Inside +",
+        "heading": "Why It Matters",
+        "heading_color": "",
+        "heading_alignment": "center",
+        "description": "MycoMatcha pairs ceremonial-grade matcha with Lion's Mane, Reishi, Cordyceps, and Turkey Tail — four adaptogenic mushrooms that support focus, energy, and balance.",
+        "description_color": "",
+        "show_hero_image": true,
+        "columns_desktop": 5,
+        "columns_mobile": 1,
+        "item_spacing": 30,
+        "section_padding": 40,
+        "background_color": "",
+        "show_gradient": true,
+        "ingredient_1_name": "",
+        "ingredient_1_description": "",
+        "ingredient_2_name": "",
+        "ingredient_2_description": "",
+        "ingredient_3_name": "",
+        "ingredient_3_description": "",
+        "ingredient_4_name": "",
+        "ingredient_4_description": "",
+        "ingredient_5_name": "",
+        "ingredient_5_description": "",
+        "ingredient_6_name": "",
+        "ingredient_6_description": "",
+        "ingredient_7_name": "",
+        "ingredient_7_description": "",
+        "ingredient_8_name": "",
+        "ingredient_8_description": ""
       }
     },
     "testimonials": {
       "type": "testimonials",
-      "settings": {
-        "content_mode": "blocks"
-      }
+      "settings": {}
     },
     "faq": {
       "type": "faq",
       "settings": {
-        "content_mode": "blocks"
+        "content_mode": "blocks",
+        "heading": "frequently asked questions",
+        "heading_color": "",
+        "heading_alignment": "center",
+        "default_open": false,
+        "icon_text": "+",
+        "section_padding": 40,
+        "background_color": "",
+        "faq_1_question": "",
+        "faq_1_answer": "",
+        "faq_2_question": "",
+        "faq_2_answer": "",
+        "faq_3_question": "",
+        "faq_3_answer": "",
+        "faq_4_question": "",
+        "faq_4_answer": "",
+        "faq_5_question": "",
+        "faq_5_answer": "",
+        "faq_6_question": "",
+        "faq_6_answer": "",
+        "faq_7_question": "",
+        "faq_7_answer": "",
+        "faq_8_question": "",
+        "faq_8_answer": "",
+        "faq_9_question": "",
+        "faq_9_answer": "",
+        "faq_10_question": "",
+        "faq_10_answer": ""
       }
     },
     "footer": {
       "type": "footer",
-      "settings": {}
+      "settings": {
+        "logo_text": "PURE VIDA",
+        "logo_text_color": "",
+        "show_plus": true,
+        "copyright_text": "<p>Copyright Pura Vida 2025. All rights reserved.</p>",
+        "copyright_color": "",
+        "show_newsletter": false,
+        "newsletter_heading": "Subscribe to our newsletter",
+        "newsletter_heading_color": "",
+        "newsletter_description": "",
+        "newsletter_text_color": "",
+        "newsletter_placeholder": "Enter your email",
+        "newsletter_button_text": "Subscribe",
+        "newsletter_button_color": "",
+        "newsletter_button_text_color": "",
+        "show_social_media": true,
+        "show_payment_icons": true,
+        "background_color": ""
+      }
     }
   },
   "order": [

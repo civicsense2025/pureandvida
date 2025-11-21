@@ -52,9 +52,11 @@
       "product_information": "Product Information",
       "product_images": "Product Images",
       "badge": {
-        "sale": "Sale"
+        "sale": "Sale",
+        "new": "New",
+        "featured": "Featured"
       },
-      "save": "Save {{ amount }} ({{ percentage }}%)",
+      "save": "Save",
       "quantity": {
         "label": "Quantity"
       },
@@ -69,6 +71,9 @@
         "sale_price": "Sale price"
       }
     }
+  },
+  "en": {
+    "Add to cart": "Add to cart"
   },
   "templates": {
     "cart": {

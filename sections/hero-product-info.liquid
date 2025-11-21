@@ -1,11 +1,11 @@
-{%- liquid
+{% liquid
   # @description Hero product info section with taglines, pricing, description, CTA, and badges
   # @settings product {Product} - Featured product
   # @settings show_pricing {Boolean} - Display product pricing
   # @example
   #   Add to index.json template for homepage hero product info section
   assign structural_element = section.settings.structural_element | default: 'section'
--%}
+%}
 
 <{{ structural_element }} class="hero-product-info-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
   <div class="hero-product-info-wrapper page-width">

@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Rich text section for displaying formatted content with heading and customizable styling
   # Supports full-width or constrained width layouts with rich text editor content
   # @settings heading {String} - Section heading
@@ -8,7 +8,7 @@
   # @settings text_alignment {String} - Text alignment: 'left', 'center', 'right', 'justify'
   # @example
   #   Add to any template for custom formatted content blocks
--%}
+%}
 
 <section class="rich-text-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="page-width{% if section.settings.full_width %} full-width{% endif %}" style="{% if section.settings.content_width != blank and section.settings.full_width == false %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">

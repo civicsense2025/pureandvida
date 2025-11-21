@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Benefits section displaying product benefits in a grid layout
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
@@ -8,7 +8,7 @@
   # @example
   #   Use blocks mode for dynamic add/remove, settings mode for fixed 6-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
--%}
+%}
 
 <{{ structural_element }} class="benefits-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="benefits-content page-width">

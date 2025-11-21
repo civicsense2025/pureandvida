@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Hero section for homepage with product showcase, customizable text, pricing, and CTAs
   # Supports dual product images, taglines, pricing display, discount badges, and multiple layout options
   # @settings title {String} - Main hero title
@@ -10,7 +10,7 @@
   # @settings background_color {Color} - Background color
   # @example
   #   Add to index.json template for homepage hero section
--%}
+%}
 
 <section class="hero-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.background_image != blank %}background-image: url('{{ section.settings.background_image | image_url: width: 1920 }}'); background-size: cover; background-position: center;{% endif %}">
   {%- if section.settings.show_gradient -%}
@@ -170,6 +170,88 @@
     }
   });
 </script>
+
+<style>
+  /* Hero Section Responsive Layout */
+  .hero-section {
+    position: relative;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+  }
+
+  .hero-product-section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-product-images {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .hero-product-img-1,
+  .hero-product-img-2 {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .hero-product-info {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  /* Mobile Portrait (max-width: 479px) */
+  @media screen and (max-width: 479px) {
+    .hero-section {
+      min-height: auto;
+      padding: 2rem 0;
+    }
+
+    .hero-product-section {
+      flex-direction: column !important;
+    }
+
+    .hero-product-images {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .hero-product-info {
+      width: 100%;
+    }
+  }
+
+  /* Mobile Landscape (480px - 767px) */
+  @media screen and (min-width: 480px) and (max-width: 767px) {
+    .hero-product-section {
+      flex-direction: column !important;
+    }
+
+    .hero-product-images {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  /* Tablet Portrait (768px - 1023px) */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .hero-product-section {
+      gap: 1.5rem;
+    }
+  }
+</style>
 
 {% schema %}
 {

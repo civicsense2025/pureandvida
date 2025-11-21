@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Collection list section displaying featured collections in a grid layout
   # Supports multiple collection blocks with custom images and titles
   # @settings heading {String} - Section heading
@@ -8,7 +8,7 @@
   # @blocks collection - Individual collection block with collection picker and custom image
   # @example
   #   Add to index.json or page.json to showcase featured collections
--%}
+%}
 
 <section class="collection-list-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="page-width">
@@ -54,9 +54,44 @@
 </section>
 
 <style>
-  @media (max-width: 768px) {
+  /* Collection List Responsive Grid */
+  .collection-list-grid {
+    display: grid;
+    gap: clamp(15px, 3vw, {{ section.settings.item_spacing }}px);
+  }
+
+  /* Mobile Portrait (max-width: 479px) */
+  @media screen and (max-width: 479px) {
     .collection-list-grid {
-      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr) !important;
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Mobile Landscape (480px - 767px) */
+  @media screen and (min-width: 480px) and (max-width: 767px) {
+    .collection-list-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr) !important;
+    }
+  }
+
+  /* Tablet Portrait (768px - 1023px) */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .collection-list-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr) !important;
+    }
+  }
+
+  /* Tablet Landscape (1024px - 1199px) */
+  @media screen and (min-width: 1024px) and (max-width: 1199px) {
+    .collection-list-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+
+  /* Desktop (1200px+) */
+  @media screen and (min-width: 1200px) {
+    .collection-list-grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, 1fr) !important;
     }
   }
 </style>

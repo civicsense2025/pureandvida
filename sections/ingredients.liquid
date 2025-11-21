@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Ingredients section displaying product ingredients with images and descriptions
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
@@ -9,7 +9,7 @@
   # @example
   #   Use blocks mode for dynamic ingredients, settings mode for fixed 8-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
--%}
+%}
 
 <{{ structural_element }} class="ingredients-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   {%- if section.settings.show_gradient -%}

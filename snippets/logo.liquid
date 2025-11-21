@@ -1,0 +1,40 @@
+{%- liquid
+  # @description Logo component for header and footer
+  # Reusable logo snippet that supports both image and text logos
+  # @param logo_image {Image} - Logo image (optional)
+  # @param logo_text {String} - Logo text if no image provided
+  # @param logo_width {Number} - Logo image width in pixels
+  # @param logo_height {Number} - Logo image height in pixels
+  # @param logo_text_size {Number} - Logo text font size in pixels
+  # @param logo_text_color {String} - Logo text color
+  # @param show_plus {Boolean} - Show plus sign (+) in text logo
+  # @param logo_link {String} - Link URL (defaults to home)
+  # @param class_name {String} - Additional CSS classes
+  # @example
+  #   {% render 'logo', logo_image: section.settings.logo_image, logo_text: section.settings.logo_text %}
+-%}
+
+{%- assign logo_link = logo_link | default: routes.root_url -%}
+{%- assign class_name = class_name | default: 'logo' -%}
+
+<a href="{{ logo_link }}" class="{{ class_name }}__link" style="text-decoration: none; display: inline-block;">
+  {%- if logo_image != blank -%}
+    <img 
+      src="{{ logo_image | image_url: width: logo_width }}" 
+      alt="{{ shop.name | escape }}" 
+      class="{{ class_name }}__image"
+      style="max-width: {{ logo_width }}px; max-height: {{ logo_height }}px; width: auto; height: auto; display: block;"
+      loading="eager"
+      width="{{ logo_width }}"
+      height="{{ logo_height }}"
+    >
+  {%- else -%}
+    <span class="{{ class_name }}__text" style="{% if logo_text_color != blank %}color: {{ logo_text_color }};{% endif %} font-size: {{ logo_text_size }}px; font-weight: bold; display: inline-block;">
+      {{ logo_text | default: shop.name }}
+      {%- if show_plus -%}
+        <span class="{{ class_name }}__plus" style="{% if logo_text_color != blank %}color: {{ logo_text_color }};{% endif %}">+</span>
+      {%- endif -%}
+    </span>
+  {%- endif -%}
+</a>
+

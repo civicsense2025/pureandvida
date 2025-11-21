@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Featured collection section displaying products from a single collection
   # Shows collection products in a grid with optional "View All" button
   # @settings collection {Collection} - Collection to display
@@ -8,7 +8,7 @@
   # @settings show_view_all {Boolean} - Display "View All" button
   # @example
   #   Add to index.json to feature a specific collection on homepage
--%}
+%}
 
 {%- if section.settings.collection != blank -%}
   {%- assign collection = section.settings.collection -%}
@@ -22,7 +22,7 @@
         <p class="featured-collection-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: 40px;">{{ section.settings.description | escape }}</p>
       {%- endif -%}
       
-      <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list" style="gap: {{ section.settings.item_spacing }}px;">
+      <ul class="grid product-grid featured-collection-grid" role="list" style="gap: {{ section.settings.item_spacing }}px;">
         {%- for product in collection.products limit: section.settings.products_to_show -%}
           <li class="grid__item">
             {% render 'product-card', product: product %}
@@ -40,6 +40,52 @@
     </div>
   </section>
 {%- endif -%}
+
+<style>
+  /* Featured Collection Responsive Grid */
+  .featured-collection-grid {
+    display: grid;
+    gap: clamp(15px, 3vw, {{ section.settings.item_spacing }}px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Mobile Portrait (max-width: 479px) */
+  @media screen and (max-width: 479px) {
+    .featured-collection-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Mobile Landscape (480px - 767px) */
+  @media screen and (min-width: 480px) and (max-width: 767px) {
+    .featured-collection-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr) !important;
+    }
+  }
+
+  /* Tablet Portrait (768px - 1023px) */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .featured-collection-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr) !important;
+    }
+  }
+
+  /* Tablet Landscape (1024px - 1199px) */
+  @media screen and (min-width: 1024px) and (max-width: 1199px) {
+    .featured-collection-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+
+  /* Desktop (1200px+) */
+  @media screen and (min-width: 1200px) {
+    .featured-collection-grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, 1fr) !important;
+    }
+  }
+</style>
 
 {% schema %}
 {

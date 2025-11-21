@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Main product section displaying product information, media gallery, variants, and add to cart
   # Core product page section with media display, variant selection, pricing, and purchase functionality
   # Supports 20+ customizable blocks for complete product page customization
@@ -29,14 +29,14 @@
   # @blocks related_products - Smart recommendations
   # @example
   #   Add to product.json template for product page layout
--%}
+%}
 
 <div class="product page-width{% if section.settings.sticky_product_info %} product--sticky-info{% endif %}" 
      id="ProductSection-{{ section.id }}" 
      data-section="{{ section.id }}"
      role="region"
      aria-label="{{ 'products.product.product_information' | t | default: 'Product Information' }}">
-  {%- liquid
+  {% liquid
     assign layout_position = section.settings.info_position
     assign gallery_style = section.settings.gallery_style
   -%}
@@ -114,7 +114,7 @@
                         </span>
                       </div>
                       {%- if block.settings.show_savings -%}
-                        {%- liquid
+                        {% liquid
                           assign savings = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price
                           assign savings_percent = savings | times: 100.0 | divided_by: product.selected_or_first_available_variant.compare_at_price | round
                         -%}

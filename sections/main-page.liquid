@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Main page section for displaying page content with customizable title, featured image, and styling
   # Used for custom pages with full content customization options
   # @settings show_page_title {Boolean} - Display page title
@@ -7,7 +7,7 @@
   # @settings text_alignment {String} - Text alignment: 'left', 'center', 'right', 'justify'
   # @example
   #   Add to page.json template for custom page layouts
--%}
+%}
 
 <div class="page-width{% if section.settings.custom_css_class != blank %} {{ section.settings.custom_css_class }}{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   {%- if section.settings.show_page_title and page.title != blank -%}

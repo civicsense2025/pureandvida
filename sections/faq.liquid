@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description FAQ accordion section with expandable questions and answers
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
@@ -8,7 +8,7 @@
   # @example
   #   Use blocks mode for dynamic FAQs, settings mode for fixed 10-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
--%}
+%}
 
 <{{ structural_element }} class="faq-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="faq-content page-width">

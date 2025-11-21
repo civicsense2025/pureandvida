@@ -1,11 +1,11 @@
-{%- liquid
+{% liquid
   # @description Hero product images section
   # @settings product_image_1 {Image} - Primary product image
   # @settings product_image_2 {Image} - Secondary product image
   # @example
   #   Add to index.json template for homepage hero product images
   assign structural_element = section.settings.structural_element | default: 'section'
--%}
+%}
 
 <{{ structural_element }} class="hero-product-images-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
   <div class="hero-product-images-wrapper page-width">

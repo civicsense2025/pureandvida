@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Header section with navigation, logo, and cart functionality
   # Supports sticky header, transparent header, custom logo, menu navigation, and cart button
   # @settings logo_image {Image} - Logo image (optional, falls back to text logo)
@@ -9,22 +9,22 @@
   # @settings show_cart {Boolean} - Display cart button
   # @example
   #   Section is automatically included in theme.liquid layout
--%}
+%}
 
 <header class="header-wrapper pure-vida-header{% if section.settings.sticky_header %} sticky-header{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.transparent_header %}background-color: transparent;{% endif %}">
-  <header class="header page-width" style="height: {{ section.settings.header_height }}px;">
-    {%- if section.settings.logo_image != blank -%}
-      <a href="{{ routes.root_url }}" class="header__heading-link">
-        <img src="{{ section.settings.logo_image | image_url: width: section.settings.logo_width }}" alt="{{ shop.name }}" style="max-height: {{ section.settings.logo_height }}px;">
-      </a>
-    {%- else -%}
-      <a href="{{ routes.root_url }}" class="header__heading-link">
-        <span class="header__logo-text" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %} font-size: {{ section.settings.logo_text_size }}px;">{{ section.settings.logo_text | default: "PURE VIDA" }}</span>
-        {%- if section.settings.show_plus -%}
-          <span class="header__plus" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">+</span>
-        {%- endif -%}
-      </a>
-    {%- endif -%}
+  <div class="header page-width" style="height: {{ section.settings.header_height }}px;">
+    <div class="header__logo">
+      {% render 'logo',
+        logo_image: section.settings.logo_image,
+        logo_text: section.settings.logo_text,
+        logo_width: section.settings.logo_width,
+        logo_height: section.settings.logo_height,
+        logo_text_size: section.settings.logo_text_size,
+        logo_text_color: section.settings.logo_text_color,
+        show_plus: section.settings.show_plus,
+        class_name: 'header'
+      %}
+    </div>
 
     <nav class="header__inline-menu">
       {%- if section.settings.menu != blank -%}
@@ -55,10 +55,66 @@
         </a>
       {%- endif -%}
     </nav>
-  </header>
+  </div>
 </header>
 
 <style>
+  /* Header Responsive Layout */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .header__logo {
+    flex-shrink: 0;
+  }
+
+  .header__inline-menu {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .header__inline-menu .list-menu {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__inline-menu .list-menu li {
+    margin: 0;
+  }
+
+  .header__menu-item {
+    text-decoration: none;
+    font-size: 1rem;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__menu-item:hover {
+    opacity: 0.7;
+  }
+
+  .header__cta-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__cta-button:hover {
+    opacity: 0.9;
+  }
+
   {%- if section.settings.sticky_header -%}
     .sticky-header {
       position: sticky;
@@ -66,6 +122,41 @@
       z-index: 1000;
     }
   {%- endif -%}
+
+  /* Mobile Responsive */
+  @media screen and (max-width: 767px) {
+    .header {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header__inline-menu {
+      width: 100%;
+      justify-content: space-between;
+      order: 2;
+    }
+
+    .header__inline-menu .list-menu {
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header__menu-item {
+      font-size: 0.9rem;
+    }
+
+    .header__cta-button {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Tablet Responsive */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .header__inline-menu .list-menu {
+      gap: 1.5rem;
+    }
+  }
 </style>
 
 {% schema %}

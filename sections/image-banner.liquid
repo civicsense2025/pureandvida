@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Image banner section with overlay text, heading, description, and call-to-action button
   # Supports separate mobile images and customizable overlay opacity
   # @settings image {Image} - Desktop banner image
@@ -11,7 +11,7 @@
   # @settings overlay_opacity {Number} - Overlay opacity (0-1)
   # @example
   #   Add to index.json or page.json for promotional banners
--%}
+%}
 
 <section class="image-banner-section" style="position: relative; height: {{ section.settings.banner_height }}px; overflow: hidden;">
   {%- if section.settings.image != blank -%}

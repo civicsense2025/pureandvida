@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Footer section with customizable columns, social media, newsletter, and payment icons
   # Supports multiple link list blocks for footer columns
   # @settings logo_text {String} - Footer logo text
@@ -9,9 +9,9 @@
   # @blocks link_list - Footer column with heading and links
   # @example
   #   Section is automatically included in theme.liquid layout
--%}
+%}
 
-{%- liquid
+{% liquid
   assign column_layout = section.settings.column_layout | default: 'auto'
   assign columns_count = section.blocks.size
   if column_layout == '2'
@@ -22,7 +22,7 @@
     assign columns_count = 4
   endif
   assign structural_element = section.settings.structural_element | default: 'footer'
--%}
+%}
 
 <{{ structural_element }} class="footer pure-vida-footer" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
   <div class="footer__content page-width" style="display: grid; grid-template-columns: {% if section.settings.layout_style == 'columns' %}repeat({{ columns_count }}, 1fr){% else %}auto 1fr auto{% endif %}; gap: {{ section.settings.column_gap | default: 40 }}px; align-items: start;">
@@ -55,10 +55,14 @@
       {%- comment -%} Three Column Layout {%- endcomment -%}
       <div class="footer__left">
         <div class="footer__logo">
-          <span class="footer__logo-text" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">{{ section.settings.logo_text | default: "PURE VIDA" }}</span>
-          {%- if section.settings.show_plus -%}
-            <span class="footer__plus" style="{% if section.settings.logo_text_color != blank %}color: {{ section.settings.logo_text_color }};{% endif %}">+</span>
-          {%- endif -%}
+          {% render 'logo',
+            logo_image: section.settings.logo_image,
+            logo_text: section.settings.logo_text,
+            logo_text_size: section.settings.logo_text_size,
+            logo_text_color: section.settings.logo_text_color,
+            show_plus: section.settings.show_plus,
+            class_name: 'footer'
+          %}
         </div>
         {%- if section.settings.copyright_text != blank -%}
           <p class="footer__copyright" style="{% if section.settings.copyright_color != blank %}color: {{ section.settings.copyright_color }};{% endif %}">{{ section.settings.copyright_text }}</p>
@@ -186,10 +190,25 @@
       "content": "Logo"
     },
     {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "Logo Image"
+    },
+    {
       "type": "text",
       "id": "logo_text",
       "label": "Logo Text",
-      "default": "PURE VIDA"
+      "default": "PURE VIDA",
+      "info": "Used if no logo image is uploaded"
+    },
+    {
+      "type": "range",
+      "id": "logo_text_size",
+      "label": "Logo Text Size (px)",
+      "min": 12,
+      "max": 72,
+      "step": 2,
+      "default": 24
     },
     {
       "type": "color",

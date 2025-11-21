@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Product recommendations section displaying related or complementary products
   # Uses Shopify's recommendation engine with lazy loading via Intersection Observer
   # @settings heading {String} - Section heading
@@ -7,9 +7,9 @@
   # @settings enable_carousel {Boolean} - Enable carousel slider
   # @example
   #   Add to product.json template to show related products below main product
--%}
+%}
 
-{%- liquid
+{% liquid
   assign recommendation_type = section.settings.recommendation_type | default: 'related'
   assign products_to_show = section.settings.products_to_show | default: 4
   assign display_style = section.settings.display_style | default: 'grid'
@@ -47,7 +47,7 @@
     when 'new_arrivals'
       assign products_list = collections.all.products | sort: 'created' | reverse | limit: products_to_show
   endcase
--%}
+%}
 
 {%- if products_list != null and products_list.size > 0 -%}
   <div class="product-recommendations page-width product-recommendations--{{ display_style }}" 

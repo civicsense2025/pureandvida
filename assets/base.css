@@ -769,3 +769,170 @@ h3 {
   padding: clamp(1rem, 3vw, 2rem);
   margin: clamp(1rem, 3vw, 2rem);
 }
+
+/* ============================================
+   Carousel Component Styles
+   ============================================ */
+
+.carousel__wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel__container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel__track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  will-change: transform;
+}
+
+.carousel__slide {
+  flex-shrink: 0;
+  transition: opacity 0.3s ease;
+}
+
+.carousel__button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 24px;
+  line-height: 1;
+  color: #000;
+  padding: 0;
+  margin: 0;
+}
+
+.carousel__button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel__button:active:not(:disabled) {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.carousel__button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.carousel__button--prev {
+  left: 10px;
+}
+
+.carousel__button--next {
+  right: 10px;
+}
+
+.carousel__dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.carousel__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.carousel__dot:hover {
+  background: rgba(0, 0, 0, 0.4);
+  transform: scale(1.2);
+}
+
+.carousel__dot--active {
+  background: rgba(0, 0, 0, 0.6);
+  width: 12px;
+  height: 12px;
+}
+
+.carousel__dot .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Mobile Carousel Adjustments */
+@media screen and (max-width: 767px) {
+  .carousel__button {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .carousel__button--prev {
+    left: 5px;
+  }
+
+  .carousel__button--next {
+    right: 5px;
+  }
+
+  .carousel__dots {
+    margin-top: 15px;
+    gap: 6px;
+  }
+
+  .carousel__dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .carousel__dot--active {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Accessibility */
+.carousel__wrapper:focus-within {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Visually Hidden Utility */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}

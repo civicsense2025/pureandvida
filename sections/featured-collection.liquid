@@ -1,18 +1,20 @@
 {% liquid
   # @description Featured collection section displaying products from a single collection
-  # Shows collection products in a grid with optional "View All" button
+  # Shows collection products in grid or carousel layout with optional "View All" button
   # @settings collection {Collection} - Collection to display
+  # @settings layout_style {String} - Layout style: 'grid' or 'carousel'
   # @settings heading {String} - Section heading
   # @settings products_to_show {Number} - Number of products to display (2-12)
   # @settings columns_desktop {Number} - Number of columns on desktop (2-5)
   # @settings show_view_all {Boolean} - Display "View All" button
   # @example
   #   Add to index.json to feature a specific collection on homepage
-%}
+  assign layout_style = section.settings.layout_style | default: 'grid'
+-%}
 
 {%- if section.settings.collection != blank -%}
   {%- assign collection = section.settings.collection -%}
-  <section class="featured-collection-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+  <section class="featured-collection-section{% if layout_style == 'carousel' %} featured-collection-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
     <div class="page-width">
       {%- if section.settings.heading != blank -%}
         <h2 class="featured-collection-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
@@ -22,13 +24,71 @@
         <p class="featured-collection-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: 40px;">{{ section.settings.description | escape }}</p>
       {%- endif -%}
       
-      <ul class="grid product-grid featured-collection-grid" role="list" style="gap: {{ section.settings.item_spacing }}px;">
-        {%- for product in collection.products limit: section.settings.products_to_show -%}
-          <li class="grid__item">
-            {% render 'product-card', product: product %}
-          </li>
-        {%- endfor -%}
-      </ul>
+      {%- assign products = collection.products | limit: section.settings.products_to_show -%}
+      {%- if products.size > 0 -%}
+        {%- if layout_style == 'carousel' -%}
+          {%- comment -%} Carousel Layout {%- endcomment -%}
+          <div class="featured-collection-carousel__wrapper" 
+               data-carousel-id="featured-collection-{{ section.id }}"
+               data-items-desktop="{{ section.settings.carousel_items_desktop }}"
+               data-items-mobile="{{ section.settings.carousel_items_mobile }}"
+               data-autoplay="{{ section.settings.carousel_autoplay }}"
+               data-autoplay-speed="{{ section.settings.carousel_autoplay_speed }}"
+               data-gap="{{ section.settings.item_spacing }}">
+            
+            <div class="featured-collection-carousel__container" role="region" aria-label="Products carousel">
+              <div class="featured-collection-carousel__track" data-carousel-track>
+                {%- for product in products -%}
+                  <div class="featured-collection-carousel__slide" data-carousel-slide>
+                    {% render 'product-card', product: product %}
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+
+            {%- if section.settings.carousel_show_arrows -%}
+              <button class="featured-collection-carousel__button featured-collection-carousel__button--prev" 
+                      data-carousel-prev 
+                      aria-label="Previous products"
+                      type="button">
+                <span aria-hidden="true">‹</span>
+              </button>
+              <button class="featured-collection-carousel__button featured-collection-carousel__button--next" 
+                      data-carousel-next 
+                      aria-label="Next products"
+                      type="button">
+                <span aria-hidden="true">›</span>
+              </button>
+            {%- endif -%}
+
+            {%- if section.settings.carousel_show_dots and products.size > section.settings.carousel_items_desktop -%}
+              <div class="featured-collection-carousel__dots" data-carousel-dots role="tablist" aria-label="Products navigation">
+                {%- assign total_slides = products.size | divided_by: section.settings.carousel_items_desktop | ceil -%}
+                {%- for i in (1..total_slides) -%}
+                  <button class="featured-collection-carousel__dot{% if forloop.first %} featured-collection-carousel__dot--active{% endif %}" 
+                          data-carousel-dot 
+                          data-slide-index="{{ forloop.index0 }}"
+                          aria-label="Go to slide {{ forloop.index }}"
+                          type="button"
+                          role="tab"
+                          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                    <span class="visually-hidden">Slide {{ forloop.index }}</span>
+                  </button>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          {%- comment -%} Grid Layout {%- endcomment -%}
+          <ul class="grid product-grid featured-collection-grid" role="list" style="gap: {{ section.settings.item_spacing }}px;">
+            {%- for product in products -%}
+              <li class="grid__item">
+                {% render 'product-card', product: product %}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      {%- endif -%}
       
       {%- if section.settings.show_view_all and section.settings.view_all_text != blank -%}
         <div class="featured-collection-view-all" style="text-align: center; margin-top: 40px;">
@@ -84,6 +144,11 @@
     .featured-collection-grid {
       grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, 1fr) !important;
     }
+  }
+
+  /* Carousel Layout Styles */
+  .featured-collection-section--carousel .featured-collection-carousel__wrapper {
+    margin-top: 20px;
   }
 </style>
 
@@ -164,22 +229,34 @@
       "content": "Layout"
     },
     {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout Style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel" }
+      ],
+      "default": "grid"
+    },
+    {
       "type": "range",
       "id": "columns_desktop",
-      "label": "Columns (Desktop)",
+      "label": "Columns (Desktop - Grid Only)",
       "min": 2,
       "max": 5,
       "step": 1,
-      "default": 4
+      "default": 4,
+      "info": "Only applies when layout style is Grid"
     },
     {
       "type": "range",
       "id": "columns_mobile",
-      "label": "Columns (Mobile)",
+      "label": "Columns (Mobile - Grid Only)",
       "min": 1,
       "max": 3,
       "step": 1,
-      "default": 2
+      "default": 2,
+      "info": "Only applies when layout style is Grid"
     },
     {
       "type": "range",
@@ -189,6 +266,58 @@
       "max": 100,
       "step": 5,
       "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Carousel Settings"
+    },
+    {
+      "type": "range",
+      "id": "carousel_items_desktop",
+      "label": "Items Per Slide (Desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "info": "Only applies when layout style is Carousel"
+    },
+    {
+      "type": "range",
+      "id": "carousel_items_mobile",
+      "label": "Items Per Slide (Mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2,
+      "info": "Only applies when layout style is Carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_show_arrows",
+      "label": "Show Navigation Arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_show_dots",
+      "label": "Show Dot Indicators",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_autoplay",
+      "label": "Enable Auto-play",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "carousel_autoplay_speed",
+      "label": "Auto-play Speed (ms)",
+      "min": 2000,
+      "max": 10000,
+      "step": 500,
+      "default": 5000,
+      "info": "Only applies when auto-play is enabled"
     },
     {
       "type": "header",

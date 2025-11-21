@@ -1,69 +1,189 @@
 {% liquid
-  # @description Benefits section displaying product benefits in a grid layout
+  # @description Benefits section displaying product benefits in grid or carousel layout
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
+  # Supports both grid and carousel layouts
   # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
+  # @settings layout_style {String} - Layout style: 'grid' or 'carousel'
   # @settings heading {String} - Section heading
   # @settings columns_desktop {Number} - Number of columns on desktop
   # @blocks benefit_item - Individual benefit with icon, title, and description
   # @example
   #   Use blocks mode for dynamic add/remove, settings mode for fixed 6-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
-%}
+  assign layout_style = section.settings.layout_style | default: 'grid'
+-%}
 
-<{{ structural_element }} class="benefits-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+<{{ structural_element }} class="benefits-section{% if layout_style == 'carousel' %} benefits-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
   <div class="benefits-content page-width">
     {%- if section.settings.heading != blank -%}
       <h2 class="benefits-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
     {%- endif -%}
     
-    <div class="benefits-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
-      {%- if section.settings.content_mode == 'blocks' -%}
-        {%- for block in section.blocks -%}
-          <div class="benefit-item" {{ block.shopify_attributes }}>
-            {%- if block.settings.icon != blank -%}
-              <div class="benefit-icon">
-                <img src="{{ block.settings.icon | image_url: width: 100 }}" alt="{{ block.settings.title | escape }}">
-              </div>
-            {%- elsif block.settings.icon_asset != blank -%}
-              <div class="benefit-icon">
-                <img src="{{ block.settings.icon_asset | asset_url }}" alt="{{ block.settings.title | escape }}">
-              </div>
-            {%- endif -%}
-            {%- if block.settings.title != blank -%}
-              <h3 class="benefit-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% endif %}">{{ block.settings.title | escape }}</h3>
-            {%- endif -%}
-            {%- if block.settings.description != blank -%}
-              <p class="benefit-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
-            {%- endif -%}
-          </div>
-        {%- endfor -%}
-      {%- else -%}
-        {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
-        {%- for i in (1..6) -%}
-          {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
-          {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
-          {%- assign icon_key = 'benefit_' | append: i | append: '_icon' -%}
-          {%- assign title = section.settings[title_key] -%}
-          {%- assign desc = section.settings[desc_key] -%}
-          {%- assign icon = section.settings[icon_key] -%}
-          {%- if title != blank or desc != blank -%}
-            <div class="benefit-item">
-              {%- if icon != blank -%}
-                <div class="benefit-icon">
-                  <img src="{{ icon | image_url: width: 100 }}" alt="{{ title | escape }}">
-                </div>
-              {%- endif -%}
-              {%- if title != blank -%}
-                <h3 class="benefit-title">{{ title | escape }}</h3>
-              {%- endif -%}
-              {%- if desc != blank -%}
-                <p class="benefit-description">{{ desc }}</p>
+    {%- comment -%} Count benefit items {%- endcomment -%}
+    {%- assign benefit_count = 0 -%}
+    {%- if section.settings.content_mode == 'blocks' -%}
+      {%- assign benefit_count = section.blocks.size -%}
+    {%- else -%}
+      {%- for i in (1..6) -%}
+        {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
+        {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
+        {%- assign title = section.settings[title_key] -%}
+        {%- assign desc = section.settings[desc_key] -%}
+        {%- if title != blank or desc != blank -%}
+          {%- assign benefit_count = benefit_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+    
+    {%- if benefit_count > 0 -%}
+      {%- if layout_style == 'carousel' -%}
+        {%- comment -%} Carousel Layout {%- endcomment -%}
+        <div class="benefits-carousel__wrapper" 
+             data-carousel-id="benefits-{{ section.id }}"
+             data-items-desktop="{{ section.settings.carousel_items_desktop }}"
+             data-items-mobile="{{ section.settings.carousel_items_mobile }}"
+             data-autoplay="{{ section.settings.carousel_autoplay }}"
+             data-autoplay-speed="{{ section.settings.carousel_autoplay_speed }}"
+             data-gap="{{ section.settings.item_spacing }}">
+          
+          <div class="benefits-carousel__container" role="region" aria-label="Benefits carousel">
+            <div class="benefits-carousel__track" data-carousel-track>
+              {%- if section.settings.content_mode == 'blocks' -%}
+                {%- for block in section.blocks -%}
+                  <div class="benefits-carousel__slide" data-carousel-slide>
+                    <div class="benefit-item" {{ block.shopify_attributes }}>
+                      {%- if block.settings.icon != blank -%}
+                        <div class="benefit-icon">
+                          <img src="{{ block.settings.icon | image_url: width: 100 }}" alt="{{ block.settings.title | escape }}" loading="lazy">
+                        </div>
+                      {%- elsif block.settings.icon_asset != blank -%}
+                        <div class="benefit-icon">
+                          <img src="{{ block.settings.icon_asset | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy">
+                        </div>
+                      {%- endif -%}
+                      {%- if block.settings.title != blank -%}
+                        <h3 class="benefit-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% endif %}">{{ block.settings.title | escape }}</h3>
+                      {%- endif -%}
+                      {%- if block.settings.description != blank -%}
+                        <p class="benefit-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                {%- endfor -%}
+              {%- else -%}
+                {%- for i in (1..6) -%}
+                  {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
+                  {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
+                  {%- assign icon_key = 'benefit_' | append: i | append: '_icon' -%}
+                  {%- assign title = section.settings[title_key] -%}
+                  {%- assign desc = section.settings[desc_key] -%}
+                  {%- assign icon = section.settings[icon_key] -%}
+                  {%- if title != blank or desc != blank -%}
+                    <div class="benefits-carousel__slide" data-carousel-slide>
+                      <div class="benefit-item">
+                        {%- if icon != blank -%}
+                          <div class="benefit-icon">
+                            <img src="{{ icon | image_url: width: 100 }}" alt="{{ title | escape }}" loading="lazy">
+                          </div>
+                        {%- endif -%}
+                        {%- if title != blank -%}
+                          <h3 class="benefit-title">{{ title | escape }}</h3>
+                        {%- endif -%}
+                        {%- if desc != blank -%}
+                          <p class="benefit-description">{{ desc }}</p>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
               {%- endif -%}
             </div>
+          </div>
+
+          {%- if section.settings.carousel_show_arrows -%}
+            <button class="benefits-carousel__button benefits-carousel__button--prev" 
+                    data-carousel-prev 
+                    aria-label="Previous benefits"
+                    type="button">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <button class="benefits-carousel__button benefits-carousel__button--next" 
+                    data-carousel-next 
+                    aria-label="Next benefits"
+                    type="button">
+              <span aria-hidden="true">›</span>
+            </button>
           {%- endif -%}
-        {%- endfor -%}
+
+          {%- if section.settings.carousel_show_dots and benefit_count > section.settings.carousel_items_desktop -%}
+            <div class="benefits-carousel__dots" data-carousel-dots role="tablist" aria-label="Benefits navigation">
+              {%- assign total_slides = benefit_count | divided_by: section.settings.carousel_items_desktop | ceil -%}
+              {%- for i in (1..total_slides) -%}
+                <button class="benefits-carousel__dot{% if forloop.first %} benefits-carousel__dot--active{% endif %}" 
+                        data-carousel-dot 
+                        data-slide-index="{{ forloop.index0 }}"
+                        aria-label="Go to slide {{ forloop.index }}"
+                        type="button"
+                        role="tab"
+                        aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                  <span class="visually-hidden">Slide {{ forloop.index }}</span>
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        {%- comment -%} Grid Layout {%- endcomment -%}
+        <div class="benefits-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
+          {%- if section.settings.content_mode == 'blocks' -%}
+            {%- for block in section.blocks -%}
+              <div class="benefit-item" {{ block.shopify_attributes }}>
+                {%- if block.settings.icon != blank -%}
+                  <div class="benefit-icon">
+                    <img src="{{ block.settings.icon | image_url: width: 100 }}" alt="{{ block.settings.title | escape }}" loading="lazy">
+                  </div>
+                {%- elsif block.settings.icon_asset != blank -%}
+                  <div class="benefit-icon">
+                    <img src="{{ block.settings.icon_asset | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy">
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.title != blank -%}
+                  <h3 class="benefit-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% endif %}">{{ block.settings.title | escape }}</h3>
+                {%- endif -%}
+                {%- if block.settings.description != blank -%}
+                  <p class="benefit-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
+            {%- for i in (1..6) -%}
+              {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
+              {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
+              {%- assign icon_key = 'benefit_' | append: i | append: '_icon' -%}
+              {%- assign title = section.settings[title_key] -%}
+              {%- assign desc = section.settings[desc_key] -%}
+              {%- assign icon = section.settings[icon_key] -%}
+              {%- if title != blank or desc != blank -%}
+                <div class="benefit-item">
+                  {%- if icon != blank -%}
+                    <div class="benefit-icon">
+                      <img src="{{ icon | image_url: width: 100 }}" alt="{{ title | escape }}" loading="lazy">
+                    </div>
+                  {%- endif -%}
+                  {%- if title != blank -%}
+                    <h3 class="benefit-title">{{ title | escape }}</h3>
+                  {%- endif -%}
+                  {%- if desc != blank -%}
+                    <p class="benefit-description">{{ desc }}</p>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
       {%- endif -%}
-    </div>
+    {%- endif -%}
   </div>
 </{{ structural_element }}>
 
@@ -105,8 +225,19 @@
   /* Desktop (1200px+) */
   @media screen and (min-width: 1200px) {
     .benefits-grid {
-      grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, 1fr) !important;
+      grid-template-columns: repeat({{ section.settings.columns_desktop | default: 3 }}, 1fr) !important;
     }
+  }
+
+  /* Carousel Layout Styles */
+  .benefits-section--carousel .benefits-carousel__wrapper {
+    margin-top: 20px;
+  }
+
+  .benefits-section--carousel .benefit-item {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 </style>
 
@@ -129,6 +260,101 @@
         { "value": "settings", "label": "Use Settings (Fixed)" }
       ],
       "default": "blocks"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout Style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop - Grid Only)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "info": "Only applies when layout style is Grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (Mobile - Grid Only)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "info": "Only applies when layout style is Grid"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Carousel Settings"
+    },
+    {
+      "type": "range",
+      "id": "carousel_items_desktop",
+      "label": "Items Per Slide (Desktop)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "info": "Only applies when layout style is Carousel"
+    },
+    {
+      "type": "range",
+      "id": "carousel_items_mobile",
+      "label": "Items Per Slide (Mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "info": "Only applies when layout style is Carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_show_arrows",
+      "label": "Show Navigation Arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_show_dots",
+      "label": "Show Dot Indicators",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_autoplay",
+      "label": "Enable Auto-play",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "carousel_autoplay_speed",
+      "label": "Auto-play Speed (ms)",
+      "min": 2000,
+      "max": 10000,
+      "step": 500,
+      "default": 5000,
+      "info": "Only applies when auto-play is enabled"
     },
     {
       "type": "header",
@@ -155,33 +381,6 @@
         { "value": "right", "label": "Right" }
       ],
       "default": "center"
-    },
-    {
-      "type": "range",
-      "id": "columns_desktop",
-      "label": "Columns (Desktop)",
-      "min": 1,
-      "max": 6,
-      "step": 1,
-      "default": 3
-    },
-    {
-      "type": "range",
-      "id": "columns_mobile",
-      "label": "Columns (Mobile)",
-      "min": 1,
-      "max": 3,
-      "step": 1,
-      "default": 1
-    },
-    {
-      "type": "range",
-      "id": "item_spacing",
-      "label": "Item Spacing (px)",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "default": 30
     },
     {
       "type": "range",

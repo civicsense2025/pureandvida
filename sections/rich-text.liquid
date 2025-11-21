@@ -10,14 +10,18 @@
   #   Add to any template for custom formatted content blocks
 %}
 
-<section class="rich-text-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
+<section class="rich-text-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
   <div class="page-width{% if section.settings.full_width %} full-width{% endif %}" style="{% if section.settings.content_width != blank and section.settings.full_width == false %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
     {%- if section.settings.heading != blank -%}
-      <h2 class="rich-text-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px;">{{ section.settings.heading | escape }}</h2>
+      <h2 class="rich-text-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    
+    {%- if section.settings.description != blank -%}
+      <p class="rich-text-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.description_size }}px; margin-bottom: {{ section.settings.description_spacing }}px;">{{ section.settings.description }}</p>
     {%- endif -%}
     
     {%- if section.settings.content != blank -%}
-      <div class="rich-text-content rte" style="{% if section.settings.text_color != blank %}color: {{ section.settings.text_color }};{% endif %} text-align: {{ section.settings.text_alignment }};">
+      <div class="rich-text-content rte" style="{% if section.settings.text_color != blank %}color: {{ section.settings.text_color }};{% endif %} text-align: {{ section.settings.text_alignment }}; font-size: {{ section.settings.text_size }}px; line-height: {{ section.settings.text_line_height }};">
         {{ section.settings.content }}
       </div>
     {%- endif -%}
@@ -49,6 +53,19 @@
       "default": 36
     },
     {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
       "type": "color",
       "id": "heading_color",
       "label": "Heading Color"
@@ -65,9 +82,68 @@
       "default": "center"
     },
     {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading Bottom Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description Size (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "range",
+      "id": "description_spacing",
+      "label": "Description Bottom Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 15
+    },
+    {
       "type": "richtext",
       "id": "content",
       "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text Size (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "label": "Text Line Height",
+      "min": 1.2,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.6
     },
     {
       "type": "color",
@@ -107,13 +183,30 @@
       "info": "Only applies if Full Width is disabled"
     },
     {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
       "type": "range",
-      "id": "section_padding",
-      "label": "Section Padding (px)",
+      "id": "section_padding_top",
+      "label": "Section Padding Top (px)",
       "min": 0,
       "max": 100,
       "step": 5,
       "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
     },
     {
       "type": "color",

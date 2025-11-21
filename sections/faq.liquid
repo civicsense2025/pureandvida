@@ -10,21 +10,25 @@
   assign structural_element = section.settings.structural_element | default: 'section'
 %}
 
-<{{ structural_element }} class="faq-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
-  <div class="faq-content page-width">
+<{{ structural_element }} class="faq-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
+  <div class="faq-content page-width" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
     {%- if section.settings.heading != blank -%}
-      <h2 class="faq-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
+      <h2 class="faq-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    
+    {%- if section.settings.description != blank -%}
+      <p class="faq-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.description_size }}px; margin-bottom: {{ section.settings.description_spacing }}px;">{{ section.settings.description }}</p>
     {%- endif -%}
     
     <div class="faq-list">
       {%- if section.settings.content_mode == 'blocks' -%}
         {%- for block in section.blocks -%}
           <details class="faq-item" {% if section.settings.default_open and forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
-            <summary class="faq-question" style="{% if block.settings.question_color != blank %}color: {{ block.settings.question_color }};{% endif %}">
+            <summary class="faq-question" style="{% if block.settings.question_color != blank %}color: {{ block.settings.question_color }};{% elsif section.settings.default_question_color != blank %}color: {{ section.settings.default_question_color }};{% endif %} font-size: {{ section.settings.question_size }}px; font-weight: {{ section.settings.question_weight }}; padding: {{ section.settings.item_padding }}px; background: {% if section.settings.item_background_color != blank %}{{ section.settings.item_background_color }}{% else %}transparent{% endif %}; border: {{ section.settings.item_border_width }}px solid {% if section.settings.item_border_color != blank %}{{ section.settings.item_border_color }}{% else %}rgba(0,0,0,0.1){% endif %}; border-radius: {{ section.settings.item_border_radius }}px;">
               <span>{{ block.settings.question | escape }}</span>
-              <span class="faq-icon" style="{% if block.settings.icon_color != blank %}color: {{ block.settings.icon_color }};{% endif %}">{{ section.settings.icon_text }}</span>
+              <span class="faq-icon" style="{% if block.settings.icon_color != blank %}color: {{ block.settings.icon_color }};{% elsif section.settings.default_icon_color != blank %}color: {{ section.settings.default_icon_color }};{% endif %} font-size: {{ section.settings.icon_size }}px;">{{ section.settings.icon_text }}</span>
             </summary>
-            <div class="faq-answer" style="{% if block.settings.answer_color != blank %}color: {{ block.settings.answer_color }};{% endif %}">
+            <div class="faq-answer" style="{% if block.settings.answer_color != blank %}color: {{ block.settings.answer_color }};{% elsif section.settings.default_answer_color != blank %}color: {{ section.settings.default_answer_color }};{% endif %} font-size: {{ section.settings.answer_size }}px; line-height: {{ section.settings.answer_line_height }}; padding: {{ section.settings.answer_padding }}px; background: {% if section.settings.answer_background_color != blank %}{{ section.settings.answer_background_color }}{% else %}transparent{% endif %};">
               <p>{{ block.settings.answer }}</p>
             </div>
           </details>
@@ -38,11 +42,11 @@
           {%- assign answer = section.settings[answer_key] -%}
           {%- if question != blank or answer != blank -%}
             <details class="faq-item" {% if section.settings.default_open and forloop.first %}open{% endif %}>
-              <summary class="faq-question">
+              <summary class="faq-question" style="{% if section.settings.default_question_color != blank %}color: {{ section.settings.default_question_color }};{% endif %} font-size: {{ section.settings.question_size }}px; font-weight: {{ section.settings.question_weight }}; padding: {{ section.settings.item_padding }}px; background: {% if section.settings.item_background_color != blank %}{{ section.settings.item_background_color }}{% else %}transparent{% endif %}; border: {{ section.settings.item_border_width }}px solid {% if section.settings.item_border_color != blank %}{{ section.settings.item_border_color }}{% else %}rgba(0,0,0,0.1){% endif %}; border-radius: {{ section.settings.item_border_radius }}px;">
                 <span>{{ question | escape }}</span>
-                <span class="faq-icon">{{ section.settings.icon_text }}</span>
+                <span class="faq-icon" style="{% if section.settings.default_icon_color != blank %}color: {{ section.settings.default_icon_color }};{% endif %} font-size: {{ section.settings.icon_size }}px;">{{ section.settings.icon_text }}</span>
               </summary>
-              <div class="faq-answer">
+              <div class="faq-answer" style="{% if section.settings.default_answer_color != blank %}color: {{ section.settings.default_answer_color }};{% endif %} font-size: {{ section.settings.answer_size }}px; line-height: {{ section.settings.answer_line_height }}; padding: {{ section.settings.answer_padding }}px; background: {% if section.settings.answer_background_color != blank %}{{ section.settings.answer_background_color }}{% else %}transparent{% endif %};">
                 <p>{{ answer }}</p>
               </div>
             </details>
@@ -54,31 +58,63 @@
 </{{ structural_element }}>
 
 <style>
-  /* FAQ Section Responsive Styles */
+  /* FAQ Section Base Styles */
   .faq-content {
-    max-width: 632px;
-    margin: 0 auto;
     padding: 0 clamp(20px, 4vw, 0);
   }
   
-  .faq-question {
-    min-height: 44px;
-    font-size: clamp(16px, 2vw, 19.719px);
-    padding: clamp(10px, 1.2vw, 11.99px);
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.item_spacing }}px;
   }
   
-  .faq-answer {
-    font-size: clamp(14px, 1.6vw, 16px);
-    padding: clamp(10px, 1.2vw, 11.99px);
+  .faq-item {
+    margin: 0;
+  }
+  
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    list-style: none;
+    transition: all 0.3s ease;
+  }
+  
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  
+  .faq-question:hover {
+    {%- if section.settings.item_hover_background_color != blank -%}
+      background-color: {{ section.settings.item_hover_background_color }} !important;
+    {%- endif -%}
+  }
+  
+  .faq-item[open] .faq-question {
+    {%- if section.settings.item_open_background_color != blank -%}
+      background-color: {{ section.settings.item_open_background_color }};
+    {%- endif -%}
   }
   
   .faq-icon {
-    font-size: clamp(20px, 2.4vw, 24px);
     min-width: 24px;
     min-height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 15px;
+  }
+  
+  .faq-item[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+  
+  .faq-answer {
+    transition: all 0.3s ease;
   }
   
   /* Mobile adjustments */
@@ -111,13 +147,35 @@
     },
     {
       "type": "header",
-      "content": "Section Settings"
+      "content": "Section Content"
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
       "default": "frequently asked questions"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Size (px)",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
     },
     {
       "type": "color",
@@ -136,10 +194,180 @@
       "default": "center"
     },
     {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading Bottom Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description Size (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "range",
+      "id": "description_spacing",
+      "label": "Description Bottom Spacing (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "FAQ Items"
+    },
+    {
       "type": "checkbox",
       "id": "default_open",
       "label": "Open First Item by Default",
       "default": false
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item Spacing (px)",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "label": "Item Padding (px)",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "item_background_color",
+      "label": "Item Background Color"
+    },
+    {
+      "type": "color",
+      "id": "item_hover_background_color",
+      "label": "Item Hover Background Color"
+    },
+    {
+      "type": "color",
+      "id": "item_open_background_color",
+      "label": "Item Open Background Color"
+    },
+    {
+      "type": "range",
+      "id": "item_border_width",
+      "label": "Item Border Width (px)",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "item_border_color",
+      "label": "Item Border Color"
+    },
+    {
+      "type": "range",
+      "id": "item_border_radius",
+      "label": "Item Border Radius (px)",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Question Size (px)",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "question_weight",
+      "label": "Question Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "default_question_color",
+      "label": "Default Question Color",
+      "info": "Used in settings mode, can be overridden per block"
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "label": "Answer Size (px)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "answer_line_height",
+      "label": "Answer Line Height",
+      "min": 1.2,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "color",
+      "id": "default_answer_color",
+      "label": "Default Answer Color",
+      "info": "Used in settings mode, can be overridden per block"
+    },
+    {
+      "type": "range",
+      "id": "answer_padding",
+      "label": "Answer Padding (px)",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "answer_background_color",
+      "label": "Answer Background Color"
+    },
+    {
+      "type": "header",
+      "content": "Icon"
     },
     {
       "type": "text",
@@ -149,12 +377,54 @@
     },
     {
       "type": "range",
-      "id": "section_padding",
-      "label": "Section Padding (px)",
+      "id": "icon_size",
+      "label": "Icon Size (px)",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "default_icon_color",
+      "label": "Default Icon Color",
+      "info": "Used in settings mode, can be overridden per block"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top (px)",
       "min": 0,
       "max": 100,
       "step": 5,
       "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width (px)",
+      "min": 0,
+      "max": 1920,
+      "step": 20,
+      "default": 632,
+      "info": "0 = full width"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
     },
     {
       "type": "color",

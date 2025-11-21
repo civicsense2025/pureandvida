@@ -123,14 +123,39 @@ body {
   grid-template-columns: 100%;
   min-height: 100%;
   margin: 0;
-  font-size: clamp(1.4rem, 1.5vw + 0.5rem, 1.6rem);
+  font-size: var(--font-body-size, 16px);
   letter-spacing: 0.06rem;
-  line-height: calc(1 + 0.8 / var(--font-body-scale));
+  line-height: var(--font-body-line-height, 1.6);
   font-family: var(--font-body-family);
   font-style: var(--font-body-style);
   font-weight: var(--font-body-weight);
   color: rgba(var(--color-base-text), 0.75);
   background-color: rgb(var(--color-base-background-1));
+}
+
+/* Ensure all text elements inherit typography */
+p, span, div, a, li, td, th, label, input, textarea, select, button {
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+  font-size: var(--font-body-size, 16px);
+  line-height: var(--font-body-line-height, 1.6);
+}
+
+/* Buttons should use body font */
+button, .button, input[type="button"], input[type="submit"] {
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight-bold, 700);
+  font-size: var(--font-body-size, 16px);
+}
+
+/* Inputs and form elements */
+input, textarea, select {
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+  font-size: var(--font-body-size, 16px);
 }
 
 /* Utility Classes */
@@ -490,21 +515,33 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading-family);
   font-style: var(--font-heading-style);
   font-weight: var(--font-heading-weight);
-  letter-spacing: calc(var(--font-heading-scale) * 0.06rem);
+  letter-spacing: 0.06rem;
   color: rgb(var(--color-base-text));
-  line-height: calc(1 + 0.3 / var(--font-heading-scale));
+  line-height: var(--font-heading-line-height, 1.2);
 }
 
 h1 {
-  font-size: clamp(2rem, 4vw + 1rem, calc(var(--font-heading-scale) * 3.2rem));
+  font-size: clamp(calc(var(--font-heading-size, 36px) * 0.6), 4vw + 1rem, var(--font-heading-size, 36px));
 }
 
 h2 {
-  font-size: clamp(1.75rem, 3vw + 0.75rem, calc(var(--font-heading-scale) * 2.4rem));
+  font-size: clamp(calc(var(--font-heading-size, 36px) * 0.5), 3vw + 0.75rem, calc(var(--font-heading-size, 36px) * 0.8));
 }
 
 h3 {
-  font-size: clamp(1.5rem, 2.5vw + 0.5rem, calc(var(--font-heading-scale) * 2rem));
+  font-size: clamp(calc(var(--font-heading-size, 36px) * 0.4), 2.5vw + 0.5rem, calc(var(--font-heading-size, 36px) * 0.65));
+}
+
+h4 {
+  font-size: clamp(calc(var(--font-heading-size, 36px) * 0.35), 2vw + 0.4rem, calc(var(--font-heading-size, 36px) * 0.55));
+}
+
+h5 {
+  font-size: clamp(calc(var(--font-heading-size, 36px) * 0.3), 1.5vw + 0.3rem, calc(var(--font-heading-size, 36px) * 0.45));
+}
+
+h6 {
+  font-size: clamp(calc(var(--font-heading-size, 36px) * 0.25), 1vw + 0.2rem, calc(var(--font-heading-size, 36px) * 0.4));
 }
 
 /* Links */
@@ -527,11 +564,27 @@ h3 {
 /* RTE (Rich Text Editor) */
 .rte {
   word-wrap: break-word;
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+  font-size: var(--font-body-size, 16px);
+  line-height: var(--font-body-line-height, 1.6);
+  color: inherit;
+}
+
+.rte h1, .rte h2, .rte h3, .rte h4, .rte h5, .rte h6 {
+  font-family: var(--font-heading-family);
+  font-style: var(--font-heading-style);
+  font-weight: var(--font-heading-weight);
+  line-height: var(--font-heading-line-height, 1.2);
 }
 
 .rte p {
   margin-top: 1.5rem;
   margin-bottom: 0;
+  font-family: var(--font-body-family);
+  font-size: var(--font-body-size, 16px);
+  line-height: var(--font-body-line-height, 1.6);
 }
 
 .rte p:first-child {

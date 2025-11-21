@@ -25,24 +25,20 @@
     "benefits": {
       "type": "benefits",
       "settings": {
-        "heading": "Why Choose Us",
         "content_mode": "blocks",
+        "heading": "Why Choose Us",
         "columns_desktop": 3
       }
     },
     "testimonials": {
       "type": "testimonials",
-      "settings": {
-        "heading": "What Our Customers Say",
-        "content_mode": "blocks",
-        "columns_desktop": 3
-      }
+      "settings": {}
     },
     "faq": {
       "type": "faq",
       "settings": {
-        "heading": "Frequently Asked Questions",
-        "content_mode": "blocks"
+        "content_mode": "blocks",
+        "heading": "Frequently Asked Questions"
       }
     }
   },
@@ -55,4 +51,3 @@
     "faq"
   ]
 }
-

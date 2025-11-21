@@ -21,7 +21,9 @@
     {%- endif -%}
     
     <div class="faq-list">
-      {%- if section.settings.content_mode == 'blocks' -%}
+      {%- comment -%} Determine which mode to use: blocks mode if set AND blocks exist, otherwise use settings mode {%- endcomment -%}
+      {%- if section.settings.content_mode == 'blocks' and section.blocks.size > 0 -%}
+        {%- comment -%} Blocks mode - Dynamic FAQ items {%- endcomment -%}
         {%- for block in section.blocks -%}
           <details class="faq-item" {% if section.settings.default_open and forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
             <summary class="faq-question" style="{% if block.settings.question_color != blank %}color: {{ block.settings.question_color }};{% elsif section.settings.default_question_color != blank %}color: {{ section.settings.default_question_color }};{% endif %} font-size: {{ section.settings.question_size }}px; font-weight: {{ section.settings.question_weight }}; padding: {{ section.settings.item_padding }}px; background: {% if section.settings.item_background_color != blank %}{{ section.settings.item_background_color }}{% else %}transparent{% endif %}; border: {{ section.settings.item_border_width }}px solid {% if section.settings.item_border_color != blank %}{{ section.settings.item_border_color }}{% else %}rgba(0,0,0,0.1){% endif %}; border-radius: {{ section.settings.item_border_radius }}px;">
@@ -34,7 +36,7 @@
           </details>
         {%- endfor -%}
       {%- else -%}
-        {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
+        {%- comment -%} Settings mode - Fixed fields (used when content_mode is 'settings' OR when blocks mode has no blocks) {%- endcomment -%}
         {%- for i in (1..10) -%}
           {%- assign question_key = 'faq_' | append: i | append: '_question' -%}
           {%- assign answer_key = 'faq_' | append: i | append: '_answer' -%}

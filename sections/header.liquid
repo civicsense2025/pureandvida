@@ -9,49 +9,72 @@
   # @settings show_cart {Boolean} - Display cart button
   # @example
   #   Section is automatically included in theme.liquid layout
+
+  # Extract style logic into variables
+  assign header_bg_style = ''
+  if section.settings.transparent_header
+    assign header_bg_style = 'background-color: transparent;'
+  elsif section.settings.background_color != blank
+    assign header_bg_style = 'background-color: ' | append: section.settings.background_color | append: ';'
+  endif
+
+  assign menu_text_style = ''
+  if section.settings.menu_text_color != blank
+    assign menu_text_style = 'color: ' | append: section.settings.menu_text_color | append: ';'
+  endif
+
+  assign cart_button_style = ''
+  if section.settings.cart_button_color != blank
+    assign cart_button_style = 'background-color: ' | append: section.settings.cart_button_color | append: ';'
+  endif
+  if section.settings.cart_button_text_color != blank
+    assign cart_button_style = cart_button_style | append: 'color: ' | append: section.settings.cart_button_text_color | append: ';'
+  endif
 %}
 
-<header class="header-wrapper pure-vida-header{% if section.settings.sticky_header %} sticky-header{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.transparent_header %}background-color: transparent;{% endif %}">
+<header class="header-wrapper pure-vida-header{% if section.settings.sticky_header %} sticky-header{% endif %}"{% if header_bg_style != blank %} style="{{ header_bg_style }}"{% endif %}>
   <div class="header page-width" style="height: {{ section.settings.header_height }}px;">
-    <div class="header__logo">
-      {% render 'logo',
-        logo_image: section.settings.logo_image,
-        logo_text: section.settings.logo_text,
-        logo_width: section.settings.logo_width,
-        logo_height: section.settings.logo_height,
-        logo_text_size: section.settings.logo_text_size,
-        logo_text_color: section.settings.logo_text_color,
-        show_plus: section.settings.show_plus,
-        class_name: 'header'
-      %}
-    </div>
+    {%- if section.settings.logo_image != blank or section.settings.logo_text != blank -%}
+      <div class="header__logo">
+        {% render 'logo',
+          logo_image: section.settings.logo_image,
+          logo_text: section.settings.logo_text,
+          logo_width: section.settings.logo_width,
+          logo_height: section.settings.logo_height,
+          logo_text_size: section.settings.logo_text_size,
+          logo_text_color: section.settings.logo_text_color,
+          show_plus: section.settings.show_plus,
+          class_name: 'header'
+        %}
+      </div>
+    {%- endif -%}
 
     <nav class="header__inline-menu">
       {%- if section.settings.menu != blank -%}
         <ul class="list-menu list-menu--inline" role="list">
           {%- for link in section.settings.menu.links -%}
             <li>
-              <a href="{{ link.url }}" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">{{ link.title | escape }}</a>
+              <a href="{{ link.url }}" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ link.title | escape }}</a>
             </li>
           {%- endfor -%}
         </ul>
       {%- else -%}
         <ul class="list-menu list-menu--inline" role="list">
           <li>
-            <a href="{{ routes.collections_url }}" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">MycoMatcha</a>
+            <a href="{{ routes.collections_url }}" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>MycoMatcha</a>
           </li>
           <li>
-            <a href="{{ routes.root_url }}/pages/order-tracking" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">Order Tracking</a>
+            <a href="{{ routes.root_url }}/pages/order-tracking" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>Order Tracking</a>
           </li>
           <li>
-            <a href="{{ routes.root_url }}/pages/about" class="header__menu-item" style="{% if section.settings.menu_text_color != blank %}color: {{ section.settings.menu_text_color }};{% endif %}">About</a>
+            <a href="{{ routes.root_url }}/pages/about" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>About</a>
           </li>
         </ul>
       {%- endif -%}
       
-      {%- if section.settings.show_cart -%}
-        <a href="{{ routes.cart_url }}" class="header__cta-button" style="{% if section.settings.cart_button_color != blank %}background-color: {{ section.settings.cart_button_color }};{% endif %}{% if section.settings.cart_button_text_color != blank %}color: {{ section.settings.cart_button_text_color }};{% endif %}">
-          {{ section.settings.cart_button_text | default: "+Add to Cart" }}
+      {%- if section.settings.show_cart and section.settings.cart_button_text != blank -%}
+        <a href="{{ routes.cart_url }}" class="header__cta-button"{% if cart_button_style != blank %} style="{{ cart_button_style }}"{% endif %}>
+          {{ section.settings.cart_button_text }}
         </a>
       {%- endif -%}
     </nav>
@@ -196,8 +219,7 @@
       "type": "text",
       "id": "logo_text",
       "label": "Logo Text",
-      "default": "PURE VIDA",
-      "info": "Used if no logo image is uploaded"
+      "info": "Used if no logo image is uploaded. Leave empty to hide logo text."
     },
     {
       "type": "range",
@@ -248,7 +270,7 @@
       "type": "text",
       "id": "cart_button_text",
       "label": "Cart Button Text",
-      "default": "+Add to Cart"
+      "info": "Leave empty to hide cart button text"
     },
     {
       "type": "color",

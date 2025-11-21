@@ -28,9 +28,9 @@
       width="{{ logo_width }}"
       height="{{ logo_height }}"
     >
-  {%- else -%}
+  {%- elsif logo_text != blank -%}
     <span class="{{ class_name }}__text" style="{% if logo_text_color != blank %}color: {{ logo_text_color }};{% endif %} font-size: {{ logo_text_size }}px; font-weight: bold; display: inline-block;">
-      {{ logo_text | default: shop.name }}
+      {{ logo_text }}
       {%- if show_plus -%}
         <span class="{{ class_name }}__plus" style="{% if logo_text_color != blank %}color: {{ logo_text_color }};{% endif %}">+</span>
       {%- endif -%}

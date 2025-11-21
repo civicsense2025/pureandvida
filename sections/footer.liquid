@@ -9,9 +9,8 @@
   # @blocks link_list - Footer column with heading and links
   # @example
   #   Section is automatically included in theme.liquid layout
-%}
 
-{% liquid
+  # Calculate column layout
   assign column_layout = section.settings.column_layout | default: 'auto'
   assign columns_count = section.blocks.size
   if column_layout == '2'
@@ -22,21 +21,46 @@
     assign columns_count = 4
   endif
   assign structural_element = section.settings.structural_element | default: 'footer'
+
+  # Extract style logic into variables
+  assign footer_bg_style = ''
+  if section.settings.background_color != blank
+    assign footer_bg_style = 'background-color: ' | append: section.settings.background_color | append: ';'
+  endif
+
+  assign grid_template_columns = 'auto 1fr auto'
+  if section.settings.layout_style == 'columns'
+    assign grid_template_columns = 'repeat(' | append: columns_count | append: ', 1fr)'
+  endif
+
+  assign column_gap = section.settings.column_gap | default: 40
+  assign grid_style = 'display: grid; grid-template-columns: ' | append: grid_template_columns | append: '; gap: ' | append: column_gap | append: 'px; align-items: start;'
 %}
 
-<{{ structural_element }} class="footer pure-vida-footer" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
-  <div class="footer__content page-width" style="display: grid; grid-template-columns: {% if section.settings.layout_style == 'columns' %}repeat({{ columns_count }}, 1fr){% else %}auto 1fr auto{% endif %}; gap: {{ section.settings.column_gap | default: 40 }}px; align-items: start;">
+<{{ structural_element }} class="footer pure-vida-footer"{% if footer_bg_style != blank %} style="{{ footer_bg_style }}"{% endif %}>
+  <div class="footer__content page-width" style="{{ grid_style }}">
     {%- if section.settings.layout_style == 'columns' -%}
       {%- comment -%} Equal Columns Layout {%- endcomment -%}
       {%- for block in section.blocks -%}
         {%- if block.type == 'link_list' -%}
           <div class="footer__column" {{ block.shopify_attributes }}>
+            {%- liquid
+              assign heading_style = ''
+              if block.settings.heading_color != blank
+                assign heading_style = 'color: ' | append: block.settings.heading_color | append: ';'
+              endif
+
+              assign link_style = ''
+              if block.settings.link_color != blank
+                assign link_style = 'color: ' | append: block.settings.link_color | append: ';'
+              endif
+            -%}
             {%- if block.settings.heading != blank -%}
-              <h3 class="footer__heading" style="{% if block.settings.heading_color != blank %}color: {{ block.settings.heading_color }};{% endif %}">{{ block.settings.heading | escape }}</h3>
+              <h3 class="footer__heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>{{ block.settings.heading | escape }}</h3>
             {%- endif -%}
             {%- if block.settings.menu != blank -%}
               {%- for link in block.settings.menu.links -%}
-                <a href="{{ link.url }}" class="footer__link" style="{% if block.settings.link_color != blank %}color: {{ block.settings.link_color }};{% endif %}">{{ link.title | escape }}</a>
+                <a href="{{ link.url }}" class="footer__link"{% if link_style != blank %} style="{{ link_style }}"{% endif %}>{{ link.title | escape }}</a>
               {%- endfor -%}
             {%- endif -%}
             {%- if block.settings.custom_links != blank -%}
@@ -44,7 +68,7 @@
               {%- for link_line in links -%}
                 {%- assign link_parts = link_line | split: '|' -%}
                 {%- if link_parts.size == 2 -%}
-                  <a href="{{ link_parts[0] | strip }}" class="footer__link" style="{% if block.settings.link_color != blank %}color: {{ block.settings.link_color }};{% endif %}">{{ link_parts[1] | strip | escape }}</a>
+                  <a href="{{ link_parts[0] | strip }}" class="footer__link"{% if link_style != blank %} style="{{ link_style }}"{% endif %}>{{ link_parts[1] | strip | escape }}</a>
                 {%- endif -%}
               {%- endfor -%}
             {%- endif -%}
@@ -54,20 +78,26 @@
     {%- else -%}
       {%- comment -%} Three Column Layout {%- endcomment -%}
       <div class="footer__left">
-        <div class="footer__logo">
-          {% render 'logo',
-            logo_image: section.settings.logo_image,
-            logo_text: section.settings.logo_text,
-            logo_text_size: section.settings.logo_text_size,
-            logo_text_color: section.settings.logo_text_color,
-            show_plus: section.settings.show_plus,
-            class_name: 'footer'
-          %}
-        </div>
+        {%- if section.settings.logo_image != blank or section.settings.logo_text != blank -%}
+          <div class="footer__logo">
+            {% render 'logo',
+              logo_image: section.settings.logo_image,
+              logo_text: section.settings.logo_text,
+              logo_text_size: section.settings.logo_text_size,
+              logo_text_color: section.settings.logo_text_color,
+              show_plus: section.settings.show_plus,
+              class_name: 'footer'
+            %}
+          </div>
+        {%- endif -%}
+        {%- liquid
+          assign copyright_style = ''
+          if section.settings.copyright_color != blank
+            assign copyright_style = 'color: ' | append: section.settings.copyright_color | append: ';'
+          endif
+        -%}
         {%- if section.settings.copyright_text != blank -%}
-          <p class="footer__copyright" style="{% if section.settings.copyright_color != blank %}color: {{ section.settings.copyright_color }};{% endif %}">{{ section.settings.copyright_text }}</p>
-        {%- else -%}
-          <p class="footer__copyright" style="{% if section.settings.copyright_color != blank %}color: {{ section.settings.copyright_color }};{% endif %}">Copyright Pura Vida 2025. All rights reserved.</p>
+          <p class="footer__copyright"{% if copyright_style != blank %} style="{{ copyright_style }}"{% endif %}>{{ section.settings.copyright_text }}</p>
         {%- endif -%}
       </div>
 
@@ -75,12 +105,23 @@
         {%- for block in section.blocks -%}
           {%- if block.type == 'link_list' -%}
             <div class="footer__column" {{ block.shopify_attributes }}>
+              {%- liquid
+                assign heading_style = ''
+                if block.settings.heading_color != blank
+                  assign heading_style = 'color: ' | append: block.settings.heading_color | append: ';'
+                endif
+
+                assign link_style = ''
+                if block.settings.link_color != blank
+                  assign link_style = 'color: ' | append: block.settings.link_color | append: ';'
+                endif
+              -%}
               {%- if block.settings.heading != blank -%}
-                <h3 class="footer__heading" style="{% if block.settings.heading_color != blank %}color: {{ block.settings.heading_color }};{% endif %}">{{ block.settings.heading | escape }}</h3>
+                <h3 class="footer__heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>{{ block.settings.heading | escape }}</h3>
               {%- endif -%}
               {%- if block.settings.menu != blank -%}
                 {%- for link in block.settings.menu.links -%}
-                  <a href="{{ link.url }}" class="footer__link" style="{% if block.settings.link_color != blank %}color: {{ block.settings.link_color }};{% endif %}">{{ link.title | escape }}</a>
+                  <a href="{{ link.url }}" class="footer__link"{% if link_style != blank %} style="{{ link_style }}"{% endif %}>{{ link.title | escape }}</a>
                 {%- endfor -%}
               {%- endif -%}
               {%- if block.settings.custom_links != blank -%}
@@ -88,7 +129,7 @@
                 {%- for link_line in links -%}
                   {%- assign link_parts = link_line | split: '|' -%}
                   {%- if link_parts.size == 2 -%}
-                    <a href="{{ link_parts[0] | strip }}" class="footer__link" style="{% if block.settings.link_color != blank %}color: {{ block.settings.link_color }};{% endif %}">{{ link_parts[1] | strip | escape }}</a>
+                    <a href="{{ link_parts[0] | strip }}" class="footer__link"{% if link_style != blank %} style="{{ link_style }}"{% endif %}>{{ link_parts[1] | strip | escape }}</a>
                   {%- endif -%}
                 {%- endfor -%}
               {%- endif -%}
@@ -99,17 +140,36 @@
 
       <div class="footer__right">
         {%- if section.settings.show_newsletter -%}
+          {%- liquid
+            assign newsletter_heading_style = ''
+            if section.settings.newsletter_heading_color != blank
+              assign newsletter_heading_style = 'color: ' | append: section.settings.newsletter_heading_color | append: ';'
+            endif
+
+            assign newsletter_text_style = ''
+            if section.settings.newsletter_text_color != blank
+              assign newsletter_text_style = 'color: ' | append: section.settings.newsletter_text_color | append: ';'
+            endif
+
+            assign newsletter_button_style = ''
+            if section.settings.newsletter_button_color != blank
+              assign newsletter_button_style = 'background-color: ' | append: section.settings.newsletter_button_color | append: ';'
+            endif
+            if section.settings.newsletter_button_text_color != blank
+              assign newsletter_button_style = newsletter_button_style | append: 'color: ' | append: section.settings.newsletter_button_text_color | append: ';'
+            endif
+          -%}
           <div class="footer__newsletter">
             {%- if section.settings.newsletter_heading != blank -%}
-              <h3 class="footer__heading" style="{% if section.settings.newsletter_heading_color != blank %}color: {{ section.settings.newsletter_heading_color }};{% endif %}">{{ section.settings.newsletter_heading | escape }}</h3>
+              <h3 class="footer__heading"{% if newsletter_heading_style != blank %} style="{{ newsletter_heading_style }}"{% endif %}>{{ section.settings.newsletter_heading | escape }}</h3>
             {%- endif -%}
             {%- if section.settings.newsletter_description != blank -%}
-              <p style="{% if section.settings.newsletter_text_color != blank %}color: {{ section.settings.newsletter_text_color }};{% endif %}">{{ section.settings.newsletter_description }}</p>
+              <p{% if newsletter_text_style != blank %} style="{{ newsletter_text_style }}"{% endif %}>{{ section.settings.newsletter_description }}</p>
             {%- endif -%}
             {%- form 'customer', class: 'footer__newsletter-form' -%}
               <input type="hidden" name="contact[tags]" value="newsletter">
               <input type="email" name="contact[email]" placeholder="{{ section.settings.newsletter_placeholder | default: 'Enter your email' }}" required>
-              <button type="submit" style="{% if section.settings.newsletter_button_color != blank %}background-color: {{ section.settings.newsletter_button_color }};{% endif %}{% if section.settings.newsletter_button_text_color != blank %}color: {{ section.settings.newsletter_button_text_color }};{% endif %}">
+              <button type="submit"{% if newsletter_button_style != blank %} style="{{ newsletter_button_style }}"{% endif %}>
                 {{ section.settings.newsletter_button_text | default: "Subscribe" }}
               </button>
             {%- endform -%}
@@ -198,8 +258,7 @@
       "type": "text",
       "id": "logo_text",
       "label": "Logo Text",
-      "default": "PURE VIDA",
-      "info": "Used if no logo image is uploaded"
+      "info": "Used if no logo image is uploaded. Leave empty to hide logo text."
     },
     {
       "type": "range",
@@ -229,7 +288,7 @@
       "type": "richtext",
       "id": "copyright_text",
       "label": "Copyright Text",
-      "default": "<p>Copyright Pura Vida 2025. All rights reserved.</p>"
+      "info": "Leave empty to hide copyright text"
     },
     {
       "type": "color",

@@ -67,6 +67,63 @@
       {{ body_font_bold_italic | font_face: font_display: 'swap' }}
       {{ settings.font_heading | font_face: font_display: 'swap' }}
 
+      /* Custom Fonts from Assets */
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 300;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ 'Nohemi-Light.otf' | asset_url }}') format('opentype');
+      }
+
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ 'Nohemi-Regular.otf' | asset_url }}') format('opentype');
+      }
+
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ 'Nohemi-Medium.otf' | asset_url }}') format('opentype');
+      }
+
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ 'Nohemi-SemiBold.otf' | asset_url }}') format('opentype');
+      }
+
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ 'Nohemi-Bold.otf' | asset_url }}') format('opentype');
+      }
+
+      @font-face {
+        font-family: 'Versailles';
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url }}') format('truetype');
+      }
+
+      @font-face {
+        font-family: 'MyriadPro';
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ 'MyriadPro-Regular.otf' | asset_url }}') format('opentype');
+      }
+
       :root {
         /* Typography */
         --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
@@ -203,6 +260,15 @@
     {%- unless settings.font_heading.system? -%}
       <link rel="preload" as="font" href="{{ settings.font_heading | font_url }}" type="font/woff2" crossorigin>
     {%- endunless -%}
+
+    {%- comment -%} Preload custom fonts from assets {%- endcomment -%}
+    <link rel="preload" as="font" href="{{ 'Nohemi-Light.otf' | asset_url }}" type="font/otf" crossorigin>
+    <link rel="preload" as="font" href="{{ 'Nohemi-Regular.otf' | asset_url }}" type="font/otf" crossorigin>
+    <link rel="preload" as="font" href="{{ 'Nohemi-Medium.otf' | asset_url }}" type="font/otf" crossorigin>
+    <link rel="preload" as="font" href="{{ 'Nohemi-SemiBold.otf' | asset_url }}" type="font/otf" crossorigin>
+    <link rel="preload" as="font" href="{{ 'Nohemi-Bold.otf' | asset_url }}" type="font/otf" crossorigin>
+    <link rel="preload" as="font" href="{{ 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url }}" type="font/ttf" crossorigin>
+    <link rel="preload" as="font" href="{{ 'MyriadPro-Regular.otf' | asset_url }}" type="font/otf" crossorigin>
 
     <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
   </head>

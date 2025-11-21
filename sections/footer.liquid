@@ -37,6 +37,17 @@
   assign grid_style = 'display: grid; grid-template-columns: ' | append: grid_template_columns | append: '; gap: ' | append: column_gap | append: 'px; align-items: start;'
 %}
 
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--footer">
+    <span class="editor-label">Footer</span>
+    <span class="editor-info">
+      {{ section.settings.layout_style | capitalize }} Layout | {{ section.blocks.size }} blocks |
+      {% if section.settings.show_newsletter %}Newsletter{% endif %}
+      {% if section.settings.show_social_media %}Social{% endif %}
+    </span>
+  </div>
+{% endif %}
+
 <{{ structural_element }} class="footer pure-vida-footer"{% if footer_bg_style != blank %} style="{{ footer_bg_style }}"{% endif %}>
   <div class="footer__content page-width" style="{{ grid_style }}">
     {%- if section.settings.layout_style == 'columns' -%}
@@ -202,15 +213,128 @@
   </div>
 </{{ structural_element }}>
 
+<style>
+  {% if request.design_mode %}
+    /* Footer Editor Visual Indicators */
+    .footer.pure-vida-footer {
+      position: relative;
+      outline: 2px dashed rgba(96, 125, 139, 0.3);
+      outline-offset: -2px;
+    }
+
+    .footer.pure-vida-footer::before {
+      content: 'FOOTER SECTION';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(96, 125, 139, 0.9);
+      color: white;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .footer__column {
+      outline: 1px dashed rgba(96, 125, 139, 0.2);
+      padding: 8px;
+      position: relative;
+    }
+
+    .footer__left,
+    .footer__middle,
+    .footer__right {
+      outline: 1px dashed rgba(96, 125, 139, 0.2);
+      padding: 8px;
+    }
+
+    .footer__left::after {
+      content: 'LEFT: Logo & Copyright';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: rgba(96, 125, 139, 0.8);
+      color: white;
+      padding: 2px 8px;
+      font-size: 10px;
+      border-radius: 2px;
+    }
+
+    .footer__middle::after {
+      content: 'MIDDLE: Link Columns';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: rgba(96, 125, 139, 0.8);
+      color: white;
+      padding: 2px 8px;
+      font-size: 10px;
+      border-radius: 2px;
+    }
+
+    .footer__right::after {
+      content: 'RIGHT: Newsletter & Social';
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(96, 125, 139, 0.8);
+      color: white;
+      padding: 2px 8px;
+      font-size: 10px;
+      border-radius: 2px;
+    }
+
+    .editor-controls--footer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(96, 125, 139, 0.95), rgba(69, 90, 100, 0.95));
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      backdrop-filter: blur(10px);
+    }
+
+    .editor-controls--footer .editor-label {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding-right: 16px;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .editor-controls--footer .editor-info {
+      font-size: 12px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+  {% endif %}
+</style>
+
 {% schema %}
 {
-  "name": "Footer",
+  "name": "⬇️ Footer",
   "tag": "footer",
   "class": "section-footer",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Create a professional site footer with logo, navigation links, newsletter signup, social media, and payment icons. Supports flexible layouts with customizable columns and complete visual control. Add link list blocks to create footer columns."
+    },
+    {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout Configuration"
     },
     {
       "type": "select",
@@ -221,7 +345,7 @@
         { "value": "columns", "label": "Equal Columns" }
       ],
       "default": "three-column",
-      "info": "Three Column: Logo left, links middle, newsletter/social right. Equal Columns: All link lists in equal columns."
+      "info": "Three Column: Logo left, link columns middle, newsletter/social right | Equal Columns: All link blocks in equal-width columns"
     },
     {
       "type": "select",
@@ -234,143 +358,163 @@
         { "value": "4", "label": "4 Columns" }
       ],
       "default": "auto",
-      "info": "Only applies when Layout Style is set to 'Equal Columns'"
+      "info": "Force specific column count (Equal Columns layout only, otherwise auto-calculated)"
     },
     {
       "type": "range",
       "id": "column_gap",
-      "label": "Column Gap (px)",
+      "label": "Column Gap",
       "min": 10,
       "max": 100,
       "step": 5,
-      "default": 40
+      "unit": "px",
+      "default": 40,
+      "info": "Horizontal spacing between footer columns (10-100px)"
     },
     {
       "type": "header",
-      "content": "Logo"
+      "content": "🎨 Logo & Branding"
     },
     {
       "type": "image_picker",
       "id": "logo_image",
-      "label": "Logo Image"
+      "label": "Logo Image",
+      "info": "Upload a logo image for your footer (optional, will use text logo if not provided)"
     },
     {
       "type": "text",
       "id": "logo_text",
       "label": "Logo Text",
-      "info": "Used if no logo image is uploaded. Leave empty to hide logo text."
+      "default": "Pure + Vida",
+      "info": "Text-based logo displayed if no image uploaded (leave empty to hide logo)"
     },
     {
       "type": "range",
       "id": "logo_text_size",
-      "label": "Logo Text Size (px)",
+      "label": "Logo Text Size",
       "min": 12,
       "max": 72,
       "step": 2,
-      "default": 24
+      "unit": "px",
+      "default": 24,
+      "info": "Font size for text-based logo (12-72px)"
     },
     {
       "type": "color",
       "id": "logo_text_color",
-      "label": "Logo Text Color"
+      "label": "Logo Text Color",
+      "info": "Custom color for text-based logo"
     },
     {
       "type": "checkbox",
       "id": "show_plus",
       "label": "Show Plus Sign (+)",
-      "default": true
+      "default": true,
+      "info": "Display the + symbol in the logo design"
     },
     {
       "type": "header",
-      "content": "Copyright"
+      "content": "© Copyright Information"
     },
     {
       "type": "richtext",
       "id": "copyright_text",
       "label": "Copyright Text",
-      "info": "Leave empty to hide copyright text"
+      "info": "Copyright notice and legal information (supports rich text formatting)"
     },
     {
       "type": "color",
       "id": "copyright_color",
-      "label": "Copyright Text Color"
+      "label": "Copyright Text Color",
+      "info": "Custom color for copyright text"
     },
     {
       "type": "header",
-      "content": "Newsletter"
+      "content": "📧 Newsletter Signup"
     },
     {
       "type": "checkbox",
       "id": "show_newsletter",
       "label": "Show Newsletter Signup",
-      "default": false
+      "default": false,
+      "info": "Display email subscription form in footer"
     },
     {
       "type": "text",
       "id": "newsletter_heading",
       "label": "Newsletter Heading",
-      "default": "Subscribe to our newsletter"
+      "default": "Subscribe to our newsletter",
+      "info": "Heading above the newsletter form"
     },
     {
       "type": "color",
       "id": "newsletter_heading_color",
-      "label": "Newsletter Heading Color"
+      "label": "Newsletter Heading Color",
+      "info": "Custom color for newsletter heading"
     },
     {
       "type": "textarea",
       "id": "newsletter_description",
-      "label": "Newsletter Description"
+      "label": "Newsletter Description",
+      "info": "Optional description text below the heading"
     },
     {
       "type": "color",
       "id": "newsletter_text_color",
-      "label": "Newsletter Text Color"
+      "label": "Newsletter Text Color",
+      "info": "Custom color for newsletter description text"
     },
     {
       "type": "text",
       "id": "newsletter_placeholder",
-      "label": "Email Placeholder",
-      "default": "Enter your email"
+      "label": "Email Input Placeholder",
+      "default": "Enter your email",
+      "info": "Placeholder text inside the email input field"
     },
     {
       "type": "text",
       "id": "newsletter_button_text",
-      "label": "Button Text",
-      "default": "Subscribe"
+      "label": "Submit Button Text",
+      "default": "Subscribe",
+      "info": "Text displayed on the subscription button"
     },
     {
       "type": "color",
       "id": "newsletter_button_color",
-      "label": "Button Background Color"
+      "label": "Button Background Color",
+      "info": "Background color for the subscribe button"
     },
     {
       "type": "color",
       "id": "newsletter_button_text_color",
-      "label": "Button Text Color"
+      "label": "Button Text Color",
+      "info": "Text color for the subscribe button"
     },
     {
       "type": "header",
-      "content": "Social Media"
+      "content": "🔗 Social Media"
     },
     {
       "type": "checkbox",
       "id": "show_social_media",
       "label": "Show Social Media Links",
-      "default": true
+      "default": true,
+      "info": "Display social media icons (add social media blocks below)"
     },
     {
       "type": "header",
-      "content": "Payment Icons"
+      "content": "💳 Payment Methods"
     },
     {
       "type": "checkbox",
       "id": "show_payment_icons",
       "label": "Show Payment Icons",
-      "default": true
+      "default": true,
+      "info": "Display accepted payment method icons in footer"
     },
     {
       "type": "header",
-      "content": "Structural Elements"
+      "content": "⚙️ Structural Settings"
     },
     {
       "type": "select",
@@ -382,90 +526,192 @@
         { "value": "div", "label": "Div" }
       ],
       "default": "footer",
-      "info": "Choose the semantic HTML element for this section"
+      "info": "Semantic HTML element for this section (footer recommended for accessibility)"
     },
     {
       "type": "header",
-      "content": "Styling"
+      "content": "🎨 Section Styling"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background Color"
+      "label": "Background Color",
+      "info": "Background color for the entire footer section"
     }
   ],
   "blocks": [
     {
       "type": "link_list",
-      "name": "Link List",
+      "name": "📋 Link List",
       "settings": [
         {
           "type": "text",
           "id": "heading",
-          "label": "Heading",
-          "default": "Links"
+          "label": "Column Heading",
+          "default": "Quick Links",
+          "info": "Heading displayed above the links in this column"
         },
         {
           "type": "color",
           "id": "heading_color",
-          "label": "Heading Color"
+          "label": "Heading Color",
+          "info": "Custom color for this column's heading"
         },
         {
           "type": "link_list",
           "id": "menu",
-          "label": "Menu"
+          "label": "Menu",
+          "info": "Select a menu from Navigation settings to display its links"
         },
         {
           "type": "textarea",
           "id": "custom_links",
           "label": "Custom Links",
-          "info": "Format: URL|Link Text (one per line)"
+          "info": "Add custom links: Format URL|Link Text (one per line). Example: /pages/about|About Us"
         },
         {
           "type": "color",
           "id": "link_color",
-          "label": "Link Color"
+          "label": "Link Text Color",
+          "info": "Custom color for links in this column"
         }
       ]
     },
     {
       "type": "social_media",
-      "name": "Social Media",
+      "name": "🔗 Social Media Link",
       "settings": [
         {
           "type": "text",
           "id": "platform",
           "label": "Platform Name",
-          "default": "Facebook"
+          "default": "Facebook",
+          "info": "Name of the social media platform (e.g., Facebook, Instagram, Twitter)"
         },
         {
           "type": "url",
           "id": "url",
-          "label": "URL"
+          "label": "Profile URL",
+          "info": "Full URL to your social media profile"
         },
         {
           "type": "image_picker",
           "id": "icon",
-          "label": "Icon Image"
+          "label": "Icon Image",
+          "info": "Optional: Upload a custom icon (24x24px recommended)"
         }
       ]
     }
   ],
-  "default": {
-    "blocks": [
-      {
-        "type": "link_list",
-        "settings": {
-          "heading": "About Us"
-        }
+  "presets": [
+    {
+      "name": "Footer",
+      "settings": {
+        "layout_style": "three-column",
+        "show_newsletter": true,
+        "show_social_media": true,
+        "show_payment_icons": true
       },
-      {
-        "type": "link_list",
-        "settings": {
-          "heading": "For You"
+      "blocks": [
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "About"
+          }
         }
-      }
-    ]
-  }
+      ]
+    },
+    {
+      "name": "Simple Footer",
+      "settings": {
+        "layout_style": "columns",
+        "column_layout": "3",
+        "show_newsletter": false,
+        "show_social_media": true,
+        "show_payment_icons": false
+      },
+      "blocks": [
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Products"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Company"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Support"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comprehensive Footer",
+      "settings": {
+        "layout_style": "three-column",
+        "show_newsletter": true,
+        "show_social_media": true,
+        "show_payment_icons": true,
+        "newsletter_heading": "Join Our Community",
+        "newsletter_description": "Get exclusive offers and updates"
+      },
+      "blocks": [
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Learn"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Support"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Minimal Footer",
+      "settings": {
+        "layout_style": "columns",
+        "column_layout": "2",
+        "show_newsletter": false,
+        "show_social_media": false,
+        "show_payment_icons": false
+      },
+      "blocks": [
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Links"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Legal"
+          }
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}

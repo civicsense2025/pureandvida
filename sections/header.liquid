@@ -32,6 +32,18 @@
   endif
 %}
 
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--header">
+    <span class="editor-label">Header</span>
+    <span class="editor-info">
+      {% if section.settings.sticky_header %}Sticky{% endif %}
+      {% if section.settings.transparent_header %}Transparent{% endif %}
+      | {{ section.settings.menu.links.size }} menu items
+      {% if section.settings.show_cart %}| Cart button{% endif %}
+    </span>
+  </div>
+{% endif %}
+
 <header class="header-wrapper pure-vida-header{% if section.settings.sticky_header %} sticky-header{% endif %}"{% if header_bg_style != blank %} style="{{ header_bg_style }}"{% endif %}>
   <div class="header page-width" style="height: {{ section.settings.header_height }}px;">
     {%- if section.settings.logo_image != blank or section.settings.logo_text != blank -%}
@@ -180,141 +192,279 @@
       gap: 1.5rem;
     }
   }
+
+  {% if request.design_mode %}
+    /* Header Editor Visual Indicators */
+    .header-wrapper.pure-vida-header {
+      position: relative;
+      outline: 2px dashed rgba(96, 125, 139, 0.3);
+      outline-offset: -2px;
+    }
+
+    .header-wrapper.pure-vida-header::before {
+      content: 'HEADER SECTION';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(96, 125, 139, 0.9);
+      color: white;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .header__logo {
+      outline: 1px dashed rgba(96, 125, 139, 0.2);
+      padding: 4px;
+    }
+
+    .header__inline-menu .list-menu li {
+      outline: 1px dashed rgba(96, 125, 139, 0.15);
+      padding: 2px;
+    }
+
+    .header__cta-button {
+      outline: 1px solid rgba(96, 125, 139, 0.3);
+    }
+
+    .editor-controls--header {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(96, 125, 139, 0.95), rgba(69, 90, 100, 0.95));
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      backdrop-filter: blur(10px);
+    }
+
+    .editor-controls--header .editor-label {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding-right: 16px;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .editor-controls--header .editor-info {
+      font-size: 12px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+  {% endif %}
 </style>
 
 {% schema %}
 {
-  "name": "Header",
+  "name": "⬆️ Header",
   "tag": "header",
   "class": "section-header",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Create a professional site header with logo, navigation menu, and cart button. Supports sticky positioning, transparent overlays, and complete visual customization. This header appears at the top of every page."
+    },
+    {
       "type": "header",
-      "content": "Logo"
+      "content": "🎨 Logo & Branding"
     },
     {
       "type": "image_picker",
       "id": "logo_image",
-      "label": "Logo Image"
+      "label": "Logo Image",
+      "info": "Upload a logo image for your header (optional, will use text logo if not provided)"
     },
     {
       "type": "range",
       "id": "logo_width",
-      "label": "Logo Width (px)",
+      "label": "Logo Width",
       "min": 50,
       "max": 500,
       "step": 10,
-      "default": 200
+      "unit": "px",
+      "default": 200,
+      "info": "Maximum width of the logo image (50-500px)"
     },
     {
       "type": "range",
       "id": "logo_height",
-      "label": "Logo Height (px)",
+      "label": "Logo Height",
       "min": 20,
       "max": 200,
       "step": 5,
-      "default": 50
+      "unit": "px",
+      "default": 50,
+      "info": "Maximum height of the logo image (20-200px)"
     },
     {
       "type": "text",
       "id": "logo_text",
       "label": "Logo Text",
-      "info": "Used if no logo image is uploaded. Leave empty to hide logo text."
+      "default": "Pure + Vida",
+      "info": "Text-based logo displayed if no image uploaded (leave empty to hide logo)"
     },
     {
       "type": "range",
       "id": "logo_text_size",
-      "label": "Logo Text Size (px)",
+      "label": "Logo Text Size",
       "min": 12,
       "max": 72,
       "step": 2,
-      "default": 24
+      "unit": "px",
+      "default": 24,
+      "info": "Font size for text-based logo (12-72px)"
     },
     {
       "type": "color",
       "id": "logo_text_color",
-      "label": "Logo Text Color"
+      "label": "Logo Text Color",
+      "info": "Custom color for text-based logo"
     },
     {
       "type": "checkbox",
       "id": "show_plus",
       "label": "Show Plus Sign (+)",
-      "default": true
+      "default": true,
+      "info": "Display the + symbol in the logo design"
     },
     {
       "type": "header",
-      "content": "Navigation"
+      "content": "🧭 Navigation Menu"
     },
     {
       "type": "link_list",
       "id": "menu",
       "label": "Menu",
-      "default": "main-menu"
+      "default": "main-menu",
+      "info": "Select which menu to display in the header (configure menus in Navigation settings)"
     },
     {
       "type": "color",
       "id": "menu_text_color",
-      "label": "Menu Text Color"
+      "label": "Menu Link Color",
+      "info": "Custom color for navigation menu links"
     },
     {
       "type": "header",
-      "content": "Cart Button"
+      "content": "🛒 Cart Button"
     },
     {
       "type": "checkbox",
       "id": "show_cart",
       "label": "Show Cart Button",
-      "default": true
+      "default": true,
+      "info": "Display a cart/checkout button in the header"
     },
     {
       "type": "text",
       "id": "cart_button_text",
       "label": "Cart Button Text",
-      "info": "Leave empty to hide cart button text"
+      "default": "Cart",
+      "info": "Text displayed on the cart button"
     },
     {
       "type": "color",
       "id": "cart_button_color",
-      "label": "Cart Button Background Color"
+      "label": "Cart Button Background",
+      "info": "Background color for the cart button"
     },
     {
       "type": "color",
       "id": "cart_button_text_color",
-      "label": "Cart Button Text Color"
+      "label": "Cart Button Text Color",
+      "info": "Text color for the cart button"
     },
     {
       "type": "header",
-      "content": "Header Behavior"
+      "content": "⚙️ Header Behavior"
     },
     {
       "type": "checkbox",
       "id": "sticky_header",
-      "label": "Sticky Header",
-      "default": false
+      "label": "Enable Sticky Header",
+      "default": false,
+      "info": "Header stays fixed at top of screen when scrolling down the page"
     },
     {
       "type": "checkbox",
       "id": "transparent_header",
-      "label": "Transparent Header",
-      "default": false
+      "label": "Transparent Background",
+      "default": false,
+      "info": "Make header background transparent (useful for overlaying hero images)"
     },
     {
       "type": "range",
       "id": "header_height",
-      "label": "Header Height (px)",
+      "label": "Header Height",
       "min": 40,
       "max": 150,
       "step": 5,
-      "default": 80
+      "unit": "px",
+      "default": 80,
+      "info": "Total height of the header section (40-150px)"
     },
     {
       "type": "header",
-      "content": "Styling"
+      "content": "🎨 Section Styling"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background Color"
+      "label": "Background Color",
+      "info": "Background color for the header (ignored if transparent header is enabled)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "settings": {
+        "sticky_header": false,
+        "transparent_header": false,
+        "show_cart": true,
+        "cart_button_text": "Cart",
+        "header_height": 80
+      }
+    },
+    {
+      "name": "Sticky Header",
+      "settings": {
+        "sticky_header": true,
+        "transparent_header": false,
+        "show_cart": true,
+        "cart_button_text": "Cart",
+        "header_height": 70
+      }
+    },
+    {
+      "name": "Transparent Header",
+      "settings": {
+        "sticky_header": false,
+        "transparent_header": true,
+        "show_cart": true,
+        "cart_button_text": "Shop",
+        "header_height": 80
+      }
+    },
+    {
+      "name": "Minimal Header",
+      "settings": {
+        "sticky_header": false,
+        "transparent_header": false,
+        "show_cart": false,
+        "header_height": 60
+      }
     }
   ]
 }

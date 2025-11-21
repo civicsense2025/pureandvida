@@ -9,6 +9,15 @@
   #   Add to product.json template to show related products below main product
 %}
 
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--product-recommendations">
+    <span class="editor-label">Product Recommendations</span>
+    <span class="editor-info">
+      {{ section.settings.recommendation_type | capitalize }} | {{ section.settings.display_style | capitalize }} | {{ section.settings.products_to_show }} products
+    </span>
+  </div>
+{% endif %}
+
 {% liquid
   assign recommendation_type = section.settings.recommendation_type | default: 'related'
   assign products_to_show = section.settings.products_to_show | default: 4
@@ -122,19 +131,87 @@
   }
 </script>
 
+<style>
+  {% if request.design_mode %}
+    /* Product Recommendations Editor Visual Indicators */
+    .product-recommendations {
+      position: relative;
+      outline: 2px dashed rgba(0, 150, 136, 0.3);
+      outline-offset: -2px;
+    }
+
+    .product-recommendations::before {
+      content: 'PRODUCT RECOMMENDATIONS';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 150, 136, 0.9);
+      color: white;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .product-grid .grid__item {
+      outline: 1px dashed rgba(0, 150, 136, 0.2);
+    }
+
+    .product-recommendations__carousel-slide {
+      outline: 1px dashed rgba(0, 150, 136, 0.2);
+    }
+
+    .editor-controls--product-recommendations {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(0, 150, 136, 0.95), rgba(0, 130, 120, 0.95));
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      backdrop-filter: blur(10px);
+    }
+
+    .editor-controls--product-recommendations .editor-label {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding-right: 16px;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .editor-controls--product-recommendations .editor-info {
+      font-size: 12px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+  {% endif %}
+</style>
+
 {% schema %}
 {
-  "name": "Product recommendations",
+  "name": "🔄 Product Recommendations",
   "tag": "section",
   "class": "section",
   "settings": [
     {
       "type": "paragraph",
-      "content": "Product recommendations are based on the product's metafields. [Learn more](https://help.shopify.com/en/themes/development/themes-by-shopify/dawn#product-recommendations)"
+      "content": "**Page Builder Controls:** Display related products, bestsellers, or new arrivals using Shopify's AI recommendation engine or custom logic. Perfect for product pages to increase cross-sells and upsells. Supports multiple recommendation types and display styles."
     },
     {
       "type": "header",
-      "content": "Content"
+      "content": "📝 Content"
     },
     {
       "type": "text",
@@ -160,7 +237,7 @@
     },
     {
       "type": "header",
-      "content": "Recommendation Type"
+      "content": "🎯 Recommendation Logic"
     },
     {
       "type": "select",
@@ -184,7 +261,7 @@
     },
     {
       "type": "header",
-      "content": "Products"
+      "content": "🛒 Product Display"
     },
     {
       "type": "range",
@@ -207,7 +284,7 @@
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout Configuration"
     },
     {
       "type": "range",
@@ -235,7 +312,7 @@
     },
     {
       "type": "header",
-      "content": "Styling"
+      "content": "🎨 Section Styling"
     },
     {
       "type": "range",
@@ -254,7 +331,59 @@
   ],
   "presets": [
     {
-      "name": "Product recommendations"
+      "name": "Product Recommendations",
+      "settings": {
+        "heading": "You May Also Like",
+        "recommendation_type": "related",
+        "products_to_show": 4,
+        "display_style": "grid",
+        "columns_desktop": 4
+      }
+    },
+    {
+      "name": "Related Products - Grid",
+      "settings": {
+        "heading": "Related Products",
+        "recommendation_type": "related",
+        "products_to_show": 4,
+        "display_style": "grid",
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "heading_alignment": "center"
+      }
+    },
+    {
+      "name": "Bestsellers - Carousel",
+      "settings": {
+        "heading": "Our Bestsellers",
+        "recommendation_type": "bestsellers",
+        "products_to_show": 8,
+        "display_style": "carousel",
+        "heading_alignment": "center"
+      }
+    },
+    {
+      "name": "Recently Viewed",
+      "settings": {
+        "heading": "Recently Viewed Products",
+        "recommendation_type": "related",
+        "products_to_show": 6,
+        "display_style": "grid",
+        "columns_desktop": 3,
+        "heading_alignment": "left"
+      }
+    },
+    {
+      "name": "Complete The Look",
+      "settings": {
+        "heading": "Complete The Look",
+        "recommendation_type": "manual",
+        "products_to_show": 3,
+        "display_style": "grid",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "section_padding": 60
+      }
     }
   ],
   "templates": ["product", "index", "page", "collection"]

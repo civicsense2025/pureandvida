@@ -9,41 +9,8 @@
   --color-footer: #516d55;
 }
 
-/* Font Faces - Note: You'll need to add actual font files */
-@font-face {
-  font-family: 'Nohemi';
-  font-weight: 300;
-  font-style: normal;
-  src: local('Nohemi Light');
-}
-
-@font-face {
-  font-family: 'Nohemi';
-  font-weight: 400;
-  font-style: normal;
-  src: local('Nohemi Regular');
-}
-
-@font-face {
-  font-family: 'Nohemi';
-  font-weight: 500;
-  font-style: normal;
-  src: local('Nohemi Medium');
-}
-
-@font-face {
-  font-family: 'Nohemi';
-  font-weight: 700;
-  font-style: normal;
-  src: local('Nohemi Bold');
-}
-
-@font-face {
-  font-family: 'Versailles';
-  font-weight: 400;
-  font-style: normal;
-  src: local('Versailles Regular');
-}
+/* Font Faces - Custom fonts are loaded via theme.liquid using asset_url */
+/* Font declarations moved to theme.liquid for proper Shopify asset loading */
 
 /* Base Styles */
 body {
@@ -226,11 +193,28 @@ body {
 }
 
 .hero-product-section {
+  margin-top: clamp(40px, 8vw, 80px);
+}
+
+.hero-product-wrapper {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 6vw, 60px);
+}
+
+.hero-product-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(30px, 6vw, 60px);
   align-items: start;
-  margin-top: clamp(40px, 8vw, 80px);
+}
+
+.hero-product-container--reverse {
+  direction: rtl;
+}
+
+.hero-product-container--reverse > * {
+  direction: ltr;
 }
 
 .hero-product-images {
@@ -260,6 +244,11 @@ body {
 
 .hero-product-info {
   padding-left: clamp(0px, 4vw, 40px);
+}
+
+.hero-product-container--reverse .hero-product-info {
+  padding-left: 0;
+  padding-right: clamp(0px, 4vw, 40px);
 }
 
 .hero-tagline {

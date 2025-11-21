@@ -1,36 +1,166 @@
 {% liquid
-  # @description Hero product images section
+  # @description Hero product section with images and product info
+  # @settings product {Product} - Featured product
   # @settings product_image_1 {Image} - Primary product image
   # @settings product_image_2 {Image} - Secondary product image
+  # @settings layout_direction {String} - Layout: images left/info right or vice versa
   # @example
-  #   Add to index.json template for homepage hero product images
+  #   Add to index.json template for homepage hero product section
   assign structural_element = section.settings.structural_element | default: 'section'
+  assign layout_class = section.settings.layout_direction | default: 'images-left'
 %}
 
-<{{ structural_element }} class="hero-product-images-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}">
-  <div class="hero-product-images-wrapper page-width">
-    <div class="hero-product-images" style="flex-direction: {{ section.settings.image_position }};">
-      {%- if section.settings.product_image_1 != blank -%}
-        <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
-      {%- else -%}
-        <img src="{{ '0a5553f60213dd436dd5e60b282c6b7cbec1de3a.png' | asset_url }}" alt="MycoMatcha Product" class="hero-product-img-1">
-      {%- endif -%}
-      
-      {%- if section.settings.product_image_2 != blank -%}
-        <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
-      {%- else -%}
-        <img src="{{ 'f713d8714eed491eeccc4f7f9c3589229c1b0783.png' | asset_url }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
-      {%- endif -%}
+<{{ structural_element }} class="hero-product-section" style="background: transparent;{% if section.settings.background_color != blank %} background-color: {{ section.settings.background_color }};{% endif %}">
+  <div class="hero-product-wrapper page-width">
+    <div class="hero-product-container {% if layout_class == 'images-right' %}hero-product-container--reverse{% endif %}">
+      <!-- Product Images -->
+      <div class="hero-product-images">
+        {%- if section.settings.product_image_1 != blank -%}
+          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
+        {%- endif -%}
+        
+        {%- if section.settings.product_image_2 != blank -%}
+          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+        {%- endif -%}
+      </div>
+
+      <!-- Product Info -->
+      <div class="hero-product-info">
+        <div class="hero-tagline">
+          {%- if section.settings.tagline_line_1 != blank -%}
+            <p class="hero-tagline-line1" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_1 | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.tagline_line_2 != blank -%}
+            <p class="hero-tagline-line2" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_2 | escape }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_pricing -%}
+          <div class="hero-pricing">
+            {%- if section.settings.show_compare_price -%}
+              <div class="hero-price-compare">
+                <span class="hero-price-old" style="{% if section.settings.compare_price_color != blank %}color: {{ section.settings.compare_price_color }};{% endif %}">
+                  {%- if section.settings.custom_compare_price != blank -%}
+                    {{ section.settings.custom_compare_price }}
+                  {%- elsif section.settings.product != blank -%}
+                    {{ section.settings.product.selected_or_first_available_variant.compare_at_price | money }}
+                  {%- else -%}
+                    $45
+                  {%- endif -%}
+                </span>
+              </div>
+            {%- endif -%}
+            <div class="hero-price-current">
+              <span class="hero-price-currency" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">$</span>
+              <span class="hero-price-amount" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">
+                {%- if section.settings.custom_price != blank -%}
+                  {{ section.settings.custom_price }}
+                {%- elsif section.settings.product != blank -%}
+                  {{ section.settings.product.selected_or_first_available_variant.price | money | remove: '$' }}
+                {%- else -%}
+                  34.99
+                {%- endif -%}
+              </span>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.description_paragraph_1 != blank or section.settings.description_paragraph_2 != blank -%}
+          <div class="hero-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}">
+            {%- if section.settings.description_paragraph_1 != blank -%}
+              <p>{{ section.settings.description_paragraph_1 }}</p>
+            {%- endif -%}
+            {%- if section.settings.description_paragraph_2 != blank -%}
+              <p>{{ section.settings.description_paragraph_2 }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        <div class="hero-cta-section">
+          {%- if section.settings.show_quantity_selector -%}
+            <div class="hero-quantity-selector">
+              <button type="button" class="quantity-btn" data-action="decrease">-</button>
+              <input type="number" class="quantity-input" value="{{ section.settings.default_quantity }}" min="{{ section.settings.min_quantity }}" max="{{ section.settings.max_quantity }}" id="hero-quantity-{{ section.id }}">
+              <button type="button" class="quantity-btn" data-action="increase">+</button>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.product != blank -%}
+            {%- assign featured_product = section.settings.product -%}
+            <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="hero-add-to-cart-form">
+              <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
+              <input type="hidden" name="quantity" value="{{ section.settings.default_quantity }}" id="cart-quantity-{{ section.id }}">
+              <button type="submit" class="hero-add-to-cart-btn" style="{% if section.settings.button_color != blank %}background-color: {{ section.settings.button_color }};{% endif %}{% if section.settings.button_text_color != blank %}color: {{ section.settings.button_text_color }};{% endif %}">
+                {{ section.settings.button_text | default: "Add to cart" }}
+              </button>
+            </form>
+          {%- else -%}
+            <a href="{{ section.settings.button_link | default: routes.collections_url }}" class="hero-add-to-cart-btn" style="{% if section.settings.button_color != blank %}background-color: {{ section.settings.button_color }};{% endif %}{% if section.settings.button_text_color != blank %}color: {{ section.settings.button_text_color }};{% endif %} text-decoration: none; display: inline-block;">
+              {{ section.settings.button_text | default: "Add to cart" }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_payment_methods -%}
+          <div class="hero-payment-methods">
+            {% render 'payment-icons' %}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.show_discount_badge and section.settings.discount_badge_text != blank -%}
+          <div class="hero-discount-badge" style="{% if section.settings.badge_background_color != blank %}background-color: {{ section.settings.badge_background_color }};{% endif %}{% if section.settings.badge_text_color != blank %}color: {{ section.settings.badge_text_color }};{% endif %}">
+            {{ section.settings.discount_badge_text | escape }}
+          </div>
+        {%- endif -%}
+      </div>
     </div>
   </div>
 </{{ structural_element }}>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.getElementById('hero-quantity-{{ section.id }}');
+    const cartQuantityInput = document.getElementById('cart-quantity-{{ section.id }}');
+    const quantityBtns = quantityInput ? quantityInput.closest('.hero-quantity-selector')?.querySelectorAll('.quantity-btn') : [];
+
+    if (quantityInput && cartQuantityInput) {
+      quantityBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const action = this.dataset.action;
+          const min = parseInt(quantityInput.min) || 1;
+          const max = parseInt(quantityInput.max) || 999;
+          let currentValue = parseInt(quantityInput.value) || min;
+          
+          if (action === 'increase' && currentValue < max) {
+            currentValue++;
+          } else if (action === 'decrease' && currentValue > min) {
+            currentValue--;
+          }
+          
+          quantityInput.value = currentValue;
+          if (cartQuantityInput) {
+            cartQuantityInput.value = currentValue;
+          }
+        });
+      });
+    }
+  });
+</script>
+
 {% schema %}
 {
-  "name": "Hero Product Images",
+  "name": "Hero Product",
   "tag": "section",
   "class": "section",
   "settings": [
+    {
+      "type": "header",
+      "content": "Product"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Featured Product"
+    },
     {
       "type": "header",
       "content": "Images"
@@ -51,13 +181,208 @@
     },
     {
       "type": "select",
+      "id": "layout_direction",
+      "label": "Layout Direction",
+      "options": [
+        { "value": "images-left", "label": "Images Left / Info Right" },
+        { "value": "images-right", "label": "Images Right / Info Left" }
+      ],
+      "default": "images-left",
+      "info": "Choose whether product images appear on the left or right side"
+    },
+    {
+      "type": "select",
       "id": "image_position",
-      "label": "Image Position",
+      "label": "Image Stack Position",
       "options": [
         { "value": "row", "label": "Left" },
         { "value": "row-reverse", "label": "Right" }
       ],
-      "default": "row"
+      "default": "row",
+      "info": "Position of image 2 relative to image 1"
+    },
+    {
+      "type": "header",
+      "content": "Taglines"
+    },
+    {
+      "type": "text",
+      "id": "tagline_line_1",
+      "label": "Tagline Line 1",
+      "default": "Coffee borrows energy."
+    },
+    {
+      "type": "text",
+      "id": "tagline_line_2",
+      "label": "Tagline Line 2",
+      "default": "MycoMatcha creates it."
+    },
+    {
+      "type": "color",
+      "id": "tagline_color",
+      "label": "Tagline Color"
+    },
+    {
+      "type": "header",
+      "content": "Pricing"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pricing",
+      "label": "Show Pricing",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_price",
+      "label": "Show Compare Price",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "custom_compare_price",
+      "label": "Custom Compare Price",
+      "info": "Leave blank to use product price"
+    },
+    {
+      "type": "text",
+      "id": "custom_price",
+      "label": "Custom Price",
+      "info": "Leave blank to use product price (enter number only, e.g. 34.99)"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price Color"
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare Price Color"
+    },
+    {
+      "type": "header",
+      "content": "Description"
+    },
+    {
+      "type": "textarea",
+      "id": "description_paragraph_1",
+      "label": "Description Paragraph 1",
+      "default": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently."
+    },
+    {
+      "type": "textarea",
+      "id": "description_paragraph_2",
+      "label": "Description Paragraph 2",
+      "default": "Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience."
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Add to cart"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "info": "Only used if no product is selected"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Background Color"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Quantity Selector"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": "Show Quantity Selector",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "default_quantity",
+      "label": "Default Quantity",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "min_quantity",
+      "label": "Minimum Quantity",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "max_quantity",
+      "label": "Maximum Quantity",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Discount Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount_badge",
+      "label": "Show Discount Badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "discount_badge_text",
+      "label": "Discount Badge Text",
+      "default": "Get 33% off today!"
+    },
+    {
+      "type": "color",
+      "id": "badge_background_color",
+      "label": "Badge Background Color"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Payment Methods"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_methods",
+      "label": "Show Payment Methods",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Styling"
     },
     {
       "type": "color",
@@ -84,10 +409,9 @@
   ],
   "presets": [
     {
-      "name": "Hero Product Images"
+      "name": "Hero Product"
     }
   ],
   "templates": ["index", "page", "collection"]
 }
 {% endschema %}
-

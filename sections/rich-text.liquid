@@ -10,6 +10,16 @@
   #   Add to any template for custom formatted content blocks
 %}
 
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--rich-text">
+    <span class="editor-label">Rich Text</span>
+    <span class="editor-info">
+      {% if section.settings.full_width %}Full width{% else %}{{ section.settings.content_width }}px{% endif %} |
+      {{ section.settings.text_alignment | capitalize }}
+    </span>
+  </div>
+{% endif %}
+
 <section class="rich-text-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
   <div class="page-width{% if section.settings.full_width %} full-width{% endif %}" style="{% if section.settings.content_width != blank and section.settings.full_width == false %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
     {%- if section.settings.heading != blank -%}
@@ -28,15 +38,85 @@
   </div>
 </section>
 
+<style>
+  {% if request.design_mode %}
+    /* Rich Text Editor Visual Indicators */
+    .rich-text-section {
+      position: relative;
+      outline: 2px dashed rgba(33, 150, 243, 0.3);
+      outline-offset: -2px;
+    }
+
+    .rich-text-section::before {
+      content: 'RICH TEXT';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(33, 150, 243, 0.9);
+      color: white;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .rich-text-content {
+      outline: 1px dashed rgba(33, 150, 243, 0.2);
+      background: rgba(33, 150, 243, 0.02);
+      padding: 8px;
+    }
+
+    .editor-controls--rich-text {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.95), rgba(25, 118, 210, 0.95));
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      backdrop-filter: blur(10px);
+    }
+
+    .editor-controls--rich-text .editor-label {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding-right: 16px;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .editor-controls--rich-text .editor-info {
+      font-size: 12px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+  {% endif %}
+</style>
+
 {% schema %}
 {
-  "name": "Rich Text",
+  "name": "📄 Rich Text",
   "tag": "section",
   "class": "section",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Add formatted text content with full WYSIWYG editing capabilities. Perfect for about pages, policy pages, and content-heavy sections. Supports headings, paragraphs, lists, links, and inline formatting."
+    },
+    {
       "type": "header",
-      "content": "Content"
+      "content": "📝 Content"
     },
     {
       "type": "text",
@@ -125,7 +205,7 @@
     },
     {
       "type": "header",
-      "content": "Typography"
+      "content": "✏️ Typography"
     },
     {
       "type": "range",
@@ -164,7 +244,7 @@
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "📐 Layout"
     },
     {
       "type": "checkbox",
@@ -184,7 +264,7 @@
     },
     {
       "type": "header",
-      "content": "Section Spacing"
+      "content": "↔️ Section Spacing"
     },
     {
       "type": "range",
@@ -206,7 +286,7 @@
     },
     {
       "type": "header",
-      "content": "Colors"
+      "content": "🎨 Colors"
     },
     {
       "type": "color",
@@ -216,7 +296,47 @@
   ],
   "presets": [
     {
-      "name": "Rich Text"
+      "name": "Rich Text",
+      "settings": {
+        "heading": "About Us",
+        "text_alignment": "left",
+        "content_width": 800,
+        "full_width": false
+      }
+    },
+    {
+      "name": "Centered Content",
+      "settings": {
+        "heading": "Our Mission",
+        "heading_alignment": "center",
+        "text_alignment": "center",
+        "content_width": 700,
+        "full_width": false,
+        "section_padding_top": 60,
+        "section_padding_bottom": 60
+      }
+    },
+    {
+      "name": "Full Width Text",
+      "settings": {
+        "heading": "Company Policy",
+        "text_alignment": "left",
+        "full_width": true,
+        "section_padding_top": 40,
+        "section_padding_bottom": 40
+      }
+    },
+    {
+      "name": "Compact Text Block",
+      "settings": {
+        "heading": "Quick Info",
+        "text_alignment": "left",
+        "content_width": 600,
+        "heading_size": 28,
+        "text_size": 14,
+        "section_padding_top": 30,
+        "section_padding_bottom": 30
+      }
     }
   ],
   "templates": ["index", "page", "product", "collection"]

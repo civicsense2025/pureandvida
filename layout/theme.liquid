@@ -68,12 +68,20 @@
       {{ settings.font_heading | font_face: font_display: 'swap' }}
 
       /* Custom Fonts from Assets */
+      {%- assign nohemi_light = 'Nohemi-Light.otf' | asset_url -%}
+      {%- assign nohemi_regular = 'Nohemi-Regular.otf' | asset_url -%}
+      {%- assign nohemi_medium = 'Nohemi-Medium.otf' | asset_url -%}
+      {%- assign nohemi_semibold = 'Nohemi-SemiBold.otf' | asset_url -%}
+      {%- assign nohemi_bold = 'Nohemi-Bold.otf' | asset_url -%}
+      {%- assign versailles = 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url -%}
+      {%- assign myriad = 'MyriadPro-Regular.otf' | asset_url -%}
+
       @font-face {
         font-family: 'Nohemi';
         font-weight: 300;
         font-style: normal;
         font-display: swap;
-        src: url('{{ 'Nohemi-Light.otf' | asset_url }}') format('opentype');
+        src: url({{ nohemi_light }}) format('opentype');
       }
 
       @font-face {
@@ -81,7 +89,7 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url('{{ 'Nohemi-Regular.otf' | asset_url }}') format('opentype');
+        src: url({{ nohemi_regular }}) format('opentype');
       }
 
       @font-face {
@@ -89,7 +97,7 @@
         font-weight: 500;
         font-style: normal;
         font-display: swap;
-        src: url('{{ 'Nohemi-Medium.otf' | asset_url }}') format('opentype');
+        src: url({{ nohemi_medium }}) format('opentype');
       }
 
       @font-face {
@@ -97,7 +105,7 @@
         font-weight: 600;
         font-style: normal;
         font-display: swap;
-        src: url('{{ 'Nohemi-SemiBold.otf' | asset_url }}') format('opentype');
+        src: url({{ nohemi_semibold }}) format('opentype');
       }
 
       @font-face {
@@ -105,7 +113,7 @@
         font-weight: 700;
         font-style: normal;
         font-display: swap;
-        src: url('{{ 'Nohemi-Bold.otf' | asset_url }}') format('opentype');
+        src: url({{ nohemi_bold }}) format('opentype');
       }
 
       @font-face {
@@ -113,7 +121,7 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url('{{ 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url }}') format('truetype');
+        src: url({{ versailles }}) format('truetype');
       }
 
       @font-face {
@@ -121,7 +129,7 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url('{{ 'MyriadPro-Regular.otf' | asset_url }}') format('opentype');
+        src: url({{ myriad }}) format('opentype');
       }
 
       :root {

@@ -5,7 +5,15 @@
     "theme_version": "2.0.0",
     "theme_author": "Pure Vida",
     "theme_documentation_url": "https://shopify.com",
-    "theme_support_url": "https://shopify.com"
+    "theme_support_url": "https://shopify.com",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Small square image shown in browser tabs. Recommended size: 32x32px."
+      }
+    ]
   },
   {
     "name": "Colors",

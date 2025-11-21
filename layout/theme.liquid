@@ -209,6 +209,7 @@
         --color-background: {{ settings.color_background }};
         --color-text: {{ settings.color_text }};
         --color-text-secondary: {{ settings.color_text_secondary }};
+        --color-footer: {{ settings.color_secondary | default: settings.color_primary }};
         --color-base-text: {{ settings.color_text }};
         --color-base-background-1: {{ settings.color_background }};
         --color-base-solid-button-labels: {{ settings.color_background }};

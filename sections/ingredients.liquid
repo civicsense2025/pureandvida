@@ -1,4 +1,4 @@
-{%liquid
+{% liquid %}
   # @description Ingredients section displaying product ingredients with images and descriptions
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # Supports both grid and carousel layouts
@@ -12,6 +12,22 @@
   #   Use blocks mode for dynamic ingredients, settings mode for fixed 8-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
   assign layout_style = section.settings.layout_style | default: 'grid'
+  
+  # Count ingredient items once so both Theme Editor UI and markup can access it
+  assign ingredient_count = 0
+  if section.settings.content_mode == 'blocks'
+    assign ingredient_count = section.blocks.size
+  else
+    for i in (1..8)
+      assign name_key = 'ingredient_' | append: i | append: '_name'
+      assign desc_key = 'ingredient_' | append: i | append: '_description'
+      assign name = section.settings[name_key]
+      assign desc = section.settings[desc_key]
+      if name != blank or desc != blank
+        assign ingredient_count = ingredient_count | plus: 1
+      endif
+    endfor
+  endif
 %}
 
 <{{ structural_element }} class="ingredients-section{% if layout_style == 'carousel' %} ingredients-section--carousel{% endif %}"
@@ -51,22 +67,6 @@
           <img src="{{ '55839acdac0cccc8f69f297d49bbcfde60b91904.png' | asset_url }}" alt="MycoMatcha Ingredients" loading="lazy">
         {%- endif -%}
       </div>
-    {%- endif -%}
-
-    {%- comment -%} Count ingredient items {%- endcomment -%}
-    {%- assign ingredient_count = 0 -%}
-    {%- if section.settings.content_mode == 'blocks' -%}
-      {%- assign ingredient_count = section.blocks.size -%}
-    {%- else -%}
-      {%- for i in (1..8) -%}
-        {%- assign name_key = 'ingredient_' | append: i | append: '_name' -%}
-        {%- assign desc_key = 'ingredient_' | append: i | append: '_description' -%}
-        {%- assign name = section.settings[name_key] -%}
-        {%- assign desc = section.settings[desc_key] -%}
-        {%- if name != blank or desc != blank -%}
-          {%- assign ingredient_count = ingredient_count | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
     {%- endif -%}
 
     {%- if ingredient_count > 0 -%}

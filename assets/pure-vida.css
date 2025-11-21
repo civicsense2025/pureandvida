@@ -1,20 +1,16 @@
 /* Pure Vida - MycoMatcha Theme Styles */
 
 /* Color Variables */
-:root {
-  --color-primary: #2f4238;
-  --color-secondary: #5e8778;
-  --color-accent: #e8983b;
-  --color-text: #ffffff;
-  --color-footer: #516d55;
-}
+/* Note: Color variables are defined in theme.liquid from theme settings */
+/* This file uses CSS variables that are set in theme.liquid */
+/* If you need to override colors, do it in theme.liquid or theme settings */
 
 /* Font Faces - Custom fonts are loaded via theme.liquid using asset_url */
 /* Font declarations moved to theme.liquid for proper Shopify asset loading */
 
 /* Base Styles */
 body {
-  background-color: var(--color-primary);
+  background-color: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body-family);
   font-style: var(--font-body-style);

@@ -9,27 +9,28 @@
  */
 {
   "sections": {
-    "cart-header": {
+    "search-header": {
       "type": "rich-text",
       "settings": {
-        "heading": "Shopping Cart",
+        "heading": "Search Results",
         "heading_alignment": "center"
       }
     },
-    "main-cart": {
-      "type": "main-cart",
+    "main-search": {
+      "type": "main-search",
       "settings": {
-        "show_cart_note": true,
-        "show_shipping_calculator": false,
-        "show_continue_shopping": true,
-        "continue_shopping_text": "Continue Shopping",
-        "cart_empty_message": "Your cart is empty"
+        "results_per_page": 20,
+        "show_product_images": true,
+        "show_product_prices": true,
+        "show_product_vendor": false,
+        "show_article_results": true,
+        "show_page_results": true
       }
     }
   },
   "order": [
-    "cart-header",
-    "main-cart"
+    "search-header",
+    "main-search"
   ]
 }
 

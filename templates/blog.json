@@ -9,27 +9,30 @@
  */
 {
   "sections": {
-    "cart-header": {
+    "blog-header": {
       "type": "rich-text",
       "settings": {
-        "heading": "Shopping Cart",
+        "heading": "Blog",
         "heading_alignment": "center"
       }
     },
-    "main-cart": {
-      "type": "main-cart",
+    "main-blog": {
+      "type": "main-blog",
       "settings": {
-        "show_cart_note": true,
-        "show_shipping_calculator": false,
-        "show_continue_shopping": true,
-        "continue_shopping_text": "Continue Shopping",
-        "cart_empty_message": "Your cart is empty"
+        "blog": "",
+        "show_date": true,
+        "show_author": true,
+        "show_excerpt": true,
+        "show_tags": true,
+        "posts_per_page": 12,
+        "columns_desktop": 3,
+        "columns_mobile": 1
       }
     }
   },
   "order": [
-    "cart-header",
-    "main-cart"
+    "blog-header",
+    "main-blog"
   ]
 }
 

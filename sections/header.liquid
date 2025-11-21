@@ -1,0 +1,40 @@
+{%- comment -%}
+  Header section with navigation and cart - Pure Vida Design
+{%- endcomment -%}
+
+<header class="header-wrapper pure-vida-header">
+  <header class="header page-width">
+    <a href="{{ routes.root_url }}" class="header__heading-link">
+      <span class="header__logo-text">PURE<span class="header__logo-spacing"> </span>VIDA</span>
+      <span class="header__plus">+</span>
+    </a>
+
+    <nav class="header__inline-menu">
+      <ul class="list-menu list-menu--inline" role="list">
+        <li>
+          <a href="{{ routes.collections_url }}" class="header__menu-item">MycoMatcha</a>
+        </li>
+        <li>
+          <a href="{{ routes.root_url }}/pages/order-tracking" class="header__menu-item">Order Tracking</a>
+        </li>
+        <li>
+          <a href="{{ routes.root_url }}/pages/about" class="header__menu-item">About</a>
+        </li>
+        <li>
+          <a href="{{ routes.cart_url }}" class="header__cta-button">
+            +Add to Cart
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+  </header>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": []
+}
+{% endschema %}

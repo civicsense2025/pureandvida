@@ -1,0 +1,68 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "search": {
+      "search": "Search"
+    },
+    "cart": {
+      "item_added": "Item added to cart",
+      "view_cart": "View cart"
+    }
+  },
+  "accessibility": {
+    "skip_to_text": "Skip to content",
+    "refresh_page": "Choosing a selection results in a full page refresh.",
+    "link_messages": {
+      "new_window": "Opens in a new window."
+    }
+  },
+  "sections": {
+    "header": {
+      "cart_count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      }
+    },
+    "cart": {
+      "cart_error": "There was an error while updating your cart. Please try again.",
+      "cart_quantity_error_html": "You can only add {{ quantity }} of this item to your cart."
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "value_unavailable": "{{ value }} is unavailable",
+      "product_variants": "Product variants",
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price"
+      }
+    }
+  },
+  "templates": {
+    "cart": {
+      "cart": "Cart"
+    }
+  },
+  "customer": {
+    "account_fallback": "Account"
+  },
+  "newsletter": {
+    "label": "Email",
+    "button_label": "Subscribe",
+    "success": "Thanks for subscribing!"
+  },
+  "sections": {
+    "cart": {
+      "checkout": "Checkout"
+    }
+  },
+  "accessibility": {
+    "close": "Close"
+  }
+}

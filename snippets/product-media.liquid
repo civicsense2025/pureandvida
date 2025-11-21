@@ -1,0 +1,49 @@
+{%- comment -%}
+  Product media snippet for displaying product images and videos
+{%- endcomment -%}
+
+{%- liquid
+  assign image_alt = media.alt | escape
+  assign image_ratio = media.aspect_ratio
+  if image_ratio == nil
+    assign image_ratio = 1
+  endif
+-%}
+
+<div class="product__media media media--transparent" data-media-id="{{ section.id }}-{{ media.id }}">
+  {%- case media.media_type -%}
+    {%- when 'image' -%}
+      <img
+        srcset="{%- if media.width >= 165 -%}{{ media | image_url: width: 165 }} 165w,{%- endif -%}
+                {%- if media.width >= 360 -%}{{ media | image_url: width: 360 }} 360w,{%- endif -%}
+                {%- if media.width >= 533 -%}{{ media | image_url: width: 533 }} 533w,{%- endif -%}
+                {%- if media.width >= 720 -%}{{ media | image_url: width: 720 }} 720w,{%- endif -%}
+                {%- if media.width >= 940 -%}{{ media | image_url: width: 940 }} 940w,{%- endif -%}
+                {%- if media.width >= 1066 -%}{{ media | image_url: width: 1066 }} 1066w,{%- endif -%}
+                {{ media | image_url }} {{ media.width }}w"
+        src="{{ media | image_url: width: 533 }}"
+        sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 100px) / 3), calc((100vw - 30px) / 2)"
+        alt="{{ image_alt }}"
+        class="product__media-item"
+        loading="lazy"
+        width="{{ media.width }}"
+        height="{{ media.height }}"
+      >
+    {%- when 'external_video' -%}
+      <div class="product__media media" style="padding-bottom: {{ 1 | divided_by: image_ratio | times: 100 }}%;">
+        {{ media | external_video_tag: image_size: "1024x", loop: loop, muted: true, controls: true, playsinline: true }}
+      </div>
+    {%- when 'video' -%}
+      <div class="product__media media" style="padding-bottom: {{ 1 | divided_by: image_ratio | times: 100 }}%;">
+        {{ media | video_tag: image_size: "1024x", autoplay: true, loop: loop, controls: true, muted: true, playsinline: true }}
+      </div>
+    {%- when 'model' -%}
+      <div class="product__media media" style="padding-bottom: 100%">
+        {{ media | model_viewer_tag: image_size: "1024x", toggleable: true }}
+      </div>
+    {%- else -%}
+      <div class="product__media media" style="padding-bottom: 100%">
+        {{ media | media_tag: class: 'media-item', image_size: "1024x" }}
+      </div>
+  {%- endcase -%}
+</div>

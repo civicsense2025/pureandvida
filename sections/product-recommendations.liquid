@@ -1,0 +1,75 @@
+{%- comment -%}
+  Product recommendations section
+{%- endcomment -%}
+
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
+  <div class="product-recommendations page-width" data-base-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ section.settings.products_to_show }}">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="product-recommendations__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    <ul class="grid product-grid grid--{{ section.settings.products_to_show }}-col-desktop grid--2-col-tablet-down" role="list">
+      {%- for product in recommendations.products -%}
+        <li class="grid__item">
+          {% render 'product-card', product: product %}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+<script>
+  const handleIntersection = (entries, observer) => {
+    if (!entries[0].isIntersecting) return;
+    observer.unobserve(productRecommendationsSection);
+    const url = productRecommendationsSection.dataset.baseUrl;
+    const productId = productRecommendationsSection.dataset.productId;
+    const limit = productRecommendationsSection.dataset.limit;
+    fetch(`${url}?section_id=${productRecommendationsSection.id}&product_id=${productId}&limit=${limit}`)
+      .then(response => response.text())
+      .then(text => {
+        const html = document.createElement('div');
+        html.innerHTML = text;
+        const recommendations = html.querySelector('.product-recommendations');
+        if (recommendations && recommendations.innerHTML.trim().length) {
+          productRecommendationsSection.innerHTML = recommendations.innerHTML;
+        }
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  };
+  const productRecommendationsSection = document.querySelector('.product-recommendations');
+  if (productRecommendationsSection) {
+    const observer = new IntersectionObserver(handleIntersection, {rootMargin: '0px 0px 200px 0px'});
+    observer.observe(productRecommendationsSection);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Product recommendations are based on the product's metafields. [Learn more](https://help.shopify.com/en/themes/development/themes-by-shopify/dawn#product-recommendations)"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "You may also like",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4,
+      "label": "Maximum products to show"
+    }
+  ]
+}
+{% endschema %}

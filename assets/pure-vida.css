@@ -1,0 +1,871 @@
+/* Pure Vida - MycoMatcha Theme Styles */
+
+/* Color Variables */
+:root {
+  --color-primary: #2f4238;
+  --color-secondary: #5e8778;
+  --color-accent: #e8983b;
+  --color-text: #ffffff;
+  --color-footer: #516d55;
+}
+
+/* Font Faces - Note: You'll need to add actual font files */
+@font-face {
+  font-family: 'Nohemi';
+  font-weight: 300;
+  font-style: normal;
+  src: local('Nohemi Light');
+}
+
+@font-face {
+  font-family: 'Nohemi';
+  font-weight: 400;
+  font-style: normal;
+  src: local('Nohemi Regular');
+}
+
+@font-face {
+  font-family: 'Nohemi';
+  font-weight: 500;
+  font-style: normal;
+  src: local('Nohemi Medium');
+}
+
+@font-face {
+  font-family: 'Nohemi';
+  font-weight: 700;
+  font-style: normal;
+  src: local('Nohemi Bold');
+}
+
+@font-face {
+  font-family: 'Versailles';
+  font-weight: 400;
+  font-style: normal;
+  src: local('Versailles Regular');
+}
+
+/* Base Styles */
+body {
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Header Styles */
+.pure-vida-header {
+  background-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 54px 60px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.header__heading-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.header__logo-text {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 300;
+  font-size: 52.105px;
+  letter-spacing: 6.2526px;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.header__logo-spacing {
+  letter-spacing: -1.76px;
+}
+
+.header__plus {
+  position: absolute;
+  left: 158px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 700;
+  font-size: 19.539px;
+  color: var(--color-secondary);
+  letter-spacing: -2.1493px;
+}
+
+.header__inline-menu {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+}
+
+.header__menu-item {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: 2.4px;
+  color: var(--color-text);
+  text-decoration: none;
+  text-align: center;
+}
+
+.header__cta-button {
+  background-color: var(--color-accent);
+  border: 2.727px solid var(--color-accent);
+  border-radius: 90.909px;
+  padding: 14.545px 21.818px;
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 2.4px;
+  color: var(--color-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.header__cta-button:hover {
+  opacity: 0.9;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--color-primary);
+  padding-top: 200px;
+  padding-bottom: 100px;
+  overflow: hidden;
+}
+
+.hero-gradient {
+  position: absolute;
+  top: -84px;
+  left: 130px;
+  width: 1233.2px;
+  height: 1098px;
+  background-image: url('b2fed71cf5290262fb25821c0353bd377a4396b0.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title-section {
+  text-align: center;
+  margin-bottom: 100px;
+}
+
+.hero-main-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10.656px;
+  margin-bottom: 31.969px;
+}
+
+.hero-title-line1 {
+  font-family: 'Versailles', serif;
+  font-size: 79.922px;
+  letter-spacing: 9.5906px;
+  color: var(--color-text);
+}
+
+.hero-trademark {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 300;
+  font-size: 47.953px;
+  letter-spacing: 21.0993px;
+  color: var(--color-text);
+}
+
+.hero-divider {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 300;
+  font-size: 24.417px;
+  letter-spacing: 19.7774px;
+  color: var(--color-text);
+  margin-bottom: 31.969px;
+}
+
+.hero-subtitle {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 31.969px;
+  letter-spacing: 3.8362px;
+  color: var(--color-text);
+}
+
+.hero-product-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+  margin-top: 80px;
+}
+
+.hero-product-images {
+  position: relative;
+}
+
+.hero-product-img-1 {
+  width: 805px;
+  height: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-product-img-2 {
+  width: 850px;
+  height: auto;
+  position: absolute;
+  left: 131.93px;
+  top: 166px;
+  z-index: 1;
+}
+
+.hero-product-info {
+  padding-left: 40px;
+}
+
+.hero-tagline {
+  margin-bottom: 40px;
+}
+
+.hero-tagline-line1,
+.hero-tagline-line2 {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 0.77;
+  letter-spacing: 7.68px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.hero-pricing {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.hero-price-compare {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-price-old {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 36px;
+  color: var(--color-secondary);
+  letter-spacing: 4.32px;
+  text-decoration: line-through;
+}
+
+.hero-price-current {
+  display: flex;
+  align-items: baseline;
+}
+
+.hero-price-currency {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 30.96px;
+  letter-spacing: -0.48px;
+  color: var(--color-text);
+}
+
+.hero-price-amount {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 96px;
+  color: var(--color-text);
+}
+
+.hero-description {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.5;
+  letter-spacing: 2.88px;
+  color: var(--color-text);
+  margin-bottom: 40px;
+}
+
+.hero-cta-section {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.hero-quantity-selector {
+  display: flex;
+  border: 4px solid var(--color-secondary);
+  border-radius: 74.119px;
+  overflow: hidden;
+  width: 119px;
+}
+
+.quantity-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-family: 'Nohemi', sans-serif;
+  font-size: 22.9472px;
+  padding: 7.412px 17.789px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.quantity-input {
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-family: 'Nohemi', sans-serif;
+  font-size: 22.9472px;
+  text-align: center;
+  width: 50px;
+  padding: 7.412px 0;
+}
+
+.hero-add-to-cart-btn {
+  background-color: var(--color-secondary);
+  border: none;
+  border-radius: 74.119px;
+  padding: 7.412px 48px;
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 22.9472px;
+  letter-spacing: 4.2693px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.hero-add-to-cart-btn:hover {
+  opacity: 0.9;
+}
+
+.hero-payment-methods {
+  margin-bottom: 20px;
+}
+
+.payment-icons {
+  display: flex;
+  gap: 7.3px;
+  flex-wrap: wrap;
+}
+
+.payment-icon {
+  width: 51.103px;
+  height: 35.042px;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.payment-icon img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.hero-discount-badge {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 15.48px;
+  letter-spacing: 2.88px;
+  color: var(--color-accent);
+  text-align: center;
+}
+
+/* Benefits Section */
+.benefits-section {
+  padding: 80px 0;
+  background-color: var(--color-primary);
+}
+
+.benefits-content {
+  display: flex;
+  gap: 96px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.benefit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25.73px;
+  max-width: 383.309px;
+  text-align: center;
+}
+
+.benefit-icon {
+  width: 46.936px;
+  height: 45.358px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.benefit-icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.benefit-title {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 25.368px;
+  letter-spacing: 3.0442px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.benefit-description {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: 0.96px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* Ingredients Section */
+.ingredients-section {
+  position: relative;
+  padding: 150px 0;
+  background-color: var(--color-primary);
+  overflow: hidden;
+}
+
+.ingredients-gradient {
+  position: absolute;
+  top: 2055px;
+  left: -99px;
+  width: 1539px;
+  height: 1227.89px;
+  background-image: url('ce520c61a925f2eb6b55077dad40ec21b433b764.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  z-index: 0;
+}
+
+.ingredients-content {
+  position: relative;
+  z-index: 1;
+}
+
+.ingredients-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.ingredients-title {
+  margin-bottom: 36px;
+}
+
+.ingredients-title-small {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 40px;
+  letter-spacing: 11.52px;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.ingredients-title-large {
+  font-family: 'Versailles', serif;
+  font-size: 96px;
+  color: var(--color-text);
+  display: block;
+}
+
+.ingredients-description {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.5;
+  letter-spacing: 2.88px;
+  color: var(--color-text);
+  max-width: 865px;
+  margin: 0 auto;
+}
+
+.ingredients-image {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.ingredients-image img {
+  width: 548px;
+  height: auto;
+}
+
+.ingredients-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 96px;
+  justify-content: center;
+}
+
+.ingredient-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 38px;
+  max-width: 488.6px;
+  text-align: center;
+}
+
+.ingredient-card img {
+  width: 400px;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.ingredient-name {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: 2.88px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.ingredient-description {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 1.56px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+  padding: 100px 0;
+  background-color: var(--color-primary);
+}
+
+.testimonials-content {
+  display: flex;
+  gap: 96px;
+  justify-content: center;
+}
+
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 320px;
+}
+
+.testimonial-stars {
+  height: 29px;
+  width: 205px;
+}
+
+.testimonial-stars img {
+  width: 100%;
+  height: 100%;
+}
+
+.testimonial-text {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: 1.92px;
+  color: var(--color-text);
+  text-align: justify;
+  margin: 0;
+}
+
+.testimonial-author {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.testimonial-avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+}
+
+.testimonial-name {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 1.92px;
+  color: var(--color-text);
+}
+
+/* FAQ Section */
+.faq-section {
+  padding: 100px 0;
+  background-color: var(--color-primary);
+}
+
+.faq-content {
+  max-width: 632px;
+  margin: 0 auto;
+}
+
+.faq-title {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 40px;
+  letter-spacing: 4.8px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-text);
+  margin-bottom: 60px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.faq-item {
+  border-bottom: 1.199px solid var(--color-text);
+}
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11.99px;
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 19.719px;
+  letter-spacing: 2.3663px;
+  color: var(--color-text);
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-icon {
+  font-size: 24px;
+  transition: transform 0.3s;
+}
+
+.faq-item[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  padding: 11.99px;
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 1.5px;
+  color: var(--color-text);
+}
+
+/* Footer */
+.pure-vida-footer {
+  background-color: var(--color-footer);
+  padding: 62px 95px 0;
+  min-height: 454px;
+}
+
+.footer__content {
+  display: flex;
+  gap: 115px;
+  align-items: flex-start;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.footer__left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.footer__logo {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.footer__logo-text {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 300;
+  font-size: 52.105px;
+  letter-spacing: 6.2526px;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.footer__logo-spacing {
+  letter-spacing: -1.76px;
+}
+
+.footer__plus {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 300;
+  font-size: 19.539px;
+  letter-spacing: -2.1493px;
+  color: var(--color-text);
+  margin-left: 10px;
+}
+
+.footer__copyright {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: 1.8px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.footer__middle,
+.footer__right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer__column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer__heading {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 2.4px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.footer__link {
+  font-family: 'Nohemi', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: 1.8px;
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 10px;
+  transition: opacity 0.3s;
+}
+
+.footer__link:hover {
+  opacity: 0.8;
+}
+
+.footer__payment-methods {
+  margin-top: 20px;
+}
+
+.footer__payment-methods .payment-icons {
+  flex-direction: column;
+  gap: 7.344px;
+}
+
+.footer__payment-methods .payment-icon {
+  width: 37.757px;
+  height: 25.891px;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1200px) {
+  .hero-product-section {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-product-images {
+    text-align: center;
+  }
+
+  .hero-product-img-2 {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-top: -100px;
+  }
+
+  .benefits-content,
+  .testimonials-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ingredients-grid {
+    justify-content: center;
+  }
+
+  .footer__content {
+    flex-direction: column;
+    gap: 40px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .header__inline-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .hero-title-line1 {
+    font-size: 50px;
+  }
+
+  .hero-tagline-line1,
+  .hero-tagline-line2 {
+    font-size: 40px;
+  }
+
+  .hero-price-amount {
+    font-size: 60px;
+  }
+}

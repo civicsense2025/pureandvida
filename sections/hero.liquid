@@ -1,0 +1,133 @@
+{%- comment -%}
+  Hero section - MycoMatcha product showcase
+{%- endcomment -%}
+
+<section class="hero-section">
+  <div class="hero-gradient"></div>
+  
+  <div class="hero-content page-width">
+    <div class="hero-title-section">
+      <h1 class="hero-main-title">
+        <span class="hero-title-line1">MYCOMATCHA</span>
+        <span class="hero-trademark">™</span>
+      </h1>
+      <div class="hero-divider">+++++++++</div>
+      <p class="hero-subtitle">The magic of matcha meets the wisdom of mushrooms</p>
+    </div>
+
+    <div class="hero-product-section">
+      <div class="hero-product-images">
+        {%- if section.settings.product_image_1 != blank -%}
+          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
+        {%- else -%}
+          <img src="{{ '0a5553f60213dd436dd5e60b282c6b7cbec1de3a.png' | asset_url }}" alt="MycoMatcha Product" class="hero-product-img-1">
+        {%- endif -%}
+        
+        {%- if section.settings.product_image_2 != blank -%}
+          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+        {%- else -%}
+          <img src="{{ 'f713d8714eed491eeccc4f7f9c3589229c1b0783.png' | asset_url }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+        {%- endif -%}
+      </div>
+
+      <div class="hero-product-info">
+        <div class="hero-tagline">
+          <p class="hero-tagline-line1">Coffee borrows energy.</p>
+          <p class="hero-tagline-line2">MycoMatcha creates it.</p>
+        </div>
+
+        <div class="hero-pricing">
+          <div class="hero-price-compare">
+            <span class="hero-price-old">$45</span>
+          </div>
+          <div class="hero-price-current">
+            <span class="hero-price-currency">$</span>
+            <span class="hero-price-amount">34.99</span>
+          </div>
+        </div>
+
+        <div class="hero-description">
+          <p>Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently.</p>
+          <p>Ceremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience.</p>
+        </div>
+
+        <div class="hero-cta-section">
+          <div class="hero-quantity-selector">
+            <button type="button" class="quantity-btn" data-action="decrease">-</button>
+            <input type="number" class="quantity-input" value="1" min="1" id="hero-quantity">
+            <button type="button" class="quantity-btn" data-action="increase">+</button>
+          </div>
+          {%- if section.settings.product != blank -%}
+            {%- assign featured_product = section.settings.product -%}
+            <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="hero-add-to-cart-form">
+              <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
+              <input type="hidden" name="quantity" value="1" id="cart-quantity">
+              <button type="submit" class="hero-add-to-cart-btn">
+                Add to cart
+              </button>
+            </form>
+          {%- else -%}
+            <a href="{{ routes.collections_url }}" class="hero-add-to-cart-btn" style="text-decoration: none; display: inline-block;">
+              Add to cart
+            </a>
+          {%- endif -%}
+        </div>
+
+        <div class="hero-payment-methods">
+          {% render 'payment-icons' %}
+        </div>
+
+        <div class="hero-discount-badge">
+          Get 33% off today!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.getElementById('hero-quantity');
+    const cartQuantityInput = document.getElementById('cart-quantity');
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+
+    quantityBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const action = this.dataset.action;
+        let currentValue = parseInt(quantityInput.value) || 1;
+        
+        if (action === 'increase') {
+          currentValue++;
+        } else if (action === 'decrease' && currentValue > 1) {
+          currentValue--;
+        }
+        
+        quantityInput.value = currentValue;
+        cartQuantityInput.value = currentValue;
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Hero Section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Featured Product"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_1",
+      "label": "Product Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_2",
+      "label": "Product Image 2 (Pouch)"
+    }
+  ]
+}
+{% endschema %}

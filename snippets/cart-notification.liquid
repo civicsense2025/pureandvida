@@ -1,0 +1,59 @@
+{%- comment -%}
+  Cart notification snippet (optional - can be simplified or removed if not using cart drawer)
+{%- endcomment -%}
+
+<cart-notification>
+  <div class="cart-notification-wrapper page-width">
+    <div class="cart-notification focus-inset" aria-modal="true" aria-label="{{ 'general.cart.item_added' | t }}" role="dialog" tabindex="-1">
+      <div class="cart-notification__header">
+        <h2 class="cart-notification__heading caption-large">{{ 'general.cart.item_added' | t }}</h2>
+        <button type="button" class="cart-notification__close" aria-label="{{ 'accessibility.close' | t }}">
+          {% render 'icon-close' %}
+        </button>
+      </div>
+      <div class="cart-notification-product"></div>
+      <div class="cart-notification__links">
+        <a href="{{ routes.cart_url }}" class="button button--secondary">{{ 'general.cart.view_cart' | t }}</a>
+        <form action="{{ routes.cart_url }}" method="post" id="cart-notification-form">
+          <button class="button button--primary" name="checkout">{{ 'sections.cart.checkout' | t }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</cart-notification>
+
+<style>
+  .cart-notification-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .cart-notification {
+    background-color: rgb(var(--color-base-background-1));
+    border: 0.1rem solid rgba(var(--color-base-text), 0.2);
+    border-radius: 0.4rem;
+    padding: 2rem;
+    pointer-events: auto;
+    max-width: 36rem;
+    margin: 2rem auto;
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.1);
+  }
+
+  .cart-notification__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .cart-notification__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+</style>

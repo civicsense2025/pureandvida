@@ -1,0 +1,18 @@
+{%- comment -%}
+  Main page section - customizable homepage content
+{%- endcomment -%}
+
+<div class="page-width">
+  <div class="rte">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "tag": "section",
+  "class": "section",
+  "settings": []
+}
+{% endschema %}

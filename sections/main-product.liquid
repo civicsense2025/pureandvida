@@ -1,0 +1,172 @@
+{%- comment -%}
+  Main product section with images, variants, and add to cart
+{%- endcomment -%}
+
+<div class="product page-width" id="ProductSection-{{ section.id }}" data-section="{{ section.id }}">
+  <div class="product__media-wrapper">
+    <div class="product__media-list">
+      {%- if product.selected_or_first_available_variant.featured_media != null -%}
+        {%- assign media = product.selected_or_first_available_variant.featured_media -%}
+        <div class="product__media-item" data-media-id="{{ section.id }}-{{ media.id }}">
+          {% render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: section.settings.hide_variants %}
+        </div>
+      {%- endif -%}
+      {%- for media in product.media -%}
+        {%- unless media.id == product.selected_or_first_available_variant.featured_media.id -%}
+          <div class="product__media-item" data-media-id="{{ section.id }}-{{ media.id }}">
+            {% render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: section.settings.hide_variants %}
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <div class="product__info-wrapper">
+    <div id="ProductInfo-{{ section.id }}">
+      <h1 class="product__title">
+        {{ product.title | escape }}
+      </h1>
+
+      <div class="product__price">
+        <div class="price">
+          <div class="price__container">
+            <div class="price__regular">
+              <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+              <span class="price-item price-item--regular">
+                {{ product.selected_or_first_available_variant.price | money }}
+              </span>
+            </div>
+            {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+              <div class="price__sale">
+                <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+                <span>
+                  <s class="price-item price-item--regular">
+                    {{ product.selected_or_first_available_variant.compare_at_price | money }}
+                  </s>
+                </span>
+                <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
+                <span class="price-item price-item--sale price-item--last">
+                  {{ product.selected_or_first_available_variant.price | money }}
+                </span>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+
+      {%- unless product.has_only_default_variant -%}
+        <variant-selects class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
+          {%- for option in product.options_with_values -%}
+            <div class="product-form__input product-form__input--dropdown">
+              <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+                {{ option.name }}
+              </label>
+              <div class="select">
+                <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                  class="select__select"
+                  name="options[{{ option.name | escape }}]"
+                  form="product-form-{{ section.id }}"
+                >
+                  {%- for value in option.values -%}
+                    <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>
+                      {{ value }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+                {% render 'icon-caret' %}
+              </div>
+            </div>
+          {%- endfor -%}
+
+          <script type="application/json">
+            {{ product.variants | json }}
+          </script>
+        </variant-selects>
+      {%- endunless -%}
+
+      <noscript class="product-form__noscript-wrapper-{{ section.id }}">
+        <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+          <label class="form__label" for="Variants-{{ section.id }}">{{ 'products.product.product_variants' | t }}</label>
+          <div class="select">
+            <select name="id" id="Variants-{{ section.id }}" class="select__select" form="product-form-{{ section.id }}">
+              {%- for variant in product.variants -%}
+                <option
+                  {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
+                  {% if variant.available == false %}disabled{% endif %}
+                  value="{{ variant.id }}"
+                >
+                  {{ variant.title }}
+                  {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+                  - {{ variant.price | money | strip_html }}
+                </option>
+              {%- endfor -%}
+            </select>
+            {% render 'icon-caret' %}
+          </div>
+        </div>
+      </noscript>
+
+      <product-form class="product-form">
+        <div class="product-form__error-message-wrapper" role="alert" hidden>
+          <svg aria-hidden="true" focusable="false" class="icon icon-error" viewBox="0 0 13 13">
+            <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+            <circle cx="6.5" cy="6.5" r="4.5" fill="white"/>
+            <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="currentColor"/>
+          </svg>
+          <span class="product-form__error-message"></span>
+        </div>
+
+        {%- form 'product', product, id: 'product-form-' | append: section.id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" disabled>
+          <div class="product-form__buttons">
+            <button
+              type="submit"
+              name="add"
+              class="product-form__submit button button--full-width button--primary"
+              {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}
+            >
+              <span>
+                {%- if product.selected_or_first_available_variant.available -%}
+                  {{ 'products.product.add_to_cart' | t }}
+                {%- else -%}
+                  {{ 'products.product.sold_out' | t }}
+                {%- endif -%}
+              </span>
+              <div class="loading-overlay__spinner hidden">
+                <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                </svg>
+              </div>
+            </button>
+          </div>
+        {%- endform -%}
+      </product-form>
+
+      <div class="product__description rte">
+        {{ product.description }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product information",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "default": false,
+      "label": "Enable video looping"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_variants",
+      "default": false,
+      "label": "Hide variant images"
+    }
+  ]
+}
+{% endschema %}

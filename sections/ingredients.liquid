@@ -1,0 +1,117 @@
+{%- comment -%}
+  Ingredients section - What's Inside + Why It Matters
+{%- endcomment -%}
+
+<section class="ingredients-section">
+  <div class="ingredients-gradient"></div>
+  
+  <div class="ingredients-content page-width">
+    <div class="ingredients-header">
+      <h2 class="ingredients-title">
+        <span class="ingredients-title-small">What's Inside + </span>
+        <span class="ingredients-title-large">Why It Matters</span>
+      </h2>
+      <p class="ingredients-description">
+        MycoMatcha pairs ceremonial-grade matcha with Lion's Mane, Reishi, Cordyceps, and Turkey Tail — four adaptogenic mushrooms that support focus, energy, and balance.
+      </p>
+    </div>
+
+    <div class="ingredients-image">
+      {%- if section.settings.ingredients_image != blank -%}
+        <img src="{{ section.settings.ingredients_image | image_url: width: 548 }}" alt="MycoMatcha Ingredients">
+      {%- else -%}
+        <img src="{{ '55839acdac0cccc8f69f297d49bbcfde60b91904.png' | asset_url }}" alt="MycoMatcha Ingredients">
+      {%- endif -%}
+    </div>
+
+    <div class="ingredients-grid">
+      <div class="ingredient-card">
+        {%- if section.settings.ingredient_1_image != blank -%}
+          <img src="{{ section.settings.ingredient_1_image | image_url: width: 400 }}" alt="Lion's Mane">
+        {%- else -%}
+          <img src="{{ 'a5f417e0a5a6fe47d414aa6efb17d2ab4887894e.png' | asset_url }}" alt="Lion's Mane">
+        {%- endif -%}
+        <h3 class="ingredient-name">Organic Lion Mane Extract</h3>
+        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
+      </div>
+
+      <div class="ingredient-card">
+        {%- if section.settings.ingredient_2_image != blank -%}
+          <img src="{{ section.settings.ingredient_2_image | image_url: width: 400 }}" alt="Reishi">
+        {%- else -%}
+          <img src="{{ '3caf666b6c4857e2167302690fc1dceb7c99c210.png' | asset_url }}" alt="Reishi">
+        {%- endif -%}
+        <h3 class="ingredient-name">Organic reishi extract</h3>
+        <p class="ingredient-description">The "mushroom of immortality" in traditional Chinese medicine. Adaptogen that helps the body manage stress, supports immune function, and promotes calm.</p>
+      </div>
+
+      <div class="ingredient-card">
+        {%- if section.settings.ingredient_3_image != blank -%}
+          <img src="{{ section.settings.ingredient_3_image | image_url: width: 400 }}" alt="Chaga">
+        {%- else -%}
+          <img src="{{ '8546b78bf42a8d3b60447c859cc41729a1d184f5.png' | asset_url }}" alt="Chaga">
+        {%- endif -%}
+        <h3 class="ingredient-name">Organic chaga extract</h3>
+        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
+      </div>
+
+      <div class="ingredient-card">
+        {%- if section.settings.ingredient_4_image != blank -%}
+          <img src="{{ section.settings.ingredient_4_image | image_url: width: 400 }}" alt="Cordyceps">
+        {%- else -%}
+          <img src="{{ '114c3dbc10e553c4e04ef1102ac975f43f1e3117.png' | asset_url }}" alt="Cordyceps">
+        {%- endif -%}
+        <h3 class="ingredient-name">Organic cordyceps extract</h3>
+        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
+      </div>
+
+      <div class="ingredient-card">
+        {%- if section.settings.ingredient_5_image != blank -%}
+          <img src="{{ section.settings.ingredient_5_image | image_url: width: 400 }}" alt="L-Theanine">
+        {%- else -%}
+          <img src="{{ '07a71be2c9b5fcf237dca281d8830dc65bcd52ab.png' | asset_url }}" alt="L-Theanine">
+        {%- endif -%}
+        <h3 class="ingredient-name">L-Theanine</h3>
+        <p class="ingredient-description">Known as the "smart mushroom." Traditionally used to support cognitive function, focus, and memory. Modern research suggests it may support nerve growth factor (NGF) production.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ingredients Section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "ingredients_image",
+      "label": "Ingredients Hero Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_1_image",
+      "label": "Lion's Mane Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_2_image",
+      "label": "Reishi Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_3_image",
+      "label": "Chaga Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_4_image",
+      "label": "Cordyceps Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "ingredient_5_image",
+      "label": "L-Theanine Image"
+    }
+  ]
+}
+{% endschema %}

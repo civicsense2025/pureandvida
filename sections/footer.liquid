@@ -1,0 +1,48 @@
+{%- comment -%}
+  Footer section - Pure Vida Design
+{%- endcomment -%}
+
+<footer class="footer pure-vida-footer">
+  <div class="footer__content page-width">
+    <div class="footer__left">
+      <div class="footer__logo">
+        <span class="footer__logo-text">PURE<span class="footer__logo-spacing"> </span>VIDA</span>
+        <span class="footer__plus">+</span>
+      </div>
+      <p class="footer__copyright">Copyright Pura Vida 2025. All rights reserved.</p>
+    </div>
+
+    <div class="footer__middle">
+      <div class="footer__column">
+        <a href="{{ routes.collections_url }}" class="footer__link">Shop MycoMatcha</a>
+      </div>
+      <div class="footer__column">
+        <h3 class="footer__heading">About Us</h3>
+        <a href="{{ routes.root_url }}/pages/the-company" class="footer__link">The Company</a>
+        <a href="{{ routes.root_url }}/pages/terms-of-service" class="footer__link">Terms of Service</a>
+        <a href="{{ routes.root_url }}/pages/privacy-policy" class="footer__link">Privacy Policy</a>
+      </div>
+    </div>
+
+    <div class="footer__right">
+      <div class="footer__column">
+        <h3 class="footer__heading">For You</h3>
+        <a href="{{ routes.root_url }}/pages/shipping" class="footer__link">Shipping Information</a>
+        <a href="{{ routes.root_url }}/pages/returns" class="footer__link">Return & Refund Policy</a>
+        <a href="{{ routes.root_url }}/pages/track-order" class="footer__link">Track Your Order</a>
+        <a href="{{ routes.root_url }}/pages/contact" class="footer__link">Contact Us</a>
+        <a href="{{ routes.root_url }}/pages/privacy-choices" class="footer__link">Privacy Choices</a>
+      </div>
+      <div class="footer__payment-methods">
+        {% render 'payment-icons' %}
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": []
+}
+{% endschema %}

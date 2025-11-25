@@ -2,37 +2,64 @@
   Section Header Snippet
   ----------------------
   Renders a reusable section header with heading and optional description.
-  Supports multiple heading sizes and alignments.
+  Supports full customization for typography, colors, spacing, and alignment.
 
   Parameters:
-    - heading: The heading text
+    - heading: The heading text (required for visibility)
     - description: Optional description text (supports HTML/richtext)
-    - heading_size: 'h1', 'h2', or 'h3' (default: 'h2')
+    - heading_tag: HTML tag for heading: 'h1', 'h2', 'h3', 'h4' (default: 'h2')
     - heading_alignment: 'left', 'center', or 'right' (default: 'center')
+    - heading_size: Font size in pixels (optional, uses CSS variable if not set)
+    - heading_weight: Font weight (optional, e.g., '400', '500', '600', '700')
+    - heading_color: Custom color for heading (optional)
+    - heading_spacing: Bottom margin for heading in pixels (optional)
+    - description_size: Font size for description in pixels (optional)
+    - description_color: Custom color for description (optional)
+    - description_spacing: Bottom margin for description in pixels (optional)
     - heading_class: Additional CSS classes for the heading
     - description_class: Additional CSS classes for the description
     - container_class: Additional CSS classes for the container
+    - max_width: Maximum width for content in pixels (optional, default: 800)
+    - section_id: Unique ID for scoped styles (optional, uses 'default' if not set)
 
   Usage:
     {% render 'section-header',
       heading: section.settings.heading,
       description: section.settings.description,
+      heading_tag: 'h2',
+      heading_alignment: section.settings.heading_alignment,
       heading_size: section.settings.heading_size,
-      heading_alignment: section.settings.heading_alignment
+      heading_weight: section.settings.heading_weight,
+      heading_color: section.settings.heading_color,
+      heading_spacing: section.settings.heading_spacing,
+      description_size: section.settings.description_size,
+      description_color: section.settings.description_color,
+      description_spacing: section.settings.description_spacing,
+      section_id: section.id
     %}
 {% endcomment %}
 
 {% if heading != blank or description != blank %}
   {% liquid
-    assign size = heading_size | default: 'h2'
+    # Defaults
+    assign tag = heading_tag | default: 'h2'
     assign align = heading_alignment | default: 'center'
+    assign h_size = heading_size | default: nil
+    assign h_weight = heading_weight | default: nil
+    assign h_color = heading_color | default: nil
+    assign h_spacing = heading_spacing | default: nil
+    assign d_size = description_size | default: nil
+    assign d_color = description_color | default: nil
+    assign d_spacing = description_spacing | default: nil
+    assign content_max_width = max_width | default: 800
+    assign unique_id = section_id | default: 'default'
   %}
 
-  <div class="section-header section-header--{{ align }}{% if container_class %} {{ container_class }}{% endif %}">
+  <div class="section-header section-header--{{ align }}{% if container_class %} {{ container_class }}{% endif %}" data-section-header="{{ unique_id }}">
     {% if heading != blank %}
-      <{{ size }} class="section-header__heading{% if heading_class %} {{ heading_class }}{% endif %}">
+      <{{ tag }} class="section-header__heading{% if heading_class %} {{ heading_class }}{% endif %}">
         {{- heading | escape -}}
-      </{{ size }}>
+      </{{ tag }}>
     {% endif %}
 
     {% if description != blank %}
@@ -43,6 +70,7 @@
   </div>
 
   <style>
+    /* Section Header Base Styles */
     .section-header {
       margin-bottom: var(--spacing-lg, 24px);
     }
@@ -85,6 +113,52 @@
 
     .section-header--right .section-header__description {
       margin-left: auto;
+    }
+
+    /* Instance-specific overrides using data attribute selector */
+    [data-section-header="{{ unique_id }}"] .section-header__heading {
+      {% if h_size != blank %}
+        font-size: {{ h_size }}px;
+      {% endif %}
+      {% if h_weight != blank %}
+        font-weight: {{ h_weight }};
+      {% endif %}
+      {% if h_color != blank %}
+        color: {{ h_color }};
+      {% endif %}
+      {% if h_spacing != blank %}
+        margin-bottom: {{ h_spacing }}px;
+      {% endif %}
+    }
+
+    [data-section-header="{{ unique_id }}"] .section-header__description {
+      {% if d_size != blank %}
+        font-size: {{ d_size }}px;
+      {% endif %}
+      {% if d_color != blank %}
+        color: {{ d_color }};
+      {% endif %}
+      {% if d_spacing != blank %}
+        margin-bottom: {{ d_spacing }}px;
+      {% endif %}
+      {% if content_max_width != blank and content_max_width > 0 %}
+        max-width: {{ content_max_width }}px;
+      {% endif %}
+    }
+
+    /* Responsive Typography */
+    @media screen and (max-width: 767px) {
+      [data-section-header="{{ unique_id }}"] .section-header__heading {
+        {% if h_size != blank %}
+          font-size: clamp(1.5rem, 5vw, {{ h_size }}px);
+        {% endif %}
+      }
+
+      [data-section-header="{{ unique_id }}"] .section-header__description {
+        {% if d_size != blank %}
+          font-size: clamp(0.875rem, 2.5vw, {{ d_size }}px);
+        {% endif %}
+      }
     }
   </style>
 {% endif %}

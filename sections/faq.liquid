@@ -36,13 +36,23 @@
   {% endif %}
 
   <div class="faq-content page-width" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
-    {% if section.settings.heading != blank %}
-      <h2 class="faq-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
-    {% endif %}
-    
-    {% if section.settings.description != blank %}
-      <p class="faq-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.description_size }}px; margin-bottom: {{ section.settings.description_spacing }}px;">{{ section.settings.description }}</p>
-    {% endif %}
+    {% render 'section-header',
+      heading: section.settings.heading,
+      description: section.settings.description,
+      heading_tag: 'h2',
+      heading_alignment: section.settings.heading_alignment,
+      heading_size: section.settings.heading_size,
+      heading_weight: section.settings.heading_weight,
+      heading_color: section.settings.heading_color,
+      heading_spacing: section.settings.heading_spacing,
+      description_size: section.settings.description_size,
+      description_color: section.settings.description_color,
+      description_spacing: section.settings.description_spacing,
+      max_width: section.settings.content_width,
+      section_id: section.id,
+      heading_class: 'faq-title',
+      description_class: 'faq-description'
+    %}
     
     <div class="faq-list">
       {% comment %} Determine which mode to use: blocks mode if set AND blocks exist, otherwise use settings mode {% endcomment %}

@@ -4,37 +4,96 @@
   Centralized icon rendering for consistent SVG icons across sections.
 
   Parameters:
-    - icon: Icon name (checkmark, star, heart, shield, truck, package, leaf, globe, clock, award, plus, minus, chevron-down, chevron-right, arrow-right)
-    - size: Icon size in pixels (default: 24)
+    - icon: Icon name (see list below)
+    - size: Icon size in pixels (default: 24 for stroke icons, varies for filled)
     - color: Icon color (default: currentColor)
     - class: Additional CSS classes (optional)
-    - stroke_width: SVG stroke width (default: 2)
+    - stroke_width: SVG stroke width for stroke-based icons (default: 2)
+
+  Stroke-based icons (24x24 viewBox):
+    checkmark, star, heart, shield, truck, package, leaf, globe, clock, award,
+    plus, minus, chevron-down, chevron-right, chevron-up, arrow-right, x, close,
+    info, alert-circle, check-circle, shopping-cart, cart, user, mail, email,
+    phone, map-pin, location, calendar, gift, refresh, sync, external-link
+
+  Filled icons (various viewBoxes, preserved from original theme):
+    caret, search, account, error, success
 
   Usage:
     {% render 'render-icon', icon: 'checkmark', size: 48, color: '#2c5530' %}
-    {% render 'render-icon', icon: block.settings.icon, size: section.settings.icon_size %}
+    {% render 'render-icon', icon: 'caret', size: 10 %}
 {% endcomment %}
 
 {% liquid
   assign icon_size = size | default: 24
   assign icon_color = color | default: 'currentColor'
   assign icon_stroke = stroke_width | default: 2
+
+  # Check if this is a filled icon with custom viewBox
+  assign filled_icons = 'caret,search,account,error,success,close-filled' | split: ','
+  assign is_filled_icon = false
+  for filled_icon in filled_icons
+    if icon == filled_icon
+      assign is_filled_icon = true
+      break
+    endif
+  endfor
 %}
 
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="{{ icon_size }}"
-  height="{{ icon_size }}"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="{{ icon_color }}"
-  stroke-width="{{ icon_stroke }}"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  {% if class %}class="{{ class }}"{% endif %}
-  aria-hidden="true"
->
+{% if is_filled_icon %}
+  {% comment %} Filled icons with original viewBoxes and paths {% endcomment %}
   {% case icon %}
+    {% when 'caret' %}
+      <svg aria-hidden="true" focusable="false" class="icon icon-caret{% if class %} {{ class }}{% endif %}" viewBox="0 0 10 6" fill="none" width="{{ size | default: 10 }}" height="{{ size | default: 10 }}">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="m9.354.646a.5.5 0 0 0-.708 0L5 4.293 1.354.646a.5.5 0 0 0-.708.708l4 4a.5.5 0 0 0 .708 0l4-4a.5.5 0 0 0 0-.708z" fill="{{ icon_color }}"/>
+      </svg>
+
+    {% when 'search' %}
+      <svg aria-hidden="true" focusable="false" class="icon icon-search{% if class %} {{ class }}{% endif %}" viewBox="0 0 18 19" fill="none" width="{{ size | default: 18 }}" height="{{ size | default: 18 }}">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 0 1 5.5 13.75c-3.59 0-6.5-2.91-6.5-6.5s2.91-6.5 6.5-6.5 6.5 2.91 6.5 6.5a5.784 5.784 0 0 1-2.07 4.28l7.32 7.32c.26.26.26.68 0 .94a.663.663 0 0 1-.94 0l-7.32-7.32zm-5.53-9.43c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" fill="{{ icon_color }}"/>
+      </svg>
+
+    {% when 'account' %}
+      <svg aria-hidden="true" focusable="false" class="icon icon-account{% if class %} {{ class }}{% endif %}" viewBox="0 0 18 19" fill="none" width="{{ size | default: 18 }}" height="{{ size | default: 18 }}">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M6 4.5a3 3 0 106 0 3 3 0 00-6 0zm3-4a4 4 0 100 8 4 4 0 000-8zm5.58 12.15c1.12.82 1.83 2.24 1.91 4.85H1.51c.08-2.6.79-4.03 1.9-4.85C4.66 11.75 6.5 11.5 9 11.5s4.35.26 5.58 1.15zM9 10.5c-2.5 0-4.65.24-6.17 1.35C1.27 12.98 1 14.14 1 15.5h16c0-1.36-.27-2.52-.83-3.65-1.52-1.1-3.67-1.35-6.17-1.35z" fill="{{ icon_color }}"/>
+      </svg>
+
+    {% when 'error' %}
+      <svg aria-hidden="true" focusable="false" class="icon icon-error{% if class %} {{ class }}{% endif %}" viewBox="0 0 13 13" fill="none" width="{{ size | default: 13 }}" height="{{ size | default: 13 }}">
+        <circle cx="6.5" cy="6.50049" r="5.5" stroke="{{ icon_color }}" stroke-width="2"/>
+        <circle cx="6.5" cy="6.5" r="4.5" fill="{{ icon_color }}"/>
+        <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+      </svg>
+
+    {% when 'success' %}
+      <svg aria-hidden="true" focusable="false" class="icon icon-success{% if class %} {{ class }}{% endif %}" viewBox="0 0 13 13" fill="none" width="{{ size | default: 13 }}" height="{{ size | default: 13 }}">
+        <path d="M6.5 12.35C9.73087 12.35 12.35 9.73086 12.35 6.5C12.35 3.26913 9.73087 0.65 6.5 0.65C3.26913 0.65 0.65 3.26913 0.65 6.5C0.65 9.73086 3.26913 12.35 6.5 12.35Z" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="0.7"/>
+        <path d="M5.53271 8.66357L9.25213 4.68197" stroke="white"/>
+        <path d="M4.10645 6.7688L6.13766 8.62553" stroke="white"/>
+      </svg>
+
+    {% when 'close-filled' %}
+      <svg aria-hidden="true" focusable="false" class="icon icon-close{% if class %} {{ class }}{% endif %}" viewBox="0 0 18 17" fill="none" width="{{ size | default: 18 }}" height="{{ size | default: 18 }}">
+        <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="{{ icon_color }}"/>
+      </svg>
+  {% endcase %}
+
+{% else %}
+  {% comment %} Stroke-based icons with 24x24 viewBox {% endcomment %}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="{{ icon_size }}"
+    height="{{ icon_size }}"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="{{ icon_color }}"
+    stroke-width="{{ icon_stroke }}"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    {% if class %}class="{{ class }}"{% endif %}
+    aria-hidden="true"
+  >
+    {% case icon %}
     {% when 'checkmark' or 'check' %}
       <polyline points="20 6 9 17 4 12"></polyline>
 
@@ -157,5 +216,6 @@
       <polyline points="15 3 21 3 21 9"></polyline>
       <line x1="10" y1="14" x2="21" y2="3"></line>
 
-  {% endcase %}
-</svg>
+    {% endcase %}
+  </svg>
+{% endif %}

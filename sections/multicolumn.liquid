@@ -28,19 +28,22 @@
   aria-label="{{ section.settings.title | default: 'Multi-column content' | escape }}"
 >
   <div class="multicolumn__container page-width">
-    {% if section.settings.title != blank or section.settings.subtitle != blank %}
+    {% if section.settings.title != blank or section.settings.subtitle != blank or section.settings.description != blank %}
       <div class="multicolumn__header" style="text-align: {{ section.settings.header_alignment }};">
         {% if section.settings.subtitle != blank %}
           <span class="multicolumn__subtitle">{{ section.settings.subtitle }}</span>
         {% endif %}
-        {% if section.settings.title != blank %}
-          <h2 class="multicolumn__title" style="font-size: {{ section.settings.title_size }}px;">
-            {{ section.settings.title }}
-          </h2>
-        {% endif %}
-        {% if section.settings.description != blank %}
-          <div class="multicolumn__description">{{ section.settings.description }}</div>
-        {% endif %}
+        {% render 'section-header',
+          heading: section.settings.title,
+          description: section.settings.description,
+          heading_tag: 'h2',
+          heading_alignment: section.settings.header_alignment,
+          heading_size: section.settings.title_size,
+          heading_color: section.settings.heading_color,
+          section_id: section.id,
+          heading_class: 'multicolumn__title',
+          description_class: 'multicolumn__description'
+        %}
       </div>
     {% endif %}
 

@@ -25,9 +25,13 @@
   {% endif %}
 
   <div class="benefits-content page-width">
-    {% if section.settings.heading != blank %}
-      <h2 class="benefits-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
-    {% endif %}
+    {% render 'section-header',
+      heading: section.settings.heading,
+      heading_tag: 'h2',
+      heading_alignment: section.settings.heading_alignment,
+      heading_color: section.settings.heading_color,
+      section_id: section.id
+    %}
     
     {% comment %} Count benefit items {% endcomment %}
     {% assign benefit_count = 0 %}

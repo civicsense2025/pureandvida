@@ -29,13 +29,19 @@
   {% assign collection = section.settings.collection %}
   <section class="featured-collection-section{% if layout_style == 'carousel' %} featured-collection-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
     <div class="page-width">
-      {% if section.settings.heading != blank %}
-        <h2 class="featured-collection-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
-      {% endif %}
-      
-      {% if section.settings.description != blank %}
-        <p class="featured-collection-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: 40px;">{{ section.settings.description | escape }}</p>
-      {% endif %}
+      {% render 'section-header',
+        heading: section.settings.heading,
+        description: section.settings.description,
+        heading_tag: 'h2',
+        heading_alignment: section.settings.heading_alignment,
+        heading_color: section.settings.heading_color,
+        heading_spacing: section.settings.heading_spacing,
+        description_color: section.settings.description_color,
+        description_spacing: 40,
+        section_id: section.id,
+        heading_class: 'featured-collection-heading',
+        description_class: 'featured-collection-description'
+      %}
       
       {% assign products = collection.products | limit: section.settings.products_to_show %}
       {% if products.size > 0 %}

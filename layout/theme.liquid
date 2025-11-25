@@ -57,6 +57,11 @@
       {% render 'structured-data', include_organization: false, include_website: settings.seo_enable_website_schema != false, include_breadcrumbs: settings.seo_enable_breadcrumbs != false %}
     {% endif %}
 
+    {% comment %} Collection-specific Structured Data {% endcomment %}
+    {% if template.name == 'collection' %}
+      {% render 'structured-data-collection', collection: collection %}
+    {% endif %}
+
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'carousel.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'product-gallery.js' | asset_url }}" defer="defer"></script>
@@ -478,6 +483,9 @@
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'pure-vida.css' | asset_url | stylesheet_tag }}
 
+    {% comment %} Typography Utilities - provides consistent typography classes {% endcomment %}
+    {% render 'typography' %}
+
     {% comment %}
       Font preloading: Only preload critical fonts used above-the-fold.
       Preloading all font weights hurts performance.
@@ -518,6 +526,12 @@
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
       <li id="a11y-new-window-message">{{ 'accessibility.link_messages.new_window' | t }}</li>
     </ul>
+
+    {% comment %} SEO Development Tools - Only render in theme editor {% endcomment %}
+    {% if request.design_mode %}
+      {% render 'seo-audit' %}
+      {% render 'seo-preview' %}
+    {% endif %}
 
     <script>
       window.shopUrl = '{{ request.origin }}';

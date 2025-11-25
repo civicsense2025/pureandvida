@@ -191,7 +191,7 @@
           <div class="product__add-to-cart-wrapper" {{ block.shopify_attributes }}>
             <product-form class="product-form">
               <div class="product-form__error-message-wrapper" role="alert" hidden>
-                {% render 'icon-error' %}
+                {% render 'render-icon', icon: 'error' %}
                 <span class="product-form__error-message"></span>
               </div>
 
@@ -472,7 +472,7 @@
             </option>
           {% endfor %}
         </select>
-        {% render 'icon-caret' %}
+        {% render 'render-icon', icon: 'caret' %}
       </div>
     </div>
   </noscript>

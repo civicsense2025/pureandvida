@@ -29,18 +29,18 @@ Use the hyphen (`-`) in your Liquid tags to strip whitespace:
 
 | Standard Tag | Whitespace-Stripped Tag | When to Use |
 |--------------|------------------------|-------------|
-| `{% if %}` | `{%- if -%}` | Inside HTML elements |
-| `{% endif %}` | `{%- endif -%}` | Closing conditionals |
-| `{% for %}` | `{%- for -%}` | Loop openings |
-| `{% endfor %}` | `{%- endfor -%}` | Loop closings |
+| `{% if %}` | `{% if %}` | Inside HTML elements |
+| `{% endif %}` | `{% endif %}` | Closing conditionals |
+| `{% for %}` | `{% for %}` | Loop openings |
+| `{% endfor %}` | `{% endfor %}` | Loop closings |
 | `{{ variable }}` | `{{- variable -}}` | Variable output (when needed) |
 
 ### Best Practice Rules
 
-1. **Always use `{%-` and `-%}` for control flow tags** (if, for, unless, case, etc.)
+1. **Always use `{%` and `%}` for control flow tags** (if, for, unless, case, etc.)
 2. **Use `{{` and `}}` for output** unless you need to strip surrounding whitespace
 3. **Exception:** The `{% schema %}` tag should NOT use whitespace control on its closing tag
-4. **Comment tags** can safely use whitespace control: `{%- comment -%}` ... `{%- endcomment -%}`
+4. **Comment tags** can safely use whitespace control: `{% comment %}` ... `{% endcomment %}`
 
 ### Example: Before and After
 
@@ -58,11 +58,11 @@ Use the hyphen (`-`) in your Liquid tags to strip whitespace:
 **CORRECT (clean output):**
 ```liquid
 <div class="products">
-  {%- for product in collection.products -%}
-    {%- if product.available -%}
+  {% for product in collection.products %}
+    {% if product.available %}
       <div class="product">{{ product.title }}</div>
-    {%- endif -%}
-  {%- endfor -%}
+    {% endif %}
+  {% endfor %}
 </div>
 ```
 
@@ -179,20 +179,20 @@ Blocks allow merchants to add, remove, and reorder content within sections.
 ### Rendering Blocks
 
 ```liquid
-{%- for block in section.blocks -%}
-  {%- case block.type -%}
-    {%- when 'text_block' -%}
+{% for block in section.blocks %}
+  {% case block.type %}
+    {% when 'text_block' %}
       <div class="text-block" {{ block.shopify_attributes }}>
         <h3>{{ block.settings.title }}</h3>
       </div>
-    {%- when 'image_block' -%}
+    {% when 'image_block' %}
       <div class="image-block" {{ block.shopify_attributes }}>
-        {%- if block.settings.image -%}
+        {% if block.settings.image %}
           {{ block.settings.image | image_url: width: 800 | image_tag }}
-        {%- endif -%}
+        {% endif %}
       </div>
-  {%- endcase -%}
-{%- endfor -%}
+  {% endcase %}
+{% endfor %}
 ```
 
 **Important:** Always include `{{ block.shopify_attributes }}` for Theme Editor functionality.
@@ -204,11 +204,11 @@ Blocks allow merchants to add, remove, and reorder content within sections.
 ### Always Provide Fallbacks
 
 ```liquid
-{%- if section.settings.image -%}
+{% if section.settings.image %}
   {{ section.settings.image | image_url: width: 800 | image_tag: class: 'section-image' }}
-{%- else -%}
+{% else %}
   {{ 'product-1' | placeholder_svg_tag: 'placeholder-image' }}
-{%- endif -%}
+{% endif %}
 ```
 
 ### Text Fallbacks
@@ -220,13 +220,13 @@ Blocks allow merchants to add, remove, and reorder content within sections.
 ### Empty Block Handling
 
 ```liquid
-{%- if section.blocks.size > 0 -%}
-  {%- for block in section.blocks -%}
-    {%- comment -%} Render blocks {%- endcomment -%}
-  {%- endfor -%}
-{%- else -%}
+{% if section.blocks.size > 0 %}
+  {% for block in section.blocks %}
+    {% comment %} Render blocks {% endcomment %}
+  {% endfor %}
+{% else %}
   <p class="no-content-message">Add content blocks in the Theme Editor.</p>
-{%- endif -%}
+{% endif %}
 ```
 
 ---
@@ -235,11 +235,11 @@ Blocks allow merchants to add, remove, and reorder content within sections.
 
 ### 1. Missing Whitespace Control
 **Problem:** Blank lines appear in rendered HTML
-**Solution:** Use `{%-` and `-%}` consistently
+**Solution:** Use `{%` and `%}` consistently
 
 ### 2. Schema Tag Whitespace
 **Problem:** Warning "'schema' tag was never closed"
-**Solution:** Do NOT use `-%}` on schema closing tag:
+**Solution:** Do NOT use `%}` on schema closing tag:
 ```liquid
 {% schema %}
 {...}
@@ -249,9 +249,9 @@ Blocks allow merchants to add, remove, and reorder content within sections.
 ### 3. Unclosed Conditionals
 **Problem:** Section breaks or shows raw Liquid code
 **Solution:** Always match opening and closing tags:
-- `{%- if -%}` needs `{%- endif -%}`
-- `{%- for -%}` needs `{%- endfor -%}`
-- `{%- case -%}` needs `{%- endcase -%}`
+- `{% if %}` needs `{% endif %}`
+- `{% for %}` needs `{% endfor %}`
+- `{% case %}` needs `{% endcase %}`
 
 ### 4. Invalid JSON in Schema
 **Problem:** Section won't load in Theme Editor
@@ -275,37 +275,37 @@ Blocks allow merchants to add, remove, and reorder content within sections.
 ### Complete Section Template
 
 ```liquid
-{%- liquid
+{% liquid
   # @description Example section with proper whitespace control
   # @param heading {String} - Section heading from settings
   assign section_id = 'section-' | append: section.id
--%}
+%}
 
 <section id="{{ section_id }}" class="example-section"
          style="padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;">
 
   <div class="page-width">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="section-heading">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if section.blocks.size > 0 -%}
+    {% if section.blocks.size > 0 %}
       <div class="blocks-container">
-        {%- for block in section.blocks -%}
-          {%- case block.type -%}
-            {%- when 'content_block' -%}
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'content_block' %}
               <div class="content-block" {{ block.shopify_attributes }}>
-                {%- if block.settings.image -%}
+                {% if block.settings.image %}
                   {{ block.settings.image | image_url: width: 600 | image_tag: class: 'block-image', loading: 'lazy' }}
-                {%- endif -%}
-                {%- if block.settings.text != blank -%}
+                {% endif %}
+                {% if block.settings.text != blank %}
                   <p>{{ block.settings.text }}</p>
-                {%- endif -%}
+                {% endif %}
               </div>
-          {%- endcase -%}
-        {%- endfor -%}
+          {% endcase %}
+        {% endfor %}
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -377,7 +377,7 @@ Blocks allow merchants to add, remove, and reorder content within sections.
 For complex logic, use the `{% liquid %}` tag to consolidate multiple operations:
 
 ```liquid
-{%- liquid
+{% liquid
   assign current_variant = product.selected_or_first_available_variant
   assign compare_price = current_variant.compare_at_price
   assign current_price = current_variant.price
@@ -388,7 +388,7 @@ For complex logic, use the `{% liquid %}` tag to consolidate multiple operations
     assign savings = compare_price | minus: current_price
     assign savings_percent = savings | times: 100.0 | divided_by: compare_price | round
   endif
--%}
+%}
 ```
 
 ---
@@ -409,9 +409,9 @@ For complex logic, use the `{% liquid %}` tag to consolidate multiple operations
 The following files were updated to use proper whitespace control:
 
 1. **`/sections/mycomatcha-product-page.liquid`**
-   - Changed `{% if %}` to `{%- if -%}`
-   - Changed `{% for %}` to `{%- for -%}`
-   - Changed `{% endif %}` to `{%- endif -%}`
-   - Changed `{% endfor %}` to `{%- endfor -%}`
+   - Changed `{% if %}` to `{% if %}`
+   - Changed `{% for %}` to `{% for %}`
+   - Changed `{% endif %}` to `{% endif %}`
+   - Changed `{% endfor %}` to `{% endfor %}`
 
 These changes eliminate whitespace artifacts that were appearing in the rendered output.

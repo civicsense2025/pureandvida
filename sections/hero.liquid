@@ -45,13 +45,13 @@
     <div class="hero-product-section" style="flex-direction: {{ section.settings.image_position }};">
       <div class="hero-product-images">
         {% if section.settings.product_image_1 != blank %}
-          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="{{ section.settings.product.title | default: 'Product Image' }}" class="hero-product-img-1" loading="eager">
+          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="{{ section.settings.product.title | default: 'Product Image' }}" class="hero-product-img-1" loading="eager" width="805" height="805">
         {% else %}
           {{ 'product-1' | placeholder_svg_tag: 'hero-product-img-1 hero-placeholder' }}
         {% endif %}
 
         {% if section.settings.product_image_2 != blank %}
-          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="{{ section.settings.product.title | default: 'Product Image' }}" class="hero-product-img-2" loading="eager">
+          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="{{ section.settings.product.title | default: 'Product Image' }}" class="hero-product-img-2" loading="eager" width="850" height="850">
         {% else %}
           {{ 'product-2' | placeholder_svg_tag: 'hero-product-img-2 hero-placeholder' }}
         {% endif %}
@@ -1010,7 +1010,6 @@
         "min_height": 400
       }
     }
-  ],
-  "templates": ["index", "page", "collection"]
+  ]
 }
 {% endschema %}

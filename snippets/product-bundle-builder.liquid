@@ -37,7 +37,7 @@
               >
               <div class="bundle-item__image">
                 {% if bundle_product.featured_media %}
-                  <img src="{{ bundle_product.featured_media | image_url: width: 100 }}" alt="{{ bundle_product.title }}" loading="lazy">
+                  <img src="{{ bundle_product.featured_media | image_url: width: 100 }}" alt="{{ bundle_product.title }}" loading="lazy" width="100" height="100">
                 {% endif %}
               </div>
               <div class="bundle-item__info">

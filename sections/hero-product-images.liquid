@@ -16,11 +16,11 @@
       <!-- Product Images -->
       <div class="hero-product-images">
         {% if section.settings.product_image_1 != blank %}
-          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
+          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1" width="805" height="805">
         {% endif %}
         
         {% if section.settings.product_image_2 != blank %}
-          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2" width="850" height="850">
         {% endif %}
       </div>
 
@@ -784,7 +784,6 @@
     {
       "name": "Hero Product"
     }
-  ],
-  "templates": ["index", "page", "collection"]
+  ]
 }
 {% endschema %}

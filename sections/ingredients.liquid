@@ -62,9 +62,9 @@
     {% if section.settings.show_hero_image %}
       <div class="ingredients-image">
         {% if section.settings.ingredients_image != blank %}
-          <img src="{{ section.settings.ingredients_image | image_url: width: 548 }}" alt="MycoMatcha Ingredients" loading="lazy">
+          <img src="{{ section.settings.ingredients_image | image_url: width: 548 }}" alt="MycoMatcha Ingredients" loading="lazy" width="548" height="548">
         {% else %}
-          <img src="{{ '55839acdac0cccc8f69f297d49bbcfde60b91904.png' | asset_url }}" alt="MycoMatcha Ingredients" loading="lazy">
+          <img src="{{ '55839acdac0cccc8f69f297d49bbcfde60b91904.png' | asset_url }}" alt="MycoMatcha Ingredients" loading="lazy" width="548" height="548">
         {% endif %}
       </div>
     {% endif %}
@@ -986,7 +986,6 @@
         { "type": "ingredient", "settings": { "name": "Feature 3", "description": "Engaging presentation style" } }
       ]
     }
-  ],
-  "templates": ["index", "page", "product", "collection"]
+  ]
 }
 {% endschema %}

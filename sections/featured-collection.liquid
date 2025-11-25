@@ -43,7 +43,7 @@
         description_class: 'featured-collection-description'
       %}
       
-      {% assign products = collection.products | limit: section.settings.products_to_show %}
+      {% assign products = collection.products %}
       {% if products.size > 0 %}
         {% if layout_style == 'carousel' %}
           {% comment %} Carousel Layout {% endcomment %}
@@ -533,8 +533,7 @@
         "section_padding": 60
       }
     }
-  ],
-  "templates": ["index", "page", "product", "collection"]
+  ]
 }
 {% endschema %}
 

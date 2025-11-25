@@ -7,7 +7,6 @@
 %}
 
 {% liquid
-  assign badges = ''
   assign new_product_days = 30
   assign product_created_date = product.created_at | date: '%s'
   assign current_date = 'now' | date: '%s'

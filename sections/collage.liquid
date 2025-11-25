@@ -89,6 +89,8 @@
                       class="collage-item__image"
                       loading="lazy"
                       style="object-position: {{ block.settings.image_position }};"
+                      width="1200"
+                      height="800"
                     >
                   {% else %}
                     <div class="collage-item__placeholder">
@@ -147,6 +149,8 @@
                           alt="{{ block.settings.product.featured_image.alt | default: block.settings.product.title | escape }}"
                           class="collage-item__image"
                           loading="lazy"
+                          width="800"
+                          height="800"
                         >
                       {% else %}
                         <div class="collage-item__placeholder">
@@ -178,6 +182,8 @@
                           alt="{{ block.settings.collection.image.alt | default: block.settings.collection.title | escape }}"
                           class="collage-item__image"
                           loading="lazy"
+                          width="800"
+                          height="600"
                         >
                       {% elsif block.settings.collection.products.first.featured_image != blank %}
                         <img
@@ -185,6 +191,8 @@
                           alt="{{ block.settings.collection.title | escape }}"
                           class="collage-item__image"
                           loading="lazy"
+                          width="800"
+                          height="800"
                         >
                       {% else %}
                         <div class="collage-item__placeholder">
@@ -230,6 +238,8 @@
                           alt="{{ block.settings.cover_image.alt | default: 'Video cover' }}"
                           class="collage-item__image"
                           loading="lazy"
+                          width="800"
+                          height="450"
                         >
                         <button type="button" class="collage-item__play-button" aria-label="Play video" data-play-video data-video-type="{{ video_type }}" data-video-id="{{ video_id }}">
                           <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="currentColor">

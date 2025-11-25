@@ -347,6 +347,8 @@
                           src="{{ item.image | image_url: width: 200 }}"
                           alt="{{ item.title | escape }}"
                           loading="lazy"
+                          width="200"
+                          height="200"
                         >
                       {% if section.settings.link_thumbnails %}
                         </a>
@@ -521,7 +523,7 @@
                 {% for product in block.settings.collection.products limit: block.settings.products_count %}
                   <div style="text-align: center;">
                     <a href="{{ product.url }}">
-                      <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title | escape }}" style="width: 100%; border-radius: var(--radius-sm);">
+                      <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title | escape }}" style="width: 100%; border-radius: var(--radius-sm);" width="200" height="200">
                     </a>
                     <p style="margin-top: var(--spacing-xs); font-size: 0.875rem;">{{ product.title }}</p>
                     <p style="font-weight: 600;">{{ product.price | money }}</p>
@@ -542,6 +544,8 @@
             src="{{ section.settings.empty_cart_image | image_url: width: 400 }}"
             alt=""
             loading="lazy"
+            width="400"
+            height="400"
           >
         {% endif %}
 

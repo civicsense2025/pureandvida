@@ -50,11 +50,11 @@
       endif
     when 'same_tags'
       assign product_tags = product.tags
-      assign products_list = collections.all.products | where: 'tags', product_tags[0] | limit: products_to_show
+      assign products_list = collections.all.products | where: 'tags', product_tags[0]
     when 'bestsellers'
-      assign products_list = collections.all.products | sort: 'best-selling' | limit: products_to_show
+      assign products_list = collections.all.products | sort: 'best-selling'
     when 'new_arrivals'
-      assign products_list = collections.all.products | sort: 'created' | reverse | limit: products_to_show
+      assign products_list = collections.all.products | sort: 'created' | reverse
   endcase
 %}
 
@@ -385,7 +385,6 @@
         "section_padding": 60
       }
     }
-  ],
-  "templates": ["product", "index", "page", "collection"]
+  ]
 }
 {% endschema %}

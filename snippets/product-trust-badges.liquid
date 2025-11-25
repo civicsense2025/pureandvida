@@ -9,7 +9,7 @@
   {% if block.settings.badge_secure %}
     <div class="trust-badge trust-badge--secure">
       {% if block.settings.secure_icon != blank %}
-        <img src="{{ block.settings.secure_icon | image_url: width: 40 }}" alt="Secure Checkout" loading="lazy">
+        <img src="{{ block.settings.secure_icon | image_url: width: 40 }}" alt="Secure Checkout" loading="lazy" width="40" height="40">
       {% else %}
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M10 1L3 4V9C3 13.55 6.16 17.74 10 19C13.84 17.74 17 13.55 17 9V4L10 1ZM10 10.99H16C15.47 14.11 13.24 16.78 10 17.93V11H4V5.3L10 2.19V10.99Z" fill="currentColor"/>
@@ -22,7 +22,7 @@
   {% if block.settings.badge_shipping %}
     <div class="trust-badge trust-badge--shipping">
       {% if block.settings.shipping_icon != blank %}
-        <img src="{{ block.settings.shipping_icon | image_url: width: 40 }}" alt="Free Shipping" loading="lazy">
+        <img src="{{ block.settings.shipping_icon | image_url: width: 40 }}" alt="Free Shipping" loading="lazy" width="40" height="40">
       {% else %}
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M0 4H4L6 10H14L16 4H20V16H0V4ZM15 14C15.55 14 16 13.55 16 13C16 12.45 15.55 12 15 12C14.45 12 14 12.45 14 13C14 13.55 14.45 14 15 14ZM6 14C6.55 14 7 13.55 7 13C7 12.45 6.55 12 6 12C5.45 12 5 12.45 5 13C5 13.55 5.45 14 6 14Z" fill="currentColor"/>
@@ -35,7 +35,7 @@
   {% if block.settings.badge_guarantee %}
     <div class="trust-badge trust-badge--guarantee">
       {% if block.settings.guarantee_icon != blank %}
-        <img src="{{ block.settings.guarantee_icon | image_url: width: 40 }}" alt="Money-Back Guarantee" loading="lazy">
+        <img src="{{ block.settings.guarantee_icon | image_url: width: 40 }}" alt="Money-Back Guarantee" loading="lazy" width="40" height="40">
       {% else %}
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M10 0L12.09 6.26L18 7.27L13 11.14L14.18 17.02L10 14.77L5.82 17.02L7 11.14L2 7.27L7.91 6.26L10 0Z" fill="currentColor"/>

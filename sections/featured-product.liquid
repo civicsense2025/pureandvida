@@ -44,6 +44,8 @@
                   class="featured-product__image"
                   data-main-image
                   style="border-radius: {{ section.settings.image_border_radius }}px;"
+                  width="1000"
+                  height="1000"
                 >
               </div>
               <div class="featured-product__thumbnails">
@@ -60,6 +62,8 @@
                       src="{{ image | image_url: width: 150 }}"
                       alt="{{ image.alt | default: featured_product.title | escape }}"
                       loading="lazy"
+                      width="150"
+                      height="150"
                     >
                   </button>
                 {%- endfor -%}
@@ -78,6 +82,8 @@
                 alt="{{ featured_product.featured_image.alt | default: featured_product.title | escape }}"
                 class="featured-product__image"
                 style="border-radius: {{ section.settings.image_border_radius }}px;"
+                width="1000"
+                height="1000"
               >
             {%- else -%}
               <div class="featured-product__image-placeholder">

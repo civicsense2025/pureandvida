@@ -1,0 +1,964 @@
+{%- liquid
+  # @description Multi-row content section with alternating layouts
+  # Each row supports image + text with automatic alternating positions
+  # @settings title {text} - Section title
+  # @blocks row {object} - Individual row content with image and text
+  # @example
+  #   Use for step-by-step guides, timeline content, or alternating feature highlights
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--multirow">
+    <span class="editor-label">Multi-Row</span>
+    <span class="editor-info">
+      {{ section.blocks.size }} rows |
+      {% if section.settings.alternate_layout %}Alternating{% else %}Fixed{% endif %}
+    </span>
+  </div>
+{% endif %}
+
+<section
+  class="multirow multirow--{{ section.settings.layout_style }}"
+  style="
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  aria-label="{{ section.settings.title | default: 'Multi-row content' | escape }}"
+>
+  <div class="multirow__container page-width">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="multirow__header" style="text-align: {{ section.settings.header_alignment }};">
+        {%- if section.settings.subtitle != blank -%}
+          <span class="multirow__subtitle">{{ section.settings.subtitle }}</span>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="multirow__title" style="font-size: {{ section.settings.title_size }}px;">
+            {{ section.settings.title }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="multirow__description">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="multirow__rows">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign is_even = forloop.index | modulo: 2
+          if section.settings.alternate_layout
+            if is_even == 0
+              assign image_position = 'right'
+            else
+              assign image_position = 'left'
+            endif
+          else
+            assign image_position = section.settings.default_image_position
+          endif
+        -%}
+
+        <div
+          class="multirow__row multirow__row--image-{{ image_position }}{% if section.settings.show_row_numbers %} multirow__row--numbered{% endif %}"
+          style="--row-gap: {{ section.settings.row_gap }}px;"
+          {{ block.shopify_attributes }}
+        >
+          {%- if section.settings.show_row_numbers -%}
+            <div class="multirow__number">
+              <span>{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_connector and forloop.last == false -%}
+            <div class="multirow__connector"></div>
+          {%- endif -%}
+
+          <div class="multirow__row-grid">
+            {%- comment -%} Image Column {%- endcomment -%}
+            <div class="multirow__media-wrapper">
+              <div
+                class="multirow__media"
+                style="
+                  {% case section.settings.image_ratio %}
+                    {% when 'square' %}aspect-ratio: 1 / 1;
+                    {% when 'portrait' %}aspect-ratio: 3 / 4;
+                    {% when 'landscape' %}aspect-ratio: 4 / 3;
+                    {% when 'wide' %}aspect-ratio: 16 / 9;
+                    {% when 'adapt' %}
+                      {% if block.settings.image != blank %}
+                        aspect-ratio: {{ block.settings.image.aspect_ratio }};
+                      {% else %}
+                        aspect-ratio: 4 / 3;
+                      {% endif %}
+                  {% endcase %}
+                "
+              >
+                {%- if block.settings.image != blank -%}
+                  <img
+                    src="{{ block.settings.image | image_url: width: 800 }}"
+                    srcset="
+                      {{ block.settings.image | image_url: width: 400 }} 400w,
+                      {{ block.settings.image | image_url: width: 600 }} 600w,
+                      {{ block.settings.image | image_url: width: 800 }} 800w,
+                      {{ block.settings.image | image_url: width: 1000 }} 1000w
+                    "
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    alt="{{ block.settings.image.alt | escape | default: block.settings.heading | escape }}"
+                    width="{{ block.settings.image.width }}"
+                    height="{{ block.settings.image.height }}"
+                    loading="lazy"
+                    class="multirow__image"
+                  >
+                {%- else -%}
+                  <div class="multirow__placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
+                      <rect width="525" height="525" fill="#E8E8E8"/>
+                      <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
+                      <path d="M157.5 382.5L202.5 322.5L247.5 352.5L307.5 277.5L367.5 382.5" stroke="#CACACA" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
+
+            {%- comment -%} Content Column {%- endcomment -%}
+            <div class="multirow__content" style="text-align: {{ section.settings.content_alignment }};">
+              {%- if block.settings.caption != blank -%}
+                <span class="multirow__caption">{{ block.settings.caption }}</span>
+              {%- endif -%}
+
+              {%- if block.settings.heading != blank -%}
+                <h3 class="multirow__heading" style="font-size: {{ section.settings.heading_size }}px;">
+                  {{ block.settings.heading }}
+                </h3>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <div class="multirow__text rte">{{ block.settings.text }}</div>
+              {%- endif -%}
+
+              {%- if block.settings.button_label != blank -%}
+                <a
+                  href="{{ block.settings.button_link }}"
+                  class="multirow__button button button--{{ section.settings.button_style }}"
+                  {% if block.settings.button_link == blank %}aria-disabled="true"{% endif %}
+                >
+                  {{ block.settings.button_label }}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {%- else -%}
+        {%- if request.design_mode -%}
+          <div class="multirow__empty">
+            <p>Add row blocks to populate this section.</p>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.footer_button_label != blank -%}
+      <div class="multirow__footer" style="text-align: {{ section.settings.header_alignment }};">
+        <a
+          href="{{ section.settings.footer_button_link }}"
+          class="multirow__footer-button button button--{{ section.settings.footer_button_style }}"
+          {% if section.settings.footer_button_link == blank %}aria-disabled="true"{% endif %}
+        >
+          {{ section.settings.footer_button_label }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .multirow {
+    position: relative;
+  }
+
+  .multirow__container {
+    width: 100%;
+  }
+
+  .multirow__header {
+    margin-bottom: 60px;
+    max-width: 800px;
+    {% if section.settings.header_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% endif %}
+  }
+
+  .multirow__subtitle {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #2c5530);
+    margin-bottom: 12px;
+  }
+
+  .multirow__title {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight, 600);
+    line-height: 1.2;
+    margin: 0 0 16px;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .multirow__description {
+    font-family: var(--font-body-family);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    opacity: 0.85;
+  }
+
+  .multirow__rows {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .multirow__row {
+    position: relative;
+    margin-bottom: var(--row-gap);
+  }
+
+  .multirow__row:last-child {
+    margin-bottom: 0;
+  }
+
+  .multirow__row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.column_gap }}px;
+    align-items: {{ section.settings.vertical_alignment }};
+  }
+
+  /* Image positioning */
+  .multirow__row--image-right .multirow__media-wrapper {
+    order: 2;
+  }
+
+  .multirow__row--image-right .multirow__content {
+    order: 1;
+  }
+
+  /* Row numbering */
+  .multirow__number {
+    position: absolute;
+    top: 0;
+    {% if section.settings.number_position == 'left' %}
+      left: -80px;
+    {% else %}
+      right: -80px;
+    {% endif %}
+    z-index: 2;
+  }
+
+  .multirow__number span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: {{ section.settings.number_background_color | default: 'var(--color-primary, #2c5530)' }};
+    color: {{ section.settings.number_text_color | default: 'white' }};
+    border-radius: 50%;
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  /* Connector line */
+  .multirow__connector {
+    position: absolute;
+    {% if section.settings.number_position == 'left' %}
+      left: -52px;
+    {% else %}
+      right: -52px;
+    {% endif %}
+    top: 56px;
+    bottom: calc(-1 * var(--row-gap));
+    width: 2px;
+    background: {{ section.settings.connector_color | default: 'rgba(44, 85, 48, 0.2)' }};
+  }
+
+  .multirow__media-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .multirow__media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: {{ section.settings.image_border_radius }}px;
+  }
+
+  .multirow__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .multirow__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    min-height: 300px;
+  }
+
+  .multirow__placeholder svg {
+    width: 50%;
+    height: auto;
+    max-width: 200px;
+  }
+
+  .multirow__content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: {{ section.settings.content_padding }}px;
+  }
+
+  .multirow__caption {
+    font-family: var(--font-body-family);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #2c5530);
+  }
+
+  .multirow__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight, 600);
+    line-height: 1.2;
+    margin: 0;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .multirow__text {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+  }
+
+  .multirow__text p {
+    margin: 0 0 1em;
+  }
+
+  .multirow__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .multirow__button,
+  .multirow__footer-button {
+    display: inline-block;
+    padding: 14px 28px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    width: fit-content;
+    margin-top: 8px;
+  }
+
+  .multirow__footer {
+    margin-top: 60px;
+  }
+
+  .multirow__empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f5f5f5;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    color: #666;
+  }
+
+  /* Button styles */
+  .button--primary {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+    border: 2px solid var(--color-primary, #2c5530);
+  }
+
+  .button--primary:hover {
+    background-color: var(--color-primary-dark, #1e3a21);
+    border-color: var(--color-primary-dark, #1e3a21);
+  }
+
+  .button--secondary {
+    background-color: transparent;
+    color: var(--color-primary, #2c5530);
+    border: 2px solid var(--color-primary, #2c5530);
+  }
+
+  .button--secondary:hover {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+  }
+
+  .button--link {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--color-primary, #2c5530);
+    text-transform: none;
+    font-weight: 600;
+  }
+
+  .button--link:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .multirow__row-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .multirow__row--image-right .multirow__media-wrapper,
+    .multirow__row--image-left .multirow__media-wrapper {
+      order: {% if section.settings.mobile_image_first %}1{% else %}2{% endif %};
+    }
+
+    .multirow__row--image-right .multirow__content,
+    .multirow__row--image-left .multirow__content {
+      order: {% if section.settings.mobile_image_first %}2{% else %}1{% endif %};
+      text-align: {{ section.settings.mobile_content_alignment }} !important;
+    }
+
+    .multirow__header {
+      margin-bottom: 40px;
+    }
+
+    .multirow__title {
+      font-size: {{ section.settings.title_size | times: 0.7 | round }}px !important;
+    }
+
+    .multirow__heading {
+      font-size: {{ section.settings.heading_size | times: 0.8 | round }}px !important;
+    }
+
+    .multirow__number {
+      position: relative;
+      left: 0 !important;
+      right: auto !important;
+      margin-bottom: 16px;
+    }
+
+    .multirow__connector {
+      display: none;
+    }
+
+    .multirow__footer {
+      margin-top: 40px;
+    }
+  }
+
+  /* Editor mode styles */
+  {% if request.design_mode %}
+    .multirow {
+      outline: 2px dashed rgba(44, 85, 48, 0.3);
+      outline-offset: -2px;
+      min-height: 200px;
+    }
+
+    .multirow::before {
+      content: 'MULTI-ROW';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(44, 85, 48, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .editor-controls--multirow {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(44, 85, 48, 0.5);
+    }
+
+    .editor-controls--multirow .editor-label {
+      font-weight: 600;
+      color: var(--color-primary, #2c5530);
+      font-size: 12px;
+    }
+
+    .editor-controls--multirow .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+
+    .multirow__row {
+      outline: 1px dashed rgba(44, 85, 48, 0.2);
+      outline-offset: -1px;
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "📋 Multi-Row",
+  "tag": "section",
+  "class": "section-multirow",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Create stacked rows with alternating image and text layouts. Perfect for step-by-step guides, timelines, or feature highlights."
+    },
+    {
+      "type": "header",
+      "content": "📝 Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "How It Works"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "alternate_layout",
+      "label": "Alternate Image Position",
+      "default": true,
+      "info": "Automatically alternate image left/right for each row"
+    },
+    {
+      "type": "select",
+      "id": "default_image_position",
+      "label": "Default Image Position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "info": "Used when alternating is disabled"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical Alignment",
+      "options": [
+        { "value": "start", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column Gap",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Row Gap",
+      "min": 40,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Content Padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "🔢 Row Numbers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_row_numbers",
+      "label": "Show Row Numbers",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "number_position",
+      "label": "Number Position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "number_background_color",
+      "label": "Number Background",
+      "default": "#2c5530"
+    },
+    {
+      "type": "color",
+      "id": "number_text_color",
+      "label": "Number Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_connector",
+      "label": "Show Connector Line",
+      "default": false,
+      "info": "Connect numbered rows with a vertical line"
+    },
+    {
+      "type": "color",
+      "id": "connector_color",
+      "label": "Connector Color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image Settings"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to Image" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "wide", "label": "Wide (16:9)" }
+      ],
+      "default": "landscape"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Corner Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "📝 Row Content"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Row Heading Size",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Row Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "link", "label": "Text Link" }
+      ],
+      "default": "secondary"
+    },
+    {
+      "type": "header",
+      "content": "📱 Mobile Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_image_first",
+      "label": "Show Image First on Mobile",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "label": "Mobile Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "🔗 Footer Button"
+    },
+    {
+      "type": "text",
+      "id": "footer_button_label",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "footer_button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "select",
+      "id": "footer_button_style",
+      "label": "Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "header",
+      "content": "📏 Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "info": "Small text above the heading"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Row Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Add a detailed description for this row. Explain the feature, step, or benefit in a clear and engaging way.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multi-Row - Alternating",
+      "settings": {
+        "title": "How It Works",
+        "alternate_layout": true,
+        "show_row_numbers": false
+      },
+      "blocks": [
+        {
+          "type": "row",
+          "settings": {
+            "caption": "Step 1",
+            "heading": "Choose Your Products",
+            "text": "<p>Browse our curated collection and select the products that match your needs.</p>",
+            "button_label": "Shop Now"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "caption": "Step 2",
+            "heading": "Customize Your Order",
+            "text": "<p>Select your preferred options, quantities, and delivery preferences.</p>"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "caption": "Step 3",
+            "heading": "Enjoy Fast Delivery",
+            "text": "<p>We ship directly to your door with eco-friendly packaging.</p>"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Multi-Row - Numbered Steps",
+      "settings": {
+        "title": "Our Process",
+        "subtitle": "Simple & Easy",
+        "alternate_layout": true,
+        "show_row_numbers": true,
+        "show_connector": true,
+        "number_position": "left"
+      },
+      "blocks": [
+        {
+          "type": "row",
+          "settings": {
+            "heading": "Initial Consultation",
+            "text": "<p>We start by understanding your needs and goals through a personalized consultation.</p>"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "heading": "Custom Solution",
+            "text": "<p>Our team creates a tailored solution designed specifically for your requirements.</p>"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "heading": "Implementation",
+            "text": "<p>We implement the solution with care and precision, keeping you informed every step of the way.</p>"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "heading": "Ongoing Support",
+            "text": "<p>Our relationship doesn't end at delivery. We provide ongoing support to ensure your success.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

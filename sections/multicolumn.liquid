@@ -1,0 +1,929 @@
+{%- liquid
+  # @description Multi-column content section with flexible blocks
+  # Supports icons, images, text content, and call-to-action buttons
+  # @settings title {text} - Section title
+  # @settings columns_desktop {range} - Number of columns on desktop
+  # @blocks column {object} - Individual column content
+  # @example
+  #   Use for feature highlights, benefits, team members, or service offerings
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--multicolumn">
+    <span class="editor-label">Multi-Column</span>
+    <span class="editor-info">
+      {{ section.blocks.size }} columns |
+      {{ section.settings.columns_desktop }} per row
+    </span>
+  </div>
+{% endif %}
+
+<section
+  class="multicolumn multicolumn--{{ section.settings.layout_style }}"
+  style="
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  aria-label="{{ section.settings.title | default: 'Multi-column content' | escape }}"
+>
+  <div class="multicolumn__container page-width">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="multicolumn__header" style="text-align: {{ section.settings.header_alignment }};">
+        {%- if section.settings.subtitle != blank -%}
+          <span class="multicolumn__subtitle">{{ section.settings.subtitle }}</span>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="multicolumn__title" style="font-size: {{ section.settings.title_size }}px;">
+            {{ section.settings.title }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="multicolumn__description">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div
+      class="multicolumn__grid"
+      style="
+        --columns-desktop: {{ section.settings.columns_desktop }};
+        --columns-tablet: {{ section.settings.columns_tablet }};
+        --columns-mobile: {{ section.settings.columns_mobile }};
+        --column-gap: {{ section.settings.column_gap }}px;
+        --row-gap: {{ section.settings.row_gap }}px;
+      "
+    >
+      {%- for block in section.blocks -%}
+        <div
+          class="multicolumn__item"
+          style="text-align: {{ section.settings.content_alignment }};"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.type == 'column' -%}
+            <div class="multicolumn__card{% if section.settings.show_card_background %} multicolumn__card--has-bg{% endif %}">
+              {%- comment -%} Media (Image or Icon) {%- endcomment -%}
+              {%- if block.settings.image != blank -%}
+                <div
+                  class="multicolumn__media"
+                  style="
+                    {% case section.settings.image_ratio %}
+                      {% when 'square' %}aspect-ratio: 1 / 1;
+                      {% when 'portrait' %}aspect-ratio: 3 / 4;
+                      {% when 'landscape' %}aspect-ratio: 4 / 3;
+                      {% when 'circle' %}aspect-ratio: 1 / 1; border-radius: 50%;
+                      {% when 'adapt' %}
+                        aspect-ratio: {{ block.settings.image.aspect_ratio }};
+                    {% endcase %}
+                    max-width: {{ section.settings.image_width }}%;
+                    {% if section.settings.content_alignment == 'center' %}margin: 0 auto;{% endif %}
+                    {% if section.settings.content_alignment == 'right' %}margin-left: auto;{% endif %}
+                  "
+                >
+                  <img
+                    src="{{ block.settings.image | image_url: width: 600 }}"
+                    srcset="
+                      {{ block.settings.image | image_url: width: 200 }} 200w,
+                      {{ block.settings.image | image_url: width: 400 }} 400w,
+                      {{ block.settings.image | image_url: width: 600 }} 600w
+                    "
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    alt="{{ block.settings.image.alt | escape | default: block.settings.title | escape }}"
+                    width="{{ block.settings.image.width }}"
+                    height="{{ block.settings.image.height }}"
+                    loading="lazy"
+                    class="multicolumn__image"
+                  >
+                </div>
+              {%- elsif block.settings.icon != 'none' -%}
+                <div
+                  class="multicolumn__icon"
+                  style="
+                    --icon-size: {{ section.settings.icon_size }}px;
+                    --icon-color: {{ section.settings.icon_color | default: 'var(--color-primary, #2c5530)' }};
+                  "
+                >
+                  {%- case block.settings.icon -%}
+                    {%- when 'checkmark' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    {%- when 'star' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    {%- when 'heart' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    {%- when 'shield' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    {%- when 'truck' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    {%- when 'package' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    {%- when 'leaf' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+                    {%- when 'globe' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    {%- when 'clock' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    {%- when 'award' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                  {%- endcase -%}
+                </div>
+              {%- endif -%}
+
+              {%- comment -%} Content {%- endcomment -%}
+              <div class="multicolumn__content">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="multicolumn__item-title">{{ block.settings.title }}</h3>
+                {%- endif -%}
+
+                {%- if block.settings.text != blank -%}
+                  <div class="multicolumn__item-text rte">{{ block.settings.text }}</div>
+                {%- endif -%}
+
+                {%- if block.settings.link_label != blank -%}
+                  <a
+                    href="{{ block.settings.link }}"
+                    class="multicolumn__link{% if section.settings.button_style != 'link' %} button button--{{ section.settings.button_style }}{% endif %}"
+                    {% if block.settings.link == blank %}aria-disabled="true"{% endif %}
+                  >
+                    {{ block.settings.link_label }}
+                    {%- if section.settings.button_style == 'link' -%}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    {%- endif -%}
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        {%- if request.design_mode -%}
+          <div class="multicolumn__empty">
+            <p>Add column blocks to populate this section.</p>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.button_label != blank -%}
+      <div class="multicolumn__footer" style="text-align: {{ section.settings.header_alignment }};">
+        <a
+          href="{{ section.settings.button_link }}"
+          class="multicolumn__button button button--{{ section.settings.footer_button_style }}"
+          {% if section.settings.button_link == blank %}aria-disabled="true"{% endif %}
+        >
+          {{ section.settings.button_label }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .multicolumn {
+    position: relative;
+  }
+
+  .multicolumn__container {
+    width: 100%;
+  }
+
+  .multicolumn__header {
+    margin-bottom: 48px;
+    max-width: 800px;
+    {% if section.settings.header_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% endif %}
+  }
+
+  .multicolumn__subtitle {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #2c5530);
+    margin-bottom: 12px;
+  }
+
+  .multicolumn__title {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight, 600);
+    line-height: 1.2;
+    margin: 0 0 16px;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .multicolumn__description {
+    font-family: var(--font-body-family);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    opacity: 0.85;
+  }
+
+  .multicolumn__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--columns-desktop), 1fr);
+    gap: var(--row-gap) var(--column-gap);
+  }
+
+  .multicolumn__item {
+    display: flex;
+  }
+
+  .multicolumn__card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    {% if section.settings.show_card_background %}
+      background: {{ section.settings.card_background_color | default: '#f9f9f9' }};
+      padding: 32px 24px;
+      border-radius: {{ section.settings.card_border_radius }}px;
+    {% endif %}
+  }
+
+  .multicolumn__media {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border-radius: {{ section.settings.image_border_radius }}px;
+  }
+
+  .multicolumn__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .multicolumn__icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    margin-bottom: 20px;
+    color: var(--icon-color);
+    {% if section.settings.content_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% endif %}
+    {% if section.settings.content_alignment == 'right' %}
+      margin-left: auto;
+    {% endif %}
+  }
+
+  .multicolumn__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .multicolumn__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .multicolumn__item-title {
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 12px;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .multicolumn__item-text {
+    font-family: var(--font-body-family);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    margin-bottom: 16px;
+    flex: 1;
+  }
+
+  .multicolumn__item-text p {
+    margin: 0;
+  }
+
+  .multicolumn__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary, #2c5530);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: auto;
+  }
+
+  .multicolumn__link:not(.button):hover {
+    gap: 10px;
+  }
+
+  .multicolumn__link.button {
+    padding: 12px 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+  }
+
+  .multicolumn__footer {
+    margin-top: 48px;
+  }
+
+  .multicolumn__button {
+    display: inline-block;
+    padding: 14px 32px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .multicolumn__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: #f5f5f5;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    color: #666;
+  }
+
+  /* Button styles */
+  .button--primary {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+    border: 2px solid var(--color-primary, #2c5530);
+  }
+
+  .button--primary:hover {
+    background-color: var(--color-primary-dark, #1e3a21);
+    border-color: var(--color-primary-dark, #1e3a21);
+  }
+
+  .button--secondary {
+    background-color: transparent;
+    color: var(--color-primary, #2c5530);
+    border: 2px solid var(--color-primary, #2c5530);
+  }
+
+  .button--secondary:hover {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .multicolumn__grid {
+      grid-template-columns: repeat(var(--columns-tablet), 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .multicolumn__grid {
+      grid-template-columns: repeat(var(--columns-mobile), 1fr);
+    }
+
+    .multicolumn__header {
+      margin-bottom: 32px;
+    }
+
+    .multicolumn__title {
+      font-size: {{ section.settings.title_size | times: 0.7 | round }}px !important;
+    }
+
+    .multicolumn__card--has-bg {
+      padding: 24px 20px;
+    }
+
+    .multicolumn__footer {
+      margin-top: 32px;
+    }
+  }
+
+  /* Editor mode styles */
+  {% if request.design_mode %}
+    .multicolumn {
+      outline: 2px dashed rgba(44, 85, 48, 0.3);
+      outline-offset: -2px;
+      min-height: 200px;
+    }
+
+    .multicolumn::before {
+      content: 'MULTI-COLUMN';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(44, 85, 48, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .editor-controls--multicolumn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(44, 85, 48, 0.5);
+    }
+
+    .editor-controls--multicolumn .editor-label {
+      font-weight: 600;
+      color: var(--color-primary, #2c5530);
+      font-size: 12px;
+    }
+
+    .editor-controls--multicolumn .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+
+    .multicolumn__item {
+      outline: 1px dashed rgba(44, 85, 48, 0.2);
+      outline-offset: -1px;
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "📊 Multi-Column",
+  "tag": "section",
+  "class": "section-multicolumn",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Create flexible multi-column layouts for features, benefits, team members, or any content grid. Add column blocks below."
+    },
+    {
+      "type": "header",
+      "content": "📝 Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "info": "Small text above the title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Multi-Column"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "📐 Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columns (Tablet)",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (Mobile)",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column Gap",
+      "min": 8,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Row Gap",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image Settings"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to Image" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "circle", "label": "Circle" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image Width",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Corner Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "🎯 Icon Settings"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon Color",
+      "default": "#2c5530"
+    },
+    {
+      "type": "header",
+      "content": "🎴 Card Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_card_background",
+      "label": "Show Card Background",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card Background Color",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card Corner Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "🔗 Column Button Style"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button Style",
+      "options": [
+        { "value": "link", "label": "Text Link with Arrow" },
+        { "value": "primary", "label": "Primary Button" },
+        { "value": "secondary", "label": "Secondary Button" }
+      ],
+      "default": "link"
+    },
+    {
+      "type": "header",
+      "content": "🔗 Section Footer Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "select",
+      "id": "footer_button_style",
+      "label": "Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "header",
+      "content": "📏 Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon (if no image)",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "checkmark", "label": "Checkmark" },
+            { "value": "star", "label": "Star" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "package", "label": "Package" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "globe", "label": "Globe" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "award", "label": "Award" }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Column Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Add a short description for this column.</p>"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link Label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multi-Column - Features",
+      "settings": {
+        "title": "Why Choose Us",
+        "columns_desktop": 3,
+        "content_alignment": "center"
+      },
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "icon": "truck",
+            "title": "Free Shipping",
+            "text": "<p>Free shipping on all orders over $50. Fast and reliable delivery to your door.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "icon": "shield",
+            "title": "Secure Payment",
+            "text": "<p>Your payment information is processed securely. We never store credit card details.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "icon": "heart",
+            "title": "Quality Guarantee",
+            "text": "<p>We stand behind every product. Not satisfied? We'll make it right.</p>"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Multi-Column - Cards",
+      "settings": {
+        "title": "Our Services",
+        "columns_desktop": 4,
+        "show_card_background": true,
+        "card_background_color": "#f5f5f5",
+        "content_alignment": "left"
+      },
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "icon": "star",
+            "title": "Service One",
+            "text": "<p>Description of your first service offering.</p>",
+            "link_label": "Learn More"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "icon": "award",
+            "title": "Service Two",
+            "text": "<p>Description of your second service offering.</p>",
+            "link_label": "Learn More"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "icon": "globe",
+            "title": "Service Three",
+            "text": "<p>Description of your third service offering.</p>",
+            "link_label": "Learn More"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "icon": "leaf",
+            "title": "Service Four",
+            "text": "<p>Description of your fourth service offering.</p>",
+            "link_label": "Learn More"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Multi-Column - Images",
+      "settings": {
+        "title": "Meet the Team",
+        "columns_desktop": 4,
+        "image_ratio": "circle",
+        "image_width": 60,
+        "content_alignment": "center"
+      },
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "title": "Team Member",
+            "text": "<p>Role / Position</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Team Member",
+            "text": "<p>Role / Position</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Team Member",
+            "text": "<p>Role / Position</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Team Member",
+            "text": "<p>Role / Position</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Contact form section with customizable fields and styling
   # Uses Shopify's customer contact form for submissions
   # @settings heading {String} - Form heading
@@ -9,7 +9,7 @@
   #   Add to contact page template for customer inquiries
 
   assign form_id = 'contact-form-' | append: section.id
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--contact">

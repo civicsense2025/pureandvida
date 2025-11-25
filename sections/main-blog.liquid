@@ -1,18 +1,12 @@
-{%- comment -%}
-  Main Blog Section
-  -----------------
-  Fully customizable blog listing with multiple layouts, card styling,
-  and optional blocks for featured articles and newsletter signup.
-
-  Enhanced: 2025-11-25
-{%- endcomment -%}
-
-{%- liquid
+{% liquid
+  # @description Main Blog Section - Fully customizable blog listing with multiple layouts,
+  # card styling, and optional blocks for featured articles and newsletter signup.
+  # Enhanced: 2025-11-25
   assign color_scheme = section.settings.color_scheme | default: 'default'
   assign layout = section.settings.layout | default: 'grid'
   assign columns_desktop = section.settings.columns_desktop | default: 3
   assign columns_mobile = section.settings.columns_mobile | default: 1
--%}
+%}
 
 {%- render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,

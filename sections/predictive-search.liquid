@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Predictive search section with live search suggestions
   # Displays product, collection, page, and article results as user types
   # @settings show_products {checkbox} - Show product results
@@ -6,7 +6,7 @@
   # @settings products_limit {range} - Maximum product results
   # @example
   #   Use as search overlay or embedded search component
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--predictive-search">

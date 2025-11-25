@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Announcement bar section with dismissible announcements and auto-rotation
   # Supports multiple announcement blocks with customizable styling and behavior
   # @settings auto_rotate {Boolean} - Enable automatic rotation between announcements
@@ -11,7 +11,7 @@
 
   assign announcement_count = section.blocks.size
   assign current_index = 0
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--announcement">

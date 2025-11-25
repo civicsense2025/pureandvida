@@ -1,11 +1,11 @@
-{%- comment -%}
-  @description Multi-row content section with alternating layouts
-  Each row supports image + text with automatic alternating positions
-  @settings title {text} - Section title
-  @blocks row {object} - Individual row content with image and text
-  @example
-    Use for step-by-step guides, timeline content, or alternating feature highlights
-{%- endcomment -%}
+{% liquid
+  # @description Multi-row content section with alternating layouts
+  # Each row supports image + text with automatic alternating positions
+  # @settings title {text} - Section title
+  # @blocks row {object} - Individual row content with image and text
+  # @example
+  #   Use for step-by-step guides, timeline content, or alternating feature highlights
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--multirow">

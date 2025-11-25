@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Product hero section for landing pages
   # Displays product image, title, pricing, description, and add-to-cart button
   # All content is configurable via Theme Editor settings
@@ -19,7 +19,7 @@
     assign display_compare_price = section.settings.original_price
     assign product_image = section.settings.product_image
   endif
--%}
+%}
 
 <section class="product-hero-landing" style="background-color: {{ section.settings.background_color | default: '#F5F3EE' }}; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0;">
   <div class="page-width">

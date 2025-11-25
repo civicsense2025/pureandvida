@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Featured product section for showcasing a single product with full details
   # @settings product {Product} - The product to feature
   # @settings show_vendor {Boolean} - Display product vendor
@@ -9,7 +9,7 @@
   #   Add to homepage or landing pages for product highlights
 
   assign featured_product = section.settings.product
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--featured-product">

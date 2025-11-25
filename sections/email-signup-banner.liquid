@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Full-width newsletter signup banner with promotional styling
   # Eye-catching banner format for growing email list
   # @settings heading {String} - Banner heading
@@ -8,7 +8,7 @@
   #   Add to homepage or any template for email capture
 
   assign form_id = 'email-signup-banner-' | append: section.id
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--email-banner">

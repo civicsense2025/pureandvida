@@ -1,12 +1,12 @@
-{%- comment -%}
-  @description Newsletter signup section for email subscription
-  Supports various layouts and styling options
-  @settings heading {text} - Section heading
-  @settings subheading {text} - Text above heading
-  @settings success_message {text} - Message shown on successful signup
-  @example
-    Use for email list building, promotional signups, or content subscriptions
-{%- endcomment -%}
+{% liquid
+  # @description Newsletter signup section for email subscription
+  # Supports various layouts and styling options
+  # @settings heading {text} - Section heading
+  # @settings subheading {text} - Text above heading
+  # @settings success_message {text} - Message shown on successful signup
+  # @example
+  #   Use for email list building, promotional signups, or content subscriptions
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--newsletter">

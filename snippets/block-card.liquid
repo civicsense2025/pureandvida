@@ -1,0 +1,56 @@
+{%- comment -%}
+  Block Card Snippet
+  ------------------
+  Generic card wrapper with configurable background, padding, and border radius.
+  Use this to wrap block content for consistent styling.
+
+  Parameters:
+    - show_background: true/false (default: false)
+    - background_color: Card background color (default: #f9f9f9)
+    - padding: Padding value (default: 24px)
+    - border_radius: Border radius (default: 12px)
+    - text_align: Text alignment - left, center, right (default: inherit)
+    - class: Additional CSS classes (optional)
+    - block: The block object for shopify_attributes (optional)
+
+  Usage:
+    {% render 'block-card',
+      show_background: section.settings.show_card_background,
+      background_color: section.settings.card_background_color,
+      border_radius: section.settings.card_border_radius,
+      text_align: section.settings.content_alignment,
+      block: block
+    %}
+      {content here}
+    {% endrender %}
+
+  Note: Since Liquid doesn't support block content in render, use capture instead:
+    {% capture card_content %}
+      <h3>Title</h3>
+      <p>Content</p>
+    {% endcapture %}
+    {% render 'block-card', content: card_content, show_background: true %}
+{%- endcomment -%}
+
+{%- liquid
+  assign card_bg = show_background | default: false
+  assign card_bg_color = background_color | default: '#f9f9f9'
+  assign card_padding = padding | default: '24px'
+  assign card_radius = border_radius | default: 12
+  assign card_align = text_align | default: 'inherit'
+-%}
+
+<div
+  class="block-card{% if card_bg %} block-card--has-bg{% endif %}{% if class %} {{ class }}{% endif %}"
+  {% if block %}{{ block.shopify_attributes }}{% endif %}
+  style="
+    {% if card_bg %}
+      background: {{ card_bg_color }};
+      padding: {{ card_padding }};
+      border-radius: {{ card_radius }}px;
+    {% endif %}
+    text-align: {{ card_align }};
+  "
+>
+  {{ content }}
+</div>

@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Collapsible content section with accordion-style expandable rows
   # Alternative to FAQ section with more flexible content options
   # @settings heading {String} - Section heading
@@ -9,7 +9,7 @@
   #   Use for FAQs, product details, shipping info, size guides, etc.
 
   assign row_count = section.blocks.size
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--collapsible">

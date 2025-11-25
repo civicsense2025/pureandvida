@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Image collage section with flexible grid layouts
   # Supports multiple layout patterns with images, products, collections, and videos
   # @settings layout {String} - Collage layout pattern (left-large, right-large, etc.)
@@ -12,7 +12,7 @@
   #   Add to any template for visual collage displays
 
   assign collage_id = 'collage-' | append: section.id
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--collage">

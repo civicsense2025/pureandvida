@@ -1,16 +1,10 @@
-{%- comment -%}
-  Main Cart Section
-  -----------------
-  Fully customizable shopping cart with multiple layouts, color schemes,
-  and optional blocks for upsells, trust badges, promo codes, and shipping progress.
-
-  Enhanced: 2025-11-25
-{%- endcomment -%}
-
-{%- liquid
+{% liquid
+  # @description Main Cart Section - Fully customizable shopping cart with multiple layouts,
+  # color schemes, and optional blocks for upsells, trust badges, promo codes, and shipping progress.
+  # Enhanced: 2025-11-25
   assign color_scheme = section.settings.color_scheme | default: 'default'
   assign layout = section.settings.layout | default: 'standard'
--%}
+%}
 
 {%- render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,

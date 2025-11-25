@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Featured blog posts section showcasing articles from a selected blog
   # @settings blog {Blog} - Blog to feature articles from
   # @settings post_count {Number} - Number of posts to display
@@ -11,7 +11,7 @@
 
   assign selected_blog = blogs[section.settings.blog]
   assign post_count = section.settings.post_count | default: 3
--%}
+%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--blog">

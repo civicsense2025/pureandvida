@@ -1,0 +1,171 @@
+{%- comment -%}
+  Block FAQ Item Snippet
+  ----------------------
+  Reusable accordion/FAQ item using details/summary pattern.
+  Used by FAQ and collapsible-content sections.
+
+  Parameters:
+    Required:
+    - question: The question/title text
+    - answer: The answer/content (can be richtext)
+
+    Optional:
+    - block: The block object for shopify_attributes
+    - open: true/false - Whether item is open by default (default: false)
+    - question_color: Question text color
+    - answer_color: Answer text color
+    - icon_color: Toggle icon color
+    - icon_text: Custom icon text (default: +)
+    - icon_size: Icon size in pixels (default: 24)
+    - item_padding: Padding for question area (default: 15px)
+    - item_background: Background color for question
+    - item_border_width: Border width (default: 1px)
+    - item_border_color: Border color
+    - item_border_radius: Border radius (default: 0)
+    - answer_padding: Padding for answer area (default: 15px)
+    - answer_background: Background for answer area
+    - question_size: Font size for question (default: 18px)
+    - question_weight: Font weight for question (default: 500)
+    - answer_size: Font size for answer (default: 16px)
+    - answer_line_height: Line height for answer (default: 1.6)
+
+  Usage:
+    {% render 'block-faq-item',
+      block: block,
+      question: block.settings.question,
+      answer: block.settings.answer,
+      open: forloop.first and section.settings.default_open,
+      question_color: section.settings.default_question_color,
+      answer_color: section.settings.default_answer_color
+    %}
+{%- endcomment -%}
+
+{%- liquid
+  assign faq_open = open | default: false
+  assign faq_icon_text = icon_text | default: '+'
+  assign faq_icon_size = icon_size | default: 24
+  assign faq_item_padding = item_padding | default: 15
+  assign faq_item_border_width = item_border_width | default: 1
+  assign faq_item_border_radius = item_border_radius | default: 0
+  assign faq_answer_padding = answer_padding | default: 15
+  assign faq_question_size = question_size | default: 18
+  assign faq_question_weight = question_weight | default: 500
+  assign faq_answer_size = answer_size | default: 16
+  assign faq_answer_line_height = answer_line_height | default: 1.6
+-%}
+
+<details
+  class="block-faq-item"
+  {% if faq_open %}open{% endif %}
+  {% if block %}{{ block.shopify_attributes }}{% endif %}
+>
+  <summary
+    class="block-faq-item__question"
+    style="
+      {% if question_color != blank %}color: {{ question_color }};{% endif %}
+      font-size: {{ faq_question_size }}px;
+      font-weight: {{ faq_question_weight }};
+      padding: {{ faq_item_padding }}px;
+      background: {% if item_background != blank %}{{ item_background }}{% else %}transparent{% endif %};
+      border: {{ faq_item_border_width }}px solid {% if item_border_color != blank %}{{ item_border_color }}{% else %}rgba(0,0,0,0.1){% endif %};
+      border-radius: {{ faq_item_border_radius }}px;
+    "
+  >
+    <span class="block-faq-item__question-text">{{ question | escape }}</span>
+    <span
+      class="block-faq-item__icon"
+      style="
+        {% if icon_color != blank %}color: {{ icon_color }};{% endif %}
+        font-size: {{ faq_icon_size }}px;
+      "
+      aria-hidden="true"
+    >
+      {{ faq_icon_text }}
+    </span>
+  </summary>
+  <div
+    class="block-faq-item__answer"
+    style="
+      {% if answer_color != blank %}color: {{ answer_color }};{% endif %}
+      font-size: {{ faq_answer_size }}px;
+      line-height: {{ faq_answer_line_height }};
+      padding: {{ faq_answer_padding }}px;
+      background: {% if answer_background != blank %}{{ answer_background }}{% else %}transparent{% endif %};
+    "
+  >
+    <div class="block-faq-item__answer-content rte">
+      {%- if answer contains '<p>' -%}
+        {{ answer }}
+      {%- else -%}
+        <p>{{ answer }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</details>
+
+<style>
+  .block-faq-item {
+    margin: 0;
+  }
+
+  .block-faq-item__question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    list-style: none;
+    transition: all 0.3s ease;
+    min-height: 48px;
+    gap: 16px;
+  }
+
+  .block-faq-item__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .block-faq-item__question:hover {
+    opacity: 0.85;
+  }
+
+  .block-faq-item__question-text {
+    flex: 1;
+  }
+
+  .block-faq-item__icon {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .block-faq-item[open] .block-faq-item__icon {
+    transform: rotate(45deg);
+  }
+
+  .block-faq-item__answer {
+    transition: all 0.3s ease;
+  }
+
+  .block-faq-item__answer-content p {
+    margin: 0;
+  }
+
+  .block-faq-item__answer-content p + p {
+    margin-top: 1em;
+  }
+
+  /* Responsive */
+  @media screen and (max-width: 767px) {
+    .block-faq-item__question {
+      font-size: clamp(0.9rem, 2.5vw, 1.125rem) !important;
+      padding: clamp(12px, 3vw, 15px) !important;
+    }
+
+    .block-faq-item__answer {
+      padding: clamp(12px, 3vw, 15px) !important;
+    }
+  }
+</style>

@@ -21,7 +21,7 @@
         "logo_text_size": 24,
         "logo_text_color": "",
         "show_plus": false,
-        "menu": "main-menu",
+        "menu": "main-menu-condensed",
         "menu_text_color": "",
         "show_cart": true,
         "cart_button_text": "Cart",

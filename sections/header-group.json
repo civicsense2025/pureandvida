@@ -13,53 +13,24 @@
   "sections": {
     "header": {
       "type": "header",
-      "blocks": {
-        "logo": {
-          "type": "logo",
-          "settings": {
-            "position": "left",
-            "logo_image": "shopify://shop_images/pure-vida-logo.svg",
-            "logo_width": 150,
-            "logo_text": "Pure + Vida",
-            "logo_text_size": 28,
-            "logo_text_color": "",
-            "show_plus": true
-          }
-        },
-        "navigation": {
-          "type": "navigation",
-          "settings": {
-            "position": "center",
-            "menu": "main-menu",
-            "text_color": "",
-            "hover_color": ""
-          }
-        },
-        "cart": {
-          "type": "cart_button",
-          "settings": {
-            "position": "right",
-            "style": "button",
-            "text": "SHOP NOW",
-            "show_count": true,
-            "background_color": "",
-            "text_color": ""
-          }
-        }
-      },
-      "block_order": ["logo", "navigation", "cart"],
       "settings": {
+        "logo_image": "shopify://shop_images/pure-vida-logo.svg",
+        "logo_width": 200,
+        "logo_height": 50,
+        "logo_text": "Pure + Vida",
+        "logo_text_size": 24,
+        "logo_text_color": "",
+        "show_plus": false,
+        "menu": "main-menu-condensed",
+        "menu_text_color": "",
+        "show_cart": true,
+        "cart_button_text": "Cart",
+        "cart_button_color": "",
+        "cart_button_text_color": "",
         "sticky_header": false,
         "transparent_header": false,
         "header_height": 80,
-        "background_color": "",
-        "hamburger_color": "",
-        "logo_font": "nohemi",
-        "logo_font_weight": "300",
-        "menu_font": "nohemi",
-        "menu_font_size": 20,
-        "menu_letter_spacing": 6,
-        "mobile_breakpoint": 768
+        "background_color": ""
       }
     }
   },

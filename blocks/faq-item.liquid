@@ -2,63 +2,78 @@
   Theme Block: FAQ Item
   ---------------------
   Accordion-style FAQ item using details/summary pattern.
-  Question/answer format with customizable styling.
+  Question/answer format with grouped override settings.
 {%- endcomment -%}
 
 {%- liquid
+  # Content
+  assign faq_question = block.settings.question
+  assign faq_answer = block.settings.answer
   assign faq_open = block.settings.open_by_default | default: false
   assign faq_icon_text = block.settings.icon_text | default: '+'
-  assign faq_icon_size = block.settings.icon_size | default: 24
-  assign faq_item_padding = block.settings.question_padding | default: 15
-  assign faq_answer_padding = block.settings.answer_padding | default: 15
-  assign faq_question_size = block.settings.question_size | default: 18
-  assign faq_question_weight = block.settings.question_weight | default: '500'
-  assign faq_answer_size = block.settings.answer_size | default: 16
-  assign faq_border_radius = block.settings.border_radius | default: 0
+
+  # Color overrides
+  assign question_bg = block.settings.question_background
+  assign question_color = block.settings.question_color
+  assign answer_bg = block.settings.answer_background
+  assign answer_color = block.settings.answer_color
+  assign border_color = block.settings.border_color
+  assign icon_color = block.settings.icon_color
+
+  # Typography overrides
+  assign question_size = block.settings.question_size
+  assign question_weight = block.settings.question_weight
+  assign answer_size = block.settings.answer_size
+  assign answer_line_height = block.settings.answer_line_height
+  assign icon_size = block.settings.icon_size | default: 24
+
+  # Spacing overrides
+  assign question_padding = block.settings.question_padding
+  assign answer_padding = block.settings.answer_padding
+  assign border_radius = block.settings.border_radius
+  assign border_width = block.settings.border_width
 -%}
 
 <details
   class="block-faq-item"
   {% if faq_open %}open{% endif %}
   {{ block.shopify_attributes }}
+  style="
+    {% if border_color != blank %}--block-border-color: {{ border_color }};{% endif %}
+    {% if border_radius != blank %}--block-border-radius: {{ border_radius }}px;{% endif %}
+    {% if border_width != blank %}--block-border-width: {{ border_width }}px;{% endif %}
+  "
 >
   <summary
     class="block-faq-item__question"
     style="
-      {% if block.settings.question_color != blank %}color: {{ block.settings.question_color }};{% endif %}
-      font-size: {{ faq_question_size }}px;
-      font-weight: {{ faq_question_weight }};
-      padding: {{ faq_item_padding }}px;
-      background: {% if block.settings.question_background != blank %}{{ block.settings.question_background }}{% else %}transparent{% endif %};
-      border: 1px solid {% if block.settings.border_color != blank %}{{ block.settings.border_color }}{% else %}rgba(0,0,0,0.1){% endif %};
-      border-radius: {{ faq_border_radius }}px;
+      {% if question_bg != blank %}--block-question-bg: {{ question_bg }};{% endif %}
+      {% if question_color != blank %}--block-question-color: {{ question_color }};{% endif %}
+      {% if question_size != blank %}--block-question-size: {{ question_size }}px;{% endif %}
+      {% if question_weight != blank %}--block-question-weight: {{ question_weight }};{% endif %}
+      {% if question_padding != blank %}--block-question-padding: {{ question_padding }}px;{% endif %}
+      {% if icon_color != blank %}--block-icon-color: {{ icon_color }};{% endif %}
+      --block-icon-size: {{ icon_size }}px;
     "
   >
-    <span class="block-faq-item__question-text">{{ block.settings.question | escape }}</span>
-    <span
-      class="block-faq-item__icon"
-      style="
-        {% if block.settings.icon_color != blank %}color: {{ block.settings.icon_color }};{% endif %}
-        font-size: {{ faq_icon_size }}px;
-      "
-      aria-hidden="true"
-    >
+    <span class="block-faq-item__question-text">{{ faq_question | escape }}</span>
+    <span class="block-faq-item__icon" aria-hidden="true">
       {{ faq_icon_text }}
     </span>
   </summary>
   <div
     class="block-faq-item__answer"
     style="
-      {% if block.settings.answer_color != blank %}color: {{ block.settings.answer_color }};{% endif %}
-      font-size: {{ faq_answer_size }}px;
-      line-height: 1.6;
-      padding: {{ faq_answer_padding }}px;
-      background: {% if block.settings.answer_background != blank %}{{ block.settings.answer_background }}{% else %}transparent{% endif %};
+      {% if answer_bg != blank %}--block-answer-bg: {{ answer_bg }};{% endif %}
+      {% if answer_color != blank %}--block-answer-color: {{ answer_color }};{% endif %}
+      {% if answer_size != blank %}--block-answer-size: {{ answer_size }}px;{% endif %}
+      {% if answer_line_height != blank %}--block-answer-line-height: {{ answer_line_height }};{% endif %}
+      {% if answer_padding != blank %}--block-answer-padding: {{ answer_padding }}px;{% endif %}
     "
   >
     <div class="block-faq-item__answer-content rte">
-      {%- if block.settings.answer != blank -%}
-        {{ block.settings.answer }}
+      {%- if faq_answer != blank -%}
+        {{ faq_answer }}
       {%- endif -%}
     </div>
   </div>
@@ -67,6 +82,9 @@
 {% stylesheet %}
   .block-faq-item {
     margin: 0;
+    border: var(--block-border-width, 1px) solid var(--block-border-color, rgba(0,0,0,0.1));
+    border-radius: var(--block-border-radius, 0);
+    overflow: hidden;
   }
 
   .block-faq-item + .block-faq-item {
@@ -82,6 +100,11 @@
     transition: all 0.3s ease;
     min-height: 48px;
     gap: 16px;
+    padding: var(--block-question-padding, 15px);
+    background: var(--block-question-bg, transparent);
+    color: var(--block-question-color, inherit);
+    font-size: var(--block-question-size, 18px);
+    font-weight: var(--block-question-weight, 500);
   }
 
   .block-faq-item__question::-webkit-details-marker {
@@ -104,6 +127,8 @@
     justify-content: center;
     transition: transform 0.3s ease;
     flex-shrink: 0;
+    font-size: var(--block-icon-size, 24px);
+    color: var(--block-icon-color, inherit);
   }
 
   .block-faq-item[open] .block-faq-item__icon {
@@ -112,6 +137,12 @@
 
   .block-faq-item__answer {
     transition: all 0.3s ease;
+    padding: var(--block-answer-padding, 15px);
+    background: var(--block-answer-bg, transparent);
+    color: var(--block-answer-color, inherit);
+    font-size: var(--block-answer-size, 16px);
+    line-height: var(--block-answer-line-height, 1.6);
+    border-top: var(--block-border-width, 1px) solid var(--block-border-color, rgba(0,0,0,0.1));
   }
 
   .block-faq-item__answer-content p {
@@ -122,15 +153,14 @@
     margin-top: 1em;
   }
 
-  /* Responsive */
   @media screen and (max-width: 767px) {
     .block-faq-item__question {
-      font-size: clamp(0.9rem, 2.5vw, 1.125rem) !important;
-      padding: clamp(12px, 3vw, 15px) !important;
+      font-size: clamp(0.9rem, 2.5vw, var(--block-question-size, 18px)) !important;
+      padding: clamp(12px, 3vw, var(--block-question-padding, 15px)) !important;
     }
 
     .block-faq-item__answer {
-      padding: clamp(12px, 3vw, 15px) !important;
+      padding: clamp(12px, 3vw, var(--block-answer-padding, 15px)) !important;
     }
   }
 {% endstylesheet %}
@@ -139,6 +169,10 @@
 {
   "name": "FAQ Item",
   "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
     {
       "type": "text",
       "id": "question",
@@ -158,70 +192,6 @@
       "default": false
     },
     {
-      "type": "header",
-      "content": "Question Style"
-    },
-    {
-      "type": "range",
-      "id": "question_size",
-      "label": "Question Font Size",
-      "min": 14,
-      "max": 24,
-      "step": 1,
-      "default": 18,
-      "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "question_weight",
-      "label": "Question Font Weight",
-      "options": [
-        { "value": "400", "label": "Normal" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semibold" },
-        { "value": "700", "label": "Bold" }
-      ],
-      "default": "500"
-    },
-    {
-      "type": "range",
-      "id": "question_padding",
-      "label": "Question Padding",
-      "min": 10,
-      "max": 30,
-      "step": 5,
-      "default": 15,
-      "unit": "px"
-    },
-    {
-      "type": "header",
-      "content": "Answer Style"
-    },
-    {
-      "type": "range",
-      "id": "answer_size",
-      "label": "Answer Font Size",
-      "min": 14,
-      "max": 20,
-      "step": 1,
-      "default": 16,
-      "unit": "px"
-    },
-    {
-      "type": "range",
-      "id": "answer_padding",
-      "label": "Answer Padding",
-      "min": 10,
-      "max": 30,
-      "step": 5,
-      "default": 15,
-      "unit": "px"
-    },
-    {
-      "type": "header",
-      "content": "Icon"
-    },
-    {
       "type": "text",
       "id": "icon_text",
       "label": "Toggle Icon",
@@ -229,37 +199,12 @@
       "info": "Symbol shown on the toggle button"
     },
     {
-      "type": "range",
-      "id": "icon_size",
-      "label": "Icon Size",
-      "min": 16,
-      "max": 32,
-      "step": 2,
-      "default": 24,
-      "unit": "px"
-    },
-    {
       "type": "header",
-      "content": "Border"
+      "content": "🎨 Color Overrides"
     },
     {
-      "type": "range",
-      "id": "border_radius",
-      "label": "Border Radius",
-      "min": 0,
-      "max": 16,
-      "step": 2,
-      "default": 0,
-      "unit": "px"
-    },
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "question_color",
-      "label": "Question Text Color"
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
     },
     {
       "type": "color",
@@ -268,13 +213,18 @@
     },
     {
       "type": "color",
-      "id": "answer_color",
-      "label": "Answer Text Color"
+      "id": "question_color",
+      "label": "Question Text Color"
     },
     {
       "type": "color",
       "id": "answer_background",
       "label": "Answer Background"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer Text Color"
     },
     {
       "type": "color",
@@ -285,6 +235,114 @@
       "type": "color",
       "id": "icon_color",
       "label": "Icon Color"
+    },
+    {
+      "type": "header",
+      "content": "📝 Typography Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Question Font Size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 18px"
+    },
+    {
+      "type": "select",
+      "id": "question_weight",
+      "label": "Question Font Weight",
+      "options": [
+        { "value": "", "label": "Default" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "label": "Answer Font Size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 16px"
+    },
+    {
+      "type": "range",
+      "id": "answer_line_height",
+      "label": "Answer Line Height",
+      "min": 1.2,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "question_padding",
+      "label": "Question Padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "info": "Default: 15px"
+    },
+    {
+      "type": "range",
+      "id": "answer_padding",
+      "label": "Answer Padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "info": "Default: 15px"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border Width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 1px"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border Radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "info": "Default: 0"
     }
   ],
   "presets": [

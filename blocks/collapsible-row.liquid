@@ -2,109 +2,136 @@
   Theme Block: Collapsible Row
   ----------------------------
   Accordion-style collapsible content with icon, title, rich content, and optional button.
+  Supports grouped override settings for colors, typography, and spacing.
 {%- endcomment -%}
 
 {%- liquid
+  # Content
+  assign row_heading = block.settings.heading
+  assign row_content = block.settings.row_content
+  assign row_page = block.settings.page
+  assign row_icon = block.settings.icon
+  assign row_icon_image = block.settings.icon_image
   assign is_open = block.settings.open_by_default | default: false
-  assign row_pad = block.settings.row_padding | default: 16
-  assign row_bg = block.settings.row_background
-  assign row_border_clr = block.settings.border_color
-  assign row_border_rad = block.settings.border_radius | default: 4
-  assign ttl_size = block.settings.title_size | default: 16
-  assign ttl_weight = block.settings.title_weight | default: 500
-  assign ttl_color = block.settings.title_color
-  assign cnt_padding = block.settings.content_padding | default: 16
-  assign cnt_bg = block.settings.content_background
-  assign cnt_color = block.settings.content_color
+
+  # Button
+  assign btn_text = block.settings.button_text
+  assign btn_link = block.settings.button_link
+  assign btn_color = block.settings.button_color
+  assign btn_text_color = block.settings.button_text_color
+
+  # Color overrides
+  assign header_bg = block.settings.row_background
+  assign header_color = block.settings.title_color
+  assign content_bg = block.settings.content_background
+  assign content_color = block.settings.content_color
+  assign border_color = block.settings.border_color
+  assign toggle_color = block.settings.toggle_color
+
+  # Typography overrides
+  assign title_size = block.settings.title_size
+  assign title_weight = block.settings.title_weight
+  assign content_size = block.settings.content_size
+  assign content_line_height = block.settings.content_line_height
+
+  # Spacing overrides
+  assign header_padding = block.settings.row_padding
+  assign content_padding = block.settings.content_padding
+  assign border_radius = block.settings.border_radius
+  assign border_width = block.settings.border_width
 -%}
 
 <details
-  class="collapsible-row"
+  class="block-collapsible-row"
   {% if is_open %}open{% endif %}
   {{ block.shopify_attributes }}
+  style="
+    {% if border_color != blank %}--block-border-color: {{ border_color }};{% endif %}
+    {% if border_radius != blank %}--block-border-radius: {{ border_radius }}px;{% endif %}
+    {% if border_width != blank %}--block-border-width: {{ border_width }}px;{% endif %}
+  "
 >
   <summary
-    class="collapsible-row__header"
+    class="block-collapsible-row__header"
     style="
-      padding: {{ row_pad }}px;
-      {% if row_bg != blank %}background-color: {{ row_bg }};{% endif %}
-      {% if row_border_clr != blank %}border-color: {{ row_border_clr }};{% endif %}
-      border-radius: {{ row_border_rad }}px;
+      {% if header_bg != blank %}--block-header-bg: {{ header_bg }};{% endif %}
+      {% if header_color != blank %}--block-header-color: {{ header_color }};{% endif %}
+      {% if header_padding != blank %}--block-header-padding: {{ header_padding }}px;{% endif %}
+      {% if title_size != blank %}--block-title-size: {{ title_size }}px;{% endif %}
+      {% if title_weight != blank %}--block-title-weight: {{ title_weight }};{% endif %}
+      {% if toggle_color != blank %}--block-toggle-color: {{ toggle_color }};{% endif %}
     "
   >
-    <div class="collapsible-row__header-content">
-      {%- if block.settings.icon != blank -%}
-        <span class="collapsible-row__icon" aria-hidden="true">{{ block.settings.icon }}</span>
-      {%- elsif block.settings.icon_image != blank -%}
+    <div class="block-collapsible-row__header-content">
+      {%- if row_icon != blank -%}
+        <span class="block-collapsible-row__icon" aria-hidden="true">{{ row_icon }}</span>
+      {%- elsif row_icon_image != blank -%}
         <img
-          src="{{ block.settings.icon_image | image_url: width: 48 }}"
+          src="{{ row_icon_image | image_url: width: 48 }}"
           alt=""
-          class="collapsible-row__icon-image"
+          class="block-collapsible-row__icon-image"
           width="24"
           height="24"
         >
       {%- endif -%}
-      <span
-        class="collapsible-row__title"
-        style="
-          {% if ttl_color != blank %}color: {{ ttl_color }};{% endif %}
-          font-size: {{ ttl_size }}px;
-          font-weight: {{ ttl_weight }};
-        "
-      >
-        {{ block.settings.heading | escape }}
+      <span class="block-collapsible-row__title">
+        {{ row_heading | escape }}
       </span>
     </div>
-    <span class="collapsible-row__toggle" aria-hidden="true">
-      <span class="toggle-icon toggle-icon--plus">+</span>
+    <span class="block-collapsible-row__toggle" aria-hidden="true">
+      <span class="toggle-icon">+</span>
     </span>
   </summary>
   <div
-    class="collapsible-row__content"
+    class="block-collapsible-row__content"
     style="
-      padding: {{ cnt_padding }}px;
-      {% if cnt_bg != blank %}background-color: {{ cnt_bg }};{% endif %}
-      {% if cnt_color != blank %}color: {{ cnt_color }};{% endif %}
+      {% if content_bg != blank %}--block-content-bg: {{ content_bg }};{% endif %}
+      {% if content_color != blank %}--block-content-color: {{ content_color }};{% endif %}
+      {% if content_padding != blank %}--block-content-padding: {{ content_padding }}px;{% endif %}
+      {% if content_size != blank %}--block-content-size: {{ content_size }}px;{% endif %}
+      {% if content_line_height != blank %}--block-content-line-height: {{ content_line_height }};{% endif %}
     "
   >
-    {%- if block.settings.row_content != blank -%}
-      <div class="collapsible-row__richtext rte">
-        {{ block.settings.row_content }}
+    {%- if row_content != blank -%}
+      <div class="block-collapsible-row__richtext rte">
+        {{ row_content }}
       </div>
     {%- endif -%}
 
-    {%- if block.settings.page != blank -%}
-      <div class="collapsible-row__page-content rte">
-        {{ block.settings.page.content }}
+    {%- if row_page != blank -%}
+      <div class="block-collapsible-row__page-content rte">
+        {{ row_page.content }}
       </div>
     {%- endif -%}
 
-    {%- if block.settings.button_text != blank and block.settings.button_link != blank -%}
+    {%- if btn_text != blank and btn_link != blank -%}
       <a
-        href="{{ block.settings.button_link }}"
-        class="collapsible-row__button button"
+        href="{{ btn_link }}"
+        class="block-collapsible-row__button button"
         style="
-          {% if block.settings.button_color != blank %}background-color: {{ block.settings.button_color }};{% endif %}
-          {% if block.settings.button_text_color != blank %}color: {{ block.settings.button_text_color }};{% endif %}
+          {% if btn_color != blank %}background-color: {{ btn_color }};{% endif %}
+          {% if btn_text_color != blank %}color: {{ btn_text_color }};{% endif %}
         "
       >
-        {{ block.settings.button_text }}
+        {{ btn_text }}
       </a>
     {%- endif -%}
   </div>
 </details>
 
 {% stylesheet %}
-  .collapsible-row {
+  .block-collapsible-row {
     margin: 0;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: var(--block-border-width, 1px) solid var(--block-border-color, rgba(0,0,0,0.1));
+    border-radius: var(--block-border-radius, 4px);
+    overflow: hidden;
   }
 
-  .collapsible-row + .collapsible-row {
+  .block-collapsible-row + .block-collapsible-row {
     margin-top: -1px;
   }
 
-  .collapsible-row__header {
+  .block-collapsible-row__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -113,38 +140,43 @@
     transition: all 0.3s ease;
     min-height: 48px;
     gap: 16px;
+    padding: var(--block-header-padding, 16px);
+    background: var(--block-header-bg, transparent);
   }
 
-  .collapsible-row__header::-webkit-details-marker {
+  .block-collapsible-row__header::-webkit-details-marker {
     display: none;
   }
 
-  .collapsible-row__header:hover {
+  .block-collapsible-row__header:hover {
     opacity: 0.85;
   }
 
-  .collapsible-row__header-content {
+  .block-collapsible-row__header-content {
     display: flex;
     align-items: center;
     gap: 12px;
     flex: 1;
   }
 
-  .collapsible-row__icon {
+  .block-collapsible-row__icon {
     font-size: 1.25rem;
   }
 
-  .collapsible-row__icon-image {
+  .block-collapsible-row__icon-image {
     width: 24px;
     height: 24px;
     object-fit: contain;
   }
 
-  .collapsible-row__title {
+  .block-collapsible-row__title {
     flex: 1;
+    color: var(--block-header-color, inherit);
+    font-size: var(--block-title-size, 16px);
+    font-weight: var(--block-title-weight, 500);
   }
 
-  .collapsible-row__toggle {
+  .block-collapsible-row__toggle {
     min-width: 44px;
     min-height: 44px;
     display: flex;
@@ -153,27 +185,45 @@
     transition: transform 0.3s ease;
     flex-shrink: 0;
     font-size: 1.5rem;
+    color: var(--block-toggle-color, inherit);
   }
 
-  .collapsible-row[open] .collapsible-row__toggle {
+  .block-collapsible-row[open] .block-collapsible-row__toggle {
     transform: rotate(45deg);
   }
 
-  .collapsible-row__content {
-    border-top: 1px solid rgba(0,0,0,0.1);
+  .block-collapsible-row__content {
+    padding: var(--block-content-padding, 16px);
+    background: var(--block-content-bg, transparent);
+    color: var(--block-content-color, inherit);
+    font-size: var(--block-content-size, 15px);
+    line-height: var(--block-content-line-height, 1.6);
+    border-top: var(--block-border-width, 1px) solid var(--block-border-color, rgba(0,0,0,0.1));
   }
 
-  .collapsible-row__richtext p:first-child {
+  .block-collapsible-row__richtext p:first-child,
+  .block-collapsible-row__page-content p:first-child {
     margin-top: 0;
   }
 
-  .collapsible-row__richtext p:last-child {
+  .block-collapsible-row__richtext p:last-child,
+  .block-collapsible-row__page-content p:last-child {
     margin-bottom: 0;
   }
 
-  .collapsible-row__button {
+  .block-collapsible-row__button {
     margin-top: 16px;
     display: inline-block;
+  }
+
+  @media screen and (max-width: 767px) {
+    .block-collapsible-row__header {
+      padding: clamp(12px, 3vw, var(--block-header-padding, 16px)) !important;
+    }
+
+    .block-collapsible-row__content {
+      padding: clamp(12px, 3vw, var(--block-content-padding, 16px)) !important;
+    }
   }
 {% endstylesheet %}
 
@@ -181,6 +231,10 @@
 {
   "name": "Collapsible Row",
   "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
     {
       "type": "text",
       "id": "heading",
@@ -247,63 +301,11 @@
     },
     {
       "type": "header",
-      "content": "Style"
+      "content": "🎨 Color Overrides"
     },
     {
-      "type": "range",
-      "id": "row_padding",
-      "label": "Header Padding",
-      "min": 8,
-      "max": 32,
-      "step": 4,
-      "default": 16,
-      "unit": "px"
-    },
-    {
-      "type": "range",
-      "id": "content_padding",
-      "label": "Content Padding",
-      "min": 8,
-      "max": 32,
-      "step": 4,
-      "default": 16,
-      "unit": "px"
-    },
-    {
-      "type": "range",
-      "id": "border_radius",
-      "label": "Border Radius",
-      "min": 0,
-      "max": 16,
-      "step": 2,
-      "default": 4,
-      "unit": "px"
-    },
-    {
-      "type": "range",
-      "id": "title_size",
-      "label": "Title Size",
-      "min": 14,
-      "max": 24,
-      "step": 1,
-      "default": 16,
-      "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "title_weight",
-      "label": "Title Weight",
-      "options": [
-        { "value": "400", "label": "Normal" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semibold" },
-        { "value": "700", "label": "Bold" }
-      ],
-      "default": "500"
-    },
-    {
-      "type": "header",
-      "content": "Colors"
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
     },
     {
       "type": "color",
@@ -312,13 +314,13 @@
     },
     {
       "type": "color",
-      "id": "border_color",
-      "label": "Border Color"
+      "id": "title_color",
+      "label": "Title Color"
     },
     {
       "type": "color",
-      "id": "title_color",
-      "label": "Title Color"
+      "id": "toggle_color",
+      "label": "Toggle Icon Color"
     },
     {
       "type": "color",
@@ -329,6 +331,109 @@
       "type": "color",
       "id": "content_color",
       "label": "Content Text Color"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color"
+    },
+    {
+      "type": "header",
+      "content": "📝 Typography Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 16px"
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title Weight",
+      "options": [
+        { "value": "", "label": "Default" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "content_size",
+      "label": "Content Font Size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 15px"
+    },
+    {
+      "type": "range",
+      "id": "content_line_height",
+      "label": "Content Line Height",
+      "min": 1.2,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "row_padding",
+      "label": "Header Padding",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "info": "Default: 16px"
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Content Padding",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "info": "Default: 16px"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border Width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 1px"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border Radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "info": "Default: 4px"
     }
   ],
   "presets": [

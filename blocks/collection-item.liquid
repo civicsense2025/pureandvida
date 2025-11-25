@@ -2,17 +2,37 @@
   Theme Block: Collection Item
   ----------------------------
   Collection card displaying image, title, and optional product count.
+  Supports grouped override settings for colors, typography, and spacing.
 {%- endcomment -%}
 
 {%- liquid
+  # Content
   assign collection = block.settings.collection
   assign custom_image = block.settings.custom_image
-  assign item_aspect_ratio = block.settings.image_ratio | default: '4/3'
-  assign item_show_title = block.settings.show_title | default: true
-  assign item_show_count = block.settings.show_product_count | default: false
-  assign item_title_color = block.settings.title_color
-  assign item_count_color = block.settings.count_color
-  assign item_border_radius = block.settings.border_radius | default: 0
+  assign show_title = block.settings.show_title | default: true
+  assign show_count = block.settings.show_product_count | default: false
+
+  # Image settings
+  assign image_ratio = block.settings.image_ratio | default: '4/3'
+  assign image_border_radius = block.settings.image_border_radius | default: 0
+
+  # Color overrides
+  assign bg_color = block.settings.background_color
+  assign title_color = block.settings.title_color
+  assign count_color = block.settings.count_color
+  assign overlay_color = block.settings.overlay_color
+  assign border_color = block.settings.border_color
+
+  # Typography overrides
+  assign title_size = block.settings.title_size
+  assign title_weight = block.settings.title_weight
+  assign count_size = block.settings.count_size
+
+  # Spacing overrides
+  assign padding = block.settings.padding
+  assign title_gap = block.settings.title_gap
+  assign border_width = block.settings.border_width
+  assign card_radius = block.settings.card_border_radius
 
   # Get the image to display
   if custom_image != blank
@@ -25,10 +45,29 @@
 -%}
 
 {%- if collection != blank -%}
-  <div class="block-collection-item" {{ block.shopify_attributes }}>
+  <div
+    class="block-collection-item"
+    {{ block.shopify_attributes }}
+    style="
+      --block-image-ratio: {{ image_ratio }};
+      --block-image-radius: {{ image_border_radius }}px;
+      {% if bg_color != blank %}--block-bg: {{ bg_color }};{% endif %}
+      {% if title_color != blank %}--block-title-color: {{ title_color }};{% endif %}
+      {% if count_color != blank %}--block-count-color: {{ count_color }};{% endif %}
+      {% if overlay_color != blank %}--block-overlay: {{ overlay_color }};{% endif %}
+      {% if border_color != blank %}--block-border-color: {{ border_color }};{% endif %}
+      {% if title_size != blank %}--block-title-size: {{ title_size }}px;{% endif %}
+      {% if title_weight != blank %}--block-title-weight: {{ title_weight }};{% endif %}
+      {% if count_size != blank %}--block-count-size: {{ count_size }}px;{% endif %}
+      {% if padding != blank %}--block-padding: {{ padding }}px;{% endif %}
+      {% if title_gap != blank %}--block-title-gap: {{ title_gap }}px;{% endif %}
+      {% if border_width != blank %}--block-border-width: {{ border_width }}px;{% endif %}
+      {% if card_radius != blank %}--block-card-radius: {{ card_radius }}px;{% endif %}
+    "
+  >
     <a href="{{ collection.url }}" class="block-collection-item__link">
       {%- if display_image != blank -%}
-        <div class="block-collection-item__image" style="aspect-ratio: {{ item_aspect_ratio }}; border-radius: {{ item_border_radius }}px;">
+        <div class="block-collection-item__image">
           <img
             src="{{ display_image | image_url: width: 600 }}"
             srcset="
@@ -43,7 +82,7 @@
           >
         </div>
       {%- else -%}
-        <div class="block-collection-item__placeholder" style="aspect-ratio: {{ item_aspect_ratio }}; border-radius: {{ item_border_radius }}px;">
+        <div class="block-collection-item__placeholder">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
             <rect width="525" height="525" fill="#E8E8E8"/>
             <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
@@ -51,20 +90,14 @@
         </div>
       {%- endif -%}
 
-      {%- if item_show_title -%}
-        <h3
-          class="block-collection-item__title"
-          {% if item_title_color != blank %}style="color: {{ item_title_color }};"{% endif %}
-        >
+      {%- if show_title -%}
+        <h3 class="block-collection-item__title">
           {{ collection.title | escape }}
         </h3>
       {%- endif -%}
 
-      {%- if item_show_count -%}
-        <p
-          class="block-collection-item__count"
-          {% if item_count_color != blank %}style="color: {{ item_count_color }};"{% endif %}
-        >
+      {%- if show_count -%}
+        <p class="block-collection-item__count">
           {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
         </p>
       {%- endif -%}
@@ -72,7 +105,7 @@
   </div>
 {%- else -%}
   <div class="block-collection-item block-collection-item--placeholder" {{ block.shopify_attributes }}>
-    <div class="block-collection-item__placeholder" style="aspect-ratio: {{ item_aspect_ratio }}; border-radius: {{ item_border_radius }}px;">
+    <div class="block-collection-item__placeholder" style="aspect-ratio: {{ image_ratio }};">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
         <rect width="525" height="525" fill="#E8E8E8"/>
         <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
@@ -85,17 +118,24 @@
 {% stylesheet %}
   .block-collection-item {
     position: relative;
+    background: var(--block-bg, transparent);
+    border: var(--block-border-width, 0) solid var(--block-border-color, transparent);
+    border-radius: var(--block-card-radius, 0);
+    overflow: hidden;
   }
 
   .block-collection-item__link {
     display: block;
     text-decoration: none;
     color: inherit;
+    padding: var(--block-padding, 0);
   }
 
   .block-collection-item__image {
     overflow: hidden;
-    margin-bottom: 15px;
+    margin-bottom: var(--block-title-gap, 15px);
+    aspect-ratio: var(--block-image-ratio, 4/3);
+    border-radius: var(--block-image-radius, 0);
   }
 
   .block-collection-item__img {
@@ -114,7 +154,9 @@
     align-items: center;
     justify-content: center;
     background: #f5f5f5;
-    margin-bottom: 15px;
+    margin-bottom: var(--block-title-gap, 15px);
+    aspect-ratio: var(--block-image-ratio, 4/3);
+    border-radius: var(--block-image-radius, 0);
   }
 
   .block-collection-item__placeholder svg {
@@ -125,8 +167,9 @@
 
   .block-collection-item__title {
     font-family: var(--font-heading-family);
-    font-size: clamp(0.9rem, 2.5vw, 1.125rem);
-    font-weight: 600;
+    font-size: var(--block-title-size, clamp(0.9rem, 2.5vw, 1.125rem));
+    font-weight: var(--block-title-weight, 600);
+    color: var(--block-title-color, inherit);
     text-align: center;
     margin: 0;
     line-height: 1.3;
@@ -134,7 +177,8 @@
 
   .block-collection-item__count {
     font-family: var(--font-body-family);
-    font-size: clamp(0.75rem, 2vw, 0.875rem);
+    font-size: var(--block-count-size, clamp(0.75rem, 2vw, 0.875rem));
+    color: var(--block-count-color, inherit);
     text-align: center;
     margin: 5px 0 0;
     opacity: 0.7;
@@ -152,6 +196,10 @@
   "name": "Collection Item",
   "settings": [
     {
+      "type": "header",
+      "content": "Content"
+    },
+    {
       "type": "collection",
       "id": "collection",
       "label": "Collection"
@@ -161,10 +209,6 @@
       "id": "custom_image",
       "label": "Custom Image",
       "info": "Override the collection's featured image"
-    },
-    {
-      "type": "header",
-      "content": "Display Options"
     },
     {
       "type": "checkbox",
@@ -180,7 +224,7 @@
     },
     {
       "type": "header",
-      "content": "Style"
+      "content": "Image Settings"
     },
     {
       "type": "select",
@@ -196,17 +240,26 @@
     },
     {
       "type": "range",
-      "id": "border_radius",
+      "id": "image_border_radius",
       "label": "Image Border Radius",
       "min": 0,
-      "max": 24,
+      "max": 30,
       "step": 2,
       "default": 0,
       "unit": "px"
     },
     {
       "type": "header",
-      "content": "Colors"
+      "content": "🎨 Color Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Card Background"
     },
     {
       "type": "color",
@@ -217,6 +270,105 @@
       "type": "color",
       "id": "count_color",
       "label": "Count Color"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Image Overlay Color"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color"
+    },
+    {
+      "type": "header",
+      "content": "📝 Typography Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: responsive 14-18px"
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title Weight",
+      "options": [
+        { "value": "", "label": "Default" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "count_size",
+      "label": "Count Size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: responsive 12-14px"
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Card Padding",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "info": "Default: 0"
+    },
+    {
+      "type": "range",
+      "id": "title_gap",
+      "label": "Image to Title Gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "info": "Default: 15px"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border Width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 0"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "info": "Default: 0"
     }
   ],
   "presets": [

@@ -62,95 +62,18 @@
         >
           {%- if block.type == 'column' -%}
             <div class="multicolumn__card{% if section.settings.show_card_background %} multicolumn__card--has-bg{% endif %}">
-              {%- comment -%} Media (Image or Icon) {%- endcomment -%}
-              {%- if block.settings.image != blank -%}
-                <div
-                  class="multicolumn__media"
-                  style="
-                    {% case section.settings.image_ratio %}
-                      {% when 'square' %}aspect-ratio: 1 / 1;
-                      {% when 'portrait' %}aspect-ratio: 3 / 4;
-                      {% when 'landscape' %}aspect-ratio: 4 / 3;
-                      {% when 'circle' %}aspect-ratio: 1 / 1; border-radius: 50%;
-                      {% when 'adapt' %}
-                        aspect-ratio: {{ block.settings.image.aspect_ratio }};
-                    {% endcase %}
-                    max-width: {{ section.settings.image_width }}%;
-                    {% if section.settings.content_alignment == 'center' %}margin: 0 auto;{% endif %}
-                    {% if section.settings.content_alignment == 'right' %}margin-left: auto;{% endif %}
-                  "
-                >
-                  <img
-                    src="{{ block.settings.image | image_url: width: 600 }}"
-                    srcset="
-                      {{ block.settings.image | image_url: width: 200 }} 200w,
-                      {{ block.settings.image | image_url: width: 400 }} 400w,
-                      {{ block.settings.image | image_url: width: 600 }} 600w
-                    "
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    alt="{{ block.settings.image.alt | escape | default: block.settings.title | escape }}"
-                    width="{{ block.settings.image.width }}"
-                    height="{{ block.settings.image.height }}"
-                    loading="lazy"
-                    class="multicolumn__image"
-                  >
-                </div>
-              {%- elsif block.settings.icon != 'none' -%}
-                <div
-                  class="multicolumn__icon"
-                  style="
-                    --icon-size: {{ section.settings.icon_size }}px;
-                    --icon-color: {{ section.settings.icon_color | default: 'var(--color-primary, #2c5530)' }};
-                  "
-                >
-                  {%- case block.settings.icon -%}
-                    {%- when 'checkmark' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    {%- when 'star' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                    {%- when 'heart' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    {%- when 'shield' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                    {%- when 'truck' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                    {%- when 'package' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                    {%- when 'leaf' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
-                    {%- when 'globe' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                    {%- when 'clock' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    {%- when 'award' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-                  {%- endcase -%}
-                </div>
-              {%- endif -%}
-
-              {%- comment -%} Content {%- endcomment -%}
-              <div class="multicolumn__content">
-                {%- if block.settings.title != blank -%}
-                  <h3 class="multicolumn__item-title">{{ block.settings.title }}</h3>
-                {%- endif -%}
-
-                {%- if block.settings.text != blank -%}
-                  <div class="multicolumn__item-text rte">{{ block.settings.text }}</div>
-                {%- endif -%}
-
-                {%- if block.settings.link_label != blank -%}
-                  <a
-                    href="{{ block.settings.link }}"
-                    class="multicolumn__link{% if section.settings.button_style != 'link' %} button button--{{ section.settings.button_style }}{% endif %}"
-                    {% if block.settings.link == blank %}aria-disabled="true"{% endif %}
-                  >
-                    {{ block.settings.link_label }}
-                    {%- if section.settings.button_style == 'link' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    {%- endif -%}
-                  </a>
-                {%- endif -%}
-              </div>
+              {%- render 'block-column',
+                block: block,
+                image_ratio: section.settings.image_ratio,
+                image_width: section.settings.image_width,
+                image_border_radius: section.settings.image_border_radius,
+                icon_size: section.settings.icon_size,
+                icon_color: section.settings.icon_color,
+                content_alignment: section.settings.content_alignment,
+                button_style: section.settings.button_style,
+                heading_color: section.settings.heading_color,
+                text_color: section.settings.text_color
+              -%}
             </div>
           {%- endif -%}
         </div>

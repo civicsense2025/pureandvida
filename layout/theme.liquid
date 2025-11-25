@@ -82,12 +82,27 @@
         {{ settings.font_heading | font_face: font_display: 'swap' }}
       {%- endif -%}
 
-      /* Custom Fonts from Assets */
-      {%- assign nohemi_light = 'Nohemi-Light.otf' | asset_url -%}
-      {%- assign nohemi_regular = 'Nohemi-Regular.otf' | asset_url -%}
-      {%- assign nohemi_medium = 'Nohemi-Medium.otf' | asset_url -%}
-      {%- assign nohemi_semibold = 'Nohemi-SemiBold.otf' | asset_url -%}
-      {%- assign nohemi_bold = 'Nohemi-Bold.otf' | asset_url -%}
+      /* Custom Fonts from Assets - Multiple formats for browser compatibility */
+      {%- assign nohemi_light_woff = 'Nohemi-Light-BF6438cc5702321.woff' | asset_url -%}
+      {%- assign nohemi_light_otf = 'Nohemi-Light.otf' | asset_url -%}
+      {%- assign nohemi_light_ttf = 'Nohemi-Light-BF6438cc5899919.ttf' | asset_url -%}
+
+      {%- assign nohemi_regular_woff = 'Nohemi-Regular-BF6438cc579d934.woff' | asset_url -%}
+      {%- assign nohemi_regular_otf = 'Nohemi-Regular.otf' | asset_url -%}
+      {%- assign nohemi_regular_ttf = 'Nohemi-Regular-BF6438cc4d0e493.ttf' | asset_url -%}
+
+      {%- assign nohemi_medium_woff = 'Nohemi-Medium-BF6438cc57ddecd.woff' | asset_url -%}
+      {%- assign nohemi_medium_otf = 'Nohemi-Medium.otf' | asset_url -%}
+      {%- assign nohemi_medium_ttf = 'Nohemi-Medium-BF6438cc5883899.ttf' | asset_url -%}
+
+      {%- assign nohemi_semibold_woff = 'Nohemi-SemiBold-BF6438cc57db2ff.woff' | asset_url -%}
+      {%- assign nohemi_semibold_otf = 'Nohemi-SemiBold.otf' | asset_url -%}
+      {%- assign nohemi_semibold_ttf = 'Nohemi-SemiBold-BF6438cc588a48a.ttf' | asset_url -%}
+
+      {%- assign nohemi_bold_woff = 'Nohemi-Bold-BF6438cc577b524.woff' | asset_url -%}
+      {%- assign nohemi_bold_otf = 'Nohemi-Bold.otf' | asset_url -%}
+      {%- assign nohemi_bold_ttf = 'Nohemi-Bold-BF6438cc587b5b5.ttf' | asset_url -%}
+
       {%- assign versailles = 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url -%}
       {%- assign myriad = 'MyriadPro-Regular.otf' | asset_url -%}
 
@@ -96,7 +111,9 @@
         font-weight: 300;
         font-style: normal;
         font-display: swap;
-        src: url({{ nohemi_light }}) format('opentype');
+        src: url('{{ nohemi_light_woff }}') format('woff'),
+             url('{{ nohemi_light_otf }}') format('opentype'),
+             url('{{ nohemi_light_ttf }}') format('truetype');
       }
 
       @font-face {
@@ -104,7 +121,9 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url({{ nohemi_regular }}) format('opentype');
+        src: url('{{ nohemi_regular_woff }}') format('woff'),
+             url('{{ nohemi_regular_otf }}') format('opentype'),
+             url('{{ nohemi_regular_ttf }}') format('truetype');
       }
 
       @font-face {
@@ -112,7 +131,9 @@
         font-weight: 500;
         font-style: normal;
         font-display: swap;
-        src: url({{ nohemi_medium }}) format('opentype');
+        src: url('{{ nohemi_medium_woff }}') format('woff'),
+             url('{{ nohemi_medium_otf }}') format('opentype'),
+             url('{{ nohemi_medium_ttf }}') format('truetype');
       }
 
       @font-face {
@@ -120,7 +141,9 @@
         font-weight: 600;
         font-style: normal;
         font-display: swap;
-        src: url({{ nohemi_semibold }}) format('opentype');
+        src: url('{{ nohemi_semibold_woff }}') format('woff'),
+             url('{{ nohemi_semibold_otf }}') format('opentype'),
+             url('{{ nohemi_semibold_ttf }}') format('truetype');
       }
 
       @font-face {
@@ -128,7 +151,9 @@
         font-weight: 700;
         font-style: normal;
         font-display: swap;
-        src: url({{ nohemi_bold }}) format('opentype');
+        src: url('{{ nohemi_bold_woff }}') format('woff'),
+             url('{{ nohemi_bold_otf }}') format('opentype'),
+             url('{{ nohemi_bold_ttf }}') format('truetype');
       }
 
       @font-face {
@@ -136,7 +161,7 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url({{ versailles }}) format('truetype');
+        src: url('{{ versailles }}') format('truetype');
       }
 
       @font-face {
@@ -144,7 +169,7 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url({{ myriad }}) format('opentype');
+        src: url('{{ myriad }}') format('opentype');
       }
 
       :root {
@@ -466,7 +491,8 @@
       <link rel="preload" as="font" href="{{ settings.font_heading | font_url }}" type="font/woff2" crossorigin>
     {%- endif -%}
     {%- comment -%} Preload only critical custom fonts (Regular for body, Versailles for titles) {%- endcomment -%}
-    <link rel="preload" as="font" href="{{ 'Nohemi-Regular.otf' | asset_url }}" type="font/otf" crossorigin>
+    <link rel="preload" as="font" href="{{ 'Nohemi-Regular-BF6438cc579d934.woff' | asset_url }}" type="font/woff" crossorigin>
+    <link rel="preload" as="font" href="{{ 'Nohemi-Medium-BF6438cc57ddecd.woff' | asset_url }}" type="font/woff" crossorigin>
     <link rel="preload" as="font" href="{{ 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url }}" type="font/ttf" crossorigin>
     {%- comment -%} theme-check-enable AssetPreload {%- endcomment -%}
 

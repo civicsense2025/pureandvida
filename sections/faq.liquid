@@ -49,15 +49,28 @@
       {%- if section.settings.content_mode == 'blocks' and section.blocks.size > 0 -%}
         {%- comment -%} Blocks mode - Dynamic FAQ items {%- endcomment -%}
         {%- for block in section.blocks -%}
-          <details class="faq-item" {% if section.settings.default_open and forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
-            <summary class="faq-question" style="{% if block.settings.question_color != blank %}color: {{ block.settings.question_color }};{% elsif section.settings.default_question_color != blank %}color: {{ section.settings.default_question_color }};{% endif %} font-size: {{ section.settings.question_size }}px; font-weight: {{ section.settings.question_weight }}; padding: {{ section.settings.item_padding }}px; background: {% if section.settings.item_background_color != blank %}{{ section.settings.item_background_color }}{% else %}transparent{% endif %}; border: {{ section.settings.item_border_width }}px solid {% if section.settings.item_border_color != blank %}{{ section.settings.item_border_color }}{% else %}rgba(0,0,0,0.1){% endif %}; border-radius: {{ section.settings.item_border_radius }}px;">
-              <span>{{ block.settings.question | escape }}</span>
-              <span class="faq-icon" style="{% if block.settings.icon_color != blank %}color: {{ block.settings.icon_color }};{% elsif section.settings.default_icon_color != blank %}color: {{ section.settings.default_icon_color }};{% endif %} font-size: {{ section.settings.icon_size }}px;">{{ section.settings.icon_text }}</span>
-            </summary>
-            <div class="faq-answer" style="{% if block.settings.answer_color != blank %}color: {{ block.settings.answer_color }};{% elsif section.settings.default_answer_color != blank %}color: {{ section.settings.default_answer_color }};{% endif %} font-size: {{ section.settings.answer_size }}px; line-height: {{ section.settings.answer_line_height }}; padding: {{ section.settings.answer_padding }}px; background: {% if section.settings.answer_background_color != blank %}{{ section.settings.answer_background_color }}{% else %}transparent{% endif %};">
-              <p>{{ block.settings.answer }}</p>
-            </div>
-          </details>
+          {%- render 'block-faq-item',
+            block: block,
+            question: block.settings.question,
+            answer: block.settings.answer,
+            open: section.settings.default_open and forloop.first,
+            question_color: block.settings.question_color | default: section.settings.default_question_color,
+            answer_color: block.settings.answer_color | default: section.settings.default_answer_color,
+            icon_color: block.settings.icon_color | default: section.settings.default_icon_color,
+            icon_text: section.settings.icon_text,
+            icon_size: section.settings.icon_size,
+            item_padding: section.settings.item_padding,
+            item_background: section.settings.item_background_color,
+            item_border_width: section.settings.item_border_width,
+            item_border_color: section.settings.item_border_color,
+            item_border_radius: section.settings.item_border_radius,
+            answer_padding: section.settings.answer_padding,
+            answer_background: section.settings.answer_background_color,
+            question_size: section.settings.question_size,
+            question_weight: section.settings.question_weight,
+            answer_size: section.settings.answer_size,
+            answer_line_height: section.settings.answer_line_height
+          -%}
         {%- endfor -%}
       {%- else -%}
         {%- comment -%} Settings mode - Fixed fields (used when content_mode is 'settings' OR when blocks mode has no blocks) {%- endcomment -%}
@@ -67,15 +80,27 @@
           {%- assign question = section.settings[question_key] -%}
           {%- assign answer = section.settings[answer_key] -%}
           {%- if question != blank or answer != blank -%}
-            <details class="faq-item" {% if section.settings.default_open and forloop.first %}open{% endif %}>
-              <summary class="faq-question" style="{% if section.settings.default_question_color != blank %}color: {{ section.settings.default_question_color }};{% endif %} font-size: {{ section.settings.question_size }}px; font-weight: {{ section.settings.question_weight }}; padding: {{ section.settings.item_padding }}px; background: {% if section.settings.item_background_color != blank %}{{ section.settings.item_background_color }}{% else %}transparent{% endif %}; border: {{ section.settings.item_border_width }}px solid {% if section.settings.item_border_color != blank %}{{ section.settings.item_border_color }}{% else %}rgba(0,0,0,0.1){% endif %}; border-radius: {{ section.settings.item_border_radius }}px;">
-                <span>{{ question | escape }}</span>
-                <span class="faq-icon" style="{% if section.settings.default_icon_color != blank %}color: {{ section.settings.default_icon_color }};{% endif %} font-size: {{ section.settings.icon_size }}px;">{{ section.settings.icon_text }}</span>
-              </summary>
-              <div class="faq-answer" style="{% if section.settings.default_answer_color != blank %}color: {{ section.settings.default_answer_color }};{% endif %} font-size: {{ section.settings.answer_size }}px; line-height: {{ section.settings.answer_line_height }}; padding: {{ section.settings.answer_padding }}px; background: {% if section.settings.answer_background_color != blank %}{{ section.settings.answer_background_color }}{% else %}transparent{% endif %};">
-                <p>{{ answer }}</p>
-              </div>
-            </details>
+            {%- render 'block-faq-item',
+              question: question,
+              answer: answer,
+              open: section.settings.default_open and forloop.first,
+              question_color: section.settings.default_question_color,
+              answer_color: section.settings.default_answer_color,
+              icon_color: section.settings.default_icon_color,
+              icon_text: section.settings.icon_text,
+              icon_size: section.settings.icon_size,
+              item_padding: section.settings.item_padding,
+              item_background: section.settings.item_background_color,
+              item_border_width: section.settings.item_border_width,
+              item_border_color: section.settings.item_border_color,
+              item_border_radius: section.settings.item_border_radius,
+              answer_padding: section.settings.answer_padding,
+              answer_background: section.settings.answer_background_color,
+              question_size: section.settings.question_size,
+              question_weight: section.settings.question_weight,
+              answer_size: section.settings.answer_size,
+              answer_line_height: section.settings.answer_line_height
+            -%}
           {%- endif -%}
         {%- endfor -%}
       {%- endif -%}

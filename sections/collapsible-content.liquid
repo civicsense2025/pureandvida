@@ -91,93 +91,23 @@
         style="max-width: {{ section.settings.content_width }}px;{% if section.settings.layout != 'split-image' %} margin: 0 auto;{% endif %}"
       >
         {%- for block in section.blocks -%}
-          <details
-            class="collapsible-row"
-            {% if section.settings.open_first and forloop.first %}open{% endif %}
-            {{ block.shopify_attributes }}
-          >
-            <summary
-              class="collapsible-row__header"
-              style="
-                padding: {{ section.settings.row_padding }}px;
-                {% if section.settings.row_background != blank %}background-color: {{ section.settings.row_background }};{% endif %}
-                {% if section.settings.row_border_color != blank %}border-color: {{ section.settings.row_border_color }};{% endif %}
-                border-radius: {{ section.settings.row_border_radius }}px;
-              "
-            >
-              <div class="collapsible-row__header-content">
-                {%- if block.settings.icon != blank -%}
-                  <span class="collapsible-row__icon" aria-hidden="true">{{ block.settings.icon }}</span>
-                {%- elsif block.settings.icon_image != blank -%}
-                  <img
-                    src="{{ block.settings.icon_image | image_url: width: 48 }}"
-                    alt=""
-                    class="collapsible-row__icon-image"
-                    width="24"
-                    height="24"
-                  >
-                {%- endif -%}
-                <span
-                  class="collapsible-row__title"
-                  style="
-                    {% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% elsif section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}
-                    font-size: {{ section.settings.title_size }}px;
-                    font-weight: {{ section.settings.title_weight }};
-                  "
-                >
-                  {{ block.settings.heading | escape }}
-                </span>
-              </div>
-              <span
-                class="collapsible-row__toggle"
-                aria-hidden="true"
-                style="{% if section.settings.toggle_color != blank %}color: {{ section.settings.toggle_color }};{% endif %}"
-              >
-                {%- if section.settings.toggle_style == 'plus' -%}
-                  <span class="toggle-icon toggle-icon--plus">+</span>
-                {%- elsif section.settings.toggle_style == 'chevron' -%}
-                  <svg class="toggle-icon toggle-icon--chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                {%- else -%}
-                  <span class="toggle-icon toggle-icon--arrow">&#8250;</span>
-                {%- endif -%}
-              </span>
-            </summary>
-            <div
-              class="collapsible-row__content"
-              style="
-                padding: {{ section.settings.content_padding }}px;
-                {% if section.settings.content_background != blank %}background-color: {{ section.settings.content_background }};{% endif %}
-                {% if block.settings.content_color != blank %}color: {{ block.settings.content_color }};{% elsif section.settings.content_color != blank %}color: {{ section.settings.content_color }};{% endif %}
-              "
-            >
-              {%- if block.settings.row_content != blank -%}
-                <div class="collapsible-row__richtext rte">
-                  {{ block.settings.row_content }}
-                </div>
-              {%- endif -%}
-
-              {%- if block.settings.page != blank -%}
-                <div class="collapsible-row__page-content rte">
-                  {{ block.settings.page.content }}
-                </div>
-              {%- endif -%}
-
-              {%- if block.settings.button_text != blank and block.settings.button_link != blank -%}
-                <a
-                  href="{{ block.settings.button_link }}"
-                  class="collapsible-row__button"
-                  style="
-                    {% if block.settings.button_color != blank %}background-color: {{ block.settings.button_color }};{% endif %}
-                    {% if block.settings.button_text_color != blank %}color: {{ block.settings.button_text_color }};{% endif %}
-                  "
-                >
-                  {{ block.settings.button_text }}
-                </a>
-              {%- endif -%}
-            </div>
-          </details>
+          {%- render 'block-collapsible-row',
+            block: block,
+            open: section.settings.open_first and forloop.first,
+            row_padding: section.settings.row_padding,
+            row_background: section.settings.row_background,
+            row_border_color: section.settings.row_border_color,
+            row_border_radius: section.settings.row_border_radius,
+            row_border_width: section.settings.row_border_width,
+            title_size: section.settings.title_size,
+            title_weight: section.settings.title_weight,
+            title_color: section.settings.title_color,
+            toggle_color: section.settings.toggle_color,
+            toggle_style: section.settings.toggle_style,
+            content_padding: section.settings.content_padding,
+            content_background: section.settings.content_background,
+            content_color: section.settings.content_color
+          -%}
         {%- endfor -%}
       </div>
     {%- elsif request.design_mode -%}

@@ -61,23 +61,7 @@
               {%- if section.settings.content_mode == 'blocks' -%}
                 {%- for block in section.blocks -%}
                   <div class="benefits-carousel__slide" data-carousel-slide>
-                    <div class="benefit-item" {{ block.shopify_attributes }}>
-                      {%- if block.settings.icon != blank -%}
-                        <div class="benefit-icon">
-                          <img src="{{ block.settings.icon | image_url: width: 100 }}" alt="{{ block.settings.title | escape }}" loading="lazy">
-                        </div>
-                      {%- elsif block.settings.icon_asset != blank -%}
-                        <div class="benefit-icon">
-                          <img src="{{ block.settings.icon_asset | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy">
-                        </div>
-                      {%- endif -%}
-                      {%- if block.settings.title != blank -%}
-                        <h3 class="benefit-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% endif %}">{{ block.settings.title | escape }}</h3>
-                      {%- endif -%}
-                      {%- if block.settings.description != blank -%}
-                        <p class="benefit-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
-                      {%- endif -%}
-                    </div>
+                    {%- render 'block-benefit', block: block -%}
                   </div>
                 {%- endfor -%}
               {%- else -%}
@@ -90,19 +74,11 @@
                   {%- assign icon = section.settings[icon_key] -%}
                   {%- if title != blank or desc != blank -%}
                     <div class="benefits-carousel__slide" data-carousel-slide>
-                      <div class="benefit-item">
-                        {%- if icon != blank -%}
-                          <div class="benefit-icon">
-                            <img src="{{ icon | image_url: width: 100 }}" alt="{{ title | escape }}" loading="lazy">
-                          </div>
-                        {%- endif -%}
-                        {%- if title != blank -%}
-                          <h3 class="benefit-title">{{ title | escape }}</h3>
-                        {%- endif -%}
-                        {%- if desc != blank -%}
-                          <p class="benefit-description">{{ desc }}</p>
-                        {%- endif -%}
-                      </div>
+                      {%- render 'block-benefit',
+                        icon: icon,
+                        title: title,
+                        description: desc
+                      -%}
                     </div>
                   {%- endif -%}
                 {%- endfor -%}
@@ -147,23 +123,7 @@
         <div class="benefits-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
           {%- if section.settings.content_mode == 'blocks' -%}
             {%- for block in section.blocks -%}
-              <div class="benefit-item" {{ block.shopify_attributes }}>
-                {%- if block.settings.icon != blank -%}
-                  <div class="benefit-icon">
-                    <img src="{{ block.settings.icon | image_url: width: 100 }}" alt="{{ block.settings.title | escape }}" loading="lazy">
-                  </div>
-                {%- elsif block.settings.icon_asset != blank -%}
-                  <div class="benefit-icon">
-                    <img src="{{ block.settings.icon_asset | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy">
-                  </div>
-                {%- endif -%}
-                {%- if block.settings.title != blank -%}
-                  <h3 class="benefit-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% endif %}">{{ block.settings.title | escape }}</h3>
-                {%- endif -%}
-                {%- if block.settings.description != blank -%}
-                  <p class="benefit-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
-                {%- endif -%}
-              </div>
+              {%- render 'block-benefit', block: block -%}
             {%- endfor -%}
           {%- else -%}
             {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
@@ -175,19 +135,11 @@
               {%- assign desc = section.settings[desc_key] -%}
               {%- assign icon = section.settings[icon_key] -%}
               {%- if title != blank or desc != blank -%}
-                <div class="benefit-item">
-                  {%- if icon != blank -%}
-                    <div class="benefit-icon">
-                      <img src="{{ icon | image_url: width: 100 }}" alt="{{ title | escape }}" loading="lazy">
-                    </div>
-                  {%- endif -%}
-                  {%- if title != blank -%}
-                    <h3 class="benefit-title">{{ title | escape }}</h3>
-                  {%- endif -%}
-                  {%- if desc != blank -%}
-                    <p class="benefit-description">{{ desc }}</p>
-                  {%- endif -%}
-                </div>
+                {%- render 'block-benefit',
+                  icon: icon,
+                  title: title,
+                  description: desc
+                -%}
               {%- endif -%}
             {%- endfor -%}
           {%- endif -%}

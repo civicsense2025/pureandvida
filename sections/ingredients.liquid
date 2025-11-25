@@ -85,24 +85,7 @@
               {%- if section.settings.content_mode == 'blocks' -%}
                 {%- for block in section.blocks -%}
                   <div class="ingredients-carousel__slide" data-carousel-slide>
-                    <div class="ingredient-card" {{ block.shopify_attributes }}>
-                      {%- if block.settings.image != blank -%}
-                        <img src="{{ block.settings.image | image_url: width: 400 }}" alt="{{ block.settings.name | escape }}" loading="lazy">
-                      {%- elsif block.settings.image_asset != blank -%}
-                        <img src="{{ block.settings.image_asset | asset_url }}" alt="{{ block.settings.name | escape }}" loading="lazy">
-                      {%- endif -%}
-                      {%- if block.settings.name != blank -%}
-                        <h3 class="ingredient-name" style="{% if block.settings.name_color != blank %}color: {{ block.settings.name_color }};{% endif %}">{{ block.settings.name | escape }}</h3>
-                      {%- endif -%}
-                      {%- if block.settings.description != blank -%}
-                        <p class="ingredient-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
-                      {%- endif -%}
-                      {%- if block.settings.benefit_tags != blank -%}
-                        <div class="ingredient-benefits">
-                          {{ block.settings.benefit_tags }}
-                        </div>
-                      {%- endif -%}
-                    </div>
+                    {%- render 'block-ingredient', block: block -%}
                   </div>
                 {%- endfor -%}
               {%- else -%}
@@ -115,17 +98,11 @@
                   {%- assign image = section.settings[image_key] -%}
                   {%- if name != blank or desc != blank -%}
                     <div class="ingredients-carousel__slide" data-carousel-slide>
-                      <div class="ingredient-card">
-                        {%- if image != blank -%}
-                          <img src="{{ image | image_url: width: 400 }}" alt="{{ name | escape }}" loading="lazy">
-                        {%- endif -%}
-                        {%- if name != blank -%}
-                          <h3 class="ingredient-name">{{ name | escape }}</h3>
-                        {%- endif -%}
-                        {%- if desc != blank -%}
-                          <p class="ingredient-description">{{ desc }}</p>
-                        {%- endif -%}
-                      </div>
+                      {%- render 'block-ingredient',
+                        image: image,
+                        name: name,
+                        description: desc
+                      -%}
                     </div>
                   {%- endif -%}
                 {%- endfor -%}
@@ -170,24 +147,7 @@
         <div class="ingredients-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
           {%- if section.settings.content_mode == 'blocks' -%}
             {%- for block in section.blocks -%}
-              <div class="ingredient-card" {{ block.shopify_attributes }}>
-                {%- if block.settings.image != blank -%}
-                  <img src="{{ block.settings.image | image_url: width: 400 }}" alt="{{ block.settings.name | escape }}" loading="lazy">
-                {%- elsif block.settings.image_asset != blank -%}
-                  <img src="{{ block.settings.image_asset | asset_url }}" alt="{{ block.settings.name | escape }}" loading="lazy">
-                {%- endif -%}
-                {%- if block.settings.name != blank -%}
-                  <h3 class="ingredient-name" style="{% if block.settings.name_color != blank %}color: {{ block.settings.name_color }};{% endif %}">{{ block.settings.name | escape }}</h3>
-                {%- endif -%}
-                {%- if block.settings.description != blank -%}
-                  <p class="ingredient-description" style="{% if block.settings.description_color != blank %}color: {{ block.settings.description_color }};{% endif %}">{{ block.settings.description }}</p>
-                {%- endif -%}
-                {%- if block.settings.benefit_tags != blank -%}
-                  <div class="ingredient-benefits">
-                    {{ block.settings.benefit_tags }}
-                  </div>
-                {%- endif -%}
-              </div>
+              {%- render 'block-ingredient', block: block -%}
             {%- endfor -%}
           {%- else -%}
             {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
@@ -199,17 +159,11 @@
               {%- assign desc = section.settings[desc_key] -%}
               {%- assign image = section.settings[image_key] -%}
               {%- if name != blank or desc != blank -%}
-                <div class="ingredient-card">
-                  {%- if image != blank -%}
-                    <img src="{{ image | image_url: width: 400 }}" alt="{{ name | escape }}" loading="lazy">
-                  {%- endif -%}
-                  {%- if name != blank -%}
-                    <h3 class="ingredient-name">{{ name | escape }}</h3>
-                  {%- endif -%}
-                  {%- if desc != blank -%}
-                    <p class="ingredient-description">{{ desc }}</p>
-                  {%- endif -%}
-                </div>
+                {%- render 'block-ingredient',
+                  image: image,
+                  name: name,
+                  description: desc
+                -%}
               {%- endif -%}
             {%- endfor -%}
           {%- endif -%}

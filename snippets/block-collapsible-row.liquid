@@ -1,0 +1,151 @@
+{%- comment -%}
+  Block Collapsible Row Snippet
+  -----------------------------
+  Reusable collapsible row with icon, title, rich content, page content, and optional button.
+  Used by collapsible-content section.
+
+  Parameters:
+    Required:
+    - block: The block object containing settings
+
+    Block Settings Expected:
+    - block.settings.heading: Row title
+    - block.settings.icon: Optional emoji/symbol icon
+    - block.settings.icon_image: Optional image icon
+    - block.settings.title_color: Override title color
+    - block.settings.row_content: Rich text content
+    - block.settings.page: Optional page content
+    - block.settings.content_color: Override content color
+    - block.settings.button_text: Optional button text
+    - block.settings.button_link: Optional button URL
+    - block.settings.button_color: Override button color
+    - block.settings.button_text_color: Override button text color
+
+    Section Settings (pass these):
+    - open: Whether row is open by default
+    - row_padding: Padding for row header
+    - row_background: Background color for row
+    - row_border_color: Border color
+    - row_border_radius: Border radius
+    - row_border_width: Border width
+    - title_size: Font size for title
+    - title_weight: Font weight for title
+    - title_color: Default title color
+    - toggle_color: Toggle icon color
+    - toggle_style: plus, chevron, or arrow
+    - content_padding: Padding for content area
+    - content_background: Background for content area
+    - content_color: Default content color
+
+  Usage:
+    {% render 'block-collapsible-row',
+      block: block,
+      open: section.settings.open_first and forloop.first,
+      row_padding: section.settings.row_padding,
+      ...
+    %}
+{%- endcomment -%}
+
+{%- liquid
+  assign is_open = open | default: false
+  assign row_pad = row_padding | default: 16
+  assign row_bg = row_background
+  assign row_border_clr = row_border_color
+  assign row_border_rad = row_border_radius | default: 4
+  assign row_border_w = row_border_width | default: 1
+  assign ttl_size = title_size | default: 16
+  assign ttl_weight = title_weight | default: 500
+  assign ttl_color = block.settings.title_color | default: title_color
+  assign toggle_clr = toggle_color
+  assign toggle_stl = toggle_style | default: 'plus'
+  assign cnt_padding = content_padding | default: 16
+  assign cnt_bg = content_background
+  assign cnt_color = block.settings.content_color | default: content_color
+-%}
+
+<details
+  class="collapsible-row"
+  {% if is_open %}open{% endif %}
+  {{ block.shopify_attributes }}
+>
+  <summary
+    class="collapsible-row__header"
+    style="
+      padding: {{ row_pad }}px;
+      {% if row_bg != blank %}background-color: {{ row_bg }};{% endif %}
+      {% if row_border_clr != blank %}border-color: {{ row_border_clr }};{% endif %}
+      border-radius: {{ row_border_rad }}px;
+    "
+  >
+    <div class="collapsible-row__header-content">
+      {%- if block.settings.icon != blank -%}
+        <span class="collapsible-row__icon" aria-hidden="true">{{ block.settings.icon }}</span>
+      {%- elsif block.settings.icon_image != blank -%}
+        <img
+          src="{{ block.settings.icon_image | image_url: width: 48 }}"
+          alt=""
+          class="collapsible-row__icon-image"
+          width="24"
+          height="24"
+        >
+      {%- endif -%}
+      <span
+        class="collapsible-row__title"
+        style="
+          {% if ttl_color != blank %}color: {{ ttl_color }};{% endif %}
+          font-size: {{ ttl_size }}px;
+          font-weight: {{ ttl_weight }};
+        "
+      >
+        {{ block.settings.heading | escape }}
+      </span>
+    </div>
+    <span
+      class="collapsible-row__toggle"
+      aria-hidden="true"
+      style="{% if toggle_clr != blank %}color: {{ toggle_clr }};{% endif %}"
+    >
+      {%- case toggle_stl -%}
+        {%- when 'plus' -%}
+          <span class="toggle-icon toggle-icon--plus">+</span>
+        {%- when 'chevron' -%}
+          {% render 'render-icon', icon: 'chevron-down', size: 20 %}
+        {%- when 'arrow' -%}
+          <span class="toggle-icon toggle-icon--arrow">&#8250;</span>
+      {%- endcase -%}
+    </span>
+  </summary>
+  <div
+    class="collapsible-row__content"
+    style="
+      padding: {{ cnt_padding }}px;
+      {% if cnt_bg != blank %}background-color: {{ cnt_bg }};{% endif %}
+      {% if cnt_color != blank %}color: {{ cnt_color }};{% endif %}
+    "
+  >
+    {%- if block.settings.row_content != blank -%}
+      <div class="collapsible-row__richtext rte">
+        {{ block.settings.row_content }}
+      </div>
+    {%- endif -%}
+
+    {%- if block.settings.page != blank -%}
+      <div class="collapsible-row__page-content rte">
+        {{ block.settings.page.content }}
+      </div>
+    {%- endif -%}
+
+    {%- if block.settings.button_text != blank and block.settings.button_link != blank -%}
+      <a
+        href="{{ block.settings.button_link }}"
+        class="collapsible-row__button"
+        style="
+          {% if block.settings.button_color != blank %}background-color: {{ block.settings.button_color }};{% endif %}
+          {% if block.settings.button_text_color != blank %}color: {{ block.settings.button_text_color }};{% endif %}
+        "
+      >
+        {{ block.settings.button_text }}
+      </a>
+    {%- endif -%}
+  </div>
+</details>

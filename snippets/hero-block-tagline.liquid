@@ -1,0 +1,13 @@
+{%- comment -%}
+  Hero Block: Tagline
+  Two-line value proposition
+{%- endcomment -%}
+
+<div class="hero-block hero-block--tagline" {{ block.shopify_attributes }}>
+  {% if block.settings.line_1 != blank %}
+    <p class="hero-block__tagline-line">{{ block.settings.line_1 | escape }}</p>
+  {% endif %}
+  {% if block.settings.line_2 != blank %}
+    <p class="hero-block__tagline-line hero-block__tagline-line--emphasis">{{ block.settings.line_2 | escape }}</p>
+  {% endif %}
+</div>

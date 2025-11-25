@@ -1,0 +1,37 @@
+{%- comment -%}
+  Hero Block Dispatcher
+  Renders the appropriate block based on type
+
+  Parameters:
+  - block: The block object
+  - product: The section's product (optional)
+{%- endcomment -%}
+
+{% case block.type %}
+  {% when 'title' %}
+    {% render 'hero-block-title', block: block %}
+
+  {% when 'subtitle' %}
+    {% render 'hero-block-subtitle', block: block %}
+
+  {% when 'media' %}
+    {% render 'hero-block-media', block: block %}
+
+  {% when 'tagline' %}
+    {% render 'hero-block-tagline', block: block %}
+
+  {% when 'description' %}
+    {% render 'hero-block-description', block: block %}
+
+  {% when 'pricing' %}
+    {% render 'hero-block-pricing', block: block, product: product %}
+
+  {% when 'button' %}
+    {% render 'hero-block-button', block: block, product: product %}
+
+  {% when 'badge' %}
+    {% render 'hero-block-badge', block: block %}
+
+  {% when 'payment_icons' %}
+    {% render 'hero-block-payment', block: block %}
+{% endcase %}

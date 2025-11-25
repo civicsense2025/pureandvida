@@ -1,0 +1,22 @@
+{%- comment -%}
+  Hero Block: Title
+  Displays headline with optional trademark and divider
+{%- endcomment -%}
+
+<div class="hero-block hero-block--title" {{ block.shopify_attributes }} style="--title-font-size: {{ block.settings.font_size }}px;">
+  <h1 class="hero-block__title">
+    {{ block.settings.text | escape }}
+    {% if block.settings.show_trademark %}
+      <sup class="hero-block__trademark">&#8482;</sup>
+    {% endif %}
+  </h1>
+
+  {% case block.settings.divider_style %}
+    {% when 'plus' %}
+      <div class="hero-block__divider hero-block__divider--plus">+++++++++</div>
+    {% when 'dots' %}
+      <div class="hero-block__divider hero-block__divider--dots">...........</div>
+    {% when 'line' %}
+      <hr class="hero-block__divider hero-block__divider--line">
+  {% endcase %}
+</div>

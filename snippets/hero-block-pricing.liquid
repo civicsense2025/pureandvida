@@ -1,0 +1,43 @@
+{%- comment -%}
+  Hero Block: Pricing
+  Price display with optional compare-at price
+
+  Parameters:
+  - block: The block object
+  - product: The section's product (optional)
+{%- endcomment -%}
+
+{% liquid
+  assign variant = product.selected_or_first_available_variant
+  assign price = variant.price
+  assign compare_price = variant.compare_at_price
+
+  # Custom price overrides
+  if block.settings.custom_price != blank
+    assign price = block.settings.custom_price | times: 100
+  endif
+
+  if block.settings.custom_compare_price != blank
+    assign compare_price = block.settings.custom_compare_price | remove: '$' | times: 100
+  endif
+
+  # Fallback if no product
+  if product == blank and block.settings.custom_price == blank
+    assign price = 3499
+  endif
+  if product == blank and block.settings.custom_compare_price == blank
+    assign compare_price = 4500
+  endif
+%}
+
+<div class="hero-block hero-block--pricing hero-block--pricing-{{ block.settings.size }}" {{ block.shopify_attributes }}>
+  {% if block.settings.show_compare_price and compare_price != blank %}
+    <span class="hero-block__compare-price">
+      {{ compare_price | money }}
+    </span>
+  {% endif %}
+
+  <span class="hero-block__price">
+    {{ price | money }}
+  </span>
+</div>

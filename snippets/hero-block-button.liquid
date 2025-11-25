@@ -1,0 +1,53 @@
+{%- comment -%}
+  Hero Block: Button
+  CTA button with optional quantity selector
+
+  Parameters:
+  - block: The block object
+  - product: The section's product (optional)
+{%- endcomment -%}
+
+{% liquid
+  assign variant = product.selected_or_first_available_variant
+  assign button_text = block.settings.text | default: 'Shop Now'
+  assign button_link = block.settings.link | default: routes.collections_url
+%}
+
+<div class="hero-block hero-block--button" {{ block.shopify_attributes }}>
+  {% if block.settings.show_quantity and product != blank %}
+    <hero-quantity-selector class="hero-block__quantity-selector">
+      <button type="button" class="hero-block__quantity-btn" data-action="decrease" aria-label="Decrease quantity">-</button>
+      <input
+        type="number"
+        class="hero-block__quantity-input"
+        value="{{ block.settings.default_quantity }}"
+        min="1"
+        max="99"
+        aria-label="Quantity"
+      >
+      <button type="button" class="hero-block__quantity-btn" data-action="increase" aria-label="Increase quantity">+</button>
+    </hero-quantity-selector>
+  {% endif %}
+
+  {% if product != blank %}
+    <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="hero-block__form">
+      <input type="hidden" name="id" value="{{ variant.id }}">
+      <input type="hidden" name="quantity" value="{{ block.settings.default_quantity }}" data-cart-quantity>
+      <button
+        type="submit"
+        class="hero-block__btn hero-block__btn--{{ block.settings.style }}"
+        {% unless variant.available %}disabled{% endunless %}
+      >
+        {% if variant.available %}
+          {{ button_text }}
+        {% else %}
+          Sold Out
+        {% endif %}
+      </button>
+    </form>
+  {% else %}
+    <a href="{{ button_link }}" class="hero-block__btn hero-block__btn--{{ block.settings.style }}">
+      {{ button_text }}
+    </a>
+  {% endif %}
+</div>

@@ -1,0 +1,17 @@
+{%- comment -%}
+  Hero Block: Badge
+  Promotional badge/label
+{%- endcomment -%}
+
+<div
+  class="hero-block hero-block--badge"
+  {{ block.shopify_attributes }}
+  style="
+    {% if block.settings.background_color != blank %}--badge-bg: {{ block.settings.background_color }};{% endif %}
+    {% if block.settings.text_color != blank %}--badge-text: {{ block.settings.text_color }};{% endif %}
+  "
+>
+  <span class="hero-block__badge">
+    {{ block.settings.text | escape }}
+  </span>
+</div>

@@ -1,0 +1,35 @@
+{%- comment -%}
+  Hero Block: Payment Icons
+  Trust signals - accepted payment methods
+{%- endcomment -%}
+
+<div class="hero-block hero-block--payment" {{ block.shopify_attributes }}>
+  <div class="hero-block__payment-icons">
+    {% if shop.enabled_payment_types.size > 0 %}
+      <span class="visually-hidden">Payment methods</span>
+      <ul class="hero-block__payment-list" role="list">
+        {% for type in shop.enabled_payment_types %}
+          <li class="hero-block__payment-icon">
+            {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      {%- comment -%} Fallback icons for preview {%- endcomment -%}
+      <ul class="hero-block__payment-list" role="list">
+        <li class="hero-block__payment-icon">
+          {{ 'visa' | payment_type_svg_tag: class: 'icon icon--full-color' }}
+        </li>
+        <li class="hero-block__payment-icon">
+          {{ 'master' | payment_type_svg_tag: class: 'icon icon--full-color' }}
+        </li>
+        <li class="hero-block__payment-icon">
+          {{ 'american_express' | payment_type_svg_tag: class: 'icon icon--full-color' }}
+        </li>
+        <li class="hero-block__payment-icon">
+          {{ 'paypal' | payment_type_svg_tag: class: 'icon icon--full-color' }}
+        </li>
+      </ul>
+    {% endif %}
+  </div>
+</div>

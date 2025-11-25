@@ -45,15 +45,15 @@
     <div class="hero-product-section" style="flex-direction: {{ section.settings.image_position }};">
       <div class="hero-product-images">
         {% if section.settings.product_image_1 != blank %}
-          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
+          <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="{{ section.settings.product.title | default: 'Product Image' }}" class="hero-product-img-1" loading="eager">
         {% else %}
-          <img src="{{ '0a5553f60213dd436dd5e60b282c6b7cbec1de3a.png' | asset_url }}" alt="MycoMatcha Product" class="hero-product-img-1">
+          {{ 'product-1' | placeholder_svg_tag: 'hero-product-img-1 hero-placeholder' }}
         {% endif %}
-        
+
         {% if section.settings.product_image_2 != blank %}
-          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+          <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="{{ section.settings.product.title | default: 'Product Image' }}" class="hero-product-img-2" loading="eager">
         {% else %}
-          <img src="{{ 'f713d8714eed491eeccc4f7f9c3589229c1b0783.png' | asset_url }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
+          {{ 'product-2' | placeholder_svg_tag: 'hero-product-img-2 hero-placeholder' }}
         {% endif %}
       </div>
 
@@ -363,6 +363,19 @@
   .hero-product-img-1,
   .hero-product-img-2 {
     max-width: 100%;
+    height: auto;
+  }
+
+  .hero-placeholder {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    background: rgba(var(--color-foreground), 0.03);
+    border-radius: 8px;
+  }
+
+  .hero-placeholder svg {
+    width: 100%;
     height: auto;
   }
 

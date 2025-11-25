@@ -1,0 +1,25 @@
+{%- comment -%}
+  Hero Block: Media
+  Product images with various display styles
+{%- endcomment -%}
+
+<div class="hero-block hero-block--media hero-block--media-{{ block.settings.style }}" {{ block.shopify_attributes }}>
+  {% if block.settings.image_1 != blank %}
+    {{ block.settings.image_1 | image_url: width: 800 | image_tag:
+      class: 'hero-block__image hero-block__image--primary',
+      loading: 'eager',
+      fetchpriority: 'high'
+    }}
+  {% else %}
+    {{ 'product-1' | placeholder_svg_tag: 'hero-block__image hero-block__image--placeholder' }}
+  {% endif %}
+
+  {% if block.settings.style != 'single' and block.settings.image_2 != blank %}
+    {{ block.settings.image_2 | image_url: width: 800 | image_tag:
+      class: 'hero-block__image hero-block__image--secondary',
+      loading: 'eager'
+    }}
+  {% elsif block.settings.style != 'single' and request.design_mode %}
+    {{ 'product-2' | placeholder_svg_tag: 'hero-block__image hero-block__image--secondary hero-block__image--placeholder' }}
+  {% endif %}
+</div>

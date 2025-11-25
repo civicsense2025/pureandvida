@@ -1,0 +1,708 @@
+{% liquid
+  # @description Unified Hero Section - Consolidates all hero section variants into one flexible component
+  # Supports 4 layout regions (header, media, content, footer), 9 block types, and 6 presets
+  # Uses external CSS/JS for performance
+
+  # Layout class mapping
+  case section.settings.layout
+    when 'split-left'
+      assign layout_class = 'hero-unified--split hero-unified--media-left'
+    when 'split-right'
+      assign layout_class = 'hero-unified--split hero-unified--media-right'
+    when 'stacked'
+      assign layout_class = 'hero-unified--stacked'
+    when 'overlay'
+      assign layout_class = 'hero-unified--overlay'
+    else
+      assign layout_class = 'hero-unified--split hero-unified--media-left'
+  endcase
+
+  # Height class
+  case section.settings.section_height
+    when 'small'
+      assign height_class = 'hero-unified--height-small'
+    when 'medium'
+      assign height_class = 'hero-unified--height-medium'
+    when 'large'
+      assign height_class = 'hero-unified--height-large'
+    when 'viewport'
+      assign height_class = 'hero-unified--height-viewport'
+    else
+      assign height_class = 'hero-unified--height-auto'
+  endcase
+
+  # Filter blocks by position
+  assign header_blocks = section.blocks | where: 'settings.position', 'header'
+  assign media_blocks = section.blocks | where: 'settings.position', 'media'
+  assign content_blocks = section.blocks | where: 'settings.position', 'content'
+  assign footer_blocks = section.blocks | where: 'settings.position', 'footer'
+
+  # Check if quantity selector is used (for conditional JS loading)
+  assign needs_quantity_js = false
+  for block in section.blocks
+    if block.type == 'button' and block.settings.show_quantity
+      assign needs_quantity_js = true
+      break
+    endif
+  endfor
+%}
+
+{{ 'hero-unified.css' | asset_url | stylesheet_tag }}
+
+<section
+  id="hero-{{ section.id }}"
+  class="hero-unified {{ layout_class }} {{ height_class }} color-{{ section.settings.color_scheme }}"
+  style="
+    --hero-padding-top: {{ section.settings.padding_top }}px;
+    --hero-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --hero-media-width: {{ section.settings.media_width }}%;
+    {% if section.settings.background_color != blank %}--hero-bg-color: {{ section.settings.background_color }};{% endif %}
+    {% if section.settings.text_color != blank %}--hero-text-color: {{ section.settings.text_color }};{% endif %}
+    {% if section.settings.overlay_opacity > 0 %}--hero-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};{% endif %}
+  "
+  {% if request.design_mode %}data-section-type="hero-unified" data-section-id="{{ section.id }}"{% endif %}
+>
+  {%- comment -%} Background Image {%- endcomment -%}
+  {% if section.settings.background_image != blank %}
+    <div class="hero-unified__background">
+      {{ section.settings.background_image | image_url: width: 1920 | image_tag:
+        class: 'hero-unified__bg-image',
+        loading: 'eager',
+        fetchpriority: 'high',
+        sizes: '100vw'
+      }}
+      {% if section.settings.show_overlay %}
+        <div class="hero-unified__overlay"></div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {%- comment -%} Design Mode Controls {%- endcomment -%}
+  {% if request.design_mode %}
+    <div class="hero-unified__editor-controls">
+      <span class="hero-unified__editor-badge">HERO</span>
+      <span class="hero-unified__editor-info">{{ section.settings.layout | replace: '-', ' ' | capitalize }}</span>
+    </div>
+  {% endif %}
+
+  <div class="hero-unified__container page-width">
+    {%- comment -%} Header Region {%- endcomment -%}
+    {% if header_blocks.size > 0 or request.design_mode %}
+      <div class="hero-unified__header" {% if request.design_mode %}data-region="header"{% endif %}>
+        {% for block in header_blocks %}
+          {% render 'hero-block', block: block, product: section.settings.product %}
+        {% endfor %}
+        {% if header_blocks.size == 0 and request.design_mode %}
+          <div class="hero-unified__empty-region">Header region - drag blocks here</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- comment -%} Main Grid (Media + Content) {%- endcomment -%}
+    <div class="hero-unified__main">
+      {%- comment -%} Media Region {%- endcomment -%}
+      {% if media_blocks.size > 0 or section.settings.layout contains 'split' %}
+        <div class="hero-unified__media" {% if request.design_mode %}data-region="media"{% endif %}>
+          {% for block in media_blocks %}
+            {% render 'hero-block', block: block, product: section.settings.product %}
+          {% endfor %}
+          {% if media_blocks.size == 0 and request.design_mode %}
+            <div class="hero-unified__empty-region">Media region - add images here</div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {%- comment -%} Content Region {%- endcomment -%}
+      <div class="hero-unified__content" {% if request.design_mode %}data-region="content"{% endif %} style="text-align: {{ section.settings.content_alignment }};">
+        {% for block in content_blocks %}
+          {% render 'hero-block', block: block, product: section.settings.product %}
+        {% endfor %}
+        {% if content_blocks.size == 0 and request.design_mode %}
+          <div class="hero-unified__empty-region">Content region - add text, pricing, buttons here</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {%- comment -%} Footer Region {%- endcomment -%}
+    {% if footer_blocks.size > 0 or request.design_mode %}
+      <div class="hero-unified__footer" {% if request.design_mode %}data-region="footer"{% endif %}>
+        {% for block in footer_blocks %}
+          {% render 'hero-block', block: block, product: section.settings.product %}
+        {% endfor %}
+        {% if footer_blocks.size == 0 and request.design_mode %}
+          <div class="hero-unified__empty-region">Footer region - add trust signals here</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if needs_quantity_js %}
+  <script src="{{ 'hero-unified.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Hero (Unified)",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A flexible hero section with draggable blocks. Choose a preset to get started, or customize every detail."
+    },
+    {
+      "type": "header",
+      "content": "Quick Start"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Featured Product",
+      "info": "Optional. Enables Add to Cart and pulls pricing automatically."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout Style",
+      "options": [
+        { "value": "split-left", "label": "Split - Media Left" },
+        { "value": "split-right", "label": "Split - Media Right" },
+        { "value": "stacked", "label": "Stacked - Centered" },
+        { "value": "overlay", "label": "Overlay - Text on Image" }
+      ],
+      "default": "split-left",
+      "info": "On mobile, all layouts stack vertically."
+    },
+    {
+      "type": "range",
+      "id": "media_width",
+      "label": "Media Column Width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "default": 50,
+      "info": "Only applies to split layouts."
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "Section Height",
+      "options": [
+        { "value": "auto", "label": "Auto (fit content)" },
+        { "value": "small", "label": "Small (400px)" },
+        { "value": "medium", "label": "Medium (600px)" },
+        { "value": "large", "label": "Large (800px)" },
+        { "value": "viewport", "label": "Full Viewport" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image",
+      "info": "Recommended: 1920x800px. Works best with overlay enabled."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "info": "Overrides color scheme background."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "info": "Overrides color scheme text color."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Add dark overlay",
+      "default": false,
+      "info": "Darkens background for better text readability."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay Darkness",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "header", "label": "Header" },
+            { "value": "content", "label": "Content" }
+          ],
+          "default": "header"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Title Text",
+          "default": "Your Headline Here"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_trademark",
+          "label": "Add trademark symbol (TM)",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "divider_style",
+          "label": "Divider Style",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "plus", "label": "Plus signs (+++)" },
+            { "value": "dots", "label": "Dots (...)" },
+            { "value": "line", "label": "Line" }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "range",
+          "id": "font_size",
+          "label": "Font Size",
+          "min": 36,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 64,
+          "info": "Desktop size. Mobile scales to 60%."
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "name": "Subtitle",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "header", "label": "Header" },
+            { "value": "content", "label": "Content" }
+          ],
+          "default": "header"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Subtitle Text",
+          "default": "Supporting text goes here"
+        }
+      ]
+    },
+    {
+      "type": "media",
+      "name": "Media",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "media", "label": "Media Column" },
+            { "value": "content", "label": "Content Column" }
+          ],
+          "default": "media"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Primary Image",
+          "info": "Recommended: 800x800px"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Secondary Image",
+          "info": "Optional. Shows as overlapping image."
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Image Style",
+          "options": [
+            { "value": "single", "label": "Single Image" },
+            { "value": "stacked", "label": "Stacked (overlapping)" },
+            { "value": "side-by-side", "label": "Side by Side" }
+          ],
+          "default": "single"
+        }
+      ]
+    },
+    {
+      "type": "tagline",
+      "name": "Tagline",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "header", "label": "Header" },
+            { "value": "content", "label": "Content" }
+          ],
+          "default": "content"
+        },
+        {
+          "type": "text",
+          "id": "line_1",
+          "label": "Line 1",
+          "default": "Coffee borrows energy."
+        },
+        {
+          "type": "text",
+          "id": "line_2",
+          "label": "Line 2",
+          "default": "MycoMatcha creates it."
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "content", "label": "Content" },
+            { "value": "footer", "label": "Footer" }
+          ],
+          "default": "content"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Description",
+          "default": "<p>Add your product description or promotional text here.</p>"
+        }
+      ]
+    },
+    {
+      "type": "pricing",
+      "name": "Pricing",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "content", "label": "Content" },
+            { "value": "footer", "label": "Footer" }
+          ],
+          "default": "content"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_compare_price",
+          "label": "Show compare-at price",
+          "default": false,
+          "info": "Shows crossed-out original price."
+        },
+        {
+          "type": "text",
+          "id": "custom_price",
+          "label": "Custom Price Override",
+          "placeholder": "34.99",
+          "info": "Number only. Leave blank to use product price."
+        },
+        {
+          "type": "text",
+          "id": "custom_compare_price",
+          "label": "Custom Compare Price",
+          "placeholder": "$49.99",
+          "info": "Original price to show crossed out."
+        },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "Price Size",
+          "options": [
+            { "value": "small", "label": "Small" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "large", "label": "Large" }
+          ],
+          "default": "medium"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "content", "label": "Content" },
+            { "value": "footer", "label": "Footer" }
+          ],
+          "default": "content"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Button Text",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Button Link",
+          "info": "Ignored if product selected (uses Add to Cart)."
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Button Style",
+          "options": [
+            { "value": "primary", "label": "Primary (solid)" },
+            { "value": "secondary", "label": "Secondary (outline)" },
+            { "value": "link", "label": "Text Link" }
+          ],
+          "default": "primary"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_quantity",
+          "label": "Show quantity selector",
+          "default": false,
+          "info": "Only works with Add to Cart."
+        },
+        {
+          "type": "range",
+          "id": "default_quantity",
+          "label": "Default Quantity",
+          "min": 1,
+          "max": 10,
+          "default": 1
+        }
+      ]
+    },
+    {
+      "type": "badge",
+      "name": "Badge",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "header", "label": "Header" },
+            { "value": "content", "label": "Content" },
+            { "value": "media", "label": "Over Media" }
+          ],
+          "default": "content"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Badge Text",
+          "default": "Save 30%"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Badge Color"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Badge Text Color"
+        }
+      ]
+    },
+    {
+      "type": "payment_icons",
+      "name": "Payment Icons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "content", "label": "Content" },
+            { "value": "footer", "label": "Footer" }
+          ],
+          "default": "footer"
+        },
+        {
+          "type": "paragraph",
+          "content": "Displays accepted payment method icons (Visa, Mastercard, etc.)."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero - Product Launch",
+      "settings": {
+        "layout": "split-left",
+        "section_height": "medium"
+      },
+      "blocks": [
+        { "type": "title", "settings": { "position": "header", "text": "PRODUCT NAME", "show_trademark": true, "divider_style": "plus" } },
+        { "type": "subtitle", "settings": { "position": "header", "text": "The tagline that makes people want it" } },
+        { "type": "media", "settings": { "position": "media", "style": "stacked" } },
+        { "type": "tagline", "settings": { "position": "content" } },
+        { "type": "pricing", "settings": { "position": "content", "show_compare_price": true } },
+        { "type": "button", "settings": { "position": "content", "text": "Add to Cart", "style": "primary", "show_quantity": true } },
+        { "type": "badge", "settings": { "position": "content", "text": "Launch Special!" } },
+        { "type": "payment_icons", "settings": { "position": "footer" } }
+      ]
+    },
+    {
+      "name": "Hero - Promotional Sale",
+      "settings": {
+        "layout": "overlay",
+        "section_height": "large",
+        "show_overlay": true,
+        "overlay_opacity": 50,
+        "content_alignment": "center"
+      },
+      "blocks": [
+        { "type": "badge", "settings": { "position": "header", "text": "LIMITED TIME" } },
+        { "type": "title", "settings": { "position": "content", "text": "FLASH SALE", "font_size": 80 } },
+        { "type": "subtitle", "settings": { "position": "content", "text": "Don't miss our biggest sale of the year" } },
+        { "type": "pricing", "settings": { "position": "content", "show_compare_price": true, "size": "large" } },
+        { "type": "button", "settings": { "position": "content", "text": "Shop Sale", "style": "primary" } }
+      ]
+    },
+    {
+      "name": "Hero - Brand Story",
+      "settings": {
+        "layout": "overlay",
+        "section_height": "large",
+        "show_overlay": true,
+        "overlay_opacity": 40,
+        "content_alignment": "center"
+      },
+      "blocks": [
+        { "type": "title", "settings": { "position": "content", "text": "Our Story" } },
+        { "type": "description", "settings": { "position": "content", "content": "<p>Tell your brand's story in a compelling way. Share your mission, values, and what makes you unique.</p>" } },
+        { "type": "button", "settings": { "position": "content", "text": "Learn More", "style": "secondary" } }
+      ]
+    },
+    {
+      "name": "Hero - Minimal Product",
+      "settings": {
+        "layout": "split-left",
+        "section_height": "auto"
+      },
+      "blocks": [
+        { "type": "title", "settings": { "position": "header", "text": "Product Name", "divider_style": "none" } },
+        { "type": "subtitle", "settings": { "position": "header", "text": "Simple and elegant" } },
+        { "type": "media", "settings": { "position": "media", "style": "single" } },
+        { "type": "pricing", "settings": { "position": "content" } },
+        { "type": "button", "settings": { "position": "content", "text": "Shop Now", "style": "primary" } }
+      ]
+    },
+    {
+      "name": "Hero - Collection Header",
+      "settings": {
+        "layout": "stacked",
+        "section_height": "small",
+        "content_alignment": "center"
+      },
+      "blocks": [
+        { "type": "title", "settings": { "position": "content", "text": "Collection Name" } },
+        { "type": "subtitle", "settings": { "position": "content", "text": "Explore our curated selection" } }
+      ]
+    },
+    {
+      "name": "Hero - Coming Soon",
+      "settings": {
+        "layout": "overlay",
+        "section_height": "medium",
+        "show_overlay": true,
+        "overlay_opacity": 60,
+        "content_alignment": "center"
+      },
+      "blocks": [
+        { "type": "title", "settings": { "position": "content", "text": "Coming Soon" } },
+        { "type": "subtitle", "settings": { "position": "content", "text": "Sign up to be notified when we launch" } },
+        { "type": "button", "settings": { "position": "content", "text": "Notify Me", "style": "primary" } }
+      ]
+    }
+  ],
+  "templates": ["index", "page", "collection", "product"]
+}
+{% endschema %}

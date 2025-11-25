@@ -1,0 +1,219 @@
+{{ 'shopdev-myco-matcha-product-hero.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .shopdev-myco-matcha-product-hero .bg-dark-green {
+    background-color: #2F4238;
+  }
+  
+  .shopdev-myco-matcha-product-hero .text-dark-green {
+    color: #314339;
+  }
+  
+  .shopdev-myco-matcha-product-hero .text-medium-green {
+    color: #5E8778;
+  }
+  
+  .shopdev-myco-matcha-product-hero .bg-medium-green {
+    background-color: #5E8778;
+  }
+  
+  .shopdev-myco-matcha-product-hero .text-orange {
+    color: #E8983B;
+  }
+  
+  .shopdev-myco-matcha-product-hero .bg-orange {
+    background-color: #E8983B;
+  }
+  
+  .shopdev-myco-matcha-product-hero .border-dark-green {
+    border-color: #5E8778;
+  }
+  
+  .shopdev-myco-matcha-product-hero .text-dark {
+    color: #1E1E1E;
+  }
+  
+  .shopdev-myco-matcha-product-hero .border-dark {
+    border-color: #1E1E1E;
+  }
+  
+  .shopdev-myco-matcha-product-hero .bg-footer-green {
+    background-color: #516D55;
+  }
+  
+  .shopdev-myco-matcha-product-hero .gradient-overlay {
+    background: radial-gradient(ellipse at top, rgba(255, 200, 150, 0.7), transparent);
+  }
+  
+  /* Mobile Navigation */
+  .shopdev-myco-matcha-product-hero .mobile-menu-toggle {
+    display: none;
+  }
+  
+  .shopdev-myco-matcha-product-hero .mobile-menu {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .shopdev-myco-matcha-product-hero .desktop-nav {
+      display: none;
+    }
+    
+    .shopdev-myco-matcha-product-hero .mobile-menu-toggle {
+      display: block;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    
+    .shopdev-myco-matcha-product-hero .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      z-index: 50;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    
+    .shopdev-myco-matcha-product-hero .mobile-menu.active {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .shopdev-myco-matcha-product-hero .mobile-menu-close {
+      align-self: flex-end;
+      background: none;
+      border: none;
+      font-size: 32px;
+      cursor: pointer;
+      padding: 8px;
+      margin-bottom: 24px;
+    }
+    
+    .shopdev-myco-matcha-product-hero .mobile-menu nav {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .shopdev-myco-matcha-product-hero .mobile-menu a {
+      font-size: 24px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    
+    .shopdev-myco-matcha-product-hero .hero-section {
+      padding: 24px 16px;
+    }
+    
+    .shopdev-myco-matcha-product-hero .product-section {
+      flex-direction: column;
+    }
+    
+    .shopdev-myco-matcha-product-hero .benefits-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .shopdev-myco-matcha-product-hero .ingredients-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .shopdev-myco-matcha-product-hero .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Tablet and Mobile Responsive Styles */
+  @media (max-width: 768px) {
+    .shopdev-myco-matcha-product-hero .header-container {
+      padding: 24px 20px !important;
+    }
+    
+    .shopdev-myco-matcha-product-hero .header-logo {
+      font-size: 36px !important;
+    }
+    
+    .shopdev-myco-matcha-product-hero .header-logo-plus {
+      font-size: 16px !important;
+      margin-left: -100px !important;
+      margin-top: 12px !important;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .shopdev-myco-matcha-product-hero .header-container {
+      padding: 20px 16px !important;
+    }
+    
+    .shopdev-myco-matcha-product-hero .header-logo {
+      font-size: 32px !important;
+    }
+    
+    .shopdev-myco-matcha-product-hero .header-logo-plus {
+      font-size: 14px !important;
+      margin-left: -80px !important;
+      margin-top: 10px !important;
+    }
+  }
+</style>
+
+<div class="w-full bg-white relative overflow-hidden">
+  <!-- Header Navigation -->
+  <div class="relative z-10 max-w-[1320px] mx-auto px-[60px] py-[54px] header-container">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <h1 class="text-dark-green text-[52px] font-light tracking-wide header-logo">PURE  VIDA</h1>
+        <span class="text-medium-green text-[20px] font-bold ml-[-144px] mt-[16px] header-logo-plus">+</span>
+      </div>
+      
+      <nav class="desktop-nav flex items-center gap-[48px]">
+        <a href="#" class="text-dark-green text-[20px] tracking-[0.12em]">{{ section.settings.nav_link_1 }}</a>
+        <a href="#" class="text-dark-green text-[20px] tracking-[0.12em]">{{ section.settings.nav_link_2 }}</a>
+        <a href="#" class="text-dark-green text-[20px] tracking-[0.12em]">{{ section.settings.nav_link_3 }}</a>
+        <a href="#" class="bg-orange text-white px-[22px] py-[15px] rounded-[91px] text-[20px] font-medium tracking-[0.12em] border border-orange">{{ section.settings.nav_cta_text }}</a>
+      </nav>
+      
+      <button class="mobile-menu-toggle" onclick="document.getElementById('mobileMenu').classList.add('active')">
+        <i class="ph ph-list text-dark-green text-[32px]"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu">
+    <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('active')">
+      <i class="ph ph-x text-dark-green"></i>
+    </button>
+    <nav>
+      <a href="#" class="text-dark-green tracking-[0.12em]">{{ section.settings.nav_link_1 }}</a>
+      <a href="#" class="text-dark-green tracking-[0.12em]">{{ section.settings.nav_link_2 }}</a>
+      <a href="#" class="text-dark-green tracking-[0.12em]">{{ section.settings.nav_link_3 }}</a>
+      <a href="#" class="bg-orange text-white px-[22px] py-[15px] rounded-[91px] font-medium tracking-[0.12em] border border-orange text-center">{{ section.settings.nav_cta_text }}</a>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="relative z-10 max-w-[1054px] mx-auto px-[10px] mt-[151px] mb-[166px] md:mt-[151px] md:mb-[166px] sm:mt-[60px] sm:mb-[60px] sm:px-[20px]">
+    {%- if section.settings.hero_background_image != blank -%}
+      <div class="absolute inset-0 z-0">
+        {{ section.settings.hero_background_image | image_url: width: 1920 | image_tag: class: 'w-full h-full object-cover', loading: 'eager' }}
+      </div>
+    {%- endif -%}
+    <div class="text-center relative z-10">
+      <div class="flex items-start justify-center mb-[32px] sm:mb-[20px]">
+        <h2 class="text-dark text-[80px] md:text-[80px] sm:text-[48px] tracking-[0.12em] uppercase">{{ section.settings.hero_title }}</h2>
+        <span class="text-dark text-[48px] md:text-[48px] sm:text-[28px] font-light tracking-[0.44em] ml-[11px] sm:ml-[6px]">™</span>
+      </div>
+      
+      <div class="text-dark text-[24px] md:text-[24px] sm:text-[16px] tracking-[0.81em] sm:tracking-[0.4em] font-light mb-[32px] sm:mb-[20px]">+++++++++</div>
+      
+      <p class="text-dark text-[32px] md:text-[32px] sm:text-[20px] tracking-[0.12em] sm:tracking-[0.06em]">{{ section.settings.hero_subtitle }}</p>
+    </div>
+  </div>

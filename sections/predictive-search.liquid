@@ -1,0 +1,1054 @@
+{%- liquid
+  # @description Predictive search section with live search suggestions
+  # Displays product, collection, page, and article results as user types
+  # @settings show_products {checkbox} - Show product results
+  # @settings show_collections {checkbox} - Show collection results
+  # @settings products_limit {range} - Maximum product results
+  # @example
+  #   Use as search overlay or embedded search component
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--predictive-search">
+    <span class="editor-label">Predictive Search</span>
+    <span class="editor-info">
+      Live search with suggestions
+    </span>
+  </div>
+{% endif %}
+
+<div
+  class="predictive-search"
+  id="predictive-search-{{ section.id }}"
+  style="
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  data-section-id="{{ section.id }}"
+>
+  <div class="predictive-search__container{% if section.settings.use_page_width %} page-width{% endif %}">
+    {%- if section.settings.show_heading -%}
+      <div class="predictive-search__header" style="text-align: {{ section.settings.text_alignment }};">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="predictive-search__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <p class="predictive-search__description">{{ section.settings.description }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="predictive-search__form-wrapper">
+      <form
+        action="{{ routes.search_url }}"
+        method="get"
+        role="search"
+        class="predictive-search__form"
+      >
+        <div class="predictive-search__input-wrapper">
+          <label for="predictive-search-input-{{ section.id }}" class="visually-hidden">
+            {{ 'general.search.search' | t | default: 'Search' }}
+          </label>
+
+          <span class="predictive-search__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+
+          <input
+            type="search"
+            id="predictive-search-input-{{ section.id }}"
+            name="q"
+            class="predictive-search__input"
+            placeholder="{{ section.settings.placeholder | default: 'Search products...' }}"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-label="{{ 'general.search.search' | t | default: 'Search' }}"
+            aria-controls="predictive-search-results-{{ section.id }}"
+            aria-autocomplete="list"
+            data-predictive-search-input
+          >
+
+          <button
+            type="button"
+            class="predictive-search__clear"
+            aria-label="{{ 'general.search.clear' | t | default: 'Clear search' }}"
+            hidden
+            data-predictive-search-clear
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+
+          {%- if section.settings.show_search_button -%}
+            <button type="submit" class="predictive-search__submit button button--{{ section.settings.button_style }}">
+              {%- if section.settings.button_label != blank -%}
+                {{ section.settings.button_label }}
+              {%- else -%}
+                {{ 'general.search.search' | t | default: 'Search' }}
+              {%- endif -%}
+            </button>
+          {%- endif -%}
+        </div>
+
+        <input type="hidden" name="type" value="{{ section.settings.search_type }}">
+        <input type="hidden" name="options[prefix]" value="last">
+      </form>
+
+      {%- comment -%} Results container {%- endcomment -%}
+      <div
+        id="predictive-search-results-{{ section.id }}"
+        class="predictive-search__results"
+        role="listbox"
+        aria-label="{{ 'general.search.results' | t | default: 'Search results' }}"
+        hidden
+        data-predictive-search-results
+      >
+        <div class="predictive-search__loading" hidden data-predictive-search-loading>
+          <div class="predictive-search__spinner"></div>
+          <span>{{ 'general.search.loading' | t | default: 'Searching...' }}</span>
+        </div>
+
+        <div class="predictive-search__results-content" data-predictive-search-results-content>
+          {%- comment -%} Results will be populated via JavaScript {%- endcomment -%}
+        </div>
+
+        <div class="predictive-search__no-results" hidden data-predictive-search-no-results>
+          <p>{{ 'general.search.no_results' | t | default: 'No results found for' }} "<span data-search-query></span>"</p>
+          <p class="predictive-search__suggestions-text">{{ section.settings.no_results_text | default: 'Try checking your spelling or using different keywords.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    {%- if section.settings.show_popular_searches and section.settings.popular_searches != blank -%}
+      <div class="predictive-search__popular">
+        <span class="predictive-search__popular-label">{{ section.settings.popular_label | default: 'Popular searches:' }}</span>
+        <div class="predictive-search__popular-links">
+          {%- assign popular_terms = section.settings.popular_searches | split: ',' -%}
+          {%- for term in popular_terms -%}
+            {%- assign trimmed_term = term | strip -%}
+            {%- if trimmed_term != blank -%}
+              <a href="{{ routes.search_url }}?q={{ trimmed_term | url_encode }}" class="predictive-search__popular-link">
+                {{ trimmed_term }}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .predictive-search {
+    position: relative;
+  }
+
+  .predictive-search__container {
+    width: 100%;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .predictive-search__header {
+    margin-bottom: 24px;
+  }
+
+  .predictive-search__title {
+    font-family: var(--font-heading-family);
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: var(--font-heading-weight, 600);
+    margin: 0 0 8px;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .predictive-search__description {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    margin: 0;
+  }
+
+  .predictive-search__form-wrapper {
+    position: relative;
+  }
+
+  .predictive-search__input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    background: {{ section.settings.input_background | default: '#ffffff' }};
+    border: {{ section.settings.input_border_width }}px solid {{ section.settings.input_border_color | default: '#ddd' }};
+    border-radius: {{ section.settings.input_border_radius }}px;
+    padding: 4px 4px 4px 16px;
+    transition: all 0.3s ease;
+  }
+
+  .predictive-search__input-wrapper:focus-within {
+    border-color: var(--color-primary, #2c5530);
+    box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.1);
+  }
+
+  .predictive-search__icon {
+    flex-shrink: 0;
+    color: {{ section.settings.text_color | default: '#999' }};
+  }
+
+  .predictive-search__input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    color: var(--color-text, #333);
+    padding: 12px 0;
+    outline: none;
+  }
+
+  .predictive-search__input::placeholder {
+    color: #999;
+  }
+
+  .predictive-search__clear {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+  }
+
+  .predictive-search__clear:hover {
+    color: var(--color-text, #333);
+  }
+
+  .predictive-search__clear[hidden] {
+    display: none;
+  }
+
+  .predictive-search__submit {
+    flex-shrink: 0;
+    padding: 12px 24px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: {{ section.settings.input_border_radius | minus: 2 }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  /* Button styles */
+  .button--primary {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+    border: none;
+  }
+
+  .button--primary:hover {
+    background-color: var(--color-primary-dark, #1e3a21);
+  }
+
+  .button--secondary {
+    background-color: transparent;
+    color: var(--color-primary, #2c5530);
+    border: 2px solid var(--color-primary, #2c5530);
+  }
+
+  .button--secondary:hover {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+  }
+
+  /* Results dropdown */
+  .predictive-search__results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-top: none;
+    border-radius: 0 0 {{ section.settings.input_border_radius }}px {{ section.settings.input_border_radius }}px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .predictive-search__results[hidden] {
+    display: none;
+  }
+
+  .predictive-search__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    color: #666;
+  }
+
+  .predictive-search__loading[hidden] {
+    display: none;
+  }
+
+  .predictive-search__spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e5e5e5;
+    border-top-color: var(--color-primary, #2c5530);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .predictive-search__results-content {
+    padding: 16px 0;
+  }
+
+  .predictive-search__results-section {
+    padding: 0 16px;
+    margin-bottom: 16px;
+  }
+
+  .predictive-search__results-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .predictive-search__results-heading {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .predictive-search__result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    text-decoration: none;
+    color: var(--color-text, #333);
+    border-radius: 6px;
+    transition: background 0.2s ease;
+  }
+
+  .predictive-search__result-item:hover,
+  .predictive-search__result-item:focus {
+    background: #f5f5f5;
+  }
+
+  .predictive-search__result-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #f5f5f5;
+  }
+
+  .predictive-search__result-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .predictive-search__result-title {
+    font-family: var(--font-body-family);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .predictive-search__result-meta {
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .predictive-search__result-price {
+    font-weight: 600;
+    color: var(--color-primary, #2c5530);
+  }
+
+  .predictive-search__view-all {
+    display: block;
+    text-align: center;
+    padding: 16px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary, #2c5530);
+    text-decoration: none;
+    border-top: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+  }
+
+  .predictive-search__view-all:hover {
+    background: #f5f5f5;
+  }
+
+  .predictive-search__no-results {
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .predictive-search__no-results[hidden] {
+    display: none;
+  }
+
+  .predictive-search__no-results p {
+    margin: 0 0 8px;
+    font-family: var(--font-body-family);
+    font-size: 0.95rem;
+    color: var(--color-text, #333);
+  }
+
+  .predictive-search__suggestions-text {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  /* Popular searches */
+  .predictive-search__popular {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    {% if section.settings.text_alignment == 'center' %}
+      justify-content: center;
+    {% endif %}
+  }
+
+  .predictive-search__popular-label {
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    color: {{ section.settings.text_color | default: '#666' }};
+  }
+
+  .predictive-search__popular-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .predictive-search__popular-link {
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    color: var(--color-primary, #2c5530);
+    text-decoration: none;
+    padding: 6px 12px;
+    background: rgba(44, 85, 48, 0.08);
+    border-radius: 20px;
+    transition: all 0.2s ease;
+  }
+
+  .predictive-search__popular-link:hover {
+    background: var(--color-primary, #2c5530);
+    color: white;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .predictive-search__title {
+      font-size: {{ section.settings.heading_size | times: 0.8 | round }}px;
+    }
+
+    .predictive-search__input-wrapper {
+      flex-wrap: wrap;
+    }
+
+    .predictive-search__submit {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .predictive-search__results {
+      max-height: 60vh;
+    }
+  }
+
+  /* Editor mode styles */
+  {% if request.design_mode %}
+    .predictive-search {
+      outline: 2px dashed rgba(44, 85, 48, 0.3);
+      outline-offset: -2px;
+      min-height: 100px;
+    }
+
+    .predictive-search::before {
+      content: 'PREDICTIVE SEARCH';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(44, 85, 48, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .editor-controls--predictive-search {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(44, 85, 48, 0.5);
+    }
+
+    .editor-controls--predictive-search .editor-label {
+      font-weight: 600;
+      color: var(--color-primary, #2c5530);
+      font-size: 12px;
+    }
+
+    .editor-controls--predictive-search .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  {% endif %}
+</style>
+
+<script>
+  (function() {
+    const section = document.getElementById('predictive-search-{{ section.id }}');
+    if (!section) return;
+
+    const input = section.querySelector('[data-predictive-search-input]');
+    const clearButton = section.querySelector('[data-predictive-search-clear]');
+    const resultsContainer = section.querySelector('[data-predictive-search-results]');
+    const resultsContent = section.querySelector('[data-predictive-search-results-content]');
+    const loadingIndicator = section.querySelector('[data-predictive-search-loading]');
+    const noResultsIndicator = section.querySelector('[data-predictive-search-no-results]');
+    const searchQuerySpan = section.querySelector('[data-search-query]');
+
+    let debounceTimer;
+    const debounceDelay = {{ section.settings.debounce_delay | default: 300 }};
+    const minChars = {{ section.settings.min_characters | default: 2 }};
+
+    function debounce(func, wait) {
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(debounceTimer);
+          func(...args);
+        };
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(later, wait);
+      };
+    }
+
+    async function performSearch(query) {
+      if (query.length < minChars) {
+        hideResults();
+        return;
+      }
+
+      showLoading();
+
+      try {
+        const response = await fetch(
+          `${window.Shopify.routes.root}search/suggest.json?q=${encodeURIComponent(query)}&resources[type]={{ section.settings.search_type }}&resources[limit]={{ section.settings.products_limit }}&resources[options][unavailable_products]=last`
+        );
+
+        if (!response.ok) throw new Error('Search failed');
+
+        const data = await response.json();
+        renderResults(data, query);
+      } catch (error) {
+        console.error('Predictive search error:', error);
+        showNoResults(query);
+      }
+    }
+
+    function renderResults(data, query) {
+      const resources = data.resources.results;
+      let hasResults = false;
+      let html = '';
+
+      // Products
+      if (resources.products && resources.products.length > 0) {
+        hasResults = true;
+        html += `
+          <div class="predictive-search__results-section">
+            <h3 class="predictive-search__results-heading">{{ 'general.search.products' | t | default: 'Products' }}</h3>
+        `;
+        resources.products.forEach(product => {
+          const image = product.image ? product.image : product.featured_image?.url;
+          html += `
+            <a href="${product.url}" class="predictive-search__result-item" role="option">
+              ${image ? `<img src="${image}" alt="${product.title}" class="predictive-search__result-image" loading="lazy">` : ''}
+              <div class="predictive-search__result-content">
+                <p class="predictive-search__result-title">${product.title}</p>
+                <span class="predictive-search__result-meta">
+                  <span class="predictive-search__result-price">${Shopify.formatMoney ? Shopify.formatMoney(product.price) : product.price}</span>
+                </span>
+              </div>
+            </a>
+          `;
+        });
+        html += '</div>';
+      }
+
+      // Collections
+      if (resources.collections && resources.collections.length > 0) {
+        hasResults = true;
+        html += `
+          <div class="predictive-search__results-section">
+            <h3 class="predictive-search__results-heading">{{ 'general.search.collections' | t | default: 'Collections' }}</h3>
+        `;
+        resources.collections.forEach(collection => {
+          html += `
+            <a href="${collection.url}" class="predictive-search__result-item" role="option">
+              <div class="predictive-search__result-content">
+                <p class="predictive-search__result-title">${collection.title}</p>
+              </div>
+            </a>
+          `;
+        });
+        html += '</div>';
+      }
+
+      // Pages
+      if (resources.pages && resources.pages.length > 0) {
+        hasResults = true;
+        html += `
+          <div class="predictive-search__results-section">
+            <h3 class="predictive-search__results-heading">{{ 'general.search.pages' | t | default: 'Pages' }}</h3>
+        `;
+        resources.pages.forEach(page => {
+          html += `
+            <a href="${page.url}" class="predictive-search__result-item" role="option">
+              <div class="predictive-search__result-content">
+                <p class="predictive-search__result-title">${page.title}</p>
+              </div>
+            </a>
+          `;
+        });
+        html += '</div>';
+      }
+
+      // Articles
+      if (resources.articles && resources.articles.length > 0) {
+        hasResults = true;
+        html += `
+          <div class="predictive-search__results-section">
+            <h3 class="predictive-search__results-heading">{{ 'general.search.articles' | t | default: 'Articles' }}</h3>
+        `;
+        resources.articles.forEach(article => {
+          html += `
+            <a href="${article.url}" class="predictive-search__result-item" role="option">
+              <div class="predictive-search__result-content">
+                <p class="predictive-search__result-title">${article.title}</p>
+              </div>
+            </a>
+          `;
+        });
+        html += '</div>';
+      }
+
+      if (hasResults) {
+        html += `<a href="${window.Shopify.routes.root}search?q=${encodeURIComponent(query)}" class="predictive-search__view-all">{{ 'general.search.view_all' | t | default: 'View all results' }}</a>`;
+        resultsContent.innerHTML = html;
+        showResults();
+      } else {
+        showNoResults(query);
+      }
+    }
+
+    function showLoading() {
+      resultsContainer.hidden = false;
+      loadingIndicator.hidden = false;
+      noResultsIndicator.hidden = true;
+      resultsContent.innerHTML = '';
+    }
+
+    function showResults() {
+      loadingIndicator.hidden = true;
+      noResultsIndicator.hidden = true;
+    }
+
+    function showNoResults(query) {
+      loadingIndicator.hidden = true;
+      noResultsIndicator.hidden = false;
+      resultsContent.innerHTML = '';
+      if (searchQuerySpan) searchQuerySpan.textContent = query;
+      resultsContainer.hidden = false;
+    }
+
+    function hideResults() {
+      resultsContainer.hidden = true;
+      loadingIndicator.hidden = true;
+      noResultsIndicator.hidden = true;
+      resultsContent.innerHTML = '';
+    }
+
+    // Event listeners
+    input.addEventListener('input', debounce(function(e) {
+      const query = e.target.value.trim();
+      clearButton.hidden = query.length === 0;
+
+      if (query.length >= minChars) {
+        performSearch(query);
+      } else {
+        hideResults();
+      }
+    }, debounceDelay));
+
+    clearButton.addEventListener('click', function() {
+      input.value = '';
+      clearButton.hidden = true;
+      hideResults();
+      input.focus();
+    });
+
+    // Close on click outside
+    document.addEventListener('click', function(e) {
+      if (!section.contains(e.target)) {
+        hideResults();
+      }
+    });
+
+    // Keyboard navigation
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        hideResults();
+        input.blur();
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "🔍 Predictive Search",
+  "tag": "section",
+  "class": "section-predictive-search",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Add a live search with instant suggestions. Results appear as users type, showing products, collections, pages, and articles."
+    },
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show Section Header",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Search Our Store"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "🔍 Search Settings"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder Text",
+      "default": "Search products..."
+    },
+    {
+      "type": "select",
+      "id": "search_type",
+      "label": "Search Types",
+      "options": [
+        { "value": "product", "label": "Products only" },
+        { "value": "product,collection", "label": "Products & Collections" },
+        { "value": "product,collection,page", "label": "Products, Collections & Pages" },
+        { "value": "product,collection,page,article", "label": "All (Products, Collections, Pages, Articles)" }
+      ],
+      "default": "product,collection,page,article"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Results Limit",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "min_characters",
+      "label": "Minimum Characters",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 2,
+      "info": "Minimum characters before search starts"
+    },
+    {
+      "type": "range",
+      "id": "debounce_delay",
+      "label": "Search Delay",
+      "min": 100,
+      "max": 500,
+      "step": 50,
+      "unit": "ms",
+      "default": 300,
+      "info": "Delay before searching after typing stops"
+    },
+    {
+      "type": "text",
+      "id": "no_results_text",
+      "label": "No Results Message",
+      "default": "Try checking your spelling or using different keywords."
+    },
+    {
+      "type": "header",
+      "content": "🔘 Search Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search_button",
+      "label": "Show Search Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Search"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "⭐ Popular Searches"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_popular_searches",
+      "label": "Show Popular Searches",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "popular_label",
+      "label": "Label",
+      "default": "Popular searches:"
+    },
+    {
+      "type": "text",
+      "id": "popular_searches",
+      "label": "Popular Search Terms",
+      "info": "Comma-separated list of popular search terms",
+      "default": "new arrivals, best sellers, sale"
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_page_width",
+      "label": "Constrain to Page Width",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Width",
+      "min": 400,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Input Styling"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input Border Color",
+      "default": "#dddddd"
+    },
+    {
+      "type": "range",
+      "id": "input_border_width",
+      "label": "Input Border Width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Input Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "header",
+      "content": "📏 Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Predictive Search - Standard",
+      "settings": {
+        "show_heading": false,
+        "show_search_button": true,
+        "show_popular_searches": false,
+        "search_type": "product,collection,page,article",
+        "products_limit": 6
+      }
+    },
+    {
+      "name": "Predictive Search - With Header",
+      "settings": {
+        "show_heading": true,
+        "heading": "What are you looking for?",
+        "description": "Search our entire catalog of products.",
+        "show_search_button": true,
+        "show_popular_searches": true,
+        "popular_searches": "organic, matcha, wellness, gifts",
+        "background_color": "#f9f9f9",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    }
+  ]
+}
+{% endschema %}

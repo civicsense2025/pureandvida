@@ -1,0 +1,636 @@
+{%- liquid
+  # @description Pickup availability section for store pickup information
+  # Displays available pickup locations for the current product variant
+  # Must be used on product pages to access product.selected_or_first_available_variant
+  # @example
+  #   Add to product pages to show local pickup options and store availability
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--pickup">
+    <span class="editor-label">Pickup Availability</span>
+    <span class="editor-info">
+      Shows store pickup options
+    </span>
+  </div>
+{% endif %}
+
+{%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+
+<div
+  class="pickup-availability"
+  id="pickup-availability-{{ section.id }}"
+  style="
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  data-product-url="{{ product.url }}"
+  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+>
+  {%- if pick_up_availabilities.size > 0 -%}
+    <div class="pickup-availability__container{% if section.settings.use_page_width %} page-width{% endif %}">
+      {%- if section.settings.show_header -%}
+        <div class="pickup-availability__header">
+          {%- if section.settings.heading != blank -%}
+            <h3 class="pickup-availability__heading">{{ section.settings.heading }}</h3>
+          {%- endif -%}
+          {%- if section.settings.description != blank -%}
+            <p class="pickup-availability__description">{{ section.settings.description }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="pickup-availability__list">
+        {%- for availability in pick_up_availabilities -%}
+          <div class="pickup-availability__item{% if availability.available %} pickup-availability__item--available{% else %} pickup-availability__item--unavailable{% endif %}">
+            <div class="pickup-availability__icon">
+              {%- if availability.available -%}
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-available">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              {%- else -%}
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-unavailable">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+              {%- endif -%}
+            </div>
+
+            <div class="pickup-availability__content">
+              <div class="pickup-availability__status">
+                {%- if availability.available -%}
+                  <span class="pickup-availability__status-text pickup-availability__status-text--available">
+                    {{ 'products.product.pickup_available_at_html' | t: location_name: availability.location.name | default: 'Pickup available' }}
+                  </span>
+                {%- else -%}
+                  <span class="pickup-availability__status-text pickup-availability__status-text--unavailable">
+                    {{ 'products.product.pickup_unavailable_at_html' | t: location_name: availability.location.name | default: 'Unavailable for pickup' }}
+                  </span>
+                {%- endif -%}
+              </div>
+
+              <div class="pickup-availability__location">
+                <strong class="pickup-availability__location-name">{{ availability.location.name }}</strong>
+
+                {%- if section.settings.show_address -%}
+                  <address class="pickup-availability__address">
+                    {%- if availability.location.address.address1 != blank -%}
+                      {{ availability.location.address.address1 }}<br>
+                    {%- endif -%}
+                    {%- if availability.location.address.address2 != blank -%}
+                      {{ availability.location.address.address2 }}<br>
+                    {%- endif -%}
+                    {{ availability.location.address.city }}, {{ availability.location.address.province_code }} {{ availability.location.address.zip }}
+                  </address>
+                {%- endif -%}
+
+                {%- if section.settings.show_pickup_time and availability.pick_up_time != blank -%}
+                  <p class="pickup-availability__time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    {{ availability.pick_up_time }}
+                  </p>
+                {%- endif -%}
+              </div>
+
+              {%- if section.settings.show_view_store_button -%}
+                <button
+                  type="button"
+                  class="pickup-availability__toggle"
+                  aria-expanded="false"
+                  aria-controls="store-details-{{ availability.location.id }}-{{ section.id }}"
+                >
+                  {{ 'products.product.view_store_info' | t | default: 'View store information' }}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+
+                <div
+                  id="store-details-{{ availability.location.id }}-{{ section.id }}"
+                  class="pickup-availability__details"
+                  hidden
+                >
+                  {%- if availability.location.address -%}
+                    <div class="pickup-availability__detail-section">
+                      <h4>{{ 'products.product.pickup_address' | t | default: 'Address' }}</h4>
+                      <address>
+                        {{ availability.location.address | format_address }}
+                      </address>
+                    </div>
+                  {%- endif -%}
+
+                  {%- comment -%} Store hours would go here if available {%- endcomment -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- elsif request.design_mode -%}
+    <div class="pickup-availability__container{% if section.settings.use_page_width %} page-width{% endif %}">
+      <div class="pickup-availability__placeholder">
+        <div class="pickup-availability__placeholder-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </div>
+        <h3 class="pickup-availability__placeholder-title">Pickup Availability</h3>
+        <p class="pickup-availability__placeholder-text">
+          This section displays store pickup availability for products.<br>
+          It will show pickup locations when viewing a product with available inventory.
+        </p>
+        <div class="pickup-availability__placeholder-note">
+          <strong>Note:</strong> Enable "Local pickup" in Shopify Admin &gt; Settings &gt; Shipping and delivery
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .pickup-availability {
+    position: relative;
+  }
+
+  .pickup-availability__container {
+    width: 100%;
+  }
+
+  .pickup-availability__header {
+    margin-bottom: 24px;
+  }
+
+  .pickup-availability__heading {
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .pickup-availability__description {
+    font-family: var(--font-body-family);
+    font-size: 0.95rem;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    margin: 0;
+  }
+
+  .pickup-availability__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pickup-availability__item {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: {{ section.settings.card_background | default: '#f9f9f9' }};
+    border-radius: {{ section.settings.border_radius }}px;
+    border: 1px solid {{ section.settings.border_color | default: '#e5e5e5' }};
+  }
+
+  .pickup-availability__item--available {
+    border-left: 4px solid {{ section.settings.available_color | default: '#2c5530' }};
+  }
+
+  .pickup-availability__item--unavailable {
+    border-left: 4px solid {{ section.settings.unavailable_color | default: '#dc3545' }};
+    opacity: 0.7;
+  }
+
+  .pickup-availability__icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pickup-availability__icon .icon-available {
+    color: {{ section.settings.available_color | default: '#2c5530' }};
+  }
+
+  .pickup-availability__icon .icon-unavailable {
+    color: {{ section.settings.unavailable_color | default: '#dc3545' }};
+  }
+
+  .pickup-availability__content {
+    flex: 1;
+  }
+
+  .pickup-availability__status {
+    margin-bottom: 8px;
+  }
+
+  .pickup-availability__status-text {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .pickup-availability__status-text--available {
+    color: {{ section.settings.available_color | default: '#2c5530' }};
+  }
+
+  .pickup-availability__status-text--unavailable {
+    color: {{ section.settings.unavailable_color | default: '#dc3545' }};
+  }
+
+  .pickup-availability__location {
+    margin-bottom: 12px;
+  }
+
+  .pickup-availability__location-name {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    font-weight: 600;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .pickup-availability__address {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-style: normal;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    line-height: 1.5;
+  }
+
+  .pickup-availability__time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    margin: 8px 0 0;
+  }
+
+  .pickup-availability__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-primary, #2c5530);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .pickup-availability__toggle:hover {
+    opacity: 0.8;
+  }
+
+  .pickup-availability__toggle[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+
+  .pickup-availability__toggle svg {
+    transition: transform 0.2s ease;
+  }
+
+  .pickup-availability__details {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid {{ section.settings.border_color | default: '#e5e5e5' }};
+  }
+
+  .pickup-availability__details[hidden] {
+    display: none;
+  }
+
+  .pickup-availability__detail-section h4 {
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .pickup-availability__detail-section address {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-style: normal;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    line-height: 1.6;
+  }
+
+  /* Placeholder for theme editor */
+  .pickup-availability__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(44, 85, 48, 0.05), rgba(44, 85, 48, 0.02));
+    border: 2px dashed rgba(44, 85, 48, 0.3);
+    border-radius: 8px;
+  }
+
+  .pickup-availability__placeholder-icon {
+    margin-bottom: 16px;
+    color: var(--color-primary, #2c5530);
+    opacity: 0.6;
+  }
+
+  .pickup-availability__placeholder-title {
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--color-text, #333);
+  }
+
+  .pickup-availability__placeholder-text {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    color: var(--color-text, #666);
+    margin: 0 0 16px;
+    line-height: 1.6;
+  }
+
+  .pickup-availability__placeholder-note {
+    font-family: var(--font-body-family);
+    font-size: 0.8rem;
+    background: rgba(44, 85, 48, 0.08);
+    padding: 12px 16px;
+    border-radius: 4px;
+    color: var(--color-text, #666);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .pickup-availability__item {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pickup-availability__icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  /* Editor mode styles */
+  {% if request.design_mode %}
+    .pickup-availability {
+      outline: 2px dashed rgba(44, 85, 48, 0.3);
+      outline-offset: -2px;
+      min-height: 100px;
+    }
+
+    .pickup-availability::before {
+      content: 'PICKUP AVAILABILITY';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(44, 85, 48, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .editor-controls--pickup {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(44, 85, 48, 0.5);
+    }
+
+    .editor-controls--pickup .editor-label {
+      font-weight: 600;
+      color: var(--color-primary, #2c5530);
+      font-size: 12px;
+    }
+
+    .editor-controls--pickup .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  {% endif %}
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.pickup-availability__toggle');
+
+    toggleButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        const targetId = button.getAttribute('aria-controls');
+        const target = document.getElementById(targetId);
+
+        button.setAttribute('aria-expanded', !expanded);
+
+        if (target) {
+          target.hidden = expanded;
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "📍 Pickup Availability",
+  "tag": "section",
+  "class": "section-pickup-availability",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Displays local pickup availability for products. Use on product pages to show which store locations have the product in stock for pickup."
+    },
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show Section Header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pickup Availability"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description",
+      "default": "Check if this product is available for pickup at a store near you."
+    },
+    {
+      "type": "header",
+      "content": "📍 Location Display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_address",
+      "label": "Show Store Address",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pickup_time",
+      "label": "Show Pickup Time",
+      "default": true,
+      "info": "Displays estimated pickup time if available"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_store_button",
+      "label": "Show View Store Button",
+      "default": true,
+      "info": "Expandable section with full store details"
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_page_width",
+      "label": "Constrain to Page Width",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Card Corner Radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card Background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "color",
+      "id": "available_color",
+      "label": "Available Status Color",
+      "default": "#2c5530"
+    },
+    {
+      "type": "color",
+      "id": "unavailable_color",
+      "label": "Unavailable Status Color",
+      "default": "#dc3545"
+    },
+    {
+      "type": "header",
+      "content": "📏 Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pickup Availability - Standard",
+      "settings": {
+        "show_header": true,
+        "heading": "Pickup Availability",
+        "show_address": true,
+        "show_pickup_time": true,
+        "show_view_store_button": true
+      }
+    },
+    {
+      "name": "Pickup Availability - Compact",
+      "settings": {
+        "show_header": false,
+        "show_address": false,
+        "show_pickup_time": true,
+        "show_view_store_button": false,
+        "padding_top": 12,
+        "padding_bottom": 12,
+        "card_background": "#ffffff",
+        "border_radius": 4
+      }
+    }
+  ]
+}
+{% endschema %}

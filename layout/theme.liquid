@@ -278,6 +278,108 @@
         --product-gallery-gap: {{ settings.product_gallery_gap | default: 16 }}px;
         --product-info-gap: {{ settings.product_info_gap | default: 24 }}px;
         --product-badge-size: {{ settings.product_badge_size | default: 12 }}px;
+
+        /* Color Schemes */
+        --scheme-default-bg: {{ settings.scheme_default_background | default: '#ffffff' }};
+        --scheme-default-text: {{ settings.scheme_default_text | default: '#333333' }};
+        --scheme-default-heading: {{ settings.scheme_default_heading | default: '#000000' }};
+        --scheme-default-accent: {{ settings.scheme_default_accent | default: '#3B82F6' }};
+
+        --scheme-inverse-bg: {{ settings.scheme_inverse_background | default: '#1a1a1a' }};
+        --scheme-inverse-text: {{ settings.scheme_inverse_text | default: '#e5e5e5' }};
+        --scheme-inverse-heading: {{ settings.scheme_inverse_heading | default: '#ffffff' }};
+        --scheme-inverse-accent: {{ settings.scheme_inverse_accent | default: '#60A5FA' }};
+
+        --scheme-accent-bg: {{ settings.scheme_accent_background | default: '#3B82F6' }};
+        --scheme-accent-text: {{ settings.scheme_accent_text | default: '#ffffff' }};
+        --scheme-accent-heading: {{ settings.scheme_accent_heading | default: '#ffffff' }};
+        --scheme-accent-accent: {{ settings.scheme_accent_accent | default: '#BFDBFE' }};
+
+        --scheme-subtle-bg: {{ settings.scheme_subtle_background | default: '#f5f5f5' }};
+        --scheme-subtle-text: {{ settings.scheme_subtle_text | default: '#333333' }};
+        --scheme-subtle-heading: {{ settings.scheme_subtle_heading | default: '#111111' }};
+        --scheme-subtle-accent: {{ settings.scheme_subtle_accent | default: '#2563EB' }};
+
+        /* Button System */
+        --button-primary-bg: {{ settings.button_primary_bg | default: '#000000' }};
+        --button-primary-text: {{ settings.button_primary_text | default: '#ffffff' }};
+        --button-primary-hover: {{ settings.button_primary_hover | default: '#333333' }};
+        --button-secondary-bg: {{ settings.button_secondary_bg | default: 'transparent' }};
+        --button-secondary-text: {{ settings.button_secondary_text | default: '#000000' }};
+        --button-secondary-border: {{ settings.button_secondary_border | default: '#000000' }};
+        {%- liquid
+          case settings.button_border_radius
+            when 'none'
+              assign button_radius = '0px'
+            when 'sm'
+              assign button_radius = '4px'
+            when 'md'
+              assign button_radius = '8px'
+            when 'lg'
+              assign button_radius = '12px'
+            when 'full'
+              assign button_radius = '9999px'
+            else
+              assign button_radius = '4px'
+          endcase
+        -%}
+        --button-radius: {{ button_radius }};
+        --button-padding-y: {{ settings.button_padding_vertical | default: 12 }}px;
+        --button-padding-x: {{ settings.button_padding_horizontal | default: 24 }}px;
+        --button-font-weight: {{ settings.button_font_weight | default: '500' }};
+        --button-text-transform: {% if settings.button_uppercase %}uppercase{% else %}none{% endif %};
+
+        /* Form Elements */
+        --input-bg: {{ settings.input_background | default: '#ffffff' }};
+        --input-text: {{ settings.input_text | default: '#000000' }};
+        --input-placeholder: {{ settings.input_placeholder | default: '#999999' }};
+        --input-border: {{ settings.input_border | default: '#cccccc' }};
+        --input-focus-border: {{ settings.input_focus_border | default: '#000000' }};
+        {%- liquid
+          case settings.input_border_radius
+            when 'none'
+              assign input_radius = '0px'
+            when 'sm'
+              assign input_radius = '4px'
+            when 'md'
+              assign input_radius = '8px'
+            else
+              assign input_radius = '4px'
+          endcase
+        -%}
+        --input-radius: {{ input_radius }};
+        --input-height: {{ settings.input_height | default: 44 }}px;
+        --form-error-color: {{ settings.form_error_color | default: '#dc2626' }};
+        --form-success-color: {{ settings.form_success_color | default: '#059669' }};
+
+        /* Links */
+        --link-color: {{ settings.link_color | default: settings.color_primary }};
+        --link-hover-color: {{ settings.link_hover_color | default: settings.color_accent }};
+        {%- liquid
+          case settings.link_underline
+            when 'none'
+              assign link_decoration = 'none'
+              assign link_hover_decoration = 'none'
+            when 'always'
+              assign link_decoration = 'underline'
+              assign link_hover_decoration = 'underline'
+            when 'hover'
+              assign link_decoration = 'none'
+              assign link_hover_decoration = 'underline'
+            else
+              assign link_decoration = 'none'
+              assign link_hover_decoration = 'underline'
+          endcase
+        -%}
+        --link-decoration: {{ link_decoration }};
+        --link-hover-decoration: {{ link_hover_decoration }};
+
+        /* Header Defaults */
+        --header-bg: {{ settings.header_background | default: '#ffffff' }};
+        --header-text: {{ settings.header_text_color | default: settings.color_text }};
+        --header-text-hover: {{ settings.header_text_hover_color | default: settings.color_accent }};
+        --header-height-desktop: {{ settings.header_height_desktop | default: 80 }}px;
+        --header-height-mobile: {{ settings.header_height_mobile | default: 60 }}px;
       }
 
       *,

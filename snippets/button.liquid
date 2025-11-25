@@ -1,0 +1,154 @@
+{%- comment -%}
+  Button Snippet
+  --------------
+  Renders a styled button with multiple variants.
+
+  Parameters:
+    - text: Button text (required)
+    - url: Button link URL (optional - renders as <a> if provided, otherwise <button>)
+    - style: 'primary', 'secondary', or 'link' (default: 'primary')
+    - size: 'small', 'medium', or 'large' (default: 'medium')
+    - full_width: true/false (default: false)
+    - new_tab: true/false - open link in new tab (default: false)
+    - type: Button type for form buttons - 'submit', 'button', 'reset' (default: 'button')
+    - disabled: true/false (default: false)
+    - class: Additional CSS classes
+    - id: Optional ID attribute
+    - aria_label: Optional aria-label for accessibility
+    - icon: Optional icon HTML to prepend
+
+  Usage:
+    {% render 'button', text: 'Add to Cart', style: 'primary' %}
+    {% render 'button', text: 'Learn More', url: '/about', style: 'secondary' %}
+    {% render 'button', text: 'View Details', url: product.url, style: 'link', new_tab: true %}
+{%- endcomment -%}
+
+{%- liquid
+  assign button_style = style | default: 'primary'
+  assign button_size = size | default: 'medium'
+  assign is_link = false
+  if url != blank
+    assign is_link = true
+  endif
+-%}
+
+{%- capture button_classes -%}
+  button button--{{ button_style }} button--{{ button_size }}{% if full_width %} button--full-width{% endif %}{% if disabled %} button--disabled{% endif %}{% if class %} {{ class }}{% endif %}
+{%- endcapture -%}
+
+{%- capture button_content -%}
+  {%- if icon -%}<span class="button__icon">{{ icon }}</span>{%- endif -%}
+  <span class="button__text">{{ text }}</span>
+{%- endcapture -%}
+
+{%- if is_link -%}
+  <a
+    href="{{ url }}"
+    class="{{ button_classes | strip }}"
+    {% if id %}id="{{ id }}"{% endif %}
+    {% if new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+    {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}
+    {% if disabled %}aria-disabled="true" tabindex="-1"{% endif %}
+  >
+    {{- button_content -}}
+  </a>
+{%- else -%}
+  <button
+    type="{{ type | default: 'button' }}"
+    class="{{ button_classes | strip }}"
+    {% if id %}id="{{ id }}"{% endif %}
+    {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}
+    {% if disabled %}disabled{% endif %}
+  >
+    {{- button_content -}}
+  </button>
+{%- endif -%}
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs, 4px);
+    padding: var(--button-padding-y) var(--button-padding-x);
+    font-family: var(--font-body-family);
+    font-size: var(--font-body-size);
+    font-weight: var(--button-font-weight);
+    text-transform: var(--button-text-transform);
+    text-decoration: none;
+    border-radius: var(--button-radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .button--primary {
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
+    border-color: var(--button-primary-bg);
+  }
+
+  .button--primary:hover,
+  .button--primary:focus {
+    background-color: var(--button-primary-hover);
+    border-color: var(--button-primary-hover);
+  }
+
+  .button--secondary {
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+    border-color: var(--button-secondary-border);
+  }
+
+  .button--secondary:hover,
+  .button--secondary:focus {
+    background-color: var(--button-secondary-border);
+    color: var(--button-primary-text);
+  }
+
+  .button--link {
+    background: transparent;
+    color: var(--link-color);
+    border: none;
+    padding: 0;
+    text-decoration: var(--link-decoration);
+  }
+
+  .button--link:hover,
+  .button--link:focus {
+    color: var(--link-hover-color);
+    text-decoration: var(--link-hover-decoration);
+  }
+
+  .button--small {
+    padding: calc(var(--button-padding-y) * 0.75) calc(var(--button-padding-x) * 0.75);
+    font-size: calc(var(--font-body-size) * 0.875);
+  }
+
+  .button--large {
+    padding: calc(var(--button-padding-y) * 1.25) calc(var(--button-padding-x) * 1.25);
+    font-size: calc(var(--font-body-size) * 1.125);
+  }
+
+  .button--full-width {
+    width: 100%;
+  }
+
+  .button--disabled,
+  .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .button__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .button__icon svg {
+    width: 1em;
+    height: 1em;
+  }
+</style>

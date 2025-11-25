@@ -1,0 +1,76 @@
+# Theme Check Configuration for Pure Vida Theme
+# https://github.com/Shopify/theme-check
+
+# Disable matching translations check (not all locales are provided)
+MatchingTranslations:
+  enabled: false
+
+# Disable template length check (some sections are intentionally comprehensive)
+TemplateLength:
+  enabled: false
+
+# Asset size limits
+AssetSizeCSS:
+  enabled: true
+  threshold_in_bytes: 100000
+
+AssetSizeJavaScript:
+  enabled: true
+  threshold_in_bytes: 100000
+
+# Liquid best practices
+LiquidTag:
+  enabled: true
+
+# Deprecated tags check
+DeprecatedTag:
+  enabled: true
+
+# Missing template check
+MissingTemplate:
+  enabled: true
+
+# Required layout theme.liquid
+RequiredLayoutThemeObject:
+  enabled: true
+
+# Valid HTML attributes
+ValidHTMLTranslation:
+  enabled: true
+
+# Unused assigns (helps keep code clean)
+UnusedAssign:
+  enabled: true
+
+# Parser blocking scripts
+ParserBlockingJavaScript:
+  enabled: true
+
+# Remote assets (should use asset_url)
+RemoteAsset:
+  enabled: true
+
+# Missing required objects in templates
+MissingRequiredTemplateFiles:
+  enabled: true
+
+# Nested snippet check
+NestedSnippet:
+  enabled: true
+  max_nesting_level: 3
+
+# Content for header required
+ContentForHeaderModification:
+  enabled: true
+
+# Img tag with lazy loading
+ImgLazyLoading:
+  enabled: true
+
+# Space inside braces
+SpaceInsideBraces:
+  enabled: true
+
+# Translation key exists
+TranslationKeyExists:
+  enabled: false

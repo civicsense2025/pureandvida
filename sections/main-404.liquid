@@ -1,53 +1,310 @@
-{% liquid
+{%- liquid
   # @description 404 error page section
   # Displays custom 404 page content with search and navigation options
-%}
+  # Fully customizable via Theme Editor
+-%}
 
-<div class="page-width" style="padding: 60px 20px; text-align: center;">
-  {%- if section.settings.heading != blank -%}
-    <h1 class="h1" style="margin-bottom: 20px;">{{ section.settings.heading | escape }}</h1>
-  {%- else -%}
-    <h1 class="h1" style="margin-bottom: 20px;">404</h1>
-  {%- endif -%}
-  
-  {%- if section.settings.subheading != blank -%}
-    <h2 class="h2" style="margin-bottom: 20px;">{{ section.settings.subheading | escape }}</h2>
-  {%- endif -%}
-  
-  {%- if section.settings.description != blank -%}
-    <p style="margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">{{ section.settings.description | escape }}</p>
-  {%- endif -%}
-  
-  {%- if section.settings.show_search -%}
-    <div style="max-width: 500px; margin: 0 auto 30px;">
-      <form action="{{ routes.search_url }}" method="get" role="search">
-        <input type="search" name="q" placeholder="Search..." style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-        <button type="submit" style="margin-top: 10px; padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Search</button>
-      </form>
+<section class="error-404-section" id="section-{{ section.id }}">
+  <div class="error-404-container">
+    {%- if section.settings.show_icon -%}
+      <div class="error-404-icon" aria-hidden="true">
+        {{ section.settings.icon_emoji | default: '🔍' }}
+      </div>
+    {%- endif -%}
+
+    <h1 class="error-404-heading">
+      {{ section.settings.heading | default: '404' }}
+    </h1>
+
+    {%- if section.settings.subheading != blank -%}
+      <h2 class="error-404-subheading">{{ section.settings.subheading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <p class="error-404-description">{{ section.settings.description }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.show_search -%}
+      <div class="error-404-search">
+        <form action="{{ routes.search_url }}" method="get" role="search" class="error-404-search-form">
+          <label for="search-input-{{ section.id }}" class="visually-hidden">
+            {{ 'general.search.search' | t | default: 'Search' }}
+          </label>
+          <input
+            type="search"
+            name="q"
+            id="search-input-{{ section.id }}"
+            placeholder="{{ section.settings.search_placeholder | default: 'Search our store...' }}"
+            class="error-404-search-input"
+            autocomplete="off"
+          >
+          <button type="submit" class="error-404-search-button">
+            {{ section.settings.search_button_text | default: 'Search' }}
+          </button>
+        </form>
+      </div>
+    {%- endif -%}
+
+    <div class="error-404-buttons">
+      {%- if section.settings.show_home_button -%}
+        <a href="{{ routes.root_url }}" class="error-404-button error-404-button--primary">
+          {{ section.settings.home_button_text | default: 'Go Home' }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.show_collections_link -%}
+        <a href="{{ routes.collections_url }}" class="error-404-button error-404-button--secondary">
+          {{ section.settings.collections_button_text | default: 'Browse Collections' }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.show_products_link -%}
+        <a href="{{ routes.all_products_collection_url }}" class="error-404-button error-404-button--secondary">
+          {{ section.settings.products_button_text | default: 'View All Products' }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.custom_button_text != blank and section.settings.custom_button_link != blank -%}
+        <a href="{{ section.settings.custom_button_link }}" class="error-404-button error-404-button--secondary">
+          {{ section.settings.custom_button_text | escape }}
+        </a>
+      {%- endif -%}
     </div>
-  {%- endif -%}
-  
-  <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-    {%- if section.settings.show_collections_link -%}
-      <a href="{{ routes.collections_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">Browse Collections</a>
-    {%- endif -%}
-    
-    {%- if section.settings.show_products_link -%}
-      <a href="{{ routes.all_products_collection_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">View All Products</a>
-    {%- endif -%}
-    
-    {%- if section.settings.button_text != blank and section.settings.button_link != blank -%}
-      <a href="{{ section.settings.button_link }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">{{ section.settings.button_text | escape }}</a>
+
+    {%- if section.settings.show_suggested_links -%}
+      <div class="error-404-suggestions">
+        <p class="error-404-suggestions-title">{{ section.settings.suggestions_title | default: 'Popular pages:' }}</p>
+        <nav class="error-404-suggestions-nav" aria-label="Suggested pages">
+          {%- if section.settings.suggested_menu != blank -%}
+            {%- for link in section.settings.suggested_menu.links -%}
+              <a href="{{ link.url }}" class="error-404-suggestion-link">{{ link.title }}</a>
+            {%- endfor -%}
+          {%- endif -%}
+        </nav>
+      </div>
     {%- endif -%}
   </div>
-</div>
+</section>
+
+<style>
+  #section-{{ section.id }} {
+    min-height: calc(100vh - var(--header-height-desktop, 80px) - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-3xl, 64px) var(--page-width-padding, 20px);
+    background-color: {{ section.settings.background_color | default: 'var(--color-background)' }};
+    text-align: center;
+  }
+
+  #section-{{ section.id }} .error-404-container {
+    width: 100%;
+    max-width: {{ section.settings.max_width | default: 600 }}px;
+  }
+
+  #section-{{ section.id }} .error-404-icon {
+    font-size: clamp(3rem, 10vw, 5rem);
+    margin-bottom: var(--spacing-md, 16px);
+    line-height: 1;
+  }
+
+  #section-{{ section.id }} .error-404-heading {
+    font-size: clamp(3rem, 12vw, 8rem);
+    font-weight: 800;
+    margin: 0 0 var(--spacing-sm, 8px);
+    color: {{ section.settings.heading_color | default: 'var(--color-text)' }};
+    font-family: var(--font-heading-family);
+    line-height: 1;
+  }
+
+  #section-{{ section.id }} .error-404-subheading {
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-md, 16px);
+    color: {{ section.settings.subheading_color | default: 'var(--color-text)' }};
+  }
+
+  #section-{{ section.id }} .error-404-description {
+    font-size: clamp(0.9rem, 2.5vw, 1.125rem);
+    color: {{ section.settings.text_color | default: 'var(--color-text-secondary)' }};
+    margin: 0 0 var(--spacing-xl, 32px);
+    line-height: 1.6;
+  }
+
+  #section-{{ section.id }} .error-404-search {
+    margin-bottom: var(--spacing-xl, 32px);
+  }
+
+  #section-{{ section.id }} .error-404-search-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm, 8px);
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  @media screen and (min-width: 480px) {
+    #section-{{ section.id }} .error-404-search-form {
+      flex-direction: row;
+    }
+  }
+
+  #section-{{ section.id }} .error-404-search-input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1px solid {{ section.settings.input_border_color | default: 'var(--color-border, #ccc)' }};
+    border-radius: {{ section.settings.button_radius | default: 8 }}px;
+    font-size: 1rem;
+    min-height: 48px;
+    background: {{ section.settings.input_bg_color | default: '#fff' }};
+  }
+
+  #section-{{ section.id }} .error-404-search-input:focus {
+    outline: none;
+    border-color: {{ section.settings.button_color | default: 'var(--color-primary)' }};
+    box-shadow: 0 0 0 3px {{ section.settings.button_color | default: 'var(--color-primary)' }}20;
+  }
+
+  #section-{{ section.id }} .error-404-search-button {
+    padding: 14px 24px;
+    background: {{ section.settings.button_color | default: 'var(--color-primary, #000)' }};
+    color: {{ section.settings.button_text_color | default: '#fff' }};
+    border: none;
+    border-radius: {{ section.settings.button_radius | default: 8 }}px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 48px;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+
+  #section-{{ section.id }} .error-404-search-button:hover {
+    opacity: 0.9;
+  }
+
+  #section-{{ section.id }} .error-404-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm, 8px);
+    justify-content: center;
+    margin-bottom: var(--spacing-xl, 32px);
+  }
+
+  #section-{{ section.id }} .error-404-button {
+    padding: 14px 28px;
+    border-radius: {{ section.settings.button_radius | default: 8 }}px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  #section-{{ section.id }} .error-404-button:hover {
+    opacity: 0.9;
+  }
+
+  #section-{{ section.id }} .error-404-button:active {
+    transform: scale(0.98);
+  }
+
+  #section-{{ section.id }} .error-404-button--primary {
+    background: {{ section.settings.button_color | default: 'var(--color-primary, #000)' }};
+    color: {{ section.settings.button_text_color | default: '#fff' }};
+  }
+
+  #section-{{ section.id }} .error-404-button--secondary {
+    background: transparent;
+    color: {{ section.settings.button_color | default: 'var(--color-primary, #000)' }};
+    border: 2px solid {{ section.settings.button_color | default: 'var(--color-primary, #000)' }};
+  }
+
+  #section-{{ section.id }} .error-404-suggestions {
+    padding-top: var(--spacing-lg, 24px);
+    border-top: 1px solid var(--color-border, rgba(0,0,0,0.1));
+  }
+
+  #section-{{ section.id }} .error-404-suggestions-title {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-sm, 8px);
+  }
+
+  #section-{{ section.id }} .error-404-suggestions-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs, 4px) var(--spacing-md, 16px);
+    justify-content: center;
+  }
+
+  #section-{{ section.id }} .error-404-suggestion-link {
+    font-size: 0.9rem;
+    color: {{ section.settings.button_color | default: 'var(--color-primary)' }};
+    text-decoration: none;
+    padding: 4px 0;
+  }
+
+  #section-{{ section.id }} .error-404-suggestion-link:hover {
+    text-decoration: underline;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 479px) {
+    #section-{{ section.id }} {
+      padding: var(--spacing-2xl, 48px) var(--spacing-md, 16px);
+    }
+
+    #section-{{ section.id }} .error-404-button {
+      width: 100%;
+      padding: 12px 20px;
+    }
+
+    #section-{{ section.id }} .error-404-search-input,
+    #section-{{ section.id }} .error-404-search-button {
+      width: 100%;
+    }
+  }
+</style>
 
 {% schema %}
 {
-  "name": "404",
+  "name": "🚫 404 Page",
   "tag": "section",
-  "class": "section",
+  "class": "section section--404",
   "settings": [
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show Icon",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "icon_emoji",
+      "label": "Icon Emoji",
+      "default": "🔍",
+      "info": "Emoji displayed above the heading"
+    },
     {
       "type": "text",
       "id": "heading",
@@ -57,13 +314,18 @@
     {
       "type": "text",
       "id": "subheading",
-      "label": "Subheading"
+      "label": "Subheading",
+      "default": "Page Not Found"
     },
     {
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "The page you're looking for doesn't exist."
+      "default": "The page you're looking for doesn't exist or has been moved."
+    },
+    {
+      "type": "header",
+      "content": "🔍 Search"
     },
     {
       "type": "checkbox",
@@ -72,33 +334,170 @@
       "default": true
     },
     {
-      "type": "checkbox",
-      "id": "show_collections_link",
-      "label": "Show Collections Link",
-      "default": true
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search Placeholder",
+      "default": "Search our store..."
+    },
+    {
+      "type": "text",
+      "id": "search_button_text",
+      "label": "Search Button Text",
+      "default": "Search"
+    },
+    {
+      "type": "header",
+      "content": "🔗 Buttons"
     },
     {
       "type": "checkbox",
-      "id": "show_products_link",
-      "label": "Show Products Link",
+      "id": "show_home_button",
+      "label": "Show Home Button",
       "default": true
     },
     {
       "type": "text",
-      "id": "button_text",
-      "label": "Button Text"
+      "id": "home_button_text",
+      "label": "Home Button Text",
+      "default": "Go Home"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collections_link",
+      "label": "Show Collections Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "collections_button_text",
+      "label": "Collections Button Text",
+      "default": "Browse Collections"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_products_link",
+      "label": "Show Products Button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "products_button_text",
+      "label": "Products Button Text",
+      "default": "View All Products"
+    },
+    {
+      "type": "text",
+      "id": "custom_button_text",
+      "label": "Custom Button Text",
+      "info": "Optional additional button"
     },
     {
       "type": "url",
-      "id": "button_link",
-      "label": "Button Link"
+      "id": "custom_button_link",
+      "label": "Custom Button Link"
+    },
+    {
+      "type": "header",
+      "content": "📌 Suggested Links"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_suggested_links",
+      "label": "Show Suggested Links",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "suggestions_title",
+      "label": "Suggestions Title",
+      "default": "Popular pages:"
+    },
+    {
+      "type": "link_list",
+      "id": "suggested_menu",
+      "label": "Suggested Links Menu",
+      "info": "Select a menu to display as suggested links"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "color",
+      "id": "input_bg_color",
+      "label": "Input Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input Border Color"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Width",
+      "min": 400,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
     }
   ],
   "presets": [
     {
-      "name": "404"
+      "name": "404 Page",
+      "settings": {
+        "heading": "404",
+        "subheading": "Page Not Found",
+        "description": "The page you're looking for doesn't exist or has been moved."
+      }
     }
   ]
 }
 {% endschema %}
-

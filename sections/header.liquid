@@ -61,7 +61,20 @@
       </div>
     {%- endif -%}
 
-    <nav class="header__inline-menu">
+    {%- comment -%} Mobile Hamburger Menu Button {%- endcomment -%}
+    <button class="header__hamburger"
+            type="button"
+            aria-label="{{ 'accessibility.navigation' | t | default: 'Open menu' }}"
+            aria-expanded="false"
+            aria-controls="mobile-menu-{{ section.id }}"
+            onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'false' ? 'true' : 'false'); document.getElementById('mobile-menu-{{ section.id }}').classList.toggle('is-open'); document.body.classList.toggle('mobile-menu-open');">
+      <span class="hamburger__line"></span>
+      <span class="hamburger__line"></span>
+      <span class="hamburger__line"></span>
+    </button>
+
+    {%- comment -%} Desktop Navigation {%- endcomment -%}
+    <nav class="header__inline-menu header__inline-menu--desktop">
       {%- if section.settings.menu != blank -%}
         <ul class="list-menu list-menu--inline" role="list">
           {%- for link in section.settings.menu.links -%}
@@ -73,22 +86,55 @@
       {%- else -%}
         <ul class="list-menu list-menu--inline" role="list">
           <li>
-            <a href="{{ routes.collections_url }}" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>MycoMatcha</a>
+            <a href="{{ routes.collections_url }}" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.collections' | t | default: 'Shop' }}</a>
           </li>
           <li>
-            <a href="{{ routes.root_url }}/pages/order-tracking" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>Order Tracking</a>
-          </li>
-          <li>
-            <a href="{{ routes.root_url }}/pages/about" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>About</a>
+            <a href="{{ routes.root_url }}/pages/about" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.about' | t | default: 'About' }}</a>
           </li>
         </ul>
       {%- endif -%}
-      
+
       {%- if section.settings.show_cart and section.settings.cart_button_text != blank -%}
         <a href="{{ routes.cart_url }}" class="header__cta-button"{% if cart_button_style != blank %} style="{{ cart_button_style }}"{% endif %}>
           {{ section.settings.cart_button_text }}
+          {%- if section.settings.show_cart_count and cart.item_count > 0 -%}
+            <span class="header__cart-count">({{ cart.item_count }})</span>
+          {%- endif -%}
         </a>
       {%- endif -%}
+    </nav>
+
+    {%- comment -%} Mobile Navigation Drawer {%- endcomment -%}
+    <nav id="mobile-menu-{{ section.id }}" class="header__mobile-menu" aria-label="{{ 'accessibility.navigation' | t | default: 'Mobile navigation' }}">
+      <div class="mobile-menu__inner">
+        {%- if section.settings.menu != blank -%}
+          <ul class="mobile-menu__list" role="list">
+            {%- for link in section.settings.menu.links -%}
+              <li>
+                <a href="{{ link.url }}" class="mobile-menu__link"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ link.title | escape }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <ul class="mobile-menu__list" role="list">
+            <li>
+              <a href="{{ routes.collections_url }}" class="mobile-menu__link"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.collections' | t | default: 'Shop' }}</a>
+            </li>
+            <li>
+              <a href="{{ routes.root_url }}/pages/about" class="mobile-menu__link"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.about' | t | default: 'About' }}</a>
+            </li>
+          </ul>
+        {%- endif -%}
+
+        {%- if section.settings.show_cart -%}
+          <a href="{{ routes.cart_url }}" class="mobile-menu__cart-button"{% if cart_button_style != blank %} style="{{ cart_button_style }}"{% endif %}>
+            {{ section.settings.cart_button_text | default: 'Cart' }}
+            {%- if cart.item_count > 0 -%}
+              <span>({{ cart.item_count }})</span>
+            {%- endif -%}
+          </a>
+        {%- endif -%}
+      </div>
     </nav>
   </div>
 </header>
@@ -106,7 +152,46 @@
     flex-shrink: 0;
   }
 
-  .header__inline-menu {
+  /* Hamburger Button - Hidden on Desktop */
+  .header__hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  .hamburger__line {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: {{ section.settings.menu_text_color | default: 'var(--color-text)' }};
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Hamburger Animation when Open */
+  .header__hamburger[aria-expanded="true"] .hamburger__line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .header__hamburger[aria-expanded="true"] .hamburger__line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .header__hamburger[aria-expanded="true"] .hamburger__line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Desktop Navigation */
+  .header__inline-menu--desktop {
     display: flex;
     align-items: center;
     gap: 2rem;
@@ -144,10 +229,102 @@
     font-weight: 500;
     white-space: nowrap;
     transition: opacity 0.2s ease;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 
   .header__cta-button:hover {
     opacity: 0.9;
+  }
+
+  .header__cart-count {
+    margin-left: 0.25rem;
+  }
+
+  /* Mobile Menu Drawer - Hidden by Default */
+  .header__mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(300px, 80vw);
+    height: 100vh;
+    background: {{ section.settings.background_color | default: 'var(--color-background)' }};
+    z-index: 1000;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .header__mobile-menu.is-open {
+    right: 0;
+  }
+
+  .mobile-menu__inner {
+    display: flex;
+    flex-direction: column;
+    padding: calc({{ section.settings.header_height }}px + 20px) 24px 24px;
+    gap: 8px;
+  }
+
+  .mobile-menu__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mobile-menu__link {
+    display: block;
+    padding: 16px 0;
+    text-decoration: none;
+    font-size: clamp(1rem, 4vw, 1.25rem);
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-border, rgba(0,0,0,0.1));
+    transition: opacity 0.2s ease;
+    min-height: 44px;
+  }
+
+  .mobile-menu__link:hover {
+    opacity: 0.7;
+  }
+
+  .mobile-menu__cart-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px;
+    margin-top: 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    min-height: 52px;
+    text-align: center;
+    transition: opacity 0.2s ease;
+  }
+
+  .mobile-menu__cart-button:hover {
+    opacity: 0.9;
+  }
+
+  /* Body Scroll Lock when Mobile Menu Open */
+  body.mobile-menu-open {
+    overflow: hidden;
+  }
+
+  /* Mobile Menu Overlay */
+  body.mobile-menu-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
   }
 
   {%- if section.settings.sticky_header -%}
@@ -158,38 +335,32 @@
     }
   {%- endif -%}
 
-  /* Mobile Responsive */
-  @media screen and (max-width: 767px) {
-    .header {
-      flex-wrap: wrap;
-      gap: 1rem;
+  /* Mobile Breakpoint - Show Hamburger, Hide Desktop Menu */
+  @media screen and (max-width: {{ section.settings.mobile_breakpoint | default: 768 }}px) {
+    .header__hamburger {
+      display: flex;
     }
 
-    .header__inline-menu {
-      width: 100%;
-      justify-content: space-between;
-      order: 2;
-    }
-
-    .header__inline-menu .list-menu {
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .header__menu-item {
-      font-size: 0.9rem;
-    }
-
-    .header__cta-button {
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
+    .header__inline-menu--desktop {
+      display: none;
     }
   }
 
   /* Tablet Responsive */
-  @media screen and (min-width: 768px) and (max-width: 1023px) {
+  @media screen and (min-width: 769px) and (max-width: 1023px) {
     .header__inline-menu .list-menu {
       gap: 1.5rem;
+    }
+
+    .header__menu-item {
+      font-size: 0.95rem;
+    }
+  }
+
+  /* Desktop - Hide Mobile Menu */
+  @media screen and (min-width: {{ section.settings.mobile_breakpoint | default: 768 | plus: 1 }}px) {
+    .header__mobile-menu {
+      display: none;
     }
   }
 
@@ -424,6 +595,39 @@
       "id": "background_color",
       "label": "Background Color",
       "info": "Background color for the header (ignored if transparent header is enabled)"
+    },
+    {
+      "type": "header",
+      "content": "📱 Mobile Settings"
+    },
+    {
+      "type": "range",
+      "id": "mobile_breakpoint",
+      "label": "Mobile Breakpoint",
+      "min": 480,
+      "max": 1024,
+      "step": 64,
+      "unit": "px",
+      "default": 768,
+      "info": "Screen width below which hamburger menu appears (480-1024px)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart_count",
+      "label": "Show Cart Item Count",
+      "default": true,
+      "info": "Display number of items in cart on the button"
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_height",
+      "label": "Mobile Header Height",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60,
+      "info": "Header height on mobile devices (50-100px)"
     }
   ],
   "presets": [

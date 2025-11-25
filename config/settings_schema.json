@@ -757,5 +757,419 @@
         "default": true
       }
     ]
+  },
+  {
+    "name": "Color Schemes",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Default Scheme"
+      },
+      {
+        "type": "paragraph",
+        "content": "The default color scheme used across sections. Sections can override these with their own color scheme selector."
+      },
+      {
+        "type": "color",
+        "id": "scheme_default_background",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "scheme_default_text",
+        "label": "Text",
+        "default": "#333333"
+      },
+      {
+        "type": "color",
+        "id": "scheme_default_heading",
+        "label": "Heading",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "scheme_default_accent",
+        "label": "Accent",
+        "default": "#3B82F6"
+      },
+      {
+        "type": "header",
+        "content": "Inverse Scheme (Dark)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Dark mode colors for sections that need to stand out."
+      },
+      {
+        "type": "color",
+        "id": "scheme_inverse_background",
+        "label": "Background",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "color",
+        "id": "scheme_inverse_text",
+        "label": "Text",
+        "default": "#e5e5e5"
+      },
+      {
+        "type": "color",
+        "id": "scheme_inverse_heading",
+        "label": "Heading",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "scheme_inverse_accent",
+        "label": "Accent",
+        "default": "#60A5FA"
+      },
+      {
+        "type": "header",
+        "content": "Accent Scheme (Brand)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Brand highlight colors for featured sections."
+      },
+      {
+        "type": "color",
+        "id": "scheme_accent_background",
+        "label": "Background",
+        "default": "#3B82F6"
+      },
+      {
+        "type": "color",
+        "id": "scheme_accent_text",
+        "label": "Text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "scheme_accent_heading",
+        "label": "Heading",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "scheme_accent_accent",
+        "label": "Accent",
+        "default": "#BFDBFE"
+      },
+      {
+        "type": "header",
+        "content": "Subtle Scheme (Muted)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Soft, muted colors for background sections."
+      },
+      {
+        "type": "color",
+        "id": "scheme_subtle_background",
+        "label": "Background",
+        "default": "#f5f5f5"
+      },
+      {
+        "type": "color",
+        "id": "scheme_subtle_text",
+        "label": "Text",
+        "default": "#333333"
+      },
+      {
+        "type": "color",
+        "id": "scheme_subtle_heading",
+        "label": "Heading",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "scheme_subtle_accent",
+        "label": "Accent",
+        "default": "#2563EB"
+      }
+    ]
+  },
+  {
+    "name": "Button Styles",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Primary Button"
+      },
+      {
+        "type": "paragraph",
+        "content": "Main call-to-action buttons (Add to Cart, Submit, etc.)"
+      },
+      {
+        "type": "color",
+        "id": "button_primary_bg",
+        "label": "Background Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "button_primary_text",
+        "label": "Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "button_primary_hover",
+        "label": "Hover Background",
+        "default": "#333333"
+      },
+      {
+        "type": "header",
+        "content": "Secondary Button (Outline)"
+      },
+      {
+        "type": "color",
+        "id": "button_secondary_bg",
+        "label": "Background Color",
+        "default": "transparent"
+      },
+      {
+        "type": "color",
+        "id": "button_secondary_text",
+        "label": "Text Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "button_secondary_border",
+        "label": "Border Color",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Button Shape"
+      },
+      {
+        "type": "select",
+        "id": "button_border_radius",
+        "label": "Corner Radius",
+        "options": [
+          { "value": "none", "label": "Square (0px)" },
+          { "value": "sm", "label": "Slightly Rounded (4px)" },
+          { "value": "md", "label": "Rounded (8px)" },
+          { "value": "lg", "label": "More Rounded (12px)" },
+          { "value": "full", "label": "Pill Shape" }
+        ],
+        "default": "sm"
+      },
+      {
+        "type": "range",
+        "id": "button_padding_vertical",
+        "label": "Vertical Padding",
+        "min": 8,
+        "max": 24,
+        "step": 2,
+        "unit": "px",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "button_padding_horizontal",
+        "label": "Horizontal Padding",
+        "min": 16,
+        "max": 48,
+        "step": 4,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "select",
+        "id": "button_font_weight",
+        "label": "Font Weight",
+        "options": [
+          { "value": "400", "label": "Normal" },
+          { "value": "500", "label": "Medium" },
+          { "value": "600", "label": "Semi-Bold" },
+          { "value": "700", "label": "Bold" }
+        ],
+        "default": "500"
+      },
+      {
+        "type": "checkbox",
+        "id": "button_uppercase",
+        "label": "Uppercase Text",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Form Elements",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Input Fields"
+      },
+      {
+        "type": "color",
+        "id": "input_background",
+        "label": "Background Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "input_text",
+        "label": "Text Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "input_placeholder",
+        "label": "Placeholder Color",
+        "default": "#999999"
+      },
+      {
+        "type": "color",
+        "id": "input_border",
+        "label": "Border Color",
+        "default": "#cccccc"
+      },
+      {
+        "type": "color",
+        "id": "input_focus_border",
+        "label": "Focus Border Color",
+        "default": "#000000"
+      },
+      {
+        "type": "select",
+        "id": "input_border_radius",
+        "label": "Corner Radius",
+        "options": [
+          { "value": "none", "label": "Square (0px)" },
+          { "value": "sm", "label": "Slightly Rounded (4px)" },
+          { "value": "md", "label": "Rounded (8px)" }
+        ],
+        "default": "sm"
+      },
+      {
+        "type": "range",
+        "id": "input_height",
+        "label": "Input Height",
+        "min": 40,
+        "max": 60,
+        "step": 2,
+        "unit": "px",
+        "default": 44,
+        "info": "Minimum 44px recommended for touch targets"
+      },
+      {
+        "type": "header",
+        "content": "Error & Success States"
+      },
+      {
+        "type": "color",
+        "id": "form_error_color",
+        "label": "Error Color",
+        "default": "#dc2626"
+      },
+      {
+        "type": "color",
+        "id": "form_success_color",
+        "label": "Success Color",
+        "default": "#059669"
+      }
+    ]
+  },
+  {
+    "name": "Links",
+    "settings": [
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "Link Color",
+        "info": "Leave blank to use primary color"
+      },
+      {
+        "type": "color",
+        "id": "link_hover_color",
+        "label": "Link Hover Color",
+        "info": "Leave blank to use accent color"
+      },
+      {
+        "type": "select",
+        "id": "link_underline",
+        "label": "Link Underline Style",
+        "options": [
+          { "value": "none", "label": "No Underline" },
+          { "value": "always", "label": "Always Underlined" },
+          { "value": "hover", "label": "Underline on Hover" }
+        ],
+        "default": "hover"
+      }
+    ]
+  },
+  {
+    "name": "Header Defaults",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Default header settings. These can be overridden in the header section."
+      },
+      {
+        "type": "select",
+        "id": "header_layout",
+        "label": "Header Layout",
+        "options": [
+          { "value": "logo-left", "label": "Logo Left, Nav Right" },
+          { "value": "logo-center", "label": "Logo Center, Nav Split" },
+          { "value": "nav-left", "label": "Nav Left, Logo Center" }
+        ],
+        "default": "logo-left"
+      },
+      {
+        "type": "range",
+        "id": "header_height_desktop",
+        "label": "Height (Desktop)",
+        "min": 60,
+        "max": 150,
+        "step": 5,
+        "unit": "px",
+        "default": 80
+      },
+      {
+        "type": "range",
+        "id": "header_height_mobile",
+        "label": "Height (Mobile)",
+        "min": 50,
+        "max": 100,
+        "step": 5,
+        "unit": "px",
+        "default": 60
+      },
+      {
+        "type": "color",
+        "id": "header_background",
+        "label": "Background Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "header_text_color",
+        "label": "Text Color"
+      },
+      {
+        "type": "color",
+        "id": "header_text_hover_color",
+        "label": "Link Hover Color"
+      },
+      {
+        "type": "checkbox",
+        "id": "header_sticky_enabled",
+        "label": "Enable Sticky Header",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "header_transparent_homepage",
+        "label": "Transparent Header on Homepage",
+        "default": false
+      }
+    ]
   }
 ]

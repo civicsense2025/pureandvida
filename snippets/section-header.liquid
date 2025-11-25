@@ -1,0 +1,90 @@
+{%- comment -%}
+  Section Header Snippet
+  ----------------------
+  Renders a reusable section header with heading and optional description.
+  Supports multiple heading sizes and alignments.
+
+  Parameters:
+    - heading: The heading text
+    - description: Optional description text (supports HTML/richtext)
+    - heading_size: 'h1', 'h2', or 'h3' (default: 'h2')
+    - heading_alignment: 'left', 'center', or 'right' (default: 'center')
+    - heading_class: Additional CSS classes for the heading
+    - description_class: Additional CSS classes for the description
+    - container_class: Additional CSS classes for the container
+
+  Usage:
+    {% render 'section-header',
+      heading: section.settings.heading,
+      description: section.settings.description,
+      heading_size: section.settings.heading_size,
+      heading_alignment: section.settings.heading_alignment
+    %}
+{%- endcomment -%}
+
+{%- if heading != blank or description != blank -%}
+  {%- liquid
+    assign size = heading_size | default: 'h2'
+    assign align = heading_alignment | default: 'center'
+  -%}
+
+  <div class="section-header section-header--{{ align }}{% if container_class %} {{ container_class }}{% endif %}">
+    {%- if heading != blank -%}
+      <{{ size }} class="section-header__heading{% if heading_class %} {{ heading_class }}{% endif %}">
+        {{- heading | escape -}}
+      </{{ size }}>
+    {%- endif -%}
+
+    {%- if description != blank -%}
+      <div class="section-header__description{% if description_class %} {{ description_class }}{% endif %}">
+        {{ description }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <style>
+    .section-header {
+      margin-bottom: var(--spacing-lg, 24px);
+    }
+
+    .section-header--left {
+      text-align: left;
+    }
+
+    .section-header--center {
+      text-align: center;
+    }
+
+    .section-header--right {
+      text-align: right;
+    }
+
+    .section-header__heading {
+      margin: 0 0 var(--spacing-sm, 8px) 0;
+      color: var(--section-heading, var(--color-text));
+      font-family: var(--font-heading-family);
+      font-weight: var(--font-heading-weight);
+      line-height: var(--font-heading-line-height, 1.2);
+    }
+
+    .section-header__heading:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-header__description {
+      color: var(--section-text, var(--color-text-secondary));
+      font-size: var(--font-body-size, 16px);
+      line-height: var(--font-body-line-height, 1.6);
+      max-width: 65ch;
+    }
+
+    .section-header--center .section-header__description {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section-header--right .section-header__description {
+      margin-left: auto;
+    }
+  </style>
+{%- endif -%}

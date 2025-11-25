@@ -1,0 +1,61 @@
+{%- comment -%}
+  Color Scheme Snippet
+  --------------------
+  Outputs CSS custom properties for section-specific color schemes.
+  Sections can use a color scheme selector and optionally override with custom colors.
+
+  Parameters:
+    - scheme: The selected color scheme ('default', 'inverse', 'accent', 'subtle', 'custom')
+    - custom_bg: Custom background color (used when scheme is 'custom')
+    - custom_text: Custom text color (used when scheme is 'custom')
+    - custom_heading: Custom heading color (used when scheme is 'custom')
+    - custom_accent: Custom accent color (used when scheme is 'custom')
+
+  Usage in section:
+    <style>
+      #{{ section.id }} {
+        {% render 'color-scheme',
+          scheme: section.settings.color_scheme,
+          custom_bg: section.settings.custom_background,
+          custom_text: section.settings.custom_text,
+          custom_heading: section.settings.custom_heading,
+          custom_accent: section.settings.custom_accent
+        %}
+      }
+    </style>
+{%- endcomment -%}
+
+{%- case scheme -%}
+  {%- when 'default' -%}
+    --section-bg: var(--scheme-default-bg);
+    --section-text: var(--scheme-default-text);
+    --section-heading: var(--scheme-default-heading);
+    --section-accent: var(--scheme-default-accent);
+  {%- when 'inverse' -%}
+    --section-bg: var(--scheme-inverse-bg);
+    --section-text: var(--scheme-inverse-text);
+    --section-heading: var(--scheme-inverse-heading);
+    --section-accent: var(--scheme-inverse-accent);
+  {%- when 'accent' -%}
+    --section-bg: var(--scheme-accent-bg);
+    --section-text: var(--scheme-accent-text);
+    --section-heading: var(--scheme-accent-heading);
+    --section-accent: var(--scheme-accent-accent);
+  {%- when 'subtle' -%}
+    --section-bg: var(--scheme-subtle-bg);
+    --section-text: var(--scheme-subtle-text);
+    --section-heading: var(--scheme-subtle-heading);
+    --section-accent: var(--scheme-subtle-accent);
+  {%- when 'custom' -%}
+    --section-bg: {{ custom_bg | default: 'var(--scheme-default-bg)' }};
+    --section-text: {{ custom_text | default: 'var(--scheme-default-text)' }};
+    --section-heading: {{ custom_heading | default: 'var(--scheme-default-heading)' }};
+    --section-accent: {{ custom_accent | default: 'var(--scheme-default-accent)' }};
+  {%- else -%}
+    --section-bg: var(--scheme-default-bg);
+    --section-text: var(--scheme-default-text);
+    --section-heading: var(--scheme-default-heading);
+    --section-accent: var(--scheme-default-accent);
+{%- endcase -%}
+background-color: var(--section-bg);
+color: var(--section-text);

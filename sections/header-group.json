@@ -1,0 +1,22 @@
+{
+  "name": "Header Group",
+  "type": "header",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_text": "Pure + Vida",
+        "show_plus": true,
+        "logo_width": 200,
+        "logo_height": 50,
+        "logo_text_size": 24,
+        "sticky_header": false,
+        "transparent_header": false,
+        "show_cart": true,
+        "cart_button_text": "Cart",
+        "header_height": 80
+      }
+    }
+  },
+  "order": ["header"]
+}

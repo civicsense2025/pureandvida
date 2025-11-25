@@ -1,0 +1,35 @@
+{%- comment -%}
+  Container Width Snippet
+  -----------------------
+  Outputs CSS for container width based on section settings.
+
+  Parameters:
+    - width: 'narrow', 'medium', 'wide', or 'full' (default: 'wide')
+
+  Usage in section style block:
+    <style>
+      #{{ section.id }} .section-content {
+        {% render 'container-width', width: section.settings.container_width %}
+      }
+    </style>
+{%- endcomment -%}
+
+{%- liquid
+  case width
+    when 'narrow'
+      assign max_width = '800px'
+    when 'medium'
+      assign max_width = '1000px'
+    when 'wide'
+      assign max_width = 'var(--page-width, 1440px)'
+    when 'full'
+      assign max_width = '100%'
+    else
+      assign max_width = 'var(--page-width, 1440px)'
+  endcase
+-%}
+max-width: {{ max_width }};
+margin-left: auto;
+margin-right: auto;
+padding-left: var(--page-width-padding);
+padding-right: var(--page-width-padding);

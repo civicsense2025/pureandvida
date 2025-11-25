@@ -1,79 +1,748 @@
-{% liquid
-  # @description Main cart section
-  # Displays shopping cart with items, quantities, and checkout button
-%}
+{%- comment -%}
+  Main Cart Section
+  -----------------
+  Fully customizable shopping cart with multiple layouts, color schemes,
+  and optional blocks for upsells, trust badges, promo codes, and shipping progress.
 
-<div class="page-width" style="padding: 40px 20px;">
-  <h1 class="h1" style="margin-bottom: 30px;">{{ 'cart.general.title' | t }}</h1>
-  
-  {%- if cart.item_count > 0 -%}
-    <form action="{{ routes.cart_url }}" method="post" novalidate>
-      <div class="cart-items">
-        {%- for item in cart.items -%}
-          <div class="cart-item" style="display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid #eee;">
-            <div class="cart-item-image">
-              <img src="{{ item.image | image_url: width: 150 }}" alt="{{ item.title | escape }}" style="width: 100px; height: 100px; object-fit: cover;">
-            </div>
-            <div class="cart-item-details" style="flex: 1;">
-              <h3 style="margin-bottom: 10px;"><a href="{{ item.url }}">{{ item.product.title | escape }}</a></h3>
-              {%- if item.variant.title != 'Default Title' -%}
-                <p style="margin-bottom: 10px; color: #666;">{{ item.variant.title }}</p>
+  Enhanced: 2025-11-25
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme = section.settings.color_scheme | default: 'default'
+  assign layout = section.settings.layout | default: 'standard'
+-%}
+
+{%- render 'visibility-classes',
+  show_on_mobile: section.settings.show_on_mobile,
+  show_on_desktop: section.settings.show_on_desktop,
+  section_id: section.id
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    {% render 'color-scheme',
+      scheme: color_scheme,
+      custom_bg: section.settings.custom_background,
+      custom_text: section.settings.custom_text,
+      custom_heading: section.settings.custom_heading,
+      custom_accent: section.settings.custom_accent
+    %}
+    {% render 'section-spacing',
+      padding_top: section.settings.padding_top,
+      padding_bottom: section.settings.padding_bottom
+    %}
+  }
+
+  #{{ section.id }} .cart-container {
+    {% render 'container-width', width: section.settings.container_width %}
+  }
+
+  #{{ section.id }} .cart-heading {
+    font-size: {{ section.settings.heading_size | default: 'h1' | replace: 'h1', '2.5rem' | replace: 'h2', '2rem' | replace: 'h3', '1.75rem' }};
+    color: var(--section-heading);
+    text-align: {{ section.settings.heading_alignment | default: 'left' }};
+    margin-bottom: var(--spacing-lg);
+  }
+
+  #{{ section.id }} .cart-layout--two-column {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: var(--spacing-xl);
+  }
+
+  @media screen and (max-width: 999px) {
+    #{{ section.id }} .cart-layout--two-column {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  #{{ section.id }} .cart-items {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #{{ section.id }} .cart-item {
+    display: grid;
+    grid-template-columns: {{ section.settings.thumbnail_size | default: 100 }}px 1fr auto;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--input-border);
+  }
+
+  #{{ section.id }} .cart-item:last-child {
+    border-bottom: none;
+  }
+
+  #{{ section.id }} .cart-item__image {
+    width: {{ section.settings.thumbnail_size | default: 100 }}px;
+    height: {{ section.settings.thumbnail_size | default: 100 }}px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+
+  #{{ section.id }} .cart-item__title {
+    font-size: {{ section.settings.item_title_size | default: '1rem' }};
+    font-weight: 500;
+    color: var(--section-heading);
+    text-decoration: none;
+    margin-bottom: var(--spacing-xs);
+    display: block;
+  }
+
+  #{{ section.id }} .cart-item__title:hover {
+    color: var(--section-accent);
+  }
+
+  #{{ section.id }} .cart-item__variant {
+    font-size: 0.875rem;
+    color: var(--section-text);
+    opacity: 0.7;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  #{{ section.id }} .cart-item__quantity {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  #{{ section.id }} .cart-item__quantity-input {
+    width: 60px;
+    height: var(--input-height);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: center;
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-radius);
+    background: var(--input-bg);
+    color: var(--input-text);
+  }
+
+  #{{ section.id }} .cart-item__price {
+    font-size: {{ section.settings.price_size | default: '1rem' }};
+    font-weight: 600;
+    color: var(--section-heading);
+  }
+
+  #{{ section.id }} .cart-item__remove {
+    font-size: 0.875rem;
+    color: var(--section-text);
+    opacity: 0.6;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  #{{ section.id }} .cart-item__remove:hover {
+    opacity: 1;
+    color: var(--form-error-color);
+  }
+
+  #{{ section.id }} .cart-sidebar {
+    background: var(--scheme-subtle-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    height: fit-content;
+    {%- if section.settings.sidebar_sticky -%}
+      position: sticky;
+      top: calc(var(--header-height-desktop) + var(--spacing-md));
+    {%- endif -%}
+  }
+
+  #{{ section.id }} .cart-footer {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 2px solid var(--section-heading);
+  }
+
+  #{{ section.id }} .cart-totals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  #{{ section.id }} .cart-totals__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #{{ section.id }} .cart-totals__label {
+    color: var(--section-text);
+  }
+
+  #{{ section.id }} .cart-totals__value {
+    font-weight: 600;
+    color: var(--section-heading);
+  }
+
+  #{{ section.id }} .cart-totals__subtotal {
+    font-size: 1.25rem;
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--input-border);
+  }
+
+  #{{ section.id }} .cart-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  #{{ section.id }} .cart-note {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  #{{ section.id }} .cart-note__label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+    color: var(--section-heading);
+  }
+
+  #{{ section.id }} .cart-note__textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-radius);
+    background: var(--input-bg);
+    color: var(--input-text);
+    font-family: var(--font-body-family);
+    resize: vertical;
+  }
+
+  #{{ section.id }} .cart-empty {
+    text-align: center;
+    padding: var(--spacing-3xl) var(--spacing-lg);
+  }
+
+  #{{ section.id }} .cart-empty__image {
+    max-width: 200px;
+    margin: 0 auto var(--spacing-lg);
+  }
+
+  #{{ section.id }} .cart-empty__heading {
+    font-size: 1.5rem;
+    color: var(--section-heading);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  #{{ section.id }} .cart-empty__text {
+    color: var(--section-text);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  /* Blocks */
+  #{{ section.id }} .cart-block {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--input-border);
+  }
+
+  #{{ section.id }} .shipping-bar {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  #{{ section.id }} .shipping-bar__text {
+    font-size: 0.875rem;
+    color: var(--section-text);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  #{{ section.id }} .shipping-bar__progress {
+    height: 8px;
+    background: var(--input-border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  #{{ section.id }} .shipping-bar__fill {
+    height: 100%;
+    background: var(--form-success-color);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-base);
+  }
+
+  #{{ section.id }} .trust-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+  }
+
+  #{{ section.id }} .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.875rem;
+    color: var(--section-text);
+  }
+
+  #{{ section.id }} .trust-badge svg {
+    width: 20px;
+    height: 20px;
+    color: var(--section-accent);
+  }
+
+  #{{ section.id }} .promo-code {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  #{{ section.id }} .promo-code__input {
+    flex: 1;
+    height: var(--input-height);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-radius);
+    background: var(--input-bg);
+    color: var(--input-text);
+  }
+</style>
+
+<div id="{{ section.id }}" class="cart-section">
+  <div class="cart-container">
+    {%- if section.settings.heading != blank -%}
+      <h1 class="cart-heading">{{ section.settings.heading }}</h1>
+    {%- else -%}
+      <h1 class="cart-heading">{{ 'cart.general.title' | t }}</h1>
+    {%- endif -%}
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" novalidate>
+        <div class="cart-layout{% if layout == 'two-column' %} cart-layout--two-column{% endif %}">
+          {%- comment -%} Cart Items {%- endcomment -%}
+          <div class="cart-items-wrapper">
+            {%- comment -%} Shipping Bar Block {%- endcomment -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'shipping_bar' -%}
+                {%- liquid
+                  assign threshold = block.settings.threshold | times: 100
+                  assign remaining = threshold | minus: cart.total_price
+                  assign progress = cart.total_price | times: 100 | divided_by: threshold
+                  if progress > 100
+                    assign progress = 100
+                  endif
+                -%}
+                <div class="shipping-bar" {{ block.shopify_attributes }}>
+                  {%- if remaining > 0 -%}
+                    <p class="shipping-bar__text">
+                      {{ block.settings.message_below | replace: '[amount]', remaining | money }}
+                    </p>
+                  {%- else -%}
+                    <p class="shipping-bar__text" style="color: var(--form-success-color);">
+                      {{ block.settings.message_reached }}
+                    </p>
+                  {%- endif -%}
+                  <div class="shipping-bar__progress">
+                    <div class="shipping-bar__fill" style="width: {{ progress }}%;"></div>
+                  </div>
+                </div>
               {%- endif -%}
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" style="width: 60px; padding: 5px;">
-                  <span style="margin-left: 10px;">x {{ item.final_price | money }}</span>
+            {%- endfor -%}
+
+            <div class="cart-items">
+              {%- for item in cart.items -%}
+                <div class="cart-item">
+                  {%- if section.settings.show_thumbnails -%}
+                    <div class="cart-item__image-wrapper">
+                      {%- if section.settings.link_thumbnails -%}
+                        <a href="{{ item.url }}">
+                      {%- endif -%}
+                        <img
+                          class="cart-item__image"
+                          src="{{ item.image | image_url: width: 200 }}"
+                          alt="{{ item.title | escape }}"
+                          loading="lazy"
+                        >
+                      {%- if section.settings.link_thumbnails -%}
+                        </a>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+
+                  <div class="cart-item__details">
+                    <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title | escape }}</a>
+
+                    {%- if item.variant.title != 'Default Title' -%}
+                      <p class="cart-item__variant">{{ item.variant.title }}</p>
+                    {%- endif -%}
+
+                    {%- if section.settings.show_vendor and item.vendor -%}
+                      <p class="cart-item__variant">{{ item.vendor }}</p>
+                    {%- endif -%}
+
+                    <div class="cart-item__quantity">
+                      <input
+                        type="number"
+                        class="cart-item__quantity-input"
+                        name="updates[]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        aria-label="{{ 'cart.label.quantity' | t }}"
+                      >
+                      <span>× {{ item.final_price | money }}</span>
+                    </div>
+                  </div>
+
+                  <div class="cart-item__actions">
+                    <span class="cart-item__price">{{ item.final_line_price | money }}</span>
+                    <a
+                      href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0"
+                      class="cart-item__remove"
+                      aria-label="{{ 'cart.label.remove' | t: product: item.title }}"
+                    >
+                      {{ section.settings.remove_text | default: 'Remove' }}
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <strong>{{ item.final_line_price | money }}</strong>
-                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+
+          {%- comment -%} Cart Sidebar/Footer {%- endcomment -%}
+          <div class="{% if layout == 'two-column' %}cart-sidebar{% else %}cart-footer{% endif %}">
+            {%- comment -%} Cart Note {%- endcomment -%}
+            {%- if section.settings.show_cart_note -%}
+              <div class="cart-note">
+                <label class="cart-note__label" for="cart-note">{{ section.settings.cart_note_label | default: 'Order Notes' }}</label>
+                <textarea
+                  class="cart-note__textarea"
+                  id="cart-note"
+                  name="note"
+                  placeholder="{{ section.settings.cart_note_placeholder }}"
+                >{{ cart.note }}</textarea>
               </div>
+            {%- endif -%}
+
+            {%- comment -%} Promo Code Block {%- endcomment -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'promo_code' -%}
+                <div class="cart-block" {{ block.shopify_attributes }}>
+                  <label class="cart-note__label">{{ block.settings.label | default: 'Promo Code' }}</label>
+                  <div class="promo-code">
+                    <input
+                      type="text"
+                      class="promo-code__input"
+                      placeholder="{{ block.settings.placeholder | default: 'Enter code' }}"
+                      name="discount"
+                    >
+                    {% render 'button', text: block.settings.button_text | default: 'Apply', style: 'secondary', type: 'button' %}
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- comment -%} Cart Totals {%- endcomment -%}
+            <div class="cart-totals">
+              {%- if section.settings.show_item_count -%}
+                <div class="cart-totals__row">
+                  <span class="cart-totals__label">{{ 'cart.label.items' | t }}</span>
+                  <span class="cart-totals__value">{{ cart.item_count }}</span>
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.show_taxes_notice and cart.taxes_included -%}
+                <div class="cart-totals__row">
+                  <span class="cart-totals__label">{{ 'cart.general.taxes_included' | t }}</span>
+                </div>
+              {%- endif -%}
+
+              <div class="cart-totals__row cart-totals__subtotal">
+                <span class="cart-totals__label">{{ 'cart.general.subtotal' | t }}</span>
+                <span class="cart-totals__value">{{ cart.total_price | money }}</span>
+              </div>
+
+              {%- if section.settings.subtotal_note != blank -%}
+                <p style="font-size: 0.875rem; color: var(--section-text); opacity: 0.7;">
+                  {{ section.settings.subtotal_note }}
+                </p>
+              {%- endif -%}
             </div>
-            <div>
-              <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" style="color: #999; text-decoration: none;">Remove</a>
+
+            {%- comment -%} Cart Buttons {%- endcomment -%}
+            <div class="cart-buttons">
+              {% render 'button',
+                text: section.settings.checkout_text | default: 'Checkout',
+                type: 'submit',
+                style: 'primary',
+                full_width: true,
+                class: 'cart-checkout-btn'
+              %}
+
+              {%- if section.settings.show_update_button -%}
+                {% render 'button',
+                  text: section.settings.update_text | default: 'Update Cart',
+                  type: 'submit',
+                  style: 'secondary',
+                  full_width: true
+                %}
+              {%- endif -%}
+
+              {%- if section.settings.show_continue_shopping -%}
+                {% render 'button',
+                  text: section.settings.continue_shopping_text | default: 'Continue Shopping',
+                  url: routes.all_products_collection_url,
+                  style: 'link',
+                  full_width: true
+                %}
+              {%- endif -%}
             </div>
-          </div>
-        {%- endfor -%}
-      </div>
-      
-      <div class="cart-footer" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #000;">
-        {%- if section.settings.show_cart_note -%}
-          <div style="margin-bottom: 20px;">
-            <label for="cart-note" style="display: block; margin-bottom: 10px;">{{ 'cart.general.note' | t }}</label>
-            <textarea id="cart-note" name="note" style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid #ccc;">{{ cart.note }}</textarea>
-          </div>
-        {%- endif -%}
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <div>
-            <strong>{{ 'cart.general.subtotal' | t }}: {{ cart.total_price | money }}</strong>
+
+            {%- comment -%} Trust Badges Block {%- endcomment -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'trust_badges' -%}
+                <div class="cart-block trust-badges" {{ block.shopify_attributes }}>
+                  {%- if block.settings.badge_1 != blank -%}
+                    <div class="trust-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <span>{{ block.settings.badge_1 }}</span>
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.badge_2 != blank -%}
+                    <div class="trust-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                      <span>{{ block.settings.badge_2 }}</span>
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.badge_3 != blank -%}
+                    <div class="trust-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <span>{{ block.settings.badge_3 }}</span>
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
           </div>
         </div>
-        
-        <button type="submit" name="update" style="padding: 12px 24px; background: #666; color: #fff; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">{{ 'cart.general.update' | t }}</button>
-        <button type="submit" name="checkout" style="padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer;">{{ 'cart.general.checkout' | t }}</button>
-        
-        {%- if section.settings.show_continue_shopping -%}
-          <div style="margin-top: 20px;">
-            <a href="{{ routes.all_products_collection_url }}" style="color: #000; text-decoration: underline;">{{ section.settings.continue_shopping_text | default: 'Continue shopping' | escape }}</a>
-          </div>
+      </form>
+
+      {%- comment -%} Upsell Block {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'cart_upsell' -%}
+          {%- if block.settings.collection != blank -%}
+            <div class="cart-block" {{ block.shopify_attributes }}>
+              <h3 style="margin-bottom: var(--spacing-md);">{{ block.settings.heading | default: 'You may also like' }}</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--spacing-md);">
+                {%- for product in block.settings.collection.products limit: block.settings.products_count -%}
+                  <div style="text-align: center;">
+                    <a href="{{ product.url }}">
+                      <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title | escape }}" style="width: 100%; border-radius: var(--radius-sm);">
+                    </a>
+                    <p style="margin-top: var(--spacing-xs); font-size: 0.875rem;">{{ product.title }}</p>
+                    <p style="font-weight: 600;">{{ product.price | money }}</p>
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
         {%- endif -%}
+      {%- endfor -%}
+
+    {%- else -%}
+      {%- comment -%} Empty Cart {%- endcomment -%}
+      <div class="cart-empty">
+        {%- if section.settings.empty_cart_image != blank -%}
+          <img
+            class="cart-empty__image"
+            src="{{ section.settings.empty_cart_image | image_url: width: 400 }}"
+            alt=""
+            loading="lazy"
+          >
+        {%- endif -%}
+
+        <h2 class="cart-empty__heading">
+          {{ section.settings.empty_cart_heading | default: 'Your cart is empty' }}
+        </h2>
+
+        {%- if section.settings.empty_cart_text != blank -%}
+          <p class="cart-empty__text">{{ section.settings.empty_cart_text }}</p>
+        {%- endif -%}
+
+        {% render 'button',
+          text: section.settings.empty_cart_button_text | default: 'Continue Shopping',
+          url: section.settings.empty_cart_button_url | default: routes.all_products_collection_url,
+          style: 'primary'
+        %}
       </div>
-    </form>
-  {%- else -%}
-    <div style="text-align: center; padding: 60px 20px;">
-      <p style="margin-bottom: 30px;">{{ section.settings.cart_empty_message | default: 'Your cart is empty' | escape }}</p>
-      <a href="{{ routes.all_products_collection_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; display: inline-block;">{{ 'cart.general.continue_shopping' | t }}</a>
-    </div>
-  {%- endif -%}
+    {%- endif -%}
+  </div>
 </div>
 
 {% schema %}
 {
-  "name": "Cart",
+  "name": "🛒 Cart",
   "tag": "section",
-  "class": "section",
+  "class": "section section--cart",
   "settings": [
+    {
+      "type": "header",
+      "content": "Color Scheme"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse (Dark)" },
+        { "value": "accent", "label": "Accent (Brand)" },
+        { "value": "subtle", "label": "Subtle (Muted)" },
+        { "value": "custom", "label": "Custom Colors" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "color",
+      "id": "custom_background",
+      "label": "Custom Background"
+    },
+    {
+      "type": "color",
+      "id": "custom_text",
+      "label": "Custom Text Color"
+    },
+    {
+      "type": "color",
+      "id": "custom_heading",
+      "label": "Custom Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "custom_accent",
+      "label": "Custom Accent Color"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Cart Layout",
+      "options": [
+        { "value": "standard", "label": "Standard (Single Column)" },
+        { "value": "two-column", "label": "Two Column (Items + Sidebar)" }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container Width",
+      "options": [
+        { "value": "narrow", "label": "Narrow (800px)" },
+        { "value": "medium", "label": "Medium (1000px)" },
+        { "value": "wide", "label": "Wide (1200px)" },
+        { "value": "full", "label": "Full Width" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "sidebar_sticky",
+      "label": "Sticky Sidebar (Two Column)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Leave blank to use default 'Cart' translation"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "options": [
+        { "value": "h1", "label": "Large (H1)" },
+        { "value": "h2", "label": "Medium (H2)" },
+        { "value": "h3", "label": "Small (H3)" }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Cart Items Display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "Show Product Images",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "link_thumbnails",
+      "label": "Link Images to Products",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "thumbnail_size",
+      "label": "Thumbnail Size",
+      "min": 60,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show Product Vendor",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "remove_text",
+      "label": "Remove Item Text",
+      "default": "Remove"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "item_title_size",
+      "label": "Item Title Size",
+      "options": [
+        { "value": "0.875rem", "label": "Small" },
+        { "value": "1rem", "label": "Medium" },
+        { "value": "1.125rem", "label": "Large" }
+      ],
+      "default": "1rem"
+    },
+    {
+      "type": "select",
+      "id": "price_size",
+      "label": "Price Size",
+      "options": [
+        { "value": "0.875rem", "label": "Small" },
+        { "value": "1rem", "label": "Medium" },
+        { "value": "1.25rem", "label": "Large" }
+      ],
+      "default": "1rem"
+    },
+    {
+      "type": "header",
+      "content": "Cart Features"
+    },
     {
       "type": "checkbox",
       "id": "show_cart_note",
@@ -81,10 +750,55 @@
       "default": true
     },
     {
+      "type": "text",
+      "id": "cart_note_label",
+      "label": "Cart Note Label",
+      "default": "Order Notes"
+    },
+    {
+      "type": "text",
+      "id": "cart_note_placeholder",
+      "label": "Cart Note Placeholder"
+    },
+    {
       "type": "checkbox",
-      "id": "show_shipping_calculator",
-      "label": "Show Shipping Calculator",
+      "id": "show_item_count",
+      "label": "Show Item Count",
       "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_taxes_notice",
+      "label": "Show Taxes Included Notice",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "subtotal_note",
+      "label": "Subtotal Note",
+      "info": "Optional note below subtotal (e.g., 'Shipping calculated at checkout')"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "checkout_text",
+      "label": "Checkout Button Text",
+      "default": "Checkout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_update_button",
+      "label": "Show Update Cart Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "update_text",
+      "label": "Update Button Text",
+      "default": "Update Cart"
     },
     {
       "type": "checkbox",
@@ -95,19 +809,228 @@
     {
       "type": "text",
       "id": "continue_shopping_text",
-      "label": "Continue Shopping Text"
+      "label": "Continue Shopping Text",
+      "default": "Continue Shopping"
+    },
+    {
+      "type": "header",
+      "content": "Empty Cart"
+    },
+    {
+      "type": "image_picker",
+      "id": "empty_cart_image",
+      "label": "Empty Cart Image"
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_heading",
+      "label": "Empty Cart Heading",
+      "default": "Your cart is empty"
     },
     {
       "type": "textarea",
-      "id": "cart_empty_message",
-      "label": "Empty Cart Message"
+      "id": "empty_cart_text",
+      "label": "Empty Cart Description"
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_button_text",
+      "label": "Empty Cart Button Text",
+      "default": "Continue Shopping"
+    },
+    {
+      "type": "url",
+      "id": "empty_cart_button_url",
+      "label": "Empty Cart Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "Show on Mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_desktop",
+      "label": "Show on Desktop",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "shipping_bar",
+      "name": "Free Shipping Bar",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "number",
+          "id": "threshold",
+          "label": "Free Shipping Threshold",
+          "default": 100,
+          "info": "Amount required for free shipping (in store currency)"
+        },
+        {
+          "type": "text",
+          "id": "message_below",
+          "label": "Message Below Threshold",
+          "default": "Spend [amount] more for free shipping!",
+          "info": "Use [amount] as placeholder for remaining amount"
+        },
+        {
+          "type": "text",
+          "id": "message_reached",
+          "label": "Message When Reached",
+          "default": "You've qualified for free shipping!"
+        }
+      ]
+    },
+    {
+      "type": "trust_badges",
+      "name": "Trust Badges",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "badge_1",
+          "label": "Badge 1 Text",
+          "default": "Secure Checkout"
+        },
+        {
+          "type": "text",
+          "id": "badge_2",
+          "label": "Badge 2 Text",
+          "default": "Free Returns"
+        },
+        {
+          "type": "text",
+          "id": "badge_3",
+          "label": "Badge 3 Text",
+          "default": "24/7 Support"
+        }
+      ]
+    },
+    {
+      "type": "promo_code",
+      "name": "Promo Code Input",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Promo Code"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder",
+          "default": "Enter code"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "Apply"
+        }
+      ]
+    },
+    {
+      "type": "cart_upsell",
+      "name": "Product Upsells",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "You may also like"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "label": "Products to Show",
+          "min": 2,
+          "max": 8,
+          "default": 4
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Cart"
+      "name": "Cart - Standard",
+      "settings": {
+        "layout": "standard"
+      }
+    },
+    {
+      "name": "Cart - Two Column",
+      "settings": {
+        "layout": "two-column",
+        "container_width": "wide"
+      },
+      "blocks": [
+        { "type": "trust_badges" }
+      ]
+    },
+    {
+      "name": "Cart - Upsell Focused",
+      "settings": {
+        "layout": "standard"
+      },
+      "blocks": [
+        { "type": "shipping_bar" },
+        { "type": "cart_upsell" },
+        { "type": "trust_badges" }
+      ]
+    },
+    {
+      "name": "Cart - Minimal",
+      "settings": {
+        "layout": "standard",
+        "container_width": "narrow",
+        "show_cart_note": false,
+        "show_update_button": false,
+        "thumbnail_size": 80
+      }
     }
   ]
 }
 {% endschema %}
-

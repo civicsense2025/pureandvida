@@ -21,7 +21,7 @@
             "heading_color": "",
             "menu": "customer-account-main-menu",
             "custom_links": "",
-            "link_color": ""
+            "link_color": "#ffffff"
           }
         },
         "link_list_about": {
@@ -31,7 +31,7 @@
             "heading_color": "",
             "menu": "footer",
             "custom_links": "",
-            "link_color": ""
+            "link_color": "#ffffff"
           }
         }
       },
@@ -52,9 +52,9 @@
         "copyright_color": "",
         "show_newsletter": true,
         "newsletter_heading": "Subscribe to our newsletter",
-        "newsletter_heading_color": "",
+        "newsletter_heading_color": "#ffffff",
         "newsletter_description": "",
-        "newsletter_text_color": "",
+        "newsletter_text_color": "#516d55",
         "newsletter_placeholder": "Enter your email",
         "newsletter_button_text": "Subscribe",
         "newsletter_button_color": "",

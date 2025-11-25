@@ -1,0 +1,768 @@
+{%- liquid
+  # @description Video section for embedding YouTube, Vimeo, or hosted videos
+  # Supports cover images, autoplay, and various display options
+  # @settings video_url {video_url} - YouTube or Vimeo URL
+  # @settings video {video} - Shopify hosted video
+  # @settings cover_image {image_picker} - Thumbnail before play
+  # @example
+  #   Use for product demos, brand stories, tutorials, or promotional content
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--video">
+    <span class="editor-label">Video</span>
+    <span class="editor-info">
+      {% if section.settings.video_url != blank %}
+        External video
+      {% elsif section.settings.video != blank %}
+        Hosted video
+      {% else %}
+        No video set
+      {% endif %}
+    </span>
+  </div>
+{% endif %}
+
+{%- liquid
+  assign video_id = nil
+  assign video_type = nil
+
+  if section.settings.video_url != blank
+    assign video_url = section.settings.video_url | default: ''
+
+    if video_url contains 'youtube.com' or video_url contains 'youtu.be'
+      assign video_type = 'youtube'
+      if video_url contains 'youtu.be'
+        assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first
+      else
+        assign video_id = video_url | split: 'v=' | last | split: '&' | first
+      endif
+    elsif video_url contains 'vimeo.com'
+      assign video_type = 'vimeo'
+      assign video_id = video_url | split: 'vimeo.com/' | last | split: '?' | first
+    endif
+  endif
+-%}
+
+<section
+  class="video-section video-section--{{ section.settings.layout }}"
+  id="video-section-{{ section.id }}"
+  style="
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  aria-label="{{ section.settings.heading | default: 'Video section' | escape }}"
+>
+  <div class="video-section__container{% if section.settings.full_width == false %} page-width{% endif %}">
+    {%- if section.settings.heading != blank or section.settings.description != blank -%}
+      <div class="video-section__header" style="text-align: {{ section.settings.text_alignment }};">
+        {%- if section.settings.subheading != blank -%}
+          <span class="video-section__subheading">{{ section.settings.subheading }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="video-section__title" style="font-size: {{ section.settings.heading_size }}px;">
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="video-section__description">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div
+      class="video-section__wrapper"
+      style="
+        {% if section.settings.aspect_ratio == 'custom' %}
+          aspect-ratio: {{ section.settings.custom_aspect_width }} / {{ section.settings.custom_aspect_height }};
+        {% else %}
+          aspect-ratio: {{ section.settings.aspect_ratio }};
+        {% endif %}
+        max-width: {{ section.settings.max_width }}px;
+        border-radius: {{ section.settings.border_radius }}px;
+      "
+    >
+      {%- if video_id != blank or section.settings.video != blank -%}
+        <div
+          class="video-section__player"
+          data-video-type="{{ video_type }}"
+          data-video-id="{{ video_id }}"
+          data-autoplay="{{ section.settings.autoplay }}"
+          data-loop="{{ section.settings.loop }}"
+          data-muted="{{ section.settings.muted }}"
+        >
+          {%- comment -%} Cover Image / Poster {%- endcomment -%}
+          {%- if section.settings.cover_image != blank and section.settings.autoplay == false -%}
+            <div class="video-section__cover" data-video-cover>
+              <img
+                src="{{ section.settings.cover_image | image_url: width: 1600 }}"
+                srcset="
+                  {{ section.settings.cover_image | image_url: width: 640 }} 640w,
+                  {{ section.settings.cover_image | image_url: width: 960 }} 960w,
+                  {{ section.settings.cover_image | image_url: width: 1280 }} 1280w,
+                  {{ section.settings.cover_image | image_url: width: 1600 }} 1600w
+                "
+                sizes="(max-width: 768px) 100vw, {{ section.settings.max_width }}px"
+                alt="{{ section.settings.cover_image.alt | escape | default: section.settings.heading | escape }}"
+                width="{{ section.settings.cover_image.width }}"
+                height="{{ section.settings.cover_image.height }}"
+                loading="lazy"
+                class="video-section__cover-image"
+              >
+              <button
+                type="button"
+                class="video-section__play-button"
+                aria-label="{{ 'general.video.play' | t | default: 'Play video' }}"
+                data-video-play
+              >
+                <span class="video-section__play-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Video Container {%- endcomment -%}
+          <div class="video-section__video-container"{% if section.settings.cover_image != blank and section.settings.autoplay == false %} hidden{% endif %} data-video-container>
+            {%- if section.settings.video != blank -%}
+              {%- comment -%} Shopify Hosted Video {%- endcomment -%}
+              {{ section.settings.video | video_tag:
+                autoplay: section.settings.autoplay,
+                loop: section.settings.loop,
+                muted: section.settings.muted,
+                controls: section.settings.show_controls,
+                playsinline: true,
+                class: 'video-section__video'
+              }}
+            {%- elsif video_type == 'youtube' -%}
+              {%- comment -%} YouTube Embed {%- endcomment -%}
+              <iframe
+                src="https://www.youtube.com/embed/{{ video_id }}?{% if section.settings.autoplay %}autoplay=1&{% endif %}{% if section.settings.loop %}loop=1&playlist={{ video_id }}&{% endif %}{% if section.settings.muted %}mute=1&{% endif %}{% unless section.settings.show_controls %}controls=0&{% endunless %}rel=0&modestbranding=1&playsinline=1"
+                class="video-section__iframe"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+                title="{{ section.settings.heading | default: 'YouTube video' | escape }}"
+              ></iframe>
+            {%- elsif video_type == 'vimeo' -%}
+              {%- comment -%} Vimeo Embed {%- endcomment -%}
+              <iframe
+                src="https://player.vimeo.com/video/{{ video_id }}?{% if section.settings.autoplay %}autoplay=1&{% endif %}{% if section.settings.loop %}loop=1&{% endif %}{% if section.settings.muted %}muted=1&{% endif %}{% unless section.settings.show_controls %}controls=0&{% endunless %}byline=0&title=0&portrait=0"
+                class="video-section__iframe"
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+                title="{{ section.settings.heading | default: 'Vimeo video' | escape }}"
+              ></iframe>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- else -%}
+        {%- comment -%} Placeholder {%- endcomment -%}
+        <div class="video-section__placeholder">
+          <div class="video-section__placeholder-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+          </div>
+          <h3 class="video-section__placeholder-title">Video Section</h3>
+          <p class="video-section__placeholder-text">
+            Add a video to this section using the settings panel.<br>
+            Supports YouTube, Vimeo, or Shopify-hosted videos.
+          </p>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.caption != blank -%}
+      <p class="video-section__caption" style="text-align: {{ section.settings.text_alignment }};">
+        {{ section.settings.caption }}
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .video-section {
+    position: relative;
+  }
+
+  .video-section__container {
+    width: 100%;
+  }
+
+  .video-section__header {
+    margin-bottom: 32px;
+    max-width: 800px;
+    {% if section.settings.text_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% endif %}
+  }
+
+  .video-section__subheading {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #2c5530);
+    margin-bottom: 12px;
+  }
+
+  .video-section__title {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight, 600);
+    line-height: 1.2;
+    margin: 0 0 16px;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .video-section__description {
+    font-family: var(--font-body-family);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+  }
+
+  .video-section__wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #000;
+    {% if section.settings.text_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% elsif section.settings.text_alignment == 'right' %}
+      margin-left: auto;
+    {% endif %}
+  }
+
+  .video-section__player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .video-section__cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    cursor: pointer;
+  }
+
+  .video-section__cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-section__play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: {{ section.settings.play_button_background }};
+    color: {{ section.settings.play_button_color }};
+    border: none;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 3;
+  }
+
+  .video-section__play-button:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    background: {{ section.settings.play_button_hover_background | default: section.settings.play_button_background }};
+  }
+
+  .video-section__play-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+  }
+
+  .video-section__play-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .video-section__video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .video-section__video-container[hidden] {
+    display: none;
+  }
+
+  .video-section__video,
+  .video-section__iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-section__caption {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #666)' }};
+    margin-top: 16px;
+    opacity: 0.8;
+    max-width: {{ section.settings.max_width }}px;
+    {% if section.settings.text_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% elsif section.settings.text_alignment == 'right' %}
+      margin-left: auto;
+    {% endif %}
+  }
+
+  /* Placeholder */
+  .video-section__placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(44, 85, 48, 0.1), rgba(44, 85, 48, 0.05));
+  }
+
+  .video-section__placeholder-icon {
+    margin-bottom: 16px;
+    color: var(--color-primary, #2c5530);
+    opacity: 0.5;
+  }
+
+  .video-section__placeholder-title {
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--color-text, #333);
+  }
+
+  .video-section__placeholder-text {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    color: var(--color-text, #666);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .video-section__title {
+      font-size: {{ section.settings.heading_size | times: 0.75 | round }}px !important;
+    }
+
+    .video-section__play-button {
+      width: 64px;
+      height: 64px;
+    }
+
+    .video-section__play-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  /* Editor mode styles */
+  {% if request.design_mode %}
+    .video-section {
+      outline: 2px dashed rgba(44, 85, 48, 0.3);
+      outline-offset: -2px;
+      min-height: 200px;
+    }
+
+    .video-section::before {
+      content: 'VIDEO';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(44, 85, 48, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .editor-controls--video {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(44, 85, 48, 0.5);
+    }
+
+    .editor-controls--video .editor-label {
+      font-weight: 600;
+      color: var(--color-primary, #2c5530);
+      font-size: 12px;
+    }
+
+    .editor-controls--video .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  {% endif %}
+</style>
+
+<script>
+  (function() {
+    const section = document.getElementById('video-section-{{ section.id }}');
+    if (!section) return;
+
+    const cover = section.querySelector('[data-video-cover]');
+    const playButton = section.querySelector('[data-video-play]');
+    const videoContainer = section.querySelector('[data-video-container]');
+    const player = section.querySelector('.video-section__player');
+
+    if (playButton && cover && videoContainer) {
+      function playVideo() {
+        cover.style.display = 'none';
+        videoContainer.hidden = false;
+
+        // For hosted videos, start playback
+        const video = videoContainer.querySelector('video');
+        if (video) {
+          video.play();
+        }
+
+        // For iframes, reload with autoplay
+        const iframe = videoContainer.querySelector('iframe');
+        if (iframe) {
+          const src = iframe.src;
+          if (!src.includes('autoplay=1')) {
+            iframe.src = src + (src.includes('?') ? '&' : '?') + 'autoplay=1';
+          }
+        }
+      }
+
+      playButton.addEventListener('click', playVideo);
+      cover.addEventListener('click', playVideo);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "🎬 Video",
+  "tag": "section",
+  "class": "section-video",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Embed videos from YouTube, Vimeo, or upload directly to Shopify. Add a cover image for a polished look."
+    },
+    {
+      "type": "header",
+      "content": "🎬 Video Source"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Shopify Hosted Video",
+      "info": "Upload a video directly to Shopify"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "YouTube or Vimeo URL",
+      "accept": ["youtube", "vimeo"],
+      "info": "Paste a YouTube or Vimeo URL. Takes priority if both are set."
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Cover Image",
+      "info": "Displayed before the video plays. Recommended: 16:9 aspect ratio."
+    },
+    {
+      "type": "header",
+      "content": "⚙️ Video Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": false,
+      "info": "Video will autoplay muted on page load"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop Video",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "muted",
+      "label": "Start Muted",
+      "default": true,
+      "info": "Required for autoplay on most browsers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show Video Controls",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "Caption",
+      "info": "Small text below the video"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full Width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1000
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect Ratio",
+      "options": [
+        { "value": "16 / 9", "label": "16:9 (Widescreen)" },
+        { "value": "4 / 3", "label": "4:3 (Standard)" },
+        { "value": "21 / 9", "label": "21:9 (Cinematic)" },
+        { "value": "1 / 1", "label": "1:1 (Square)" },
+        { "value": "9 / 16", "label": "9:16 (Vertical)" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "16 / 9"
+    },
+    {
+      "type": "range",
+      "id": "custom_aspect_width",
+      "label": "Custom Aspect Width",
+      "min": 1,
+      "max": 21,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "custom_aspect_height",
+      "label": "Custom Aspect Height",
+      "min": 1,
+      "max": 21,
+      "step": 1,
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Corner Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "▶️ Play Button"
+    },
+    {
+      "type": "color",
+      "id": "play_button_background",
+      "label": "Button Background",
+      "default": "rgba(255, 255, 255, 0.9)"
+    },
+    {
+      "type": "color",
+      "id": "play_button_hover_background",
+      "label": "Button Hover Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "play_button_color",
+      "label": "Button Icon Color",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "header",
+      "content": "📏 Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video - Standard",
+      "settings": {
+        "aspect_ratio": "16 / 9",
+        "max_width": 1000,
+        "show_controls": true,
+        "autoplay": false
+      }
+    },
+    {
+      "name": "Video - With Header",
+      "settings": {
+        "subheading": "Watch Now",
+        "heading": "Our Story",
+        "description": "<p>Discover what makes us different.</p>",
+        "aspect_ratio": "16 / 9",
+        "max_width": 900,
+        "border_radius": 16,
+        "text_alignment": "center"
+      }
+    },
+    {
+      "name": "Video - Full Width Background",
+      "settings": {
+        "full_width": true,
+        "aspect_ratio": "21 / 9",
+        "autoplay": true,
+        "loop": true,
+        "muted": true,
+        "show_controls": false,
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  ]
+}
+{% endschema %}

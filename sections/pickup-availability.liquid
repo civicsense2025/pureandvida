@@ -1,10 +1,10 @@
-{%- liquid
-  # @description Pickup availability section for store pickup information
-  # Displays available pickup locations for the current product variant
-  # Must be used on product pages to access product.selected_or_first_available_variant
-  # @example
-  #   Add to product pages to show local pickup options and store availability
--%}
+{%- comment -%}
+  @description Pickup availability section for store pickup information
+  Displays available pickup locations for the current product variant
+  Must be used on product pages to access product.selected_or_first_available_variant
+  @example
+    Add to product pages to show local pickup options and store availability
+{%- endcomment -%}
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--pickup">

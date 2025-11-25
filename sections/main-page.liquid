@@ -16,7 +16,7 @@
   
   {%- if section.settings.show_featured_image and page.featured_image != blank -%}
     <div class="page-featured-image" style="text-align: {{ section.settings.image_alignment }}; margin-bottom: {{ section.settings.image_spacing }}px;">
-      <img src="{{ page.featured_image | image_url: width: 1200 }}" alt="{{ page.title | escape }}">
+      <img src="{{ page.featured_image | image_url: width: 1200 }}" alt="{{ page.title | escape }}" width="1200" height="auto">
     </div>
   {%- endif -%}
   
@@ -337,6 +337,5 @@
       "name": "Page"
     }
   ],
-  "templates": ["page"]
 }
 {% endschema %}

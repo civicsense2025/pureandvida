@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -25,19 +34,19 @@
         "compare_price_color": "",
         "button_text": "",
         "button_link": "",
-        "button_color": "",
-        "button_text_color": "",
+        "button_color": "#5e8778",
+        "button_text_color": "#ffffff",
         "show_quantity_selector": true,
         "default_quantity": 1,
         "min_quantity": 1,
         "max_quantity": 10,
         "show_discount_badge": true,
         "discount_badge_text": "",
-        "badge_background_color": "",
+        "badge_background_color": "#DC2626",
         "badge_text_color": "",
         "image_position": "row",
         "text_alignment": "left",
-        "background_color": "",
+        "background_color": "#ffffff",
         "show_gradient": true,
         "show_payment_methods": true
       }
@@ -53,7 +62,7 @@
         "columns_mobile": 1,
         "item_spacing": 30,
         "section_padding": 40,
-        "background_color": "",
+        "background_color": "#ffffff",
         "benefit_1_title": "",
         "benefit_1_description": "",
         "benefit_2_title": "",
@@ -65,7 +74,8 @@
         "benefit_5_title": "",
         "benefit_5_description": "",
         "benefit_6_title": "",
-        "benefit_6_description": ""
+        "benefit_6_description": "",
+        "structural_element": "section"
       }
     },
     "ingredients": {
@@ -83,8 +93,9 @@
         "columns_mobile": 1,
         "item_spacing": 30,
         "section_padding": 40,
-        "background_color": "",
+        "background_color": "#ffffff",
         "show_gradient": true,
+        "structural_element": "section",
         "ingredient_1_name": "",
         "ingredient_1_description": "",
         "ingredient_2_name": "",
@@ -117,7 +128,8 @@
         "default_open": false,
         "icon_text": "+",
         "section_padding": 40,
-        "background_color": "",
+        "background_color": "#ffffff",
+        "structural_element": "section",
         "faq_1_question": "",
         "faq_1_answer": "",
         "faq_2_question": "",

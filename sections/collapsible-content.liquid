@@ -31,10 +31,10 @@
   "
 >
   <div class="collapsible-section__container page-width">
-    {% if section.settings.layout == 'split-image' %}
+    {%- if section.settings.layout == 'split-image' -%}
       <div class="collapsible-section__grid">
         <div class="collapsible-section__image-column">
-          {% if section.settings.image != blank %}
+          {%- if section.settings.image != blank -%}
             <img
               src="{{ section.settings.image | image_url: width: 800 }}"
               srcset="
@@ -48,16 +48,16 @@
               loading="lazy"
               style="border-radius: {{ section.settings.image_border_radius }}px;"
             >
-          {% else %}
+          {%- else -%}
             <div class="collapsible-section__image-placeholder">
               {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
             </div>
-          {% endif %}
+          {%- endif -%}
         </div>
         <div class="collapsible-section__content-column">
-    {% endif %}
+    {%- endif -%}
 
-    {% if section.settings.heading != blank %}
+    {%- if section.settings.heading != blank -%}
       <h2
         class="collapsible-section__heading"
         style="
@@ -70,9 +70,9 @@
       >
         {{ section.settings.heading | escape }}
       </h2>
-    {% endif %}
+    {%- endif -%}
 
-    {% if section.settings.description != blank %}
+    {%- if section.settings.description != blank -%}
       <div
         class="collapsible-section__description"
         style="
@@ -83,47 +83,43 @@
       >
         {{ section.settings.description }}
       </div>
-    {% endif %}
+    {%- endif -%}
 
-    {% if row_count > 0 %}
+    {%- if row_count > 0 -%}
       <div
         class="collapsible-content"
         style="max-width: {{ section.settings.content_width }}px;{% if section.settings.layout != 'split-image' %} margin: 0 auto;{% endif %}"
       >
-        {% for block in section.blocks %}
-          {% if block.type contains '@theme' %}
-            {{ block }}
-          {% else %}
-            {% render 'block-collapsible-row',
-              block: block,
-              open: section.settings.open_first and forloop.first,
-              row_padding: section.settings.row_padding,
-              row_background: section.settings.row_background,
-              row_border_color: section.settings.row_border_color,
-              row_border_radius: section.settings.row_border_radius,
-              row_border_width: section.settings.row_border_width,
-              title_size: section.settings.title_size,
-              title_weight: section.settings.title_weight,
-              title_color: section.settings.title_color,
-              toggle_color: section.settings.toggle_color,
-              toggle_style: section.settings.toggle_style,
-              content_padding: section.settings.content_padding,
-              content_background: section.settings.content_background,
-              content_color: section.settings.content_color
-            %}
-          {% endif %}
-        {% endfor %}
+        {%- for block in section.blocks -%}
+          {%- render 'block-collapsible-row',
+            block: block,
+            open: section.settings.open_first and forloop.first,
+            row_padding: section.settings.row_padding,
+            row_background: section.settings.row_background,
+            row_border_color: section.settings.row_border_color,
+            row_border_radius: section.settings.row_border_radius,
+            row_border_width: section.settings.row_border_width,
+            title_size: section.settings.title_size,
+            title_weight: section.settings.title_weight,
+            title_color: section.settings.title_color,
+            toggle_color: section.settings.toggle_color,
+            toggle_style: section.settings.toggle_style,
+            content_padding: section.settings.content_padding,
+            content_background: section.settings.content_background,
+            content_color: section.settings.content_color
+          -%}
+        {%- endfor -%}
       </div>
-    {% elsif request.design_mode %}
+    {%- elsif request.design_mode -%}
       <div class="collapsible-section__placeholder">
         <p>Add collapsible row blocks to create your content</p>
       </div>
-    {% endif %}
+    {%- endif -%}
 
-    {% if section.settings.layout == 'split-image' %}
+    {%- if section.settings.layout == 'split-image' -%}
         </div>
       </div>
-    {% endif %}
+    {%- endif -%}
   </div>
 </section>
 
@@ -570,7 +566,7 @@
     },
     {
       "type": "header",
-      "content": "Behavior"
+      "content": "⚙️ Behavior"
     },
     {
       "type": "checkbox",
@@ -591,7 +587,7 @@
     },
     {
       "type": "header",
-      "content": "Row Styling"
+      "content": "🎨 Row Styling"
     },
     {
       "type": "range",
@@ -650,7 +646,7 @@
     },
     {
       "type": "header",
-      "content": "Typography"
+      "content": "📝 Typography"
     },
     {
       "type": "range",
@@ -725,7 +721,7 @@
     },
     {
       "type": "header",
-      "content": "Section Styling"
+      "content": "🎨 Section Styling"
     },
     {
       "type": "color",
@@ -734,7 +730,7 @@
     },
     {
       "type": "header",
-      "content": "Spacing"
+      "content": "📏 Spacing"
     },
     {
       "type": "range",
@@ -759,10 +755,6 @@
   ],
   "blocks": [
     {
-      "type": "@theme/collapsible-row",
-      "name": "Theme Collapsible Row"
-    },
-    {
       "type": "collapsible_row",
       "name": "📋 Collapsible Row",
       "settings": [
@@ -777,8 +769,8 @@
           "type": "text",
           "id": "icon",
           "label": "Icon (Emoji/Symbol)",
-          ,
-          "info": "Optional icon before title"
+          "placeholder": "📦",
+          "info": "Optional icon before title (e.g., 📦, 🚚, ❓)"
         },
         {
           "type": "image_picker",
@@ -855,7 +847,7 @@
           "settings": {
             "heading": "What is your return policy?",
             "row_content": "<p>We offer a 30-day return policy on all unused items. Simply contact our support team to initiate a return.</p>",
-            "icon": ""
+            "icon": "📦"
           }
         },
         {
@@ -863,7 +855,7 @@
           "settings": {
             "heading": "How long does shipping take?",
             "row_content": "<p>Standard shipping takes 5-7 business days. Express shipping is available for 2-3 day delivery.</p>",
-            "icon": ""
+            "icon": "🚚"
           }
         },
         {
@@ -871,7 +863,7 @@
           "settings": {
             "heading": "Do you ship internationally?",
             "row_content": "<p>Yes! We ship to most countries worldwide. International shipping rates and delivery times vary by location.</p>",
-            "icon": ""
+            "icon": "🌍"
           }
         }
       ]

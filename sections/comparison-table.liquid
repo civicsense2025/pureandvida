@@ -11,17 +11,17 @@
 <section class="comparison-table-section" style="background-color: {{ section.settings.background_color }}; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0;">
   <div class="page-width" style="max-width: {{ section.settings.max_width }}px; margin: 0 auto;">
 
-    {% if section.settings.heading != blank %}
+    {%- if section.settings.heading != blank -%}
       <h2 class="comparison-table__heading" style="color: {{ section.settings.heading_color }}; font-size: {{ section.settings.heading_size }}px; text-align: {{ section.settings.heading_alignment }}; margin-bottom: {{ section.settings.heading_spacing }}px;">
         {{ section.settings.heading | escape }}
       </h2>
-    {% endif %}
+    {%- endif -%}
 
-    {% if section.settings.description != blank %}
+    {%- if section.settings.description != blank -%}
       <p class="comparison-table__description" style="color: {{ section.settings.description_color }}; text-align: {{ section.settings.heading_alignment }}; margin-bottom: 40px;">
         {{ section.settings.description }}
       </p>
-    {% endif %}
+    {%- endif -%}
 
     <div class="comparison-table__wrapper">
       <table class="comparison-table" style="border-radius: {{ section.settings.table_border_radius }}px;">
@@ -39,35 +39,35 @@
           </tr>
         </thead>
         <tbody>
-          {% for block in section.blocks %}
-            {% if block.type == 'comparison_row' %}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'comparison_row' -%}
               <tr class="comparison-table__row{% cycle ' comparison-table__row--odd', '' %}" {{ block.shopify_attributes }}>
                 <td class="comparison-table__feature" style="color: {{ section.settings.feature_text_color }};">
                   {{ block.settings.feature_name | escape }}
                 </td>
                 <td class="comparison-table__value comparison-table__value--1" style="color: {{ section.settings.value_text_color }};">
-                  {% case block.settings.column_1_value %}
-                    {% when 'check' %}
+                  {%- case block.settings.column_1_value -%}
+                    {%- when 'check' -%}
                       <span class="comparison-check" style="color: {{ section.settings.check_color }};" aria-label="Yes">{{ section.settings.check_icon | default: '&#10003;' }}</span>
-                    {% when 'x' %}
+                    {%- when 'x' -%}
                       <span class="comparison-x" style="color: {{ section.settings.x_color }};" aria-label="No">{{ section.settings.x_icon | default: '&#10007;' }}</span>
-                    {% when 'custom' %}
+                    {%- when 'custom' -%}
                       {{ block.settings.column_1_custom }}
-                    {% endcase %}
+                    {%- endcase -%}
                 </td>
                 <td class="comparison-table__value comparison-table__value--2" style="color: {{ section.settings.value_text_color }};">
-                  {% case block.settings.column_2_value %}
-                    {% when 'check' %}
+                  {%- case block.settings.column_2_value -%}
+                    {%- when 'check' -%}
                       <span class="comparison-check" style="color: {{ section.settings.check_color }};" aria-label="Yes">{{ section.settings.check_icon | default: '&#10003;' }}</span>
-                    {% when 'x' %}
+                    {%- when 'x' -%}
                       <span class="comparison-x" style="color: {{ section.settings.x_color }};" aria-label="No">{{ section.settings.x_icon | default: '&#10007;' }}</span>
-                    {% when 'custom' %}
+                    {%- when 'custom' -%}
                       {{ block.settings.column_2_custom }}
-                    {% endcase %}
+                    {%- endcase -%}
                 </td>
               </tr>
-            {% endif %}
-          {% endfor %}
+            {%- endif -%}
+          {%- endfor -%}
         </tbody>
       </table>
     </div>
@@ -219,7 +219,7 @@
       "type": "text",
       "id": "check_icon",
       "label": "Check Icon",
-      "default": "",
+      "default": "✓",
       "info": "Character or emoji for positive values"
     },
     {

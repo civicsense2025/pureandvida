@@ -12,17 +12,15 @@
     "main-page": {
       "type": "main-page",
       "settings": {
+        "background_color": "",
         "show_page_title": true,
         "title_color": "",
-        "title_alignment": "center",
         "show_featured_image": false,
         "image_alignment": "center",
         "image_spacing": 30,
         "content_width": 800,
         "text_alignment": "left",
         "text_color": "",
-        "section_padding": 100,
-        "background_color": "",
         "custom_css_class": "",
         "enable_structured_data": true
       }

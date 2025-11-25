@@ -40,31 +40,11 @@
         "link_list_about"
       ],
       "settings": {
-        "layout_style": "three-column",
-        "column_layout": "auto",
         "column_gap": 40,
-        "logo_image": "shopify://shop_images/pure-vida-logo-white.svg",
-        "logo_text": "Pure + Vida",
-        "logo_text_size": 24,
-        "logo_text_color": "",
-        "show_plus": true,
-        "copyright_text": "",
-        "copyright_color": "",
-        "show_newsletter": true,
-        "newsletter_heading": "Subscribe to our newsletter",
-        "newsletter_heading_color": "#ffffff",
-        "newsletter_description": "",
-        "newsletter_text_color": "#516d55",
-        "newsletter_placeholder": "Enter your email",
-        "newsletter_button_text": "Subscribe",
-        "newsletter_button_color": "",
-        "newsletter_button_text_color": "",
-        "show_social_media": true,
-        "show_payment_icons": true,
-        "structural_element": "footer",
         "background_color": "#516d55",
         "padding_top": 60,
-        "padding_bottom": 40
+        "padding_bottom": 40,
+        "structural_element": "footer"
       }
     }
   },

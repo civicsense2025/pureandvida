@@ -1,0 +1,287 @@
+{%- liquid
+  # @description Apps section for rendering third-party Shopify app blocks
+  # This section provides a container for app embeds and app blocks
+  # @settings none - Settings controlled by individual app blocks
+  # @blocks @app - App blocks from installed Shopify apps
+  # @example
+  #   Add this section to any template to enable app block support
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--apps">
+    <span class="editor-label">Apps Section</span>
+    <span class="editor-info">
+      {{ section.blocks.size }} app block(s) |
+      Drop app blocks here to add functionality
+    </span>
+  </div>
+{% endif %}
+
+<div
+  class="apps-section"
+  style="
+    {% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="apps-section__container{% if section.settings.full_width %} apps-section__container--full{% else %} page-width{% endif %}">
+    {%- if section.blocks.size > 0 -%}
+      {%- for block in section.blocks -%}
+        <div class="apps-section__block" {{ block.shopify_attributes }}>
+          {% render block %}
+        </div>
+      {%- endfor -%}
+    {%- elsif request.design_mode -%}
+      <div class="apps-section__placeholder">
+        <div class="apps-section__placeholder-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </div>
+        <h3 class="apps-section__placeholder-title">App Blocks</h3>
+        <p class="apps-section__placeholder-text">
+          Add app blocks from your installed Shopify apps here.<br>
+          Click "Add block" and select an app block to get started.
+        </p>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .apps-section {
+    position: relative;
+  }
+
+  .apps-section__container {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.block_spacing }}px;
+  }
+
+  .apps-section__container--full {
+    width: 100%;
+    max-width: none;
+  }
+
+  .apps-section__block {
+    width: 100%;
+  }
+
+  /* Placeholder styles for theme editor */
+  .apps-section__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(156, 39, 176, 0.05), rgba(103, 58, 183, 0.05));
+    border: 2px dashed rgba(156, 39, 176, 0.3);
+    border-radius: 8px;
+    color: var(--color-text, #333);
+  }
+
+  .apps-section__placeholder-icon {
+    margin-bottom: 16px;
+    opacity: 0.6;
+    color: var(--color-primary, #9c27b0);
+  }
+
+  .apps-section__placeholder-title {
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--color-text, #333);
+  }
+
+  .apps-section__placeholder-text {
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    margin: 0;
+    opacity: 0.7;
+    line-height: 1.6;
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 767px) {
+    .apps-section__container {
+      gap: {{ section.settings.block_spacing | times: 0.75 | round }}px;
+    }
+
+    .apps-section__placeholder {
+      padding: 40px 16px;
+    }
+  }
+
+  {% if request.design_mode %}
+    .apps-section {
+      outline: 2px dashed rgba(156, 39, 176, 0.3);
+      outline-offset: -2px;
+      min-height: 100px;
+    }
+
+    .apps-section::before {
+      content: 'APPS SECTION';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(156, 39, 176, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .apps-section__block {
+      outline: 1px dashed rgba(156, 39, 176, 0.2);
+      outline-offset: 2px;
+      position: relative;
+    }
+
+    .apps-section__block::before {
+      content: 'APP BLOCK';
+      position: absolute;
+      top: -10px;
+      right: 8px;
+      background: rgba(156, 39, 176, 0.8);
+      color: white;
+      padding: 2px 8px;
+      font-size: 9px;
+      font-weight: 600;
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .editor-controls--apps {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(156, 39, 176, 0.5);
+    }
+
+    .editor-controls--apps .editor-label {
+      font-weight: 600;
+      color: rgba(156, 39, 176, 1);
+      font-size: 12px;
+    }
+
+    .editor-controls--apps .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "🔌 Apps",
+  "tag": "section",
+  "class": "section-apps",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Container for third-party Shopify app blocks. Add app blocks from your installed apps to extend your store's functionality. Each app's blocks will appear in the 'Add block' menu if the app supports app blocks."
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full Width Container",
+      "default": false,
+      "info": "Remove max-width constraint for full-width app displays"
+    },
+    {
+      "type": "range",
+      "id": "block_spacing",
+      "label": "Space Between Blocks",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20,
+      "info": "Vertical space between multiple app blocks"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "info": "Background color for the apps section container"
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Apps - Standard",
+      "settings": {
+        "full_width": false,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    {
+      "name": "Apps - Full Width",
+      "settings": {
+        "full_width": true,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  ]
+}
+{% endschema %}

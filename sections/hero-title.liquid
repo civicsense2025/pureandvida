@@ -26,6 +26,119 @@
   </div>
 </{{ structural_element }}>
 
+<style>
+  /* Hero Title Section - Responsive Styles */
+  .hero-title-section {
+    padding: clamp(2rem, 5vw, 4rem) 0;
+  }
+
+  .hero-title-content {
+    padding: 0 clamp(1rem, 4vw, 2rem);
+  }
+
+  .hero-main-title {
+    font-size: clamp(2rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin: 0 0 clamp(0.75rem, 2vw, 1.5rem) 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .hero-title-line1 {
+    display: inline;
+  }
+
+  .hero-trademark {
+    font-size: clamp(0.875rem, 2vw, 1.25rem);
+    vertical-align: super;
+  }
+
+  .hero-divider {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    margin: clamp(0.5rem, 2vw, 1rem) 0;
+    letter-spacing: clamp(0.1em, 0.5vw, 0.3em);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    line-height: 1.5;
+    margin: clamp(0.5rem, 2vw, 1rem) 0 0 0;
+    max-width: 100%;
+  }
+
+  /* Mobile - 479px and below */
+  @media screen and (max-width: 479px) {
+    .hero-title-section {
+      padding: 1.5rem 0;
+    }
+
+    .hero-title-content {
+      padding: 0 1rem;
+    }
+
+    .hero-main-title {
+      font-size: 1.75rem;
+      line-height: 1.2;
+    }
+
+    .hero-trademark {
+      font-size: 0.75rem;
+    }
+
+    .hero-divider {
+      font-size: 0.875rem;
+      letter-spacing: 0.1em;
+    }
+
+    .hero-subtitle {
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
+  }
+
+  /* Small tablets - 480px to 767px */
+  @media screen and (min-width: 480px) and (max-width: 767px) {
+    .hero-title-section {
+      padding: 2rem 0;
+    }
+
+    .hero-main-title {
+      font-size: 2.25rem;
+    }
+
+    .hero-trademark {
+      font-size: 0.875rem;
+    }
+
+    .hero-divider {
+      font-size: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+    }
+  }
+
+  /* Tablets - 768px to 1023px */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .hero-title-section {
+      padding: 2.5rem 0;
+    }
+
+    .hero-main-title {
+      font-size: 3rem;
+    }
+
+    .hero-trademark {
+      font-size: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+    }
+  }
+</style>
+
 {% schema %}
 {
   "name": "Hero Title",

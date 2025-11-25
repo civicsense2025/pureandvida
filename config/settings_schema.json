@@ -1052,17 +1052,18 @@
     "settings": [
       {
         "type": "header",
-        "content": "Primary Button"
+        "content": "Primary Button (Add to Cart)"
       },
       {
         "type": "paragraph",
-        "content": "Main call-to-action buttons (Add to Cart, Submit, etc.)"
+        "content": "Figma design: Green pill button with white text"
       },
       {
         "type": "color",
         "id": "button_primary_bg",
         "label": "Background Color",
-        "default": "#000000"
+        "default": "#5E877A",
+        "info": "Figma: Primary Green"
       },
       {
         "type": "color",
@@ -1074,29 +1075,54 @@
         "type": "color",
         "id": "button_primary_hover",
         "label": "Hover Background",
-        "default": "#333333"
+        "default": "#4A6D62"
       },
       {
         "type": "header",
-        "content": "Secondary Button (Outline)"
+        "content": "Secondary Button (Cart/Accent)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Figma design: Orange pill button with white text"
       },
       {
         "type": "color",
         "id": "button_secondary_bg",
         "label": "Background Color",
-        "default": "transparent"
+        "default": "#E8983B",
+        "info": "Figma: Orange Accent"
       },
       {
         "type": "color",
         "id": "button_secondary_text",
         "label": "Text Color",
-        "default": "#000000"
+        "default": "#ffffff"
       },
       {
         "type": "color",
         "id": "button_secondary_border",
         "label": "Border Color",
-        "default": "#000000"
+        "default": "#E8983B"
+      },
+      {
+        "type": "header",
+        "content": "Outline Button (Quantity/Tertiary)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Figma design: Green outline with no fill"
+      },
+      {
+        "type": "color",
+        "id": "button_outline_border",
+        "label": "Border Color",
+        "default": "#5E877A"
+      },
+      {
+        "type": "color",
+        "id": "button_outline_text",
+        "label": "Text Color",
+        "default": "#1E1E1E"
       },
       {
         "type": "header",
@@ -1111,41 +1137,54 @@
           { "value": "sm", "label": "Slightly Rounded (4px)" },
           { "value": "md", "label": "Rounded (8px)" },
           { "value": "lg", "label": "More Rounded (12px)" },
-          { "value": "full", "label": "Pill Shape" }
+          { "value": "full", "label": "Pill Shape (Figma default)" }
         ],
-        "default": "sm"
+        "default": "full",
+        "info": "Figma uses pill shape for all buttons"
       },
       {
         "type": "range",
         "id": "button_padding_vertical",
         "label": "Vertical Padding",
         "min": 8,
-        "max": 24,
+        "max": 32,
         "step": 2,
         "unit": "px",
-        "default": 12
+        "default": 18,
+        "info": "Figma: ~18-24px"
       },
       {
         "type": "range",
         "id": "button_padding_horizontal",
         "label": "Horizontal Padding",
         "min": 16,
-        "max": 48,
+        "max": 64,
         "step": 4,
         "unit": "px",
-        "default": 24
+        "default": 48,
+        "info": "Figma: ~48px"
       },
       {
         "type": "select",
         "id": "button_font_weight",
         "label": "Font Weight",
         "options": [
-          { "value": "400", "label": "Normal" },
+          { "value": "400", "label": "Normal (Figma default)" },
           { "value": "500", "label": "Medium" },
           { "value": "600", "label": "Semi-Bold" },
           { "value": "700", "label": "Bold" }
         ],
-        "default": "500"
+        "default": "400"
+      },
+      {
+        "type": "range",
+        "id": "button_letter_spacing",
+        "label": "Button Letter Spacing (%)",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "default": 12,
+        "info": "Figma: 12%"
       },
       {
         "type": "checkbox",

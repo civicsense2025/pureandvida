@@ -151,7 +151,7 @@
       }
 
       :root {
-        /* Typography */
+        /* Typography - Font Families */
         {%- liquid
           if settings.custom_font_body == 'nohemi'
             assign body_font_family = 'Nohemi'
@@ -174,7 +174,7 @@
           if settings.custom_font_heading == 'nohemi'
             assign heading_font_family = 'Nohemi'
             assign heading_font_style = 'normal'
-            assign heading_font_weight = 600
+            assign heading_font_weight = settings.font_weight_heading | default: 400
           elsif settings.custom_font_heading == 'versailles'
             assign heading_font_family = 'Versailles'
             assign heading_font_style = 'normal'
@@ -182,33 +182,66 @@
           elsif settings.custom_font_heading == 'myriad'
             assign heading_font_family = 'MyriadPro'
             assign heading_font_style = 'normal'
-            assign heading_font_weight = 600
+            assign heading_font_weight = settings.font_weight_heading | default: 600
           else
             assign heading_font_family = settings.font_heading.family
             assign heading_font_style = settings.font_heading.style
             assign heading_font_weight = settings.font_heading.weight
           endif
+
+          comment
+            Accent font for hero titles - Figma uses Versailles
+          endcomment
+          if settings.custom_font_accent == 'heading'
+            assign accent_font_family = heading_font_family
+          elsif settings.custom_font_accent == 'nohemi'
+            assign accent_font_family = 'Nohemi'
+          elsif settings.custom_font_accent == 'versailles'
+            assign accent_font_family = 'Versailles'
+          elsif settings.custom_font_accent == 'myriad'
+            assign accent_font_family = 'MyriadPro'
+          else
+            assign accent_font_family = 'Versailles'
+          endif
         -%}
         --font-body-family: {{ body_font_family }}{% if settings.custom_font_body == 'shopify_font' %}, {{ settings.font_body.fallback_families }}{% else %}, sans-serif{% endif %};
         --font-body-style: {{ body_font_style }};
-        --font-body-weight: {{ body_font_weight }};
+        --font-body-weight: {{ settings.font_weight_body | default: body_font_weight }};
         --font-body-weight-bold: {% if settings.custom_font_body == 'shopify_font' %}{{ settings.font_body.weight | plus: 300 | at_most: 1000 }}{% else %}700{% endif %};
-        --font-body-size: {{ settings.font_size_body | default: 16 }}px;
+        --font-body-size: {{ settings.font_size_body | default: 24 }}px;
         --font-body-line-height: 1.6;
 
         --font-heading-family: {{ heading_font_family }}{% if settings.custom_font_heading == 'shopify_font' %}, {{ settings.font_heading.fallback_families }}{% else %}, sans-serif{% endif %};
         --font-heading-style: {{ heading_font_style }};
-        --font-heading-weight: {{ heading_font_weight }};
-        --font-heading-size: {{ settings.font_size_heading | default: 36 }}px;
+        --font-heading-weight: {{ settings.font_weight_heading | default: heading_font_weight }};
+        --font-heading-size: {{ settings.font_size_heading | default: 24 }}px;
         --font-heading-line-height: 1.2;
 
-        /* Colors */
-        --color-primary: {{ settings.color_primary }};
-        --color-secondary: {{ settings.color_secondary }};
-        --color-accent: {{ settings.color_accent }};
-        --color-background: {{ settings.color_background }};
-        --color-text: {{ settings.color_text }};
-        --color-text-secondary: {{ settings.color_text_secondary }};
+        /* Accent Font - for hero titles (Figma: Versailles) */
+        --font-accent-family: {{ accent_font_family }}, serif;
+
+        /* Typography Scale (from Figma) */
+        --font-size-hero: {{ settings.font_size_hero | default: 80 }}px;
+        --font-size-h1: {{ settings.font_size_h1 | default: 64 }}px;
+        --font-size-h2: {{ settings.font_size_h2 | default: 48 }}px;
+        --font-size-h3: {{ settings.font_size_h3 | default: 32 }}px;
+        --font-size-h4: {{ settings.font_size_heading | default: 24 }}px;
+        --font-size-body: {{ settings.font_size_body | default: 24 }}px;
+        --font-size-small: {{ settings.font_size_small | default: 16 }}px;
+
+        /* Letter Spacing (from Figma) */
+        --letter-spacing-heading: {{ settings.letter_spacing_heading | default: 12 | divided_by: 100.0 }}em;
+        --letter-spacing-body: {{ settings.letter_spacing_body | default: 6 | divided_by: 100.0 }}em;
+        --letter-spacing-button: {{ settings.button_letter_spacing | default: 12 | divided_by: 100.0 }}em;
+
+        /* Colors (from Figma) */
+        --color-primary: {{ settings.color_primary | default: '#5E877A' }};
+        --color-secondary: {{ settings.color_secondary | default: '#E8983B' }};
+        --color-accent: {{ settings.color_accent | default: '#5E877A' }};
+        --color-dark: {{ settings.color_dark | default: '#2F4238' }};
+        --color-background: {{ settings.color_background | default: '#ffffff' }};
+        --color-text: {{ settings.color_text | default: '#1E1E1E' }};
+        --color-text-secondary: {{ settings.color_text_secondary | default: '#666666' }};
         --color-footer: {{ settings.color_secondary | default: settings.color_primary }};
         --color-base-text: {{ settings.color_text }};
         --color-base-background-1: {{ settings.color_background }};
@@ -300,13 +333,16 @@
         --scheme-subtle-heading: {{ settings.scheme_subtle_heading | default: '#111111' }};
         --scheme-subtle-accent: {{ settings.scheme_subtle_accent | default: '#2563EB' }};
 
-        /* Button System */
-        --button-primary-bg: {{ settings.button_primary_bg | default: '#000000' }};
+        /* Button System (Figma: pill buttons with brand colors) */
+        --button-primary-bg: {{ settings.button_primary_bg | default: '#5E877A' }};
         --button-primary-text: {{ settings.button_primary_text | default: '#ffffff' }};
-        --button-primary-hover: {{ settings.button_primary_hover | default: '#333333' }};
-        --button-secondary-bg: {{ settings.button_secondary_bg | default: 'transparent' }};
-        --button-secondary-text: {{ settings.button_secondary_text | default: '#000000' }};
-        --button-secondary-border: {{ settings.button_secondary_border | default: '#000000' }};
+        --button-primary-hover: {{ settings.button_primary_hover | default: '#4A6D62' }};
+        --button-secondary-bg: {{ settings.button_secondary_bg | default: '#E8983B' }};
+        --button-secondary-text: {{ settings.button_secondary_text | default: '#ffffff' }};
+        --button-secondary-border: {{ settings.button_secondary_border | default: '#E8983B' }};
+        --button-outline-border: {{ settings.button_outline_border | default: '#5E877A' }};
+        --button-outline-text: {{ settings.button_outline_text | default: '#1E1E1E' }};
+        --button-letter-spacing: {{ settings.button_letter_spacing | default: 12 | divided_by: 100.0 }}em;
         {%- liquid
           case settings.button_border_radius
             when 'none'

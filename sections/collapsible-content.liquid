@@ -1,0 +1,975 @@
+{%- liquid
+  # @description Collapsible content section with accordion-style expandable rows
+  # Alternative to FAQ section with more flexible content options
+  # @settings heading {String} - Section heading
+  # @settings layout {String} - Layout style (full, split-image)
+  # @settings open_first {Boolean} - Expand first item by default
+  # @blocks collapsible_row - Individual row with title and rich content
+  # @example
+  #   Use for FAQs, product details, shipping info, size guides, etc.
+
+  assign row_count = section.blocks.size
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--collapsible">
+    <span class="editor-label">Collapsible Content</span>
+    <span class="editor-info">
+      {{ row_count }} rows |
+      Layout: {{ section.settings.layout | replace: '-', ' ' | capitalize }} |
+      {% if section.settings.open_first %}First open{% else %}All closed{% endif %}
+    </span>
+  </div>
+{% endif %}
+
+<section
+  class="collapsible-section collapsible-section--{{ section.settings.layout }}"
+  style="
+    {% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="collapsible-section__container page-width">
+    {%- if section.settings.layout == 'split-image' -%}
+      <div class="collapsible-section__grid">
+        <div class="collapsible-section__image-column">
+          {%- if section.settings.image != blank -%}
+            <img
+              src="{{ section.settings.image | image_url: width: 800 }}"
+              srcset="
+                {{ section.settings.image | image_url: width: 400 }} 400w,
+                {{ section.settings.image | image_url: width: 600 }} 600w,
+                {{ section.settings.image | image_url: width: 800 }} 800w
+              "
+              sizes="(max-width: 767px) 100vw, 50vw"
+              alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}"
+              class="collapsible-section__image"
+              loading="lazy"
+              style="border-radius: {{ section.settings.image_border_radius }}px;"
+            >
+          {%- else -%}
+            <div class="collapsible-section__image-placeholder">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {%- endif -%}
+        </div>
+        <div class="collapsible-section__content-column">
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2
+        class="collapsible-section__heading"
+        style="
+          {% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %}
+          text-align: {{ section.settings.heading_alignment }};
+          font-size: {{ section.settings.heading_size }}px;
+          font-weight: {{ section.settings.heading_weight }};
+          margin-bottom: {{ section.settings.heading_spacing }}px;
+        "
+      >
+        {{ section.settings.heading | escape }}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <div
+        class="collapsible-section__description"
+        style="
+          {% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}
+          text-align: {{ section.settings.heading_alignment }};
+          margin-bottom: {{ section.settings.description_spacing }}px;
+        "
+      >
+        {{ section.settings.description }}
+      </div>
+    {%- endif -%}
+
+    {%- if row_count > 0 -%}
+      <div
+        class="collapsible-content"
+        style="max-width: {{ section.settings.content_width }}px;{% if section.settings.layout != 'split-image' %} margin: 0 auto;{% endif %}"
+      >
+        {%- for block in section.blocks -%}
+          <details
+            class="collapsible-row"
+            {% if section.settings.open_first and forloop.first %}open{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <summary
+              class="collapsible-row__header"
+              style="
+                padding: {{ section.settings.row_padding }}px;
+                {% if section.settings.row_background != blank %}background-color: {{ section.settings.row_background }};{% endif %}
+                {% if section.settings.row_border_color != blank %}border-color: {{ section.settings.row_border_color }};{% endif %}
+                border-radius: {{ section.settings.row_border_radius }}px;
+              "
+            >
+              <div class="collapsible-row__header-content">
+                {%- if block.settings.icon != blank -%}
+                  <span class="collapsible-row__icon" aria-hidden="true">{{ block.settings.icon }}</span>
+                {%- elsif block.settings.icon_image != blank -%}
+                  <img
+                    src="{{ block.settings.icon_image | image_url: width: 48 }}"
+                    alt=""
+                    class="collapsible-row__icon-image"
+                    width="24"
+                    height="24"
+                  >
+                {%- endif -%}
+                <span
+                  class="collapsible-row__title"
+                  style="
+                    {% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% elsif section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}
+                    font-size: {{ section.settings.title_size }}px;
+                    font-weight: {{ section.settings.title_weight }};
+                  "
+                >
+                  {{ block.settings.heading | escape }}
+                </span>
+              </div>
+              <span
+                class="collapsible-row__toggle"
+                aria-hidden="true"
+                style="{% if section.settings.toggle_color != blank %}color: {{ section.settings.toggle_color }};{% endif %}"
+              >
+                {%- if section.settings.toggle_style == 'plus' -%}
+                  <span class="toggle-icon toggle-icon--plus">+</span>
+                {%- elsif section.settings.toggle_style == 'chevron' -%}
+                  <svg class="toggle-icon toggle-icon--chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                {%- else -%}
+                  <span class="toggle-icon toggle-icon--arrow">&#8250;</span>
+                {%- endif -%}
+              </span>
+            </summary>
+            <div
+              class="collapsible-row__content"
+              style="
+                padding: {{ section.settings.content_padding }}px;
+                {% if section.settings.content_background != blank %}background-color: {{ section.settings.content_background }};{% endif %}
+                {% if block.settings.content_color != blank %}color: {{ block.settings.content_color }};{% elsif section.settings.content_color != blank %}color: {{ section.settings.content_color }};{% endif %}
+              "
+            >
+              {%- if block.settings.row_content != blank -%}
+                <div class="collapsible-row__richtext rte">
+                  {{ block.settings.row_content }}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.page != blank -%}
+                <div class="collapsible-row__page-content rte">
+                  {{ block.settings.page.content }}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.button_text != blank and block.settings.button_link != blank -%}
+                <a
+                  href="{{ block.settings.button_link }}"
+                  class="collapsible-row__button"
+                  style="
+                    {% if block.settings.button_color != blank %}background-color: {{ block.settings.button_color }};{% endif %}
+                    {% if block.settings.button_text_color != blank %}color: {{ block.settings.button_text_color }};{% endif %}
+                  "
+                >
+                  {{ block.settings.button_text }}
+                </a>
+              {%- endif -%}
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- elsif request.design_mode -%}
+      <div class="collapsible-section__placeholder">
+        <p>Add collapsible row blocks to create your content</p>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.layout == 'split-image' -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .collapsible-section {
+    position: relative;
+  }
+
+  .collapsible-section__heading {
+    font-family: var(--font-heading-family);
+    margin: 0;
+  }
+
+  .collapsible-section__description {
+    font-family: var(--font-body-family);
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    line-height: 1.6;
+  }
+
+  .collapsible-section__description p {
+    margin: 0;
+  }
+
+  /* Split Image Layout */
+  .collapsible-section--split-image .collapsible-section__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.grid_gap }}px;
+    align-items: {{ section.settings.vertical_alignment }};
+  }
+
+  .collapsible-section__image-column {
+    position: relative;
+  }
+
+  .collapsible-section__image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .collapsible-section__image-placeholder {
+    aspect-ratio: 1;
+    background: var(--color-background-alt, #f5f5f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ section.settings.image_border_radius }}px;
+  }
+
+  .collapsible-section__image-placeholder .placeholder-svg {
+    width: 100px;
+    height: 100px;
+    opacity: 0.5;
+  }
+
+  /* Collapsible Content */
+  .collapsible-content {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.row_gap }}px;
+  }
+
+  .collapsible-row {
+    border: {{ section.settings.row_border_width }}px solid var(--color-border, rgba(0,0,0,0.1));
+    border-radius: {{ section.settings.row_border_radius }}px;
+    overflow: hidden;
+  }
+
+  .collapsible-row__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+    transition: background-color 0.2s ease;
+    min-height: 48px;
+    gap: 16px;
+  }
+
+  .collapsible-row__header::-webkit-details-marker {
+    display: none;
+  }
+
+  .collapsible-row__header:hover {
+    {% if section.settings.row_hover_background != blank %}
+      background-color: {{ section.settings.row_hover_background }};
+    {% endif %}
+  }
+
+  .collapsible-row__header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .collapsible-row__icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .collapsible-row__icon-image {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .collapsible-row__title {
+    font-family: var(--font-heading-family);
+    line-height: 1.4;
+  }
+
+  .collapsible-row__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .toggle-icon--plus {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .toggle-icon--arrow {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .toggle-icon--chevron {
+    transition: transform 0.3s ease;
+  }
+
+  /* Open state animations */
+  .collapsible-row[open] .toggle-icon--plus {
+    transform: rotate(45deg);
+  }
+
+  .collapsible-row[open] .toggle-icon--arrow {
+    transform: rotate(90deg);
+  }
+
+  .collapsible-row[open] .toggle-icon--chevron {
+    transform: rotate(180deg);
+  }
+
+  .collapsible-row__content {
+    font-family: var(--font-body-family);
+    font-size: clamp(0.875rem, 2vw, {{ section.settings.content_size }}px);
+    line-height: {{ section.settings.content_line_height }};
+    border-top: {{ section.settings.row_border_width }}px solid var(--color-border, rgba(0,0,0,0.1));
+  }
+
+  .collapsible-row__richtext,
+  .collapsible-row__page-content {
+    margin: 0;
+  }
+
+  .collapsible-row__richtext p:first-child,
+  .collapsible-row__page-content p:first-child {
+    margin-top: 0;
+  }
+
+  .collapsible-row__richtext p:last-child,
+  .collapsible-row__page-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .collapsible-row__button {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 12px 24px;
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: opacity 0.2s ease;
+    min-height: 44px;
+  }
+
+  .collapsible-row__button:hover {
+    opacity: 0.9;
+  }
+
+  /* Mobile Responsive */
+  @media screen and (max-width: 767px) {
+    .collapsible-section--split-image .collapsible-section__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .collapsible-section__image-column {
+      order: {% if section.settings.mobile_image_position == 'top' %}1{% else %}2{% endif %};
+    }
+
+    .collapsible-section__content-column {
+      order: {% if section.settings.mobile_image_position == 'top' %}2{% else %}1{% endif %};
+    }
+
+    .collapsible-row__header {
+      padding: 12px 16px !important;
+    }
+
+    .collapsible-row__content {
+      padding: 12px 16px !important;
+    }
+  }
+
+  {% if request.design_mode %}
+    .collapsible-section {
+      outline: 2px dashed rgba(0, 150, 136, 0.3);
+      outline-offset: -2px;
+    }
+
+    .collapsible-section::before {
+      content: 'COLLAPSIBLE CONTENT';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0, 150, 136, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .collapsible-row {
+      outline: 1px dashed rgba(0, 150, 136, 0.2);
+    }
+
+    .editor-controls--collapsible {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(0, 150, 136, 0.5);
+    }
+
+    .editor-controls--collapsible .editor-label {
+      font-weight: 600;
+      color: rgba(0, 150, 136, 1);
+      font-size: 12px;
+    }
+
+    .editor-controls--collapsible .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+
+    .collapsible-section__placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      background: rgba(0, 150, 136, 0.05);
+      border: 2px dashed rgba(0, 150, 136, 0.3);
+      border-radius: 8px;
+      color: var(--color-text);
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "📂 Collapsible Content",
+  "tag": "section",
+  "class": "section-collapsible-content",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Create expandable accordion content for FAQs, product details, size guides, shipping info, and more. Supports rich text, embedded pages, and optional side images."
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout Style",
+      "options": [
+        { "value": "full", "label": "Full Width" },
+        { "value": "split-image", "label": "Split with Image" }
+      ],
+      "default": "full",
+      "info": "Full: Centered collapsible content. Split: Image alongside content."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Side Image",
+      "info": "Only displayed in 'Split with Image' layout"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid Gap",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "info": "Space between image and content columns"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical Alignment",
+      "options": [
+        { "value": "start", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Bottom" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_position",
+      "label": "Mobile Image Position",
+      "options": [
+        { "value": "top", "label": "Above Content" },
+        { "value": "bottom", "label": "Below Content" }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "header",
+      "content": "✏️ Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading Spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "info": "Optional introductory text"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "range",
+      "id": "description_spacing",
+      "label": "Description Spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 400,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "header",
+      "content": "⚙️ Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open First Row by Default",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "toggle_style",
+      "label": "Toggle Icon Style",
+      "options": [
+        { "value": "plus", "label": "Plus/Minus" },
+        { "value": "chevron", "label": "Chevron" },
+        { "value": "arrow", "label": "Arrow" }
+      ],
+      "default": "plus"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Row Styling"
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Gap Between Rows",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "row_padding",
+      "label": "Row Header Padding",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "row_border_width",
+      "label": "Row Border Width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "row_border_radius",
+      "label": "Row Border Radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "row_border_color",
+      "label": "Row Border Color"
+    },
+    {
+      "type": "color",
+      "id": "row_background",
+      "label": "Row Background"
+    },
+    {
+      "type": "color",
+      "id": "row_hover_background",
+      "label": "Row Hover Background"
+    },
+    {
+      "type": "header",
+      "content": "📝 Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "color",
+      "id": "toggle_color",
+      "label": "Toggle Icon Color"
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Content Padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "content_size",
+      "label": "Content Font Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "content_line_height",
+      "label": "Content Line Height",
+      "min": 1.2,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Content Color"
+    },
+    {
+      "type": "color",
+      "id": "content_background",
+      "label": "Content Background"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collapsible_row",
+      "name": "📋 Collapsible Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Row Title",
+          "default": "Collapsible row title",
+          "info": "The clickable header text"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (Emoji/Symbol)",
+          "placeholder": "📦",
+          "info": "Optional icon before title (e.g., 📦, 🚚, ❓)"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon Image",
+          "info": "Alternative: Use an image as the icon"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title Color Override"
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "richtext",
+          "id": "row_content",
+          "label": "Row Content",
+          "default": "<p>Add your content here. You can use formatting, lists, and links.</p>",
+          "info": "Rich text content for this row"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page Content",
+          "info": "Alternative: Display content from a page"
+        },
+        {
+          "type": "color",
+          "id": "content_color",
+          "label": "Content Color Override"
+        },
+        {
+          "type": "header",
+          "content": "Button (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        },
+        {
+          "type": "color",
+          "id": "button_color",
+          "label": "Button Color"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "Button Text Color"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collapsible Content - FAQ",
+      "settings": {
+        "heading": "Frequently Asked Questions",
+        "layout": "full",
+        "heading_alignment": "center",
+        "open_first": true
+      },
+      "blocks": [
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "What is your return policy?",
+            "row_content": "<p>We offer a 30-day return policy on all unused items. Simply contact our support team to initiate a return.</p>",
+            "icon": "📦"
+          }
+        },
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "How long does shipping take?",
+            "row_content": "<p>Standard shipping takes 5-7 business days. Express shipping is available for 2-3 day delivery.</p>",
+            "icon": "🚚"
+          }
+        },
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Do you ship internationally?",
+            "row_content": "<p>Yes! We ship to most countries worldwide. International shipping rates and delivery times vary by location.</p>",
+            "icon": "🌍"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Collapsible Content - Split Image",
+      "settings": {
+        "heading": "Product Details",
+        "layout": "split-image",
+        "heading_alignment": "left",
+        "open_first": true
+      },
+      "blocks": [
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Ingredients",
+            "row_content": "<p>Our products are made with carefully selected natural ingredients.</p>"
+          }
+        },
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "How to Use",
+            "row_content": "<p>Follow these simple steps for best results.</p>"
+          }
+        },
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Storage Instructions",
+            "row_content": "<p>Store in a cool, dry place away from direct sunlight.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

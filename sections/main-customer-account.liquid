@@ -1,43 +1,521 @@
 {% liquid
-  # @description Customer account section
-  # Displays customer account dashboard
+  # @description Customer account dashboard with full customization
+  # Displays account overview with orders, addresses, and profile info
 %}
 
-<div class="page-width" style="padding: 40px 20px;">
-  <h1 class="h1" style="margin-bottom: 30px;">Account</h1>
-  
-  <div style="display: grid; grid-template-columns: 250px 1fr; gap: 40px;">
-    <nav style="border-right: 1px solid #eee; padding-right: 20px;">
-      <ul style="list-style: none; padding: 0;">
-        <li style="margin-bottom: 15px;"><a href="{{ routes.account_url }}" style="color: #000; text-decoration: none;">Account Overview</a></li>
-        <li style="margin-bottom: 15px;"><a href="{{ routes.account_addresses_url }}" style="color: #000; text-decoration: none;">Addresses</a></li>
-        <li style="margin-bottom: 15px;"><a href="{{ routes.account_logout_url }}" style="color: #000; text-decoration: none;">Logout</a></li>
-      </ul>
-    </nav>
-    
-    <div>
-      <h2 style="margin-bottom: 20px;">Order History</h2>
-      {%- if customer.orders.size > 0 -%}
-        <div class="orders-list">
-          {%- for order in customer.orders -%}
-            <div style="padding: 20px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 20px;">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <div>
-                  <strong>Order {{ order.name }}</strong>
-                  <p style="margin: 5px 0; color: #666; font-size: 14px;">{{ order.created_at | date: '%B %d, %Y' }}</p>
+{%- render 'visibility-classes',
+  show_on_mobile: section.settings.show_on_mobile,
+  show_on_desktop: section.settings.show_on_desktop,
+  section_id: section.id
+-%}
+
+<div
+  id="{{ section.id }}"
+  class="customer-account color-scheme-{{ section.settings.color_scheme }}"
+>
+  <style>
+    #{{ section.id }} {
+      {% render 'color-scheme', scheme: section.settings.color_scheme %}
+      {% render 'section-spacing', padding_top: section.settings.padding_top, padding_bottom: section.settings.padding_bottom %}
+    }
+
+    #{{ section.id }} .account-container {
+      {% render 'container-width', width: section.settings.container_width %}
+    }
+
+    /* Account Header */
+    #{{ section.id }} .account-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-lg);
+      border-bottom: 1px solid var(--section-border, rgba(0,0,0,0.1));
+    }
+
+    #{{ section.id }} .account-title {
+      font-family: var(--font-heading-family);
+      font-size: calc(var(--font-heading-size) * {{ section.settings.title_scale | divided_by: 100.0 }});
+      font-weight: var(--font-heading-weight);
+      color: var(--section-heading, var(--color-heading));
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    #{{ section.id }} .account-welcome {
+      font-size: var(--font-body-size);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.8;
+      margin: var(--spacing-xs) 0 0;
+    }
+
+    #{{ section.id }} .account-logout {
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-family: var(--font-body-family);
+      font-size: calc(var(--font-body-size) * 0.9375);
+      font-weight: 500;
+      color: var(--button-secondary-text);
+      background-color: var(--button-secondary-bg);
+      border: 1px solid var(--button-secondary-border);
+      border-radius: var(--button-radius);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    #{{ section.id }} .account-logout:hover {
+      background-color: var(--button-secondary-hover);
+    }
+
+    /* Account Layout */
+    #{{ section.id }} .account-layout {
+      display: grid;
+      {%- if section.settings.layout == 'sidebar' -%}
+        grid-template-columns: 250px 1fr;
+        gap: var(--spacing-xxl);
+      {%- else -%}
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+      {%- endif -%}
+    }
+
+    @media screen and (max-width: 989px) {
+      #{{ section.id }} .account-layout {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+      }
+    }
+
+    /* Account Navigation */
+    #{{ section.id }} .account-nav {
+      {%- if section.settings.layout == 'sidebar' -%}
+        position: sticky;
+        top: var(--spacing-lg);
+        align-self: start;
+      {%- else -%}
+        display: flex;
+        gap: var(--spacing-sm);
+        flex-wrap: wrap;
+        padding-bottom: var(--spacing-lg);
+        border-bottom: 1px solid var(--section-border, rgba(0,0,0,0.1));
+      {%- endif -%}
+    }
+
+    #{{ section.id }} .account-nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      {%- if section.settings.layout == 'sidebar' -%}
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+      {%- else -%}
+        display: contents;
+      {%- endif -%}
+    }
+
+    #{{ section.id }} .account-nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: var(--font-body-size);
+      font-weight: 500;
+      color: var(--section-text, var(--color-text));
+      text-decoration: none;
+      border-radius: var(--button-radius);
+      transition: all var(--transition-fast);
+    }
+
+    #{{ section.id }} .account-nav-link:hover,
+    #{{ section.id }} .account-nav-link.active {
+      background: rgba(0,0,0,0.05);
+      color: var(--section-heading, var(--color-heading));
+    }
+
+    #{{ section.id }} .account-nav-link svg {
+      width: 20px;
+      height: 20px;
+      opacity: 0.7;
+    }
+
+    /* Account Content */
+    #{{ section.id }} .account-content {
+      min-width: 0;
+    }
+
+    /* Section Cards */
+    #{{ section.id }} .account-section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    #{{ section.id }} .account-section:last-child {
+      margin-bottom: 0;
+    }
+
+    #{{ section.id }} .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    #{{ section.id }} .section-title {
+      font-family: var(--font-heading-family);
+      font-size: calc(var(--font-heading-size) * 0.55);
+      font-weight: var(--font-heading-weight);
+      color: var(--section-heading, var(--color-heading));
+      margin: 0;
+    }
+
+    #{{ section.id }} .section-link {
+      font-size: calc(var(--font-body-size) * 0.9375);
+      font-weight: 500;
+      color: var(--link-color, var(--color-primary));
+      text-decoration: none;
+    }
+
+    #{{ section.id }} .section-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Order List */
+    #{{ section.id }} .orders-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    #{{ section.id }} .order-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--spacing-md);
+      padding: var(--spacing-lg);
+      background: {% if section.settings.card_background %}rgba(0,0,0,0.02){% else %}transparent{% endif %};
+      border: 1px solid var(--section-border, rgba(0,0,0,0.1));
+      border-radius: {{ section.settings.card_border_radius }}px;
+      transition: all var(--transition-fast);
+    }
+
+    #{{ section.id }} .order-card:hover {
+      {%- if section.settings.card_hover_effect -%}
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      {%- endif -%}
+    }
+
+    @media screen and (max-width: 749px) {
+      #{{ section.id }} .order-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    #{{ section.id }} .order-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    #{{ section.id }} .order-number {
+      font-family: var(--font-heading-family);
+      font-size: calc(var(--font-heading-size) * 0.4);
+      font-weight: var(--font-heading-weight);
+      color: var(--section-heading, var(--color-heading));
+      margin: 0;
+    }
+
+    #{{ section.id }} .order-number a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    #{{ section.id }} .order-number a:hover {
+      text-decoration: underline;
+    }
+
+    #{{ section.id }} .order-date {
+      font-size: calc(var(--font-body-size) * 0.9375);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.7;
+      margin: 0;
+    }
+
+    #{{ section.id }} .order-status {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-xs);
+    }
+
+    #{{ section.id }} .status-badge {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-size: calc(var(--font-body-size) * 0.75);
+      font-weight: 600;
+      text-transform: capitalize;
+      border-radius: var(--button-radius);
+    }
+
+    #{{ section.id }} .status-badge--paid {
+      background: rgba(5, 150, 105, 0.1);
+      color: #059669;
+    }
+
+    #{{ section.id }} .status-badge--pending {
+      background: rgba(217, 119, 6, 0.1);
+      color: #D97706;
+    }
+
+    #{{ section.id }} .status-badge--fulfilled {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3B82F6;
+    }
+
+    #{{ section.id }} .order-total {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #{{ section.id }} .order-price {
+      font-family: var(--font-heading-family);
+      font-size: calc(var(--font-heading-size) * 0.45);
+      font-weight: var(--font-heading-weight);
+      color: var(--section-heading, var(--color-heading));
+      margin: 0;
+    }
+
+    #{{ section.id }} .order-items {
+      font-size: calc(var(--font-body-size) * 0.875);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.7;
+      margin: var(--spacing-xs) 0 0;
+    }
+
+    /* Address Card */
+    #{{ section.id }} .address-card {
+      padding: var(--spacing-lg);
+      background: {% if section.settings.card_background %}rgba(0,0,0,0.02){% else %}transparent{% endif %};
+      border: 1px solid var(--section-border, rgba(0,0,0,0.1));
+      border-radius: {{ section.settings.card_border_radius }}px;
+    }
+
+    #{{ section.id }} .address-default {
+      display: inline-block;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+      font-size: calc(var(--font-body-size) * 0.75);
+      font-weight: 600;
+      color: #059669;
+      background: rgba(5, 150, 105, 0.1);
+      border-radius: var(--button-radius);
+    }
+
+    #{{ section.id }} .address-content {
+      font-size: var(--font-body-size);
+      color: var(--section-text, var(--color-text));
+      line-height: 1.6;
+    }
+
+    /* Empty State */
+    #{{ section.id }} .empty-state {
+      text-align: center;
+      padding: var(--spacing-xxl) var(--spacing-lg);
+      background: rgba(0,0,0,0.02);
+      border-radius: {{ section.settings.card_border_radius }}px;
+    }
+
+    #{{ section.id }} .empty-icon {
+      font-size: 48px;
+      opacity: 0.3;
+      margin-bottom: var(--spacing-md);
+    }
+
+    #{{ section.id }} .empty-title {
+      font-family: var(--font-heading-family);
+      font-size: calc(var(--font-heading-size) * 0.5);
+      color: var(--section-heading, var(--color-heading));
+      margin: 0 0 var(--spacing-sm);
+    }
+
+    #{{ section.id }} .empty-text {
+      font-size: var(--font-body-size);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.7;
+      margin: 0 0 var(--spacing-lg);
+    }
+
+    #{{ section.id }} .empty-action {
+      display: inline-block;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      font-weight: 500;
+      color: var(--button-primary-text);
+      background-color: var(--button-primary-bg);
+      border-radius: var(--button-radius);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    #{{ section.id }} .empty-action:hover {
+      background-color: var(--button-primary-hover);
+    }
+  </style>
+
+  <div class="account-container">
+    {%- comment -%} Account Header {%- endcomment -%}
+    <header class="account-header">
+      <div>
+        <h1 class="account-title">{{ section.settings.title | default: 'My Account' }}</h1>
+        {%- if section.settings.show_welcome and customer -%}
+          <p class="account-welcome">
+            {{ section.settings.welcome_text | default: 'Welcome back,' }} {{ customer.first_name | default: customer.email }}
+          </p>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.show_logout -%}
+        <a href="{{ routes.account_logout_url }}" class="account-logout">
+          {{ section.settings.logout_text | default: 'Sign Out' }}
+        </a>
+      {%- endif -%}
+    </header>
+
+    {%- comment -%} Account Layout {%- endcomment -%}
+    <div class="account-layout">
+      {%- comment -%} Navigation {%- endcomment -%}
+      {%- if section.settings.show_navigation -%}
+        <nav class="account-nav" aria-label="Account navigation">
+          <ul class="account-nav-list">
+            <li>
+              <a href="{{ routes.account_url }}" class="account-nav-link active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <path d="M3 9h18M9 21V9"/>
+                </svg>
+                {{ section.settings.nav_overview | default: 'Overview' }}
+              </a>
+            </li>
+            <li>
+              <a href="{{ routes.account_addresses_url }}" class="account-nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                {{ section.settings.nav_addresses | default: 'Addresses' }}
+              </a>
+            </li>
+            <li>
+              <a href="{{ routes.account_logout_url }}" class="account-nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                {{ section.settings.nav_logout | default: 'Sign Out' }}
+              </a>
+            </li>
+          </ul>
+        </nav>
+      {%- endif -%}
+
+      {%- comment -%} Main Content {%- endcomment -%}
+      <div class="account-content">
+        {%- comment -%} Orders Section {%- endcomment -%}
+        <section class="account-section">
+          <div class="section-header">
+            <h2 class="section-title">{{ section.settings.orders_title | default: 'Order History' }}</h2>
+          </div>
+
+          {%- if customer.orders.size > 0 -%}
+            <div class="orders-list">
+              {%- assign orders_limit = section.settings.orders_per_page | default: 5 -%}
+              {%- for order in customer.orders limit: orders_limit -%}
+                <div class="order-card">
+                  <div class="order-info">
+                    <h3 class="order-number">
+                      <a href="{{ order.customer_url }}">{{ order.name }}</a>
+                    </h3>
+                    <p class="order-date">{{ order.created_at | date: section.settings.date_format | default: '%B %d, %Y' }}</p>
+                    <div class="order-status">
+                      <span class="status-badge status-badge--{% if order.financial_status == 'paid' %}paid{% else %}pending{% endif %}">
+                        {{ order.financial_status_label }}
+                      </span>
+                      {%- if order.fulfillment_status_label != blank -%}
+                        <span class="status-badge status-badge--fulfilled">
+                          {{ order.fulfillment_status_label }}
+                        </span>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                  <div class="order-total">
+                    <p class="order-price">{{ order.total_price | money }}</p>
+                    <p class="order-items">{{ order.line_items.size }} {{ order.line_items.size | pluralize: 'item', 'items' }}</p>
+                  </div>
                 </div>
-                <div style="text-align: right;">
-                  <strong>{{ order.total_price | money }}</strong>
-                  <p style="margin: 5px 0; color: #666; font-size: 14px;">{{ order.financial_status_label }}</p>
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            <div class="empty-state">
+              <div class="empty-icon">📦</div>
+              <h3 class="empty-title">{{ section.settings.empty_orders_title | default: 'No orders yet' }}</h3>
+              <p class="empty-text">{{ section.settings.empty_orders_text | default: "You haven't placed any orders yet." }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="empty-action">
+                {{ section.settings.empty_orders_button | default: 'Start Shopping' }}
+              </a>
+            </div>
+          {%- endif -%}
+        </section>
+
+        {%- comment -%} Default Address Section {%- endcomment -%}
+        {%- if section.settings.show_address -%}
+          <section class="account-section">
+            <div class="section-header">
+              <h2 class="section-title">{{ section.settings.address_title | default: 'Default Address' }}</h2>
+              <a href="{{ routes.account_addresses_url }}" class="section-link">
+                {{ section.settings.manage_addresses_text | default: 'Manage addresses' }} →
+              </a>
+            </div>
+
+            {%- if customer.default_address -%}
+              <div class="address-card">
+                <span class="address-default">{{ section.settings.default_badge | default: 'Default' }}</span>
+                <div class="address-content">
+                  {{ customer.default_address | format_address }}
                 </div>
               </div>
-              <a href="{{ order.customer_url }}" style="color: #000; text-decoration: underline;">View Order</a>
-            </div>
-          {%- endfor -%}
-        </div>
-      {%- else -%}
-        <p>You haven't placed any orders yet.</p>
-      {%- endif -%}
+            {%- else -%}
+              <div class="empty-state" style="padding: var(--spacing-xl);">
+                <p class="empty-text" style="margin-bottom: 0;">{{ section.settings.no_address_text | default: 'No addresses saved yet.' }}</p>
+              </div>
+            {%- endif -%}
+          </section>
+        {%- endif -%}
+
+        {%- comment -%} Additional Blocks {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'quick_links' -%}
+              <section class="account-section" {{ block.shopify_attributes }}>
+                <div class="section-header">
+                  <h2 class="section-title">{{ block.settings.title | default: 'Quick Links' }}</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-md);">
+                  {%- for i in (1..4) -%}
+                    {%- assign link_key = 'link_' | append: i -%}
+                    {%- assign text_key = 'link_' | append: i | append: '_text' -%}
+                    {%- if block.settings[link_key] != blank -%}
+                      <a href="{{ block.settings[link_key] }}" style="padding: var(--spacing-md); text-align: center; background: rgba(0,0,0,0.03); border-radius: {{ section.settings.card_border_radius }}px; text-decoration: none; color: var(--section-text); transition: background var(--transition-fast);">
+                        {{ block.settings[text_key] | default: 'Link' }}
+                      </a>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </section>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
     </div>
   </div>
 </div>
@@ -47,10 +525,359 @@
   "name": "Customer Account",
   "tag": "section",
   "class": "section",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Color Scheme"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "subtle", "label": "Subtle" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "My Account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_welcome",
+      "label": "Show welcome message",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "welcome_text",
+      "label": "Welcome text",
+      "default": "Welcome back,"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_logout",
+      "label": "Show logout button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "logout_text",
+      "label": "Logout text",
+      "default": "Sign Out"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "sidebar", "label": "With sidebar" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "sidebar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show navigation",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "options": [
+        { "value": "narrow", "label": "Narrow" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "wide", "label": "Wide" },
+        { "value": "full", "label": "Full" }
+      ],
+      "default": "wide"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Labels"
+    },
+    {
+      "type": "text",
+      "id": "nav_overview",
+      "label": "Overview label",
+      "default": "Overview"
+    },
+    {
+      "type": "text",
+      "id": "nav_addresses",
+      "label": "Addresses label",
+      "default": "Addresses"
+    },
+    {
+      "type": "text",
+      "id": "nav_logout",
+      "label": "Logout label",
+      "default": "Sign Out"
+    },
+    {
+      "type": "header",
+      "content": "Orders Section"
+    },
+    {
+      "type": "text",
+      "id": "orders_title",
+      "label": "Orders title",
+      "default": "Order History"
+    },
+    {
+      "type": "range",
+      "id": "orders_per_page",
+      "label": "Orders to show",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "date_format",
+      "label": "Date format",
+      "default": "%B %d, %Y",
+      "info": "Example: %B %d, %Y = January 01, 2024"
+    },
+    {
+      "type": "text",
+      "id": "empty_orders_title",
+      "label": "Empty state title",
+      "default": "No orders yet"
+    },
+    {
+      "type": "text",
+      "id": "empty_orders_text",
+      "label": "Empty state text",
+      "default": "You haven't placed any orders yet."
+    },
+    {
+      "type": "text",
+      "id": "empty_orders_button",
+      "label": "Empty state button",
+      "default": "Start Shopping"
+    },
+    {
+      "type": "header",
+      "content": "Address Section"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_address",
+      "label": "Show default address",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "address_title",
+      "label": "Address title",
+      "default": "Default Address"
+    },
+    {
+      "type": "text",
+      "id": "manage_addresses_text",
+      "label": "Manage addresses text",
+      "default": "Manage addresses"
+    },
+    {
+      "type": "text",
+      "id": "default_badge",
+      "label": "Default badge text",
+      "default": "Default"
+    },
+    {
+      "type": "text",
+      "id": "no_address_text",
+      "label": "No address text",
+      "default": "No addresses saved yet."
+    },
+    {
+      "type": "header",
+      "content": "Card Styling"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_background",
+      "label": "Card background",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_hover_effect",
+      "label": "Card hover effect",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_scale",
+      "label": "Title size",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "default": 90,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "label": "Padding top",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "Show on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_desktop",
+      "label": "Show on desktop",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quick_links",
+      "name": "Quick links",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Quick Links"
+        },
+        {
+          "type": "url",
+          "id": "link_1",
+          "label": "Link 1"
+        },
+        {
+          "type": "text",
+          "id": "link_1_text",
+          "label": "Link 1 text",
+          "default": "Shop All"
+        },
+        {
+          "type": "url",
+          "id": "link_2",
+          "label": "Link 2"
+        },
+        {
+          "type": "text",
+          "id": "link_2_text",
+          "label": "Link 2 text",
+          "default": "Contact Us"
+        },
+        {
+          "type": "url",
+          "id": "link_3",
+          "label": "Link 3"
+        },
+        {
+          "type": "text",
+          "id": "link_3_text",
+          "label": "Link 3 text",
+          "default": "FAQ"
+        },
+        {
+          "type": "url",
+          "id": "link_4",
+          "label": "Link 4"
+        },
+        {
+          "type": "text",
+          "id": "link_4_text",
+          "label": "Link 4 text",
+          "default": "Returns"
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "Customer Account"
+      "name": "Customer Account - Sidebar",
+      "settings": {
+        "layout": "sidebar",
+        "show_navigation": true
+      }
+    },
+    {
+      "name": "Customer Account - Full Width",
+      "settings": {
+        "layout": "full",
+        "show_navigation": false
+      }
+    },
+    {
+      "name": "Customer Account - With Quick Links",
+      "settings": {
+        "layout": "sidebar"
+      },
+      "blocks": [
+        {
+          "type": "quick_links"
+        }
+      ]
     }
   ]
 }

@@ -179,6 +179,75 @@
 </script>
 
 <style>
+  /* Hero Section Typography (from Figma) */
+  {%- liquid
+    case section.settings.title_font
+      when 'accent'
+        assign title_font = 'var(--font-accent-family)'
+      when 'nohemi'
+        assign title_font = 'Nohemi, sans-serif'
+      when 'versailles'
+        assign title_font = 'Versailles, serif'
+      when 'myriad'
+        assign title_font = 'MyriadPro, sans-serif'
+      else
+        assign title_font = 'var(--font-heading-family)'
+    endcase
+
+    case section.settings.subtitle_font
+      when 'nohemi'
+        assign subtitle_font = 'Nohemi, sans-serif'
+      when 'versailles'
+        assign subtitle_font = 'Versailles, serif'
+      when 'myriad'
+        assign subtitle_font = 'MyriadPro, sans-serif'
+      else
+        assign subtitle_font = 'var(--font-body-family)'
+    endcase
+
+    case section.settings.body_font
+      when 'nohemi'
+        assign body_font = 'Nohemi, sans-serif'
+      when 'versailles'
+        assign body_font = 'Versailles, serif'
+      when 'myriad'
+        assign body_font = 'MyriadPro, sans-serif'
+      else
+        assign body_font = 'var(--font-body-family)'
+    endcase
+  -%}
+
+  .hero-section .hero-main-title {
+    font-family: {{ title_font }};
+    font-size: {{ section.settings.title_size | default: 80 }}px;
+    letter-spacing: {{ section.settings.title_letter_spacing | default: 12 | divided_by: 100.0 }}em;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .hero-section .hero-subtitle,
+  .hero-section .hero-tagline {
+    font-family: {{ subtitle_font }};
+  }
+
+  .hero-section .hero-description,
+  .hero-section .hero-product-info {
+    font-family: {{ body_font }};
+  }
+
+  /* Responsive title sizes */
+  @media screen and (max-width: 768px) {
+    .hero-section .hero-main-title {
+      font-size: calc({{ section.settings.title_size | default: 80 }}px * 0.6);
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .hero-section .hero-main-title {
+      font-size: calc({{ section.settings.title_size | default: 80 }}px * 0.45);
+    }
+  }
+
   /* Hero Section Responsive Layout */
   .hero-section {
     position: relative;
@@ -410,6 +479,75 @@
       ],
       "default": "center",
       "info": "Where to position the background image."
+    },
+    {
+      "type": "header",
+      "content": "🔤 Typography Settings"
+    },
+    {
+      "type": "paragraph",
+      "content": "Figma design uses Versailles for hero titles, Nohemi for all other text."
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Title Font Family",
+      "options": [
+        { "value": "theme", "label": "Use Theme Setting" },
+        { "value": "accent", "label": "Accent Font (Versailles)" },
+        { "value": "nohemi", "label": "Nohemi" },
+        { "value": "versailles", "label": "Versailles" },
+        { "value": "myriad", "label": "Myriad Pro" }
+      ],
+      "default": "accent",
+      "info": "Font for the main title. Figma uses Versailles for hero titles."
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Font Size",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 80,
+      "unit": "px",
+      "info": "Figma uses 80px for hero titles."
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "label": "Title Letter Spacing (%)",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 12,
+      "info": "Figma uses 12% letter spacing for titles."
+    },
+    {
+      "type": "select",
+      "id": "subtitle_font",
+      "label": "Subtitle Font Family",
+      "options": [
+        { "value": "theme", "label": "Use Theme Setting" },
+        { "value": "nohemi", "label": "Nohemi" },
+        { "value": "versailles", "label": "Versailles" },
+        { "value": "myriad", "label": "Myriad Pro" }
+      ],
+      "default": "nohemi",
+      "info": "Font for subtitle/tagline. Figma uses Nohemi."
+    },
+    {
+      "type": "select",
+      "id": "body_font",
+      "label": "Body Text Font Family",
+      "options": [
+        { "value": "theme", "label": "Use Theme Setting" },
+        { "value": "nohemi", "label": "Nohemi" },
+        { "value": "versailles", "label": "Versailles" },
+        { "value": "myriad", "label": "Myriad Pro" }
+      ],
+      "default": "nohemi",
+      "info": "Font for descriptions and body text. Figma uses Nohemi."
     },
     {
       "type": "header",

@@ -1,0 +1,274 @@
+{%- liquid
+  # @description Custom Liquid section for merchants to add custom code
+  # Allows HTML, CSS, JavaScript, and Liquid code injection
+  # @settings custom_liquid {HTML} - Custom Liquid/HTML code
+  # @example
+  #   Use for custom integrations, tracking codes, or unique layouts
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--custom-liquid">
+    <span class="editor-label">Custom Liquid</span>
+    <span class="editor-info">
+      Custom code section |
+      {% if section.settings.custom_liquid != blank %}Has content{% else %}Empty{% endif %}
+    </span>
+  </div>
+{% endif %}
+
+<div
+  class="custom-liquid-section"
+  style="
+    {% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  {%- if section.settings.use_page_width -%}
+    <div class="custom-liquid-section__container page-width">
+  {%- endif -%}
+
+  {%- if section.settings.custom_liquid != blank -%}
+    {{ section.settings.custom_liquid }}
+  {%- elsif request.design_mode -%}
+    <div class="custom-liquid-section__placeholder">
+      <div class="custom-liquid-section__placeholder-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+      </div>
+      <h3 class="custom-liquid-section__placeholder-title">Custom Liquid</h3>
+      <p class="custom-liquid-section__placeholder-text">
+        Add custom HTML, CSS, JavaScript, or Liquid code in the section settings.<br>
+        This section is empty until you add code.
+      </p>
+      <div class="custom-liquid-section__placeholder-tips">
+        <p><strong>Tips:</strong></p>
+        <ul>
+          <li>Use Liquid objects like {{ '{{ shop.name }}' }}</li>
+          <li>Wrap CSS in &lt;style&gt; tags</li>
+          <li>Wrap JavaScript in &lt;script&gt; tags</li>
+          <li>Access products: {{ '{{ all_products["handle"] }}' }}</li>
+        </ul>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.use_page_width -%}
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .custom-liquid-section {
+    position: relative;
+  }
+
+  .custom-liquid-section__container {
+    width: 100%;
+  }
+
+  /* Placeholder styles for theme editor */
+  .custom-liquid-section__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(63, 81, 181, 0.05), rgba(103, 58, 183, 0.05));
+    border: 2px dashed rgba(63, 81, 181, 0.3);
+    border-radius: 8px;
+    color: var(--color-text, #333);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .custom-liquid-section__placeholder-icon {
+    margin-bottom: 16px;
+    opacity: 0.6;
+    color: var(--color-primary, #3f51b5);
+  }
+
+  .custom-liquid-section__placeholder-title {
+    font-family: var(--font-heading-family);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--color-text, #333);
+  }
+
+  .custom-liquid-section__placeholder-text {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    margin: 0 0 24px;
+    opacity: 0.7;
+    line-height: 1.6;
+  }
+
+  .custom-liquid-section__placeholder-tips {
+    text-align: left;
+    background: rgba(63, 81, 181, 0.08);
+    padding: 16px 20px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .custom-liquid-section__placeholder-tips p {
+    margin: 0 0 8px;
+  }
+
+  .custom-liquid-section__placeholder-tips ul {
+    margin: 0;
+    padding-left: 20px;
+    opacity: 0.8;
+  }
+
+  .custom-liquid-section__placeholder-tips li {
+    margin-bottom: 4px;
+    font-family: monospace;
+    font-size: 0.8rem;
+  }
+
+  {% if request.design_mode %}
+    .custom-liquid-section {
+      outline: 2px dashed rgba(63, 81, 181, 0.3);
+      outline-offset: -2px;
+      min-height: 60px;
+    }
+
+    .custom-liquid-section::before {
+      content: 'CUSTOM LIQUID';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(63, 81, 181, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .editor-controls--custom-liquid {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(63, 81, 181, 0.5);
+    }
+
+    .editor-controls--custom-liquid .editor-label {
+      font-weight: 600;
+      color: rgba(63, 81, 181, 1);
+      font-size: 12px;
+    }
+
+    .editor-controls--custom-liquid .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "💻 Custom Liquid",
+  "tag": "section",
+  "class": "section-custom-liquid",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Add custom HTML, CSS, JavaScript, or Liquid code. Use this section for custom integrations, tracking codes, or unique layouts that aren't available in other sections."
+    },
+    {
+      "type": "header",
+      "content": "💻 Custom Code"
+    },
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "Custom Liquid",
+      "info": "Add custom Liquid, HTML, CSS, or JavaScript code. Liquid objects and tags are fully supported."
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_page_width",
+      "label": "Constrain to Page Width",
+      "default": true,
+      "info": "Wrap content in page-width container"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Liquid - Standard",
+      "settings": {
+        "use_page_width": true,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    {
+      "name": "Custom Liquid - Full Width",
+      "settings": {
+        "use_page_width": false,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  ]
+}
+{% endschema %}

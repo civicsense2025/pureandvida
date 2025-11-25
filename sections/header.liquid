@@ -140,6 +140,50 @@
 </header>
 
 <style>
+  /* Header Typography (from Figma) */
+  {%- liquid
+    case section.settings.logo_font
+      when 'nohemi'
+        assign logo_font = 'Nohemi, sans-serif'
+      when 'versailles'
+        assign logo_font = 'Versailles, serif'
+      when 'myriad'
+        assign logo_font = 'MyriadPro, sans-serif'
+      else
+        assign logo_font = 'var(--font-heading-family)'
+    endcase
+
+    case section.settings.menu_font
+      when 'nohemi'
+        assign menu_font = 'Nohemi, sans-serif'
+      when 'versailles'
+        assign menu_font = 'Versailles, serif'
+      when 'myriad'
+        assign menu_font = 'MyriadPro, sans-serif'
+      else
+        assign menu_font = 'var(--font-body-family)'
+    endcase
+  -%}
+
+  .header__logo .logo,
+  .header__logo .logo__text {
+    font-family: {{ logo_font }};
+    font-weight: {{ section.settings.logo_font_weight | default: '300' }};
+  }
+
+  .header__menu-item,
+  .mobile-menu__link {
+    font-family: {{ menu_font }};
+    font-size: {{ section.settings.menu_font_size | default: 24 }}px;
+    letter-spacing: {{ section.settings.menu_letter_spacing | default: 6 | divided_by: 100.0 }}em;
+  }
+
+  .header__cta-button,
+  .mobile-menu__cart-button {
+    font-family: {{ menu_font }};
+    letter-spacing: var(--letter-spacing-button, 0.12em);
+  }
+
   /* Header Responsive Layout */
   .header {
     display: flex;
@@ -509,6 +553,74 @@
       "label": "Show Plus Sign (+)",
       "default": true,
       "info": "Display the + symbol in the logo design"
+    },
+    {
+      "type": "header",
+      "content": "🔤 Typography Settings"
+    },
+    {
+      "type": "paragraph",
+      "content": "Figma design uses Nohemi Light for logo, Nohemi Regular/SemiBold for navigation."
+    },
+    {
+      "type": "select",
+      "id": "logo_font",
+      "label": "Logo Font Family",
+      "options": [
+        { "value": "theme", "label": "Use Theme Setting" },
+        { "value": "nohemi", "label": "Nohemi (Figma)" },
+        { "value": "versailles", "label": "Versailles" },
+        { "value": "myriad", "label": "Myriad Pro" }
+      ],
+      "default": "nohemi",
+      "info": "Font for the text logo. Figma uses Nohemi Light."
+    },
+    {
+      "type": "select",
+      "id": "logo_font_weight",
+      "label": "Logo Font Weight",
+      "options": [
+        { "value": "300", "label": "Light (Figma)" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-Bold" }
+      ],
+      "default": "300",
+      "info": "Figma uses Light (300) weight for header logo."
+    },
+    {
+      "type": "select",
+      "id": "menu_font",
+      "label": "Menu Font Family",
+      "options": [
+        { "value": "theme", "label": "Use Theme Setting" },
+        { "value": "nohemi", "label": "Nohemi (Figma)" },
+        { "value": "versailles", "label": "Versailles" },
+        { "value": "myriad", "label": "Myriad Pro" }
+      ],
+      "default": "nohemi",
+      "info": "Font for navigation menu items. Figma uses Nohemi."
+    },
+    {
+      "type": "range",
+      "id": "menu_font_size",
+      "label": "Menu Font Size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 24,
+      "unit": "px",
+      "info": "Figma uses 24px for navigation."
+    },
+    {
+      "type": "range",
+      "id": "menu_letter_spacing",
+      "label": "Menu Letter Spacing (%)",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 6,
+      "info": "Figma uses 6% letter spacing for navigation."
     },
     {
       "type": "header",

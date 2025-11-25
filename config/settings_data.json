@@ -7,11 +7,10 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
-
 {
   "current": {
     "custom_font_heading": "versailles",
-    "custom_font_body": "myriad",
+    "custom_font_body": "nohemi",
     "content_for_index": []
   }
 }

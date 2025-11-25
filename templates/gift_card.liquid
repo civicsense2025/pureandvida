@@ -12,24 +12,87 @@
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {% endif %}
 
-    <title>{{ 'gift_cards.issued.title' | t: value: gift_card.initial_value | format_address }} - {{ shop.name }}</title>
+    <title>{{ 'gift_cards.issued.title' | t: value: gift_card.initial_value, shop: shop.name }} - {{ shop.name }}</title>
 
     {{ content_for_header }}
 
     {% liquid
-      assign nohemi_regular = 'Nohemi-Regular.otf' | asset_url
-      assign nohemi_semibold = 'Nohemi-SemiBold.otf' | asset_url
+      # Font asset URLs - matching theme.liquid
+      assign nohemi_light_woff = 'Nohemi-Light-BF6438cc5702321.woff' | asset_url
+      assign nohemi_light_otf = 'Nohemi-Light.otf' | asset_url
+      assign nohemi_light_ttf = 'Nohemi-Light-BF6438cc5899919.ttf' | asset_url
+
+      assign nohemi_regular_woff = 'Nohemi-Regular-BF6438cc579d934.woff' | asset_url
+      assign nohemi_regular_otf = 'Nohemi-Regular.otf' | asset_url
+      assign nohemi_regular_ttf = 'Nohemi-Regular-BF6438cc4d0e493.ttf' | asset_url
+
+      assign nohemi_medium_woff = 'Nohemi-Medium-BF6438cc57ddecd.woff' | asset_url
+      assign nohemi_medium_otf = 'Nohemi-Medium.otf' | asset_url
+      assign nohemi_medium_ttf = 'Nohemi-Medium-BF6438cc5883899.ttf' | asset_url
+
+      assign nohemi_semibold_woff = 'Nohemi-SemiBold-BF6438cc57db2ff.woff' | asset_url
+      assign nohemi_semibold_otf = 'Nohemi-SemiBold.otf' | asset_url
+      assign nohemi_semibold_ttf = 'Nohemi-SemiBold-BF6438cc588a48a.ttf' | asset_url
+
+      assign nohemi_bold_woff = 'Nohemi-Bold-BF6438cc577b524.woff' | asset_url
+      assign nohemi_bold_otf = 'Nohemi-Bold.otf' | asset_url
+      assign nohemi_bold_ttf = 'Nohemi-Bold-BF6438cc587b5b5.ttf' | asset_url
+
       assign versailles = 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url
       assign myriad = 'MyriadPro-Regular.otf' | asset_url
+
+      # Determine font families based on theme settings
+      if settings.custom_font_body == 'nohemi'
+        assign body_font_family = 'Nohemi'
+      elsif settings.custom_font_body == 'versailles'
+        assign body_font_family = 'Versailles'
+      elsif settings.custom_font_body == 'myriad'
+        assign body_font_family = 'MyriadPro'
+      else
+        assign body_font_family = settings.font_body.family | default: 'MyriadPro'
+      endif
+
+      if settings.custom_font_heading == 'nohemi'
+        assign heading_font_family = 'Nohemi'
+      elsif settings.custom_font_heading == 'versailles'
+        assign heading_font_family = 'Versailles'
+      elsif settings.custom_font_heading == 'myriad'
+        assign heading_font_family = 'MyriadPro'
+      else
+        assign heading_font_family = settings.font_heading.family | default: 'Versailles'
+      endif
     %}
 
     {% style %}
+      /* Font faces - matching theme.liquid for consistency */
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 300;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ nohemi_light_woff }}') format('woff'),
+             url('{{ nohemi_light_otf }}') format('opentype'),
+             url('{{ nohemi_light_ttf }}') format('truetype');
+      }
+
       @font-face {
         font-family: 'Nohemi';
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url({{ nohemi_regular }}) format('opentype');
+        src: url('{{ nohemi_regular_woff }}') format('woff'),
+             url('{{ nohemi_regular_otf }}') format('opentype'),
+             url('{{ nohemi_regular_ttf }}') format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ nohemi_medium_woff }}') format('woff'),
+             url('{{ nohemi_medium_otf }}') format('opentype'),
+             url('{{ nohemi_medium_ttf }}') format('truetype');
       }
 
       @font-face {
@@ -37,7 +100,19 @@
         font-weight: 600;
         font-style: normal;
         font-display: swap;
-        src: url({{ nohemi_semibold }}) format('opentype');
+        src: url('{{ nohemi_semibold_woff }}') format('woff'),
+             url('{{ nohemi_semibold_otf }}') format('opentype'),
+             url('{{ nohemi_semibold_ttf }}') format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Nohemi';
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ nohemi_bold_woff }}') format('woff'),
+             url('{{ nohemi_bold_otf }}') format('opentype'),
+             url('{{ nohemi_bold_ttf }}') format('truetype');
       }
 
       @font-face {
@@ -45,7 +120,7 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url({{ versailles }}) format('truetype');
+        src: url('{{ versailles }}') format('truetype');
       }
 
       @font-face {
@@ -53,18 +128,49 @@
         font-weight: 400;
         font-style: normal;
         font-display: swap;
-        src: url({{ myriad }}) format('opentype');
+        src: url('{{ myriad }}') format('opentype');
       }
 
       :root {
-        --font-heading-family: 'Versailles', serif;
-        --font-body-family: 'MyriadPro', sans-serif;
-        --color-primary: {{ settings.color_primary | default: '#4A7C59' }};
-        --color-secondary: {{ settings.color_secondary | default: '#8B9D83' }};
-        --color-accent: {{ settings.color_accent | default: '#C4A962' }};
+        /* Typography - pulled from theme settings */
+        --font-heading-family: {{ heading_font_family }}, serif;
+        --font-body-family: {{ body_font_family }}, sans-serif;
+
+        /* Colors - pulled from theme settings */
+        --color-primary: {{ settings.color_primary | default: '#5E877A' }};
+        --color-secondary: {{ settings.color_secondary | default: '#E8983B' }};
+        --color-accent: {{ settings.color_accent | default: '#5E877A' }};
         --color-background: {{ settings.color_background | default: '#FDFBF7' }};
         --color-text: {{ settings.color_text | default: '#2C3E2D' }};
-        --color-text-light: {{ settings.color_text_light | default: '#5A6B5C' }};
+        --color-text-secondary: {{ settings.color_text_secondary | default: '#5A6B5C' }};
+
+        /* Product badge colors */
+        --color-badge-expired: {{ settings.color_product_badge_sale | default: '#DC2626' }};
+        --color-success: {{ settings.color_product_badge_new | default: '#059669' }};
+
+        /* Button system */
+        --button-primary-bg: {{ settings.button_primary_bg | default: settings.color_primary | default: '#5E877A' }};
+        --button-primary-text: {{ settings.button_primary_text | default: '#ffffff' }};
+        --button-primary-hover: {{ settings.button_primary_hover | default: '#4A6D62' }};
+        --button-outline-border: {{ settings.button_outline_border | default: settings.color_primary | default: '#5E877A' }};
+        --button-outline-text: {{ settings.button_outline_text | default: settings.color_text | default: '#1E1E1E' }};
+
+        /* Spacing */
+        --spacing-sm: {{ settings.spacing_sm | default: 8 }}px;
+        --spacing-md: {{ settings.spacing_md | default: 16 }}px;
+        --spacing-lg: {{ settings.spacing_lg | default: 24 }}px;
+        --spacing-xl: {{ settings.spacing_xl | default: 32 }}px;
+
+        /* Border radius */
+        --radius-sm: {{ settings.radius_sm | default: 4 }}px;
+        --radius-md: {{ settings.radius_md | default: 8 }}px;
+        --radius-lg: {{ settings.radius_lg | default: 12 }}px;
+
+        /* Shadows */
+        --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+        /* Transitions */
+        --transition-base: {{ settings.transition_base | default: 250 }}ms ease;
       }
 
       *,
@@ -85,7 +191,7 @@
         justify-content: center;
         min-height: 100vh;
         margin: 0;
-        padding: 2rem;
+        padding: var(--spacing-xl);
         font-family: var(--font-body-family);
         font-size: 1.6rem;
         line-height: 1.6;
@@ -107,7 +213,7 @@
       }
 
       .gift-card__header {
-        margin-bottom: 2rem;
+        margin-bottom: var(--spacing-xl);
       }
 
       .gift-card__logo {
@@ -120,16 +226,21 @@
         gap: 0.25em;
       }
 
+      .gift-card__logo-image {
+        max-height: 60px;
+        width: auto;
+      }
+
       .gift-card__logo .plus {
-        color: var(--color-accent);
+        color: var(--color-secondary);
       }
 
       .gift-card__image-wrapper {
         position: relative;
-        margin-bottom: 2rem;
-        border-radius: 12px;
+        margin-bottom: var(--spacing-xl);
+        border-radius: var(--radius-lg);
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
       }
 
       .gift-card__image {
@@ -140,12 +251,12 @@
 
       .gift-card__badge {
         position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: #dc2626;
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+        background: var(--color-badge-expired);
         color: white;
-        padding: 0.4rem 1rem;
-        border-radius: 4px;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-sm);
         font-size: 1.2rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -155,29 +266,29 @@
         font-family: var(--font-heading-family);
         font-size: 4.8rem;
         color: var(--color-primary);
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-sm);
       }
 
       .gift-card__balance-text {
         font-size: 1.4rem;
-        color: var(--color-text-light);
-        margin-bottom: 2rem;
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-xl);
       }
 
       .gift-card__code-wrapper {
         background: white;
         border: 2px dashed var(--color-secondary);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        border-radius: var(--radius-md);
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
       }
 
       .gift-card__code-label {
         font-size: 1.2rem;
-        color: var(--color-text-light);
+        color: var(--color-text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-sm);
       }
 
       .gift-card__code {
@@ -190,7 +301,7 @@
       }
 
       .gift-card__qr {
-        margin: 2rem 0;
+        margin: var(--spacing-xl) 0;
       }
 
       .gift-card__qr img {
@@ -201,50 +312,51 @@
       .gift-card__actions {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: var(--spacing-md);
       }
 
       .gift-card__button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: var(--spacing-sm);
         padding: 1.2rem 2.4rem;
         font-family: var(--font-body-family);
         font-size: 1.6rem;
         font-weight: 500;
         text-decoration: none;
-        border-radius: 6px;
+        border-radius: var(--radius-md);
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all var(--transition-base);
       }
 
       .gift-card__button--primary {
-        background-color: var(--color-primary);
-        color: white;
+        background-color: var(--button-primary-bg);
+        color: var(--button-primary-text);
         border: none;
       }
 
       .gift-card__button--primary:hover {
-        background-color: var(--color-secondary);
+        background-color: var(--button-primary-hover);
       }
 
       .gift-card__button--secondary {
         background-color: transparent;
-        color: var(--color-primary);
-        border: 2px solid var(--color-primary);
+        color: var(--button-outline-text);
+        border: 2px solid var(--button-outline-border);
       }
 
       .gift-card__button--secondary:hover {
-        background-color: var(--color-primary);
-        color: white;
+        background-color: var(--button-primary-bg);
+        color: var(--button-primary-text);
+        border-color: var(--button-primary-bg);
       }
 
       .gift-card__copy-success {
         display: none;
-        color: #059669;
+        color: var(--color-success);
         font-size: 1.4rem;
-        margin-top: 0.5rem;
+        margin-top: var(--spacing-sm);
       }
 
       .gift-card__copy-success.is-visible {
@@ -252,22 +364,22 @@
       }
 
       .gift-card__expiry {
-        margin-top: 2rem;
+        margin-top: var(--spacing-xl);
         font-size: 1.4rem;
-        color: var(--color-text-light);
+        color: var(--color-text-secondary);
       }
 
       .gift-card__print {
-        margin-top: 2rem;
+        margin-top: var(--spacing-xl);
       }
 
       .gift-card__print a {
-        color: var(--color-text-light);
+        color: var(--color-text-secondary);
         font-size: 1.4rem;
       }
 
       .gift-card__apple-wallet {
-        margin-top: 1.5rem;
+        margin-top: var(--spacing-lg);
       }
 
       .gift-card__apple-wallet img {
@@ -301,9 +413,19 @@
     <div class="gift-card">
       <header class="gift-card__header">
         <a href="{{ shop.url }}" class="gift-card__logo">
-          <span>Pure</span>
-          <span class="plus">+</span>
-          <span>Vida</span>
+          {% if settings.logo != blank %}
+            <img
+              src="{{ settings.logo | image_url: height: 60 }}"
+              alt="{{ shop.name | escape }}"
+              class="gift-card__logo-image"
+              loading="eager"
+            >
+          {% else %}
+            {%- comment -%} Fallback to text logo - customize per brand {%- endcomment -%}
+            <span>Pure</span>
+            <span class="plus">+</span>
+            <span>Vida</span>
+          {% endif %}
         </a>
       </header>
 
@@ -315,7 +437,7 @@
           <img
             class="gift-card__image"
             src="{{ 'gift-card/card.svg' | shopify_asset_url }}"
-            alt="{{ 'gift_cards.issued.title' | t }}"
+            alt="{{ 'gift_cards.issued.subtext' | t }}"
             width="570"
             height="340"
             loading="eager"

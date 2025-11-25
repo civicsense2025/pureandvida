@@ -1,8 +1,8 @@
-{% liquid
+{%- liquid
   # @description Main search section with full customization
   # Displays search form and results for products, articles, and pages
   # Supports grid/list layouts, filtering, and result type organization
-%}
+-%}
 
 {%- render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,
@@ -32,7 +32,7 @@
 
     #{{ section.id }} .search-title {
       font-family: var(--font-heading-family);
-      font-size: calc(var(--font-heading-size) * {{ section.settings.title_scale | divided_by: 100.0 }});
+      font-size: clamp(1.5rem, 5vw, calc(var(--font-heading-size) * {{ section.settings.title_scale | divided_by: 100.0 }}));
       font-weight: var(--font-heading-weight);
       color: var(--section-heading, var(--color-heading));
       margin: 0 0 var(--spacing-sm);
@@ -41,7 +41,7 @@
 
     #{{ section.id }} .search-subtitle {
       font-family: var(--font-body-family);
-      font-size: calc(var(--font-body-size) * 1.125);
+      font-size: clamp(0.875rem, 2.5vw, calc(var(--font-body-size) * 1.125));
       color: var(--section-text, var(--color-text));
       opacity: 0.8;
       margin: 0;
@@ -64,13 +64,13 @@
 
     #{{ section.id }} .search-input {
       width: 100%;
-      height: var(--input-height);
-      padding: var(--spacing-sm) var(--spacing-md);
+      min-height: 48px;
+      padding: 12px var(--spacing-md);
       {%- if section.settings.show_search_icon -%}
         padding-left: calc(var(--spacing-md) + 24px);
       {%- endif -%}
       font-family: var(--font-body-family);
-      font-size: var(--font-body-size);
+      font-size: clamp(0.875rem, 2.5vw, var(--font-body-size));
       color: var(--input-text);
       background-color: var(--input-bg);
       border: {{ section.settings.input_border_width }}px solid var(--input-border);
@@ -98,15 +98,17 @@
     }
 
     #{{ section.id }} .search-submit {
-      padding: var(--spacing-sm) var(--spacing-lg);
+      padding: 12px var(--spacing-lg);
+      min-height: 48px;
       font-family: var(--font-body-family);
-      font-size: var(--font-body-size);
+      font-size: clamp(0.875rem, 2.5vw, var(--font-body-size));
       font-weight: 500;
       color: var(--button-primary-text);
       background-color: var(--button-primary-bg);
       border: none;
       border-radius: var(--button-radius);
       cursor: pointer;
+      white-space: nowrap;
       transition: background-color var(--transition-fast), transform var(--transition-fast);
     }
 
@@ -180,10 +182,64 @@
         {%- if section.settings.results_layout == 'grid' -%}
           grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
         {%- endif -%}
+        gap: var(--spacing-md);
       }
 
       #{{ section.id }} .search-form {
         flex-direction: column;
+      }
+
+      #{{ section.id }} .search-results-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+      }
+
+      #{{ section.id }} .search-filters {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: var(--spacing-xs);
+      }
+
+      #{{ section.id }} .filter-tab {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+    }
+
+    /* Small phones */
+    @media screen and (max-width: 479px) {
+      #{{ section.id }} .search-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      #{{ section.id }} .search-results {
+        {%- if section.settings.results_layout == 'grid' -%}
+          grid-template-columns: 1fr;
+        {%- endif -%}
+      }
+
+      #{{ section.id }} .search-result-item {
+        padding: var(--spacing-sm);
+      }
+
+      #{{ section.id }} .pagination-link {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacing-xs) var(--spacing-sm);
+      }
+
+      #{{ section.id }} .search-empty {
+        padding: var(--spacing-xl) var(--spacing-sm);
+      }
+
+      #{{ section.id }} .empty-icon {
+        font-size: 36px;
       }
     }
 
@@ -263,7 +319,7 @@
 
     #{{ section.id }} .result-title {
       font-family: var(--font-heading-family);
-      font-size: calc(var(--font-heading-size) * 0.5);
+      font-size: clamp(0.9rem, 2.5vw, calc(var(--font-heading-size) * 0.5));
       font-weight: var(--font-heading-weight);
       color: var(--section-heading, var(--color-heading));
       margin: 0 0 var(--spacing-xs);
@@ -326,16 +382,17 @@
 
     #{{ section.id }} .empty-title {
       font-family: var(--font-heading-family);
-      font-size: calc(var(--font-heading-size) * 0.6);
+      font-size: clamp(1.125rem, 4vw, calc(var(--font-heading-size) * 0.6));
       color: var(--section-heading, var(--color-heading));
       margin: 0 0 var(--spacing-sm);
     }
 
     #{{ section.id }} .empty-text {
-      font-size: var(--font-body-size);
+      font-size: clamp(0.875rem, 2.5vw, var(--font-body-size));
       color: var(--section-text, var(--color-text));
       opacity: 0.8;
       margin: 0;
+      line-height: 1.6;
     }
 
     /* Pagination */

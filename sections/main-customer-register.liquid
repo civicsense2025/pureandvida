@@ -1,44 +1,382 @@
 {% liquid
-  # @description Customer register section
-  # Displays registration form for new customers
+  # @description Customer register section with full customization
+  # Displays registration form with customizable styling, layout, and messaging
 %}
 
-<div class="page-width" style="padding: 40px 20px; max-width: 500px; margin: 0 auto;">
-  <h1 class="h1" style="margin-bottom: 30px; text-align: center;">Create Account</h1>
-  
-  {%- form 'create_customer', novalidate: 'novalidate' -%}
-    {%- if form.errors -%}
-      <div style="padding: 15px; background: #fee; border: 1px solid #d00; border-radius: 4px; margin-bottom: 20px; color: #d00;">
-        {{ form.errors | default_errors }}
-      </div>
-    {%- endif -%}
-    
-    <div style="margin-bottom: 20px;">
-      <label for="register_first_name" style="display: block; margin-bottom: 5px;">First Name</label>
-      <input type="text" name="customer[first_name]" id="register_first_name" autocomplete="given-name" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+{%- render 'visibility-classes',
+  show_on_mobile: section.settings.show_on_mobile,
+  show_on_desktop: section.settings.show_on_desktop,
+  section_id: section.id
+-%}
+
+<div
+  id="{{ section.id }}"
+  class="customer-register color-scheme-{{ section.settings.color_scheme }}"
+>
+  <style>
+    #{{ section.id }} {
+      {% render 'color-scheme', scheme: section.settings.color_scheme %}
+      {% render 'section-spacing', padding_top: section.settings.padding_top, padding_bottom: section.settings.padding_bottom %}
+    }
+
+    #{{ section.id }} .register-container {
+      {% render 'container-width', width: 'narrow' %}
+      max-width: {{ section.settings.form_width }}px;
+    }
+
+    /* Header */
+    #{{ section.id }} .register-header {
+      text-align: {{ section.settings.header_alignment }};
+      margin-bottom: var(--spacing-xl);
+    }
+
+    #{{ section.id }} .register-title {
+      font-family: var(--font-heading-family);
+      font-size: calc(var(--font-heading-size) * {{ section.settings.title_scale | divided_by: 100.0 }});
+      font-weight: var(--font-heading-weight);
+      color: var(--section-heading, var(--color-heading));
+      margin: 0 0 var(--spacing-sm);
+      line-height: 1.2;
+    }
+
+    #{{ section.id }} .register-subtitle {
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    /* Form Card */
+    #{{ section.id }} .register-card {
+      {%- if section.settings.card_style != 'none' -%}
+        padding: var(--spacing-xl);
+        background: {% if section.settings.card_style == 'filled' %}rgba(0,0,0,0.03){% else %}var(--section-bg, #fff){% endif %};
+        border-radius: {{ section.settings.card_border_radius }}px;
+        {%- if section.settings.card_style == 'outlined' or section.settings.card_style == 'elevated' -%}
+          border: 1px solid var(--section-border, rgba(0,0,0,0.1));
+        {%- endif -%}
+        {%- if section.settings.card_style == 'elevated' -%}
+          box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        {%- endif -%}
+      {%- endif -%}
+    }
+
+    /* Form Elements */
+    #{{ section.id }} .register-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    #{{ section.id }} .form-error {
+      padding: var(--spacing-md);
+      background: rgba(220, 38, 38, 0.1);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      border-radius: {{ section.settings.card_border_radius | times: 0.5 | at_least: 4 }}px;
+      color: var(--form-error-color);
+      font-size: calc(var(--font-body-size) * 0.9375);
+    }
+
+    #{{ section.id }} .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    @media screen and (max-width: 479px) {
+      #{{ section.id }} .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    #{{ section.id }} .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    #{{ section.id }} .form-label {
+      font-size: calc(var(--font-body-size) * 0.875);
+      font-weight: 500;
+      color: var(--section-text, var(--color-text));
+    }
+
+    #{{ section.id }} .form-label .required {
+      color: var(--form-error-color);
+      margin-left: 2px;
+    }
+
+    #{{ section.id }} .form-input {
+      width: 100%;
+      height: var(--input-height);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      color: var(--input-text);
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--input-radius);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    #{{ section.id }} .form-input:focus {
+      outline: none;
+      border-color: var(--input-focus-border);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    #{{ section.id }} .form-input::placeholder {
+      color: var(--input-placeholder);
+    }
+
+    /* Password Requirements */
+    #{{ section.id }} .password-hint {
+      font-size: calc(var(--font-body-size) * 0.8125);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.6;
+      margin-top: var(--spacing-xs);
+    }
+
+    /* Submit Button */
+    #{{ section.id }} .register-submit {
+      width: 100%;
+      height: var(--input-height);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      margin-top: var(--spacing-sm);
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      font-weight: 500;
+      color: var(--button-primary-text);
+      background-color: var(--button-primary-bg);
+      border: none;
+      border-radius: var(--button-radius);
+      cursor: pointer;
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    #{{ section.id }} .register-submit:hover {
+      background-color: var(--button-primary-hover);
+    }
+
+    #{{ section.id }} .register-submit:active {
+      transform: scale(0.98);
+    }
+
+    /* Terms */
+    #{{ section.id }} .register-terms {
+      font-size: calc(var(--font-body-size) * 0.8125);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.7;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    #{{ section.id }} .register-terms a {
+      color: var(--link-color, var(--color-primary));
+      text-decoration: underline;
+    }
+
+    /* Divider */
+    #{{ section.id }} .register-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin: var(--spacing-lg) 0;
+    }
+
+    #{{ section.id }} .register-divider::before,
+    #{{ section.id }} .register-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--section-border, rgba(0,0,0,0.1));
+    }
+
+    #{{ section.id }} .register-divider span {
+      font-size: calc(var(--font-body-size) * 0.875);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.6;
+    }
+
+    /* Login CTA */
+    #{{ section.id }} .register-login {
+      text-align: center;
+    }
+
+    #{{ section.id }} .register-login p {
+      font-size: var(--font-body-size);
+      color: var(--section-text, var(--color-text));
+      margin: 0 0 var(--spacing-md);
+    }
+
+    #{{ section.id }} .login-link {
+      display: inline-block;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      font-weight: 500;
+      color: var(--button-secondary-text);
+      background-color: var(--button-secondary-bg);
+      border: 1px solid var(--button-secondary-border);
+      border-radius: var(--button-radius);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    #{{ section.id }} .login-link:hover {
+      background-color: var(--button-secondary-hover);
+      color: var(--button-secondary-text-hover, var(--button-secondary-text));
+    }
+
+    @media screen and (max-width: 749px) {
+      #{{ section.id }} .register-card {
+        padding: var(--spacing-lg);
+      }
+    }
+  </style>
+
+  <div class="register-container">
+    {%- comment -%} Header {%- endcomment -%}
+    <header class="register-header">
+      <h1 class="register-title">{{ section.settings.title | default: 'Create Account' }}</h1>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="register-subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- comment -%} Register Card {%- endcomment -%}
+    <div class="register-card">
+      {%- form 'create_customer', novalidate: 'novalidate', class: 'register-form' -%}
+        {%- if form.errors -%}
+          <div class="form-error" role="alert">
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.show_name_fields -%}
+          <div class="form-row">
+            <div class="form-field">
+              <label for="register_first_name" class="form-label">
+                {{ section.settings.first_name_label | default: 'First Name' }}
+              </label>
+              <input
+                type="text"
+                name="customer[first_name]"
+                id="register_first_name"
+                class="form-input"
+                autocomplete="given-name"
+                placeholder="{{ section.settings.first_name_placeholder }}"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="register_last_name" class="form-label">
+                {{ section.settings.last_name_label | default: 'Last Name' }}
+              </label>
+              <input
+                type="text"
+                name="customer[last_name]"
+                id="register_last_name"
+                class="form-input"
+                autocomplete="family-name"
+                placeholder="{{ section.settings.last_name_placeholder }}"
+              >
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="form-field">
+          <label for="register_email" class="form-label">
+            {{ section.settings.email_label | default: 'Email' }}
+            <span class="required" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="email"
+            name="customer[email]"
+            id="register_email"
+            class="form-input"
+            autocomplete="email"
+            required
+            aria-required="true"
+            placeholder="{{ section.settings.email_placeholder }}"
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="register_password" class="form-label">
+            {{ section.settings.password_label | default: 'Password' }}
+            <span class="required" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="password"
+            name="customer[password]"
+            id="register_password"
+            class="form-input"
+            autocomplete="new-password"
+            required
+            aria-required="true"
+            placeholder="{{ section.settings.password_placeholder }}"
+          >
+          {%- if section.settings.password_hint != blank -%}
+            <p class="password-hint">{{ section.settings.password_hint }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.terms_text != blank -%}
+          <p class="register-terms">{{ section.settings.terms_text }}</p>
+        {%- endif -%}
+
+        <button type="submit" class="register-submit">
+          {{ section.settings.button_text | default: 'Create Account' }}
+        </button>
+      {%- endform -%}
+
+      {%- if section.settings.show_login_link -%}
+        <div class="register-divider">
+          <span>{{ section.settings.divider_text | default: 'or' }}</span>
+        </div>
+
+        <div class="register-login">
+          <p>{{ section.settings.login_prompt | default: 'Already have an account?' }}</p>
+          <a href="{{ routes.account_login_url }}" class="login-link">
+            {{ section.settings.login_button_text | default: 'Sign In' }}
+          </a>
+        </div>
+      {%- endif -%}
     </div>
-    
-    <div style="margin-bottom: 20px;">
-      <label for="register_last_name" style="display: block; margin-bottom: 5px;">Last Name</label>
-      <input type="text" name="customer[last_name]" id="register_last_name" autocomplete="family-name" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-    </div>
-    
-    <div style="margin-bottom: 20px;">
-      <label for="register_email" style="display: block; margin-bottom: 5px;">Email</label>
-      <input type="email" name="customer[email]" id="register_email" autocomplete="email" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-    </div>
-    
-    <div style="margin-bottom: 20px;">
-      <label for="register_password" style="display: block; margin-bottom: 5px;">Password</label>
-      <input type="password" name="customer[password]" id="register_password" autocomplete="new-password" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-    </div>
-    
-    <button type="submit" style="width: 100%; padding: 12px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 20px;">Create Account</button>
-  {%- endform -%}
-  
-  <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee;">
-    <p style="margin-bottom: 15px;">Already have an account?</p>
-    <a href="{{ routes.account_login_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; display: inline-block;">Login</a>
+
+    {%- comment -%} Benefits Block {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'benefits' -%}
+          <div class="register-benefits" {{ block.shopify_attributes }} style="margin-top: var(--spacing-xl);">
+            {%- if block.settings.title != blank -%}
+              <p style="font-weight: 500; margin-bottom: var(--spacing-lg); text-align: center; color: var(--section-heading);">
+                {{ block.settings.title }}
+              </p>
+            {%- endif -%}
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+              {%- for i in (1..4) -%}
+                {%- assign benefit_title = 'benefit_' | append: i | append: '_title' -%}
+                {%- assign benefit_text = 'benefit_' | append: i | append: '_text' -%}
+                {%- if block.settings[benefit_title] != blank -%}
+                  <div style="text-align: center; padding: var(--spacing-md);">
+                    <p style="font-weight: 500; margin-bottom: var(--spacing-xs); color: var(--section-heading);">
+                      {{ block.settings[benefit_title] }}
+                    </p>
+                    {%- if block.settings[benefit_text] != blank -%}
+                      <p style="font-size: calc(var(--font-body-size) * 0.9375); color: var(--section-text); opacity: 0.8; margin: 0;">
+                        {{ block.settings[benefit_text] }}
+                      </p>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
   </div>
 </div>
 
@@ -47,10 +385,335 @@
   "name": "Customer Register",
   "tag": "section",
   "class": "section",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Color Scheme"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "subtle", "label": "Subtle" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Create Account"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Join us for exclusive benefits"
+    },
+    {
+      "type": "header",
+      "content": "Form Fields"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_name_fields",
+      "label": "Show name fields",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "first_name_label",
+      "label": "First name label",
+      "default": "First Name"
+    },
+    {
+      "type": "text",
+      "id": "first_name_placeholder",
+      "label": "First name placeholder"
+    },
+    {
+      "type": "text",
+      "id": "last_name_label",
+      "label": "Last name label",
+      "default": "Last Name"
+    },
+    {
+      "type": "text",
+      "id": "last_name_placeholder",
+      "label": "Last name placeholder"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Email placeholder",
+      "default": "your@email.com"
+    },
+    {
+      "type": "text",
+      "id": "password_label",
+      "label": "Password label",
+      "default": "Password"
+    },
+    {
+      "type": "text",
+      "id": "password_placeholder",
+      "label": "Password placeholder"
+    },
+    {
+      "type": "text",
+      "id": "password_hint",
+      "label": "Password hint",
+      "default": "Minimum 5 characters"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Create Account"
+    },
+    {
+      "type": "header",
+      "content": "Terms & Links"
+    },
+    {
+      "type": "textarea",
+      "id": "terms_text",
+      "label": "Terms text",
+      "default": "By creating an account, you agree to our Terms of Service and Privacy Policy."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_login_link",
+      "label": "Show login link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "divider_text",
+      "label": "Divider text",
+      "default": "or"
+    },
+    {
+      "type": "text",
+      "id": "login_prompt",
+      "label": "Login prompt",
+      "default": "Already have an account?"
+    },
+    {
+      "type": "text",
+      "id": "login_button_text",
+      "label": "Login button text",
+      "default": "Sign In"
+    },
+    {
+      "type": "header",
+      "content": "Card Style"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "outlined", "label": "Outlined" },
+        { "value": "filled", "label": "Filled" },
+        { "value": "elevated", "label": "Elevated" }
+      ],
+      "default": "elevated"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "form_width",
+      "label": "Form max width",
+      "min": 350,
+      "max": 600,
+      "step": 25,
+      "default": 500,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "title_scale",
+      "label": "Title size",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "default": 80,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "label": "Padding top",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "Show on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_desktop",
+      "label": "Show on desktop",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefits",
+      "name": "Account benefits",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Account Benefits"
+        },
+        {
+          "type": "text",
+          "id": "benefit_1_title",
+          "label": "Benefit 1 title",
+          "default": "Order Tracking"
+        },
+        {
+          "type": "text",
+          "id": "benefit_1_text",
+          "label": "Benefit 1 description",
+          "default": "Track all your orders in one place"
+        },
+        {
+          "type": "text",
+          "id": "benefit_2_title",
+          "label": "Benefit 2 title",
+          "default": "Saved Addresses"
+        },
+        {
+          "type": "text",
+          "id": "benefit_2_text",
+          "label": "Benefit 2 description",
+          "default": "Faster checkout with saved addresses"
+        },
+        {
+          "type": "text",
+          "id": "benefit_3_title",
+          "label": "Benefit 3 title",
+          "default": "Exclusive Offers"
+        },
+        {
+          "type": "text",
+          "id": "benefit_3_text",
+          "label": "Benefit 3 description",
+          "default": "Access to member-only deals"
+        },
+        {
+          "type": "text",
+          "id": "benefit_4_title",
+          "label": "Benefit 4 title"
+        },
+        {
+          "type": "text",
+          "id": "benefit_4_text",
+          "label": "Benefit 4 description"
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "Customer Register"
+      "name": "Customer Register - Standard",
+      "settings": {
+        "card_style": "elevated",
+        "header_alignment": "center"
+      }
+    },
+    {
+      "name": "Customer Register - With Benefits",
+      "settings": {
+        "card_style": "elevated",
+        "header_alignment": "center"
+      },
+      "blocks": [
+        {
+          "type": "benefits"
+        }
+      ]
+    },
+    {
+      "name": "Customer Register - Minimal",
+      "settings": {
+        "card_style": "none",
+        "header_alignment": "left",
+        "show_name_fields": false,
+        "show_login_link": false
+      }
     }
   ]
 }

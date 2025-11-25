@@ -19,22 +19,35 @@
     "name": "Colors",
     "settings": [
       {
+        "type": "header",
+        "content": "Brand Colors (from Figma)"
+      },
+      {
         "type": "color",
         "id": "color_primary",
-        "label": "Primary Color",
-        "default": "#000000"
+        "label": "Primary Green",
+        "default": "#5E877A",
+        "info": "Main brand color - used for primary buttons and accents"
       },
       {
         "type": "color",
         "id": "color_secondary",
-        "label": "Secondary Color",
-        "default": "#666666"
+        "label": "Orange Accent",
+        "default": "#E8983B",
+        "info": "Secondary brand color - used for cart buttons and highlights"
       },
       {
         "type": "color",
         "id": "color_accent",
         "label": "Accent Color",
-        "default": "#3B82F6"
+        "default": "#5E877A"
+      },
+      {
+        "type": "color",
+        "id": "color_dark",
+        "label": "Dark Green",
+        "default": "#2F4238",
+        "info": "Used for dark sections and header backgrounds"
       },
       {
         "type": "color_background",
@@ -46,7 +59,8 @@
         "type": "color",
         "id": "color_text",
         "label": "Text Color",
-        "default": "#000000"
+        "default": "#1E1E1E",
+        "info": "Primary body text color"
       },
       {
         "type": "color",
@@ -111,6 +125,10 @@
         "content": "Custom Fonts"
       },
       {
+        "type": "paragraph",
+        "content": "Figma design uses: Versailles for hero titles, Nohemi for all other text."
+      },
+      {
         "type": "select",
         "id": "custom_font_heading",
         "label": "Heading Font (Custom)",
@@ -133,7 +151,7 @@
             "label": "Myriad Pro"
           }
         ],
-        "default": "shopify_font"
+        "default": "nohemi"
       },
       {
         "type": "font_picker",
@@ -141,6 +159,31 @@
         "label": "Heading Font (Shopify)",
         "info": "Only used if 'Use Shopify Font' is selected above",
         "default": "assistant_n4"
+      },
+      {
+        "type": "select",
+        "id": "custom_font_accent",
+        "label": "Accent/Title Font (Custom)",
+        "info": "Used for hero titles and special headlines. Figma design uses Versailles.",
+        "options": [
+          {
+            "value": "heading",
+            "label": "Same as Heading Font"
+          },
+          {
+            "value": "nohemi",
+            "label": "Nohemi"
+          },
+          {
+            "value": "versailles",
+            "label": "Versailles (Figma default)"
+          },
+          {
+            "value": "myriad",
+            "label": "Myriad Pro"
+          }
+        ],
+        "default": "versailles"
       },
       {
         "type": "select",
@@ -165,7 +208,7 @@
             "label": "Myriad Pro"
           }
         ],
-        "default": "shopify_font"
+        "default": "nohemi"
       },
       {
         "type": "font_picker",
@@ -175,22 +218,135 @@
         "default": "assistant_n4"
       },
       {
+        "type": "header",
+        "content": "Typography Scale (from Figma)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Font sizes derived from Figma designs for consistent typography."
+      },
+      {
+        "type": "range",
+        "id": "font_size_hero",
+        "label": "Hero Title (px)",
+        "min": 48,
+        "max": 120,
+        "step": 4,
+        "default": 80,
+        "info": "Figma: 80px"
+      },
+      {
+        "type": "range",
+        "id": "font_size_h1",
+        "label": "H1 - Section Headlines (px)",
+        "min": 36,
+        "max": 96,
+        "step": 4,
+        "default": 64,
+        "info": "Figma: 64px"
+      },
+      {
+        "type": "range",
+        "id": "font_size_h2",
+        "label": "H2 - Subsection Titles (px)",
+        "min": 28,
+        "max": 64,
+        "step": 2,
+        "default": 48,
+        "info": "Figma: 48px"
+      },
+      {
+        "type": "range",
+        "id": "font_size_h3",
+        "label": "H3 - Card Titles (px)",
+        "min": 20,
+        "max": 48,
+        "step": 2,
+        "default": 32,
+        "info": "Figma: 32px"
+      },
+      {
         "type": "range",
         "id": "font_size_heading",
-        "label": "Heading Font Size (px)",
-        "min": 24,
-        "max": 72,
+        "label": "H4-H6 - Small Headings (px)",
+        "min": 16,
+        "max": 32,
         "step": 2,
-        "default": 36
+        "default": 24,
+        "info": "Figma: 24px"
       },
       {
         "type": "range",
         "id": "font_size_body",
-        "label": "Body Font Size (px)",
-        "min": 12,
-        "max": 24,
+        "label": "Body Text (px)",
+        "min": 14,
+        "max": 28,
         "step": 1,
-        "default": 16
+        "default": 24,
+        "info": "Figma: 24px for main body"
+      },
+      {
+        "type": "range",
+        "id": "font_size_small",
+        "label": "Small Text (px)",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "default": 16,
+        "info": "For captions, labels, etc."
+      },
+      {
+        "type": "header",
+        "content": "Letter Spacing"
+      },
+      {
+        "type": "range",
+        "id": "letter_spacing_heading",
+        "label": "Heading Letter Spacing (%)",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "default": 12,
+        "info": "Figma: 12% for headings"
+      },
+      {
+        "type": "range",
+        "id": "letter_spacing_body",
+        "label": "Body Letter Spacing (%)",
+        "min": 0,
+        "max": 15,
+        "step": 1,
+        "default": 6,
+        "info": "Figma: 6% for navigation/body"
+      },
+      {
+        "type": "header",
+        "content": "Font Weights"
+      },
+      {
+        "type": "select",
+        "id": "font_weight_heading",
+        "label": "Heading Font Weight",
+        "options": [
+          { "value": "300", "label": "Light (300)" },
+          { "value": "400", "label": "Regular (400)" },
+          { "value": "500", "label": "Medium (500)" },
+          { "value": "600", "label": "Semi-Bold (600)" },
+          { "value": "700", "label": "Bold (700)" }
+        ],
+        "default": "400",
+        "info": "Figma uses Regular (400) for most headings"
+      },
+      {
+        "type": "select",
+        "id": "font_weight_body",
+        "label": "Body Font Weight",
+        "options": [
+          { "value": "300", "label": "Light (300)" },
+          { "value": "400", "label": "Regular (400)" },
+          { "value": "500", "label": "Medium (500)" }
+        ],
+        "default": "400"
       }
     ]
   },

@@ -1,0 +1,762 @@
+{%- liquid
+  # @description Announcement bar section with dismissible announcements and auto-rotation
+  # Supports multiple announcement blocks with customizable styling and behavior
+  # @settings auto_rotate {Boolean} - Enable automatic rotation between announcements
+  # @settings rotation_speed {Number} - Time between rotations in milliseconds
+  # @settings show_close_button {Boolean} - Allow users to dismiss the bar
+  # @settings sticky {Boolean} - Keep bar fixed at top of viewport
+  # @blocks announcement - Individual announcement with text and optional link
+  # @example
+  #   Add to theme.liquid above header for site-wide announcements
+
+  assign announcement_count = section.blocks.size
+  assign current_index = 0
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--announcement">
+    <span class="editor-label">Announcement Bar</span>
+    <span class="editor-info">
+      {{ announcement_count }} announcements |
+      {% if section.settings.auto_rotate %}Auto-rotate: {{ section.settings.rotation_speed }}ms{% else %}Static{% endif %}
+      {% if section.settings.show_close_button %}| Dismissible{% endif %}
+    </span>
+  </div>
+{% endif %}
+
+{%- if announcement_count > 0 -%}
+  <div
+    class="announcement-bar{% if section.settings.sticky %} announcement-bar--sticky{% endif %}"
+    id="announcement-bar-{{ section.id }}"
+    role="region"
+    aria-label="{{ 'accessibility.announcement_bar' | t | default: 'Announcement' }}"
+    style="
+      {% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}
+      {% if section.settings.text_color != blank %}color: {{ section.settings.text_color }};{% endif %}
+      padding: {{ section.settings.padding_vertical }}px {{ section.settings.padding_horizontal }}px;
+    "
+    data-announcement-bar
+    data-auto-rotate="{{ section.settings.auto_rotate }}"
+    data-rotation-speed="{{ section.settings.rotation_speed }}"
+  >
+    <div class="announcement-bar__content page-width">
+      {%- if announcement_count > 1 and section.settings.show_arrows -%}
+        <button
+          class="announcement-bar__arrow announcement-bar__arrow--prev"
+          type="button"
+          aria-label="{{ 'accessibility.previous' | t | default: 'Previous announcement' }}"
+          data-announcement-prev
+        >
+          <span aria-hidden="true">&#8249;</span>
+        </button>
+      {%- endif -%}
+
+      <div class="announcement-bar__slider" data-announcement-slider>
+        {%- for block in section.blocks -%}
+          <div
+            class="announcement-bar__slide{% if forloop.first %} announcement-bar__slide--active{% endif %}"
+            {{ block.shopify_attributes }}
+            data-announcement-slide
+            data-index="{{ forloop.index0 }}"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="Announcement {{ forloop.index }} of {{ announcement_count }}"
+            style="
+              {% if block.settings.background_color != blank %}background-color: {{ block.settings.background_color }};{% endif %}
+              {% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}
+            "
+          >
+            {%- if block.settings.icon != blank -%}
+              <span class="announcement-bar__icon" aria-hidden="true">{{ block.settings.icon }}</span>
+            {%- endif -%}
+
+            {%- if block.settings.link != blank -%}
+              <a
+                href="{{ block.settings.link }}"
+                class="announcement-bar__link"
+                {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+              >
+                <span class="announcement-bar__text">{{ block.settings.text }}</span>
+                {%- if block.settings.show_link_arrow -%}
+                  <span class="announcement-bar__link-arrow" aria-hidden="true">&rarr;</span>
+                {%- endif -%}
+              </a>
+            {%- else -%}
+              <span class="announcement-bar__text">{{ block.settings.text }}</span>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if announcement_count > 1 and section.settings.show_arrows -%}
+        <button
+          class="announcement-bar__arrow announcement-bar__arrow--next"
+          type="button"
+          aria-label="{{ 'accessibility.next' | t | default: 'Next announcement' }}"
+          data-announcement-next
+        >
+          <span aria-hidden="true">&#8250;</span>
+        </button>
+      {%- endif -%}
+
+      {%- if section.settings.show_close_button -%}
+        <button
+          class="announcement-bar__close"
+          type="button"
+          aria-label="{{ 'accessibility.close' | t | default: 'Close announcement bar' }}"
+          data-announcement-close
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- if announcement_count > 1 and section.settings.show_dots -%}
+      <div class="announcement-bar__dots" role="tablist" aria-label="Announcement navigation">
+        {%- for block in section.blocks -%}
+          <button
+            class="announcement-bar__dot{% if forloop.first %} announcement-bar__dot--active{% endif %}"
+            type="button"
+            role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-label="Go to announcement {{ forloop.index }}"
+            data-announcement-dot
+            data-index="{{ forloop.index0 }}"
+          >
+            <span class="visually-hidden">Announcement {{ forloop.index }}</span>
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const bar = document.querySelector('[data-announcement-bar]');
+    if (!bar) return;
+
+    const slides = bar.querySelectorAll('[data-announcement-slide]');
+    const dots = bar.querySelectorAll('[data-announcement-dot]');
+    const prevBtn = bar.querySelector('[data-announcement-prev]');
+    const nextBtn = bar.querySelector('[data-announcement-next]');
+    const closeBtn = bar.querySelector('[data-announcement-close]');
+    const autoRotate = bar.dataset.autoRotate === 'true';
+    const rotationSpeed = parseInt(bar.dataset.rotationSpeed) || 5000;
+
+    let currentIndex = 0;
+    let autoPlayInterval = null;
+
+    function showSlide(index) {
+      if (slides.length === 0) return;
+
+      currentIndex = (index + slides.length) % slides.length;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('announcement-bar__slide--active', i === currentIndex);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('announcement-bar__dot--active', i === currentIndex);
+        dot.setAttribute('aria-selected', i === currentIndex ? 'true' : 'false');
+      });
+    }
+
+    function nextSlide() {
+      showSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      showSlide(currentIndex - 1);
+    }
+
+    function startAutoPlay() {
+      if (autoRotate && slides.length > 1) {
+        autoPlayInterval = setInterval(nextSlide, rotationSpeed);
+      }
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+      }
+    }
+
+    function dismissBar() {
+      bar.style.transform = 'translateY(-100%)';
+      bar.style.opacity = '0';
+      setTimeout(() => {
+        bar.style.display = 'none';
+      }, 300);
+      sessionStorage.setItem('announcement-bar-dismissed-{{ section.id }}', 'true');
+    }
+
+    // Check if bar was previously dismissed
+    if (sessionStorage.getItem('announcement-bar-dismissed-{{ section.id }}') === 'true') {
+      bar.style.display = 'none';
+      return;
+    }
+
+    // Event listeners
+    if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoPlay(); prevSlide(); startAutoPlay(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoPlay(); nextSlide(); startAutoPlay(); });
+    if (closeBtn) closeBtn.addEventListener('click', dismissBar);
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        stopAutoPlay();
+        showSlide(index);
+        startAutoPlay();
+      });
+    });
+
+    // Pause on hover
+    bar.addEventListener('mouseenter', stopAutoPlay);
+    bar.addEventListener('mouseleave', startAutoPlay);
+
+    // Start auto-play
+    startAutoPlay();
+  });
+</script>
+
+<style>
+  .announcement-bar {
+    position: relative;
+    z-index: 100;
+    background-color: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    font-family: var(--font-body-family);
+    font-size: clamp(0.75rem, 2vw, {{ section.settings.font_size }}px);
+    text-align: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .announcement-bar--sticky {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+  }
+
+  .announcement-bar__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+  }
+
+  .announcement-bar__slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    min-height: {{ section.settings.min_height }}px;
+  }
+
+  .announcement-bar__slide {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    padding: 0 2rem;
+  }
+
+  .announcement-bar__slide--active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .announcement-bar__icon {
+    flex-shrink: 0;
+  }
+
+  .announcement-bar__text {
+    font-weight: {{ section.settings.font_weight }};
+    letter-spacing: {{ section.settings.letter_spacing }}em;
+    {% if section.settings.text_transform != 'none' %}
+      text-transform: {{ section.settings.text_transform }};
+    {% endif %}
+  }
+
+  .announcement-bar__link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.2s ease;
+  }
+
+  .announcement-bar__link:hover {
+    opacity: 0.8;
+    {% if section.settings.link_underline %}
+      text-decoration: underline;
+    {% endif %}
+  }
+
+  .announcement-bar__link-arrow {
+    transition: transform 0.2s ease;
+  }
+
+  .announcement-bar__link:hover .announcement-bar__link-arrow {
+    transform: translateX(3px);
+  }
+
+  .announcement-bar__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    z-index: 2;
+  }
+
+  .announcement-bar__arrow:hover {
+    opacity: 1;
+  }
+
+  .announcement-bar__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .announcement-bar__close:hover {
+    opacity: 1;
+  }
+
+  .announcement-bar__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+
+  .announcement-bar__dot {
+    width: 8px;
+    height: 8px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .announcement-bar__dot::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.4;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .announcement-bar__dot--active::before,
+  .announcement-bar__dot:hover::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.25);
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 767px) {
+    .announcement-bar__content {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+
+    .announcement-bar__arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .announcement-bar__arrow--prev {
+      left: 0;
+    }
+
+    .announcement-bar__arrow--next {
+      right: {% if section.settings.show_close_button %}44px{% else %}0{% endif %};
+    }
+  }
+
+  {% if request.design_mode %}
+    .announcement-bar {
+      outline: 2px dashed rgba(76, 175, 80, 0.4);
+      outline-offset: -2px;
+    }
+
+    .announcement-bar::before {
+      content: 'ANNOUNCEMENT BAR';
+      position: absolute;
+      top: 100%;
+      left: 8px;
+      background: rgba(76, 175, 80, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 0 0 4px 4px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .announcement-bar__slide {
+      outline: 1px dashed rgba(76, 175, 80, 0.2);
+    }
+
+    .editor-controls--announcement {
+      position: fixed;
+      top: 80px;
+      right: 8px;
+      z-index: 10001;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(76, 175, 80, 0.5);
+    }
+
+    .editor-controls--announcement .editor-label {
+      font-weight: 600;
+      color: rgba(76, 175, 80, 1);
+      font-size: 12px;
+    }
+
+    .editor-controls--announcement .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "📢 Announcement Bar",
+  "tag": "section",
+  "class": "section-announcement-bar",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Display important announcements at the top of your site. Supports multiple rotating announcements, dismissible option, and complete visual customization."
+    },
+    {
+      "type": "header",
+      "content": "⚙️ Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Auto-rotate Announcements",
+      "default": true,
+      "info": "Automatically cycle through multiple announcements"
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "label": "Rotation Speed",
+      "min": 2000,
+      "max": 10000,
+      "step": 500,
+      "unit": "ms",
+      "default": 5000,
+      "info": "Time between automatic transitions (milliseconds)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close_button",
+      "label": "Show Close Button",
+      "default": true,
+      "info": "Allow visitors to dismiss the announcement bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky Position",
+      "default": false,
+      "info": "Keep announcement bar fixed at top when scrolling"
+    },
+    {
+      "type": "header",
+      "content": "🎮 Navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show Navigation Arrows",
+      "default": true,
+      "info": "Display left/right arrows for manual navigation (when multiple announcements)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show Dot Indicators",
+      "default": false,
+      "info": "Display pagination dots below announcements"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#000000",
+      "info": "Default background color for the announcement bar"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff",
+      "info": "Default text color for announcements"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14,
+      "info": "Font size for announcement text"
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter Spacing",
+      "min": 0,
+      "max": 0.3,
+      "step": 0.02,
+      "default": 0,
+      "info": "Space between letters (em)"
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text Transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_underline",
+      "label": "Underline Links on Hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical Padding",
+      "min": 4,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal Padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Minimum Height",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40,
+      "info": "Minimum height to prevent layout shift during transitions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "📣 Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Announcement Text",
+          "default": "Free shipping on orders over $50!",
+          "info": "Main announcement message"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (Emoji or Symbol)",
+          "placeholder": "🚚",
+          "info": "Optional icon displayed before text (e.g., 🎉, 🚚, ⭐)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL",
+          "info": "Optional link for the announcement"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Open Link in New Tab",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_link_arrow",
+          "label": "Show Link Arrow",
+          "default": true,
+          "info": "Display arrow icon after linked text"
+        },
+        {
+          "type": "header",
+          "content": "🎨 Custom Colors (Optional)"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color Override",
+          "info": "Override section background for this announcement"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color Override",
+          "info": "Override section text color for this announcement"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement Bar - Single",
+      "settings": {
+        "auto_rotate": false,
+        "show_close_button": true,
+        "show_arrows": false,
+        "show_dots": false
+      },
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on all orders over $50!",
+            "icon": "🚚"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Announcement Bar - Rotating",
+      "settings": {
+        "auto_rotate": true,
+        "rotation_speed": 5000,
+        "show_close_button": true,
+        "show_arrows": true,
+        "show_dots": false
+      },
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on orders over $50!",
+            "icon": "🚚"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "New arrivals just dropped!",
+            "icon": "✨",
+            "link": "/collections/new-arrivals",
+            "show_link_arrow": true
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Sign up for 10% off your first order",
+            "icon": "💌"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

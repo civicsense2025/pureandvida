@@ -158,19 +158,27 @@
 
   /* FAQ Section Base Styles */
   .faq-content {
-    padding: 0 clamp(20px, 4vw, 0);
+    padding: 0 clamp(16px, 4vw, 0);
   }
-  
+
+  .faq-title {
+    font-size: clamp(1.5rem, 5vw, {{ section.settings.heading_size }}px) !important;
+  }
+
+  .faq-description {
+    font-size: clamp(0.875rem, 2.5vw, {{ section.settings.description_size }}px) !important;
+  }
+
   .faq-list {
     display: flex;
     flex-direction: column;
-    gap: {{ section.settings.item_spacing }}px;
+    gap: clamp(8px, 2vw, {{ section.settings.item_spacing }}px);
   }
-  
+
   .faq-item {
     margin: 0;
   }
-  
+
   .faq-question {
     display: flex;
     justify-content: space-between;
@@ -178,47 +186,77 @@
     cursor: pointer;
     list-style: none;
     transition: all 0.3s ease;
+    min-height: 48px;
+    font-size: clamp(0.9rem, 2.5vw, {{ section.settings.question_size }}px) !important;
   }
-  
+
   .faq-question::-webkit-details-marker {
     display: none;
   }
-  
+
   .faq-question:hover {
     {%- if section.settings.item_hover_background_color != blank -%}
       background-color: {{ section.settings.item_hover_background_color }} !important;
     {%- endif -%}
   }
-  
+
   .faq-item[open] .faq-question {
     {%- if section.settings.item_open_background_color != blank -%}
       background-color: {{ section.settings.item_open_background_color }};
     {%- endif -%}
   }
-  
+
   .faq-icon {
-    min-width: 24px;
-    min-height: 24px;
+    min-width: 44px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.3s ease;
     flex-shrink: 0;
-    margin-left: 15px;
+    margin-left: 8px;
   }
-  
+
   .faq-item[open] .faq-icon {
     transform: rotate(45deg);
   }
-  
+
   .faq-answer {
     transition: all 0.3s ease;
+    font-size: clamp(0.875rem, 2.5vw, {{ section.settings.answer_size }}px) !important;
   }
-  
+
+  .faq-answer p {
+    margin: 0;
+  }
+
+  /* Tablet adjustments */
+  @media screen and (max-width: 1023px) {
+    .faq-content {
+      max-width: 100% !important;
+      padding: 0 var(--spacing-md, 16px);
+    }
+  }
+
   /* Mobile adjustments */
   @media screen and (max-width: 767px) {
     .faq-content {
       max-width: 100%;
+    }
+
+    .faq-question {
+      padding: clamp(12px, 3vw, {{ section.settings.item_padding }}px) !important;
+    }
+
+    .faq-answer {
+      padding: clamp(12px, 3vw, {{ section.settings.answer_padding }}px) !important;
+    }
+  }
+
+  /* Small phones */
+  @media screen and (max-width: 479px) {
+    .faq-question span:first-child {
+      padding-right: 8px;
     }
   }
 </style>

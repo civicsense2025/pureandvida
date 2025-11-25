@@ -1,38 +1,353 @@
 {% liquid
-  # @description Customer login section
-  # Displays login form for customers
+  # @description Customer login section with full customization
+  # Displays login form with customizable styling, layout, and messaging
 %}
 
-<div class="page-width" style="padding: 40px 20px; max-width: 500px; margin: 0 auto;">
-  <h1 class="h1" style="margin-bottom: 30px; text-align: center;">Login</h1>
-  
-  {%- form 'customer_login', novalidate: 'novalidate' -%}
-    {%- if form.errors -%}
-      <div style="padding: 15px; background: #fee; border: 1px solid #d00; border-radius: 4px; margin-bottom: 20px; color: #d00;">
-        {{ form.errors | default_errors }}
-      </div>
-    {%- endif -%}
-    
-    <div style="margin-bottom: 20px;">
-      <label for="customer_email" style="display: block; margin-bottom: 5px;">Email</label>
-      <input type="email" name="customer[email]" id="customer_email" autocomplete="email" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+{%- render 'visibility-classes',
+  show_on_mobile: section.settings.show_on_mobile,
+  show_on_desktop: section.settings.show_on_desktop,
+  section_id: section.id
+-%}
+
+<div
+  id="{{ section.id }}"
+  class="customer-login color-scheme-{{ section.settings.color_scheme }}"
+>
+  <style>
+    #{{ section.id }} {
+      {% render 'color-scheme', scheme: section.settings.color_scheme %}
+      {% render 'section-spacing', padding_top: section.settings.padding_top, padding_bottom: section.settings.padding_bottom %}
+    }
+
+    #{{ section.id }} .login-container {
+      {% render 'container-width', width: 'narrow' %}
+      max-width: {{ section.settings.form_width }}px;
+    }
+
+    /* Header */
+    #{{ section.id }} .login-header {
+      text-align: {{ section.settings.header_alignment }};
+      margin-bottom: var(--spacing-xl);
+    }
+
+    #{{ section.id }} .login-title {
+      font-family: var(--font-heading-family);
+      font-size: calc(var(--font-heading-size) * {{ section.settings.title_scale | divided_by: 100.0 }});
+      font-weight: var(--font-heading-weight);
+      color: var(--section-heading, var(--color-heading));
+      margin: 0 0 var(--spacing-sm);
+      line-height: 1.2;
+    }
+
+    #{{ section.id }} .login-subtitle {
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    /* Form Card */
+    #{{ section.id }} .login-card {
+      {%- if section.settings.card_style != 'none' -%}
+        padding: var(--spacing-xl);
+        background: {% if section.settings.card_style == 'filled' %}rgba(0,0,0,0.03){% else %}var(--section-bg, #fff){% endif %};
+        border-radius: {{ section.settings.card_border_radius }}px;
+        {%- if section.settings.card_style == 'outlined' or section.settings.card_style == 'elevated' -%}
+          border: 1px solid var(--section-border, rgba(0,0,0,0.1));
+        {%- endif -%}
+        {%- if section.settings.card_style == 'elevated' -%}
+          box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        {%- endif -%}
+      {%- endif -%}
+    }
+
+    /* Form Elements */
+    #{{ section.id }} .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    #{{ section.id }} .form-error {
+      padding: var(--spacing-md);
+      background: rgba(220, 38, 38, 0.1);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      border-radius: {{ section.settings.card_border_radius | times: 0.5 | at_least: 4 }}px;
+      color: var(--form-error-color);
+      font-size: calc(var(--font-body-size) * 0.9375);
+    }
+
+    #{{ section.id }} .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    #{{ section.id }} .form-label {
+      font-size: calc(var(--font-body-size) * 0.875);
+      font-weight: 500;
+      color: var(--section-text, var(--color-text));
+    }
+
+    #{{ section.id }} .form-label .required {
+      color: var(--form-error-color);
+      margin-left: 2px;
+    }
+
+    #{{ section.id }} .form-input {
+      width: 100%;
+      height: var(--input-height);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      color: var(--input-text);
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--input-radius);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    #{{ section.id }} .form-input:focus {
+      outline: none;
+      border-color: var(--input-focus-border);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    #{{ section.id }} .form-input::placeholder {
+      color: var(--input-placeholder);
+    }
+
+    /* Forgot Password Link */
+    #{{ section.id }} .forgot-password {
+      text-align: right;
+      margin-top: calc(var(--spacing-xs) * -1);
+    }
+
+    #{{ section.id }} .forgot-password a {
+      font-size: calc(var(--font-body-size) * 0.875);
+      color: var(--link-color, var(--color-primary));
+      text-decoration: {% if section.settings.link_underline %}underline{% else %}none{% endif %};
+    }
+
+    #{{ section.id }} .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
+    /* Submit Button */
+    #{{ section.id }} .login-submit {
+      width: 100%;
+      height: var(--input-height);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      margin-top: var(--spacing-sm);
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      font-weight: 500;
+      color: var(--button-primary-text);
+      background-color: var(--button-primary-bg);
+      border: none;
+      border-radius: var(--button-radius);
+      cursor: pointer;
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    #{{ section.id }} .login-submit:hover {
+      background-color: var(--button-primary-hover);
+    }
+
+    #{{ section.id }} .login-submit:active {
+      transform: scale(0.98);
+    }
+
+    /* Divider */
+    #{{ section.id }} .login-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin: var(--spacing-lg) 0;
+    }
+
+    #{{ section.id }} .login-divider::before,
+    #{{ section.id }} .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--section-border, rgba(0,0,0,0.1));
+    }
+
+    #{{ section.id }} .login-divider span {
+      font-size: calc(var(--font-body-size) * 0.875);
+      color: var(--section-text, var(--color-text));
+      opacity: 0.6;
+    }
+
+    /* Register CTA */
+    #{{ section.id }} .login-register {
+      text-align: center;
+    }
+
+    #{{ section.id }} .login-register p {
+      font-size: var(--font-body-size);
+      color: var(--section-text, var(--color-text));
+      margin: 0 0 var(--spacing-md);
+    }
+
+    #{{ section.id }} .register-link {
+      display: inline-block;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-family: var(--font-body-family);
+      font-size: var(--font-body-size);
+      font-weight: 500;
+      color: var(--button-secondary-text);
+      background-color: var(--button-secondary-bg);
+      border: 1px solid var(--button-secondary-border);
+      border-radius: var(--button-radius);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    #{{ section.id }} .register-link:hover {
+      background-color: var(--button-secondary-hover);
+      color: var(--button-secondary-text-hover, var(--button-secondary-text));
+    }
+
+    /* Guest Checkout */
+    #{{ section.id }} .guest-checkout {
+      text-align: center;
+      margin-top: var(--spacing-lg);
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--section-border, rgba(0,0,0,0.1));
+    }
+
+    #{{ section.id }} .guest-checkout a {
+      font-size: var(--font-body-size);
+      color: var(--link-color, var(--color-primary));
+      text-decoration: {% if section.settings.link_underline %}underline{% else %}none{% endif %};
+    }
+
+    #{{ section.id }} .guest-checkout a:hover {
+      text-decoration: underline;
+    }
+
+    @media screen and (max-width: 749px) {
+      #{{ section.id }} .login-card {
+        padding: var(--spacing-lg);
+      }
+    }
+  </style>
+
+  <div class="login-container">
+    {%- comment -%} Header {%- endcomment -%}
+    <header class="login-header">
+      <h1 class="login-title">{{ section.settings.title | default: 'Login' }}</h1>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="login-subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- comment -%} Login Card {%- endcomment -%}
+    <div class="login-card">
+      {%- form 'customer_login', novalidate: 'novalidate', class: 'login-form' -%}
+        {%- if form.errors -%}
+          <div class="form-error" role="alert">
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+
+        <div class="form-field">
+          <label for="customer_email" class="form-label">
+            {{ section.settings.email_label | default: 'Email' }}
+            <span class="required" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="email"
+            name="customer[email]"
+            id="customer_email"
+            class="form-input"
+            autocomplete="email"
+            required
+            aria-required="true"
+            placeholder="{{ section.settings.email_placeholder }}"
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="customer_password" class="form-label">
+            {{ section.settings.password_label | default: 'Password' }}
+            <span class="required" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="password"
+            name="customer[password]"
+            id="customer_password"
+            class="form-input"
+            autocomplete="current-password"
+            required
+            aria-required="true"
+            placeholder="{{ section.settings.password_placeholder }}"
+          >
+        </div>
+
+        {%- if section.settings.show_forgot_password -%}
+          <div class="forgot-password">
+            <a href="{{ routes.account_recover_url }}">
+              {{ section.settings.forgot_password_text | default: 'Forgot password?' }}
+            </a>
+          </div>
+        {%- endif -%}
+
+        <button type="submit" class="login-submit">
+          {{ section.settings.button_text | default: 'Sign In' }}
+        </button>
+      {%- endform -%}
+
+      {%- if section.settings.show_register_link -%}
+        <div class="login-divider">
+          <span>{{ section.settings.divider_text | default: 'or' }}</span>
+        </div>
+
+        <div class="login-register">
+          <p>{{ section.settings.register_prompt | default: "Don't have an account?" }}</p>
+          <a href="{{ routes.account_register_url }}" class="register-link">
+            {{ section.settings.register_button_text | default: 'Create Account' }}
+          </a>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_guest_checkout and checkout.guest_login -%}
+        <div class="guest-checkout">
+          <a href="{{ routes.root_url }}">{{ section.settings.guest_checkout_text | default: 'Continue as guest' }}</a>
+        </div>
+      {%- endif -%}
     </div>
-    
-    <div style="margin-bottom: 20px;">
-      <label for="customer_password" style="display: block; margin-bottom: 5px;">Password</label>
-      <input type="password" name="customer[password]" id="customer_password" autocomplete="current-password" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
-    </div>
-    
-    <div style="margin-bottom: 20px;">
-      <a href="{{ routes.account_recover_url }}" style="color: #000; text-decoration: underline;">Forgot password?</a>
-    </div>
-    
-    <button type="submit" style="width: 100%; padding: 12px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 20px;">Login</button>
-  {%- endform -%}
-  
-  <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee;">
-    <p style="margin-bottom: 15px;">Don't have an account?</p>
-    <a href="{{ routes.account_register_url }}" style="padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; display: inline-block;">Create Account</a>
+
+    {%- comment -%} Additional Blocks {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'benefits' -%}
+          <div class="login-benefits" {{ block.shopify_attributes }} style="margin-top: var(--spacing-xl); text-align: center;">
+            {%- if block.settings.title != blank -%}
+              <p style="font-weight: 500; margin-bottom: var(--spacing-md); color: var(--section-heading);">
+                {{ block.settings.title }}
+              </p>
+            {%- endif -%}
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-lg);">
+              {%- for i in (1..3) -%}
+                {%- assign benefit_key = 'benefit_' | append: i -%}
+                {%- assign benefit = block.settings[benefit_key] -%}
+                {%- if benefit != blank -%}
+                  <div style="display: flex; align-items: center; gap: var(--spacing-xs); font-size: calc(var(--font-body-size) * 0.9375); color: var(--section-text);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    {{ benefit }}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
   </div>
 </div>
 
@@ -41,10 +356,296 @@
   "name": "Customer Login",
   "tag": "section",
   "class": "section",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Color Scheme"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "subtle", "label": "Subtle" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Welcome Back"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Sign in to your account"
+    },
+    {
+      "type": "header",
+      "content": "Form Labels"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Email placeholder",
+      "default": "your@email.com"
+    },
+    {
+      "type": "text",
+      "id": "password_label",
+      "label": "Password label",
+      "default": "Password"
+    },
+    {
+      "type": "text",
+      "id": "password_placeholder",
+      "label": "Password placeholder"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Sign In"
+    },
+    {
+      "type": "header",
+      "content": "Links"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_forgot_password",
+      "label": "Show forgot password link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "forgot_password_text",
+      "label": "Forgot password text",
+      "default": "Forgot password?"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_register_link",
+      "label": "Show register link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "divider_text",
+      "label": "Divider text",
+      "default": "or"
+    },
+    {
+      "type": "text",
+      "id": "register_prompt",
+      "label": "Register prompt",
+      "default": "Don't have an account?"
+    },
+    {
+      "type": "text",
+      "id": "register_button_text",
+      "label": "Register button text",
+      "default": "Create Account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_guest_checkout",
+      "label": "Show guest checkout link",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "guest_checkout_text",
+      "label": "Guest checkout text",
+      "default": "Continue as guest"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_underline",
+      "label": "Underline links",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card Style"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "outlined", "label": "Outlined" },
+        { "value": "filled", "label": "Filled" },
+        { "value": "elevated", "label": "Elevated" }
+      ],
+      "default": "elevated"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "form_width",
+      "label": "Form max width",
+      "min": 350,
+      "max": 600,
+      "step": 25,
+      "default": 450,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "title_scale",
+      "label": "Title size",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "default": 80,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "label": "Padding top",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "Show on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_desktop",
+      "label": "Show on desktop",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefits",
+      "name": "Account benefits",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Why create an account?"
+        },
+        {
+          "type": "text",
+          "id": "benefit_1",
+          "label": "Benefit 1",
+          "default": "Track your orders"
+        },
+        {
+          "type": "text",
+          "id": "benefit_2",
+          "label": "Benefit 2",
+          "default": "Save addresses"
+        },
+        {
+          "type": "text",
+          "id": "benefit_3",
+          "label": "Benefit 3",
+          "default": "Exclusive offers"
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "Customer Login"
+      "name": "Customer Login - Standard",
+      "settings": {
+        "card_style": "elevated",
+        "header_alignment": "center"
+      }
+    },
+    {
+      "name": "Customer Login - Minimal",
+      "settings": {
+        "card_style": "none",
+        "header_alignment": "left",
+        "show_register_link": false
+      }
+    },
+    {
+      "name": "Customer Login - Card",
+      "settings": {
+        "card_style": "outlined",
+        "header_alignment": "center"
+      },
+      "blocks": [
+        {
+          "type": "benefits"
+        }
+      ]
     }
   ]
 }

@@ -9,41 +9,97 @@
 
   {% when 'logo' %}
     <div class="footer__logo" {{ block.shopify_attributes }}>
-      <a href="{{ routes.root_url }}" class="logo-link">
-        {% if block.settings.logo_image != blank %}
-          {{ block.settings.logo_image | image_url: width: block.settings.logo_width | image_tag:
-            class: 'logo logo--image',
-            widths: '100, 150, 200, 250',
-            loading: 'lazy',
-            style: 'max-width: ' | append: block.settings.logo_width | append: 'px;'
-          }}
-        {% elsif block.settings.logo_text != blank %}
-          <span class="logo logo__text" style="font-size: {{ block.settings.logo_text_size | default: 24 }}px;{% if block.settings.logo_text_color != blank %} color: {{ block.settings.logo_text_color }};{% endif %}">
-            {% if block.settings.show_plus %}
-              {% assign logo_parts = block.settings.logo_text | split: '+' %}
-              {% if logo_parts.size > 1 %}
-                {{ logo_parts[0] }}<span class="logo__plus">+</span>{{ logo_parts[1] }}
-              {% else %}
-                {{ block.settings.logo_text }}
-              {% endif %}
-            {% else %}
-              {{ block.settings.logo_text | replace: '+', '' }}
-            {% endif %}
-          </span>
-        {% endif %}
-      </a>
+      {% render 'logo',
+        logo_image: block.settings.logo_image,
+        logo_text: block.settings.logo_text,
+        logo_width: block.settings.logo_width,
+        logo_height: block.settings.logo_width,
+        logo_text_size: block.settings.logo_text_size,
+        logo_text_color: block.settings.logo_text_color,
+        show_plus: block.settings.show_plus,
+        logo_link: routes.root_url,
+        class_name: 'footer-logo'
+      %}
     </div>
 
   {% when 'link_list' %}
-    <div class="footer__column" {{ block.shopify_attributes }}>
+    {% liquid
+      # Build column styles
+      assign column_style = ''
+      assign column_min_width = block.settings.column_width | default: 140
+      assign column_style = column_style | append: 'min-width: ' | append: column_min_width | append: 'px;'
+      if block.settings.column_background != blank
+        assign column_style = column_style | append: 'background-color: ' | append: block.settings.column_background | append: ';'
+      endif
+      if block.settings.column_padding != blank and block.settings.column_padding > 0
+        assign column_style = column_style | append: 'padding: ' | append: block.settings.column_padding | append: 'px;'
+      endif
+      if block.settings.column_radius != blank and block.settings.column_radius > 0
+        assign column_style = column_style | append: 'border-radius: ' | append: block.settings.column_radius | append: 'px;'
+      endif
+      assign link_gap = block.settings.link_spacing | default: 8
+      assign column_style = column_style | append: 'gap: ' | append: link_gap | append: 'px;'
+
+      # Build heading styles
+      assign heading_style = ''
+      if block.settings.heading_color != blank
+        assign heading_style = heading_style | append: 'color: ' | append: block.settings.heading_color | append: ';'
+      endif
+      assign heading_size = block.settings.heading_size | default: 14
+      assign heading_style = heading_style | append: 'font-size: ' | append: heading_size | append: 'px;'
+      assign heading_weight = block.settings.heading_weight | default: '600'
+      assign heading_style = heading_style | append: 'font-weight: ' | append: heading_weight | append: ';'
+      assign heading_transform = block.settings.heading_transform | default: 'uppercase'
+      assign heading_style = heading_style | append: 'text-transform: ' | append: heading_transform | append: ';'
+      assign heading_margin = block.settings.heading_spacing | default: 12
+      assign heading_style = heading_style | append: 'margin-bottom: ' | append: heading_margin | append: 'px;'
+
+      # Build link styles
+      assign link_style = ''
+      if block.settings.link_color != blank
+        assign link_style = link_style | append: 'color: ' | append: block.settings.link_color | append: ';'
+      endif
+      assign link_size = block.settings.link_size | default: 14
+      assign link_style = link_style | append: 'font-size: ' | append: link_size | append: 'px;'
+      assign link_weight = block.settings.link_weight | default: '400'
+      assign link_style = link_style | append: 'font-weight: ' | append: link_weight | append: ';'
+      assign link_transform = block.settings.link_transform | default: 'none'
+      assign link_style = link_style | append: 'text-transform: ' | append: link_transform | append: ';'
+      if block.settings.link_letter_spacing != blank and block.settings.link_letter_spacing > 0
+        assign letter_spacing_em = block.settings.link_letter_spacing | divided_by: 100.0
+        assign link_style = link_style | append: 'letter-spacing: ' | append: letter_spacing_em | append: 'em;'
+      endif
+      assign link_underline = block.settings.link_underline | default: 'hover'
+      if link_underline == 'none'
+        assign link_style = link_style | append: 'text-decoration: none;'
+      elsif link_underline == 'always'
+        assign link_style = link_style | append: 'text-decoration: underline;'
+      else
+        assign link_style = link_style | append: 'text-decoration: none;'
+      endif
+
+      # Generate unique ID for hover styles
+      assign block_id = block.id | replace: '-', ''
+    %}
+
+    {% if block.settings.link_hover_color != blank or link_underline == 'hover' %}
+      <style>
+        .footer__link-{{ block_id }}:hover {
+          {% if block.settings.link_hover_color != blank %}color: {{ block.settings.link_hover_color }} !important;{% endif %}
+          {% if link_underline == 'hover' %}text-decoration: underline !important;{% endif %}
+        }
+      </style>
+    {% endif %}
+
+    <div class="footer__column" style="{{ column_style }}" {{ block.shopify_attributes }}>
       {% if block.settings.heading != blank %}
-        <h3 class="footer__heading"{% if block.settings.heading_color != blank %} style="color: {{ block.settings.heading_color }};"{% endif %}>
+        <h3 class="footer__heading" style="{{ heading_style }}">
           {{ block.settings.heading | escape }}
         </h3>
       {% endif %}
       {% if block.settings.menu != blank %}
         {% for link in block.settings.menu.links %}
-          <a href="{{ link.url }}" class="footer__link"{% if block.settings.link_color != blank %} style="color: {{ block.settings.link_color }};"{% endif %}>
+          <a href="{{ link.url }}" class="footer__link footer__link-{{ block_id }}" style="{{ link_style }}">
             {{ link.title | escape }}
           </a>
         {% endfor %}
@@ -53,7 +109,7 @@
         {% for link_line in links %}
           {% assign link_parts = link_line | split: '|' %}
           {% if link_parts.size == 2 %}
-            <a href="{{ link_parts[0] | strip }}" class="footer__link"{% if block.settings.link_color != blank %} style="color: {{ block.settings.link_color }};"{% endif %}>
+            <a href="{{ link_parts[0] | strip }}" class="footer__link footer__link-{{ block_id }}" style="{{ link_style }}">
               {{ link_parts[1] | strip | escape }}
             </a>
           {% endif %}

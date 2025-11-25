@@ -623,7 +623,7 @@
           const image = product.image ? product.image : product.featured_image?.url;
           html += `
             <a href="${product.url}" class="predictive-search__result-item" role="option">
-              ${image ? `<img src="${image}" alt="${product.title}" class="predictive-search__result-image" loading="lazy">` : ''}
+              ${image ? `<img src="${image}" alt="${product.title}" class="predictive-search__result-image" loading="lazy" width="60" height="60">` : ''}
               <div class="predictive-search__result-content">
                 <p class="predictive-search__result-title">${product.title}</p>
                 <span class="predictive-search__result-meta">

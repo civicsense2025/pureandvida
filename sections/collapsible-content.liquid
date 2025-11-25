@@ -91,23 +91,27 @@
         style="max-width: {{ section.settings.content_width }}px;{% if section.settings.layout != 'split-image' %} margin: 0 auto;{% endif %}"
       >
         {%- for block in section.blocks -%}
-          {%- render 'block-collapsible-row',
-            block: block,
-            open: section.settings.open_first and forloop.first,
-            row_padding: section.settings.row_padding,
-            row_background: section.settings.row_background,
-            row_border_color: section.settings.row_border_color,
-            row_border_radius: section.settings.row_border_radius,
-            row_border_width: section.settings.row_border_width,
-            title_size: section.settings.title_size,
-            title_weight: section.settings.title_weight,
-            title_color: section.settings.title_color,
-            toggle_color: section.settings.toggle_color,
-            toggle_style: section.settings.toggle_style,
-            content_padding: section.settings.content_padding,
-            content_background: section.settings.content_background,
-            content_color: section.settings.content_color
-          -%}
+          {%- if block.type contains '@theme' -%}
+            {{ block }}
+          {%- else -%}
+            {%- render 'block-collapsible-row',
+              block: block,
+              open: section.settings.open_first and forloop.first,
+              row_padding: section.settings.row_padding,
+              row_background: section.settings.row_background,
+              row_border_color: section.settings.row_border_color,
+              row_border_radius: section.settings.row_border_radius,
+              row_border_width: section.settings.row_border_width,
+              title_size: section.settings.title_size,
+              title_weight: section.settings.title_weight,
+              title_color: section.settings.title_color,
+              toggle_color: section.settings.toggle_color,
+              toggle_style: section.settings.toggle_style,
+              content_padding: section.settings.content_padding,
+              content_background: section.settings.content_background,
+              content_color: section.settings.content_color
+            -%}
+          {%- endif -%}
         {%- endfor -%}
       </div>
     {%- elsif request.design_mode -%}
@@ -754,6 +758,10 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@theme/collapsible-row",
+      "name": "Theme Collapsible Row"
+    },
     {
       "type": "collapsible_row",
       "name": "📋 Collapsible Row",

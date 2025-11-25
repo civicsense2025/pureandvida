@@ -55,32 +55,22 @@
           <div class="collection-list-carousel__container" role="region" aria-label="Collections carousel">
             <div class="collection-list-carousel__track" data-carousel-track>
               {%- for block in section.blocks -%}
-                {%- if block.type == 'collection' and block.settings.collection != blank -%}
-                  {%- assign collection = block.settings.collection -%}
+                {%- if block.type contains '@theme' -%}
                   <div class="collection-list-carousel__slide" data-carousel-slide>
-                    <div class="collection-item" {{ block.shopify_attributes }}>
-                      <a href="{{ collection.url }}" style="text-decoration: none; display: block;">
-                        {%- if collection.featured_image != blank -%}
-                          <div class="collection-image" style="aspect-ratio: {{ section.settings.image_aspect_ratio }}; overflow: hidden; margin-bottom: 15px;">
-                            <img src="{{ collection.featured_image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
-                          </div>
-                        {%- elsif block.settings.custom_image != blank -%}
-                          <div class="collection-image" style="aspect-ratio: {{ section.settings.image_aspect_ratio }}; overflow: hidden; margin-bottom: 15px;">
-                            <img src="{{ block.settings.custom_image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
-                          </div>
-                        {%- endif -%}
-
-                        {%- if section.settings.show_collection_title -%}
-                          <h3 class="collection-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% elsif section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %} text-align: center;">{{ collection.title | escape }}</h3>
-                        {%- endif -%}
-
-                        {%- if section.settings.show_product_count -%}
-                          <p class="collection-count" style="{% if section.settings.count_color != blank %}color: {{ section.settings.count_color }};{% endif %} text-align: center; margin-top: 5px;">
-                            {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
-                          </p>
-                        {%- endif -%}
-                      </a>
-                    </div>
+                    {{ block }}
+                  </div>
+                {%- elsif block.type == 'collection' and block.settings.collection != blank -%}
+                  <div class="collection-list-carousel__slide" data-carousel-slide>
+                    {% render 'block-collection-item',
+                      collection: block.settings.collection,
+                      block: block,
+                      custom_image: block.settings.custom_image,
+                      image_aspect_ratio: section.settings.image_aspect_ratio,
+                      show_title: section.settings.show_collection_title,
+                      show_product_count: section.settings.show_product_count,
+                      title_color: block.settings.title_color | default: section.settings.title_color,
+                      count_color: section.settings.count_color
+                    %}
                   </div>
                 {%- endif -%}
               {%- endfor -%}
@@ -123,31 +113,19 @@
         {%- comment -%} Grid Layout {%- endcomment -%}
         <div class="collection-list-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
           {%- for block in section.blocks -%}
-            {%- if block.type == 'collection' and block.settings.collection != blank -%}
-              {%- assign collection = block.settings.collection -%}
-              <div class="collection-item" {{ block.shopify_attributes }}>
-                <a href="{{ collection.url }}" style="text-decoration: none; display: block;">
-                  {%- if collection.featured_image != blank -%}
-                    <div class="collection-image" style="aspect-ratio: {{ section.settings.image_aspect_ratio }}; overflow: hidden; margin-bottom: 15px;">
-                      <img src="{{ collection.featured_image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
-                    </div>
-                  {%- elsif block.settings.custom_image != blank -%}
-                    <div class="collection-image" style="aspect-ratio: {{ section.settings.image_aspect_ratio }}; overflow: hidden; margin-bottom: 15px;">
-                      <img src="{{ block.settings.custom_image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
-                    </div>
-                  {%- endif -%}
-
-                  {%- if section.settings.show_collection_title -%}
-                    <h3 class="collection-title" style="{% if block.settings.title_color != blank %}color: {{ block.settings.title_color }};{% elsif section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %} text-align: center;">{{ collection.title | escape }}</h3>
-                  {%- endif -%}
-
-                  {%- if section.settings.show_product_count -%}
-                    <p class="collection-count" style="{% if section.settings.count_color != blank %}color: {{ section.settings.count_color }};{% endif %} text-align: center; margin-top: 5px;">
-                      {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
-                    </p>
-                  {%- endif -%}
-                </a>
-              </div>
+            {%- if block.type contains '@theme' -%}
+              {{ block }}
+            {%- elsif block.type == 'collection' and block.settings.collection != blank -%}
+              {% render 'block-collection-item',
+                collection: block.settings.collection,
+                block: block,
+                custom_image: block.settings.custom_image,
+                image_aspect_ratio: section.settings.image_aspect_ratio,
+                show_title: section.settings.show_collection_title,
+                show_product_count: section.settings.show_product_count,
+                title_color: block.settings.title_color | default: section.settings.title_color,
+                count_color: section.settings.count_color
+              %}
             {%- endif -%}
           {%- endfor -%}
         </div>
@@ -523,6 +501,10 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@theme/collection-item",
+      "name": "Theme Collection"
+    },
     {
       "type": "collection",
       "name": "🏪 Collection: {{ block.settings.collection.title }}",

@@ -60,7 +60,11 @@
           style="text-align: {{ section.settings.content_alignment }};"
           {{ block.shopify_attributes }}
         >
-          {%- if block.type == 'column' -%}
+          {%- if block.type contains '@theme' -%}
+            <div class="multicolumn__card{% if section.settings.show_card_background %} multicolumn__card--has-bg{% endif %}">
+              {{ block }}
+            </div>
+          {%- elsif block.type == 'column' -%}
             <div class="multicolumn__card{% if section.settings.show_card_background %} multicolumn__card--has-bg{% endif %}">
               {%- render 'block-column',
                 block: block,
@@ -671,6 +675,14 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@theme/column",
+      "name": "Theme Column"
+    },
+    {
+      "type": "@theme/card",
+      "name": "Theme Card"
+    },
     {
       "type": "column",
       "name": "Column",

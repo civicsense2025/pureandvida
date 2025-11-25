@@ -217,3 +217,68 @@
       <p class="text-dark text-[32px] md:text-[32px] sm:text-[20px] tracking-[0.12em] sm:tracking-[0.06em]">{{ section.settings.hero_subtitle }}</p>
     </div>
   </div>
+</div>
+
+{% schema %}
+{
+  "name": "MycoMatcha Product Hero",
+  "tag": "section",
+  "class": "shopdev-myco-matcha-product-hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "text",
+      "id": "nav_link_1",
+      "label": "Nav Link 1",
+      "default": "BENEFITS"
+    },
+    {
+      "type": "text",
+      "id": "nav_link_2",
+      "label": "Nav Link 2",
+      "default": "INGREDIENTS"
+    },
+    {
+      "type": "text",
+      "id": "nav_link_3",
+      "label": "Nav Link 3",
+      "default": "REVIEWS"
+    },
+    {
+      "type": "text",
+      "id": "nav_cta_text",
+      "label": "CTA Button Text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "MYCO MATCHA"
+    },
+    {
+      "type": "text",
+      "id": "hero_subtitle",
+      "label": "Hero Subtitle",
+      "default": "FUNCTIONAL MATCHA BLEND"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MycoMatcha Product Hero"
+    }
+  ]
+}
+{% endschema %}

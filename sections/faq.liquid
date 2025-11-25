@@ -49,28 +49,32 @@
       {%- if section.settings.content_mode == 'blocks' and section.blocks.size > 0 -%}
         {%- comment -%} Blocks mode - Dynamic FAQ items {%- endcomment -%}
         {%- for block in section.blocks -%}
-          {%- render 'block-faq-item',
-            block: block,
-            question: block.settings.question,
-            answer: block.settings.answer,
-            open: section.settings.default_open and forloop.first,
-            question_color: block.settings.question_color | default: section.settings.default_question_color,
-            answer_color: block.settings.answer_color | default: section.settings.default_answer_color,
-            icon_color: block.settings.icon_color | default: section.settings.default_icon_color,
-            icon_text: section.settings.icon_text,
-            icon_size: section.settings.icon_size,
-            item_padding: section.settings.item_padding,
-            item_background: section.settings.item_background_color,
-            item_border_width: section.settings.item_border_width,
-            item_border_color: section.settings.item_border_color,
-            item_border_radius: section.settings.item_border_radius,
-            answer_padding: section.settings.answer_padding,
-            answer_background: section.settings.answer_background_color,
-            question_size: section.settings.question_size,
-            question_weight: section.settings.question_weight,
-            answer_size: section.settings.answer_size,
-            answer_line_height: section.settings.answer_line_height
-          -%}
+          {%- if block.type contains '@theme' -%}
+            {{ block }}
+          {%- else -%}
+            {%- render 'block-faq-item',
+              block: block,
+              question: block.settings.question,
+              answer: block.settings.answer,
+              open: section.settings.default_open and forloop.first,
+              question_color: block.settings.question_color | default: section.settings.default_question_color,
+              answer_color: block.settings.answer_color | default: section.settings.default_answer_color,
+              icon_color: block.settings.icon_color | default: section.settings.default_icon_color,
+              icon_text: section.settings.icon_text,
+              icon_size: section.settings.icon_size,
+              item_padding: section.settings.item_padding,
+              item_background: section.settings.item_background_color,
+              item_border_width: section.settings.item_border_width,
+              item_border_color: section.settings.item_border_color,
+              item_border_radius: section.settings.item_border_radius,
+              answer_padding: section.settings.answer_padding,
+              answer_background: section.settings.answer_background_color,
+              question_size: section.settings.question_size,
+              question_weight: section.settings.question_weight,
+              answer_size: section.settings.answer_size,
+              answer_line_height: section.settings.answer_line_height
+            -%}
+          {%- endif -%}
         {%- endfor -%}
       {%- else -%}
         {%- comment -%} Settings mode - Fixed fields (used when content_mode is 'settings' OR when blocks mode has no blocks) {%- endcomment -%}
@@ -720,6 +724,10 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@theme/faq-item",
+      "name": "Theme FAQ"
+    },
     {
       "type": "faq_item",
       "name": "❔ FAQ: {{ block.settings.question }}",

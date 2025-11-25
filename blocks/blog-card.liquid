@@ -1,0 +1,346 @@
+{%- comment -%}
+  Theme Block: Blog Card
+  ----------------------
+  Blog article card for featured blog sections.
+  Displays article image, tags, title, excerpt, meta info, and read more link.
+{%- endcomment -%}
+
+{%- liquid
+  assign article = block.settings.article
+  assign card_show_image = block.settings.show_image | default: true
+  assign card_show_tags = block.settings.show_tags | default: true
+  assign card_show_excerpt = block.settings.show_excerpt | default: true
+  assign card_show_author = block.settings.show_author | default: true
+  assign card_show_date = block.settings.show_date | default: true
+  assign card_show_read_more = block.settings.show_read_more | default: true
+  assign card_image_ratio = block.settings.image_ratio | default: '3/2'
+  assign card_border_radius = block.settings.border_radius | default: 8
+  assign card_content_padding = block.settings.padding | default: 20
+  assign card_excerpt_length = block.settings.excerpt_length | default: 20
+  assign card_date_format = '%B %d, %Y'
+  assign card_read_more_text = block.settings.read_more_text | default: 'Read more'
+-%}
+
+{%- if article != blank -%}
+  <article class="block-blog-card" style="border-radius: {{ card_border_radius }}px;" {{ block.shopify_attributes }}>
+    {%- if card_show_image -%}
+      <a href="{{ article.url }}" class="block-blog-card__image-link">
+        {%- if article.image != blank -%}
+          <div class="block-blog-card__image-wrapper" style="aspect-ratio: {{ card_image_ratio }};">
+            <img
+              src="{{ article.image | image_url: width: 800 }}"
+              srcset="
+                {{ article.image | image_url: width: 400 }} 400w,
+                {{ article.image | image_url: width: 600 }} 600w,
+                {{ article.image | image_url: width: 800 }} 800w
+              "
+              sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+              alt="{{ article.image.alt | default: article.title | escape }}"
+              class="block-blog-card__image"
+              loading="lazy"
+              style="border-radius: {{ card_border_radius }}px {{ card_border_radius }}px 0 0;"
+            >
+          </div>
+        {%- else -%}
+          <div class="block-blog-card__image-placeholder" style="aspect-ratio: {{ card_image_ratio }};">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {%- endif -%}
+      </a>
+    {%- endif -%}
+
+    <div class="block-blog-card__content" style="padding: {{ card_content_padding }}px;">
+      {%- if card_show_tags and article.tags.size > 0 -%}
+        <div class="block-blog-card__tags">
+          {%- for tag in article.tags limit: 2 -%}
+            <span class="block-blog-card__tag">{{ tag }}</span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <h3 class="block-blog-card__title">
+        <a href="{{ article.url }}">{{ article.title | escape }}</a>
+      </h3>
+
+      {%- if card_show_excerpt and article.excerpt_or_content != blank -%}
+        <p class="block-blog-card__excerpt">
+          {{ article.excerpt_or_content | strip_html | truncatewords: card_excerpt_length }}
+        </p>
+      {%- endif -%}
+
+      <div class="block-blog-card__meta">
+        {%- if card_show_author -%}
+          <span class="block-blog-card__author">{{ article.author }}</span>
+        {%- endif -%}
+        {%- if card_show_date -%}
+          {%- if card_show_author -%}
+            <span class="block-blog-card__separator" aria-hidden="true">|</span>
+          {%- endif -%}
+          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" class="block-blog-card__date">
+            {{ article.published_at | date: card_date_format }}
+          </time>
+        {%- endif -%}
+      </div>
+
+      {%- if card_show_read_more -%}
+        <a href="{{ article.url }}" class="block-blog-card__read-more">
+          {{ card_read_more_text }}
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </article>
+{%- else -%}
+  <div class="block-blog-card block-blog-card--placeholder" {{ block.shopify_attributes }}>
+    <div class="block-blog-card__image-placeholder" style="aspect-ratio: {{ card_image_ratio }};">
+      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+    </div>
+    <div class="block-blog-card__content" style="padding: {{ card_content_padding }}px;">
+      <p class="block-blog-card__placeholder-text">Select an article in block settings</p>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .block-blog-card {
+    background: var(--blog-card-background, var(--color-background, #fff));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .block-blog-card__image-link {
+    display: block;
+    overflow: hidden;
+  }
+
+  .block-blog-card__image-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .block-blog-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .block-blog-card:hover .block-blog-card__image {
+    transform: scale(1.05);
+  }
+
+  .block-blog-card__image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background-alt, #f5f5f5);
+  }
+
+  .block-blog-card__image-placeholder .placeholder-svg {
+    width: 60px;
+    height: 60px;
+    opacity: 0.4;
+  }
+
+  .block-blog-card__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .block-blog-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .block-blog-card__tag {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    border-radius: 2px;
+  }
+
+  .block-blog-card__title {
+    font-family: var(--font-heading-family);
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 12px;
+  }
+
+  .block-blog-card__title a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .block-blog-card__title a:hover {
+    opacity: 0.7;
+  }
+
+  .block-blog-card__excerpt {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0 0 16px;
+    opacity: 0.8;
+    flex: 1;
+  }
+
+  .block-blog-card__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+
+  .block-blog-card__separator {
+    opacity: 0.5;
+  }
+
+  .block-blog-card__read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-primary, #000);
+    transition: gap 0.2s ease;
+    margin-top: auto;
+  }
+
+  .block-blog-card__read-more:hover {
+    gap: 10px;
+  }
+
+  .block-blog-card__placeholder-text {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Blog Card",
+  "settings": [
+    {
+      "type": "article",
+      "id": "article",
+      "label": "Article"
+    },
+    {
+      "type": "header",
+      "content": "Display Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Show Image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show Tags",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show Excerpt",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show Author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show Date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_read_more",
+      "label": "Show Read More Link",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "4/3", "label": "Landscape (4:3)" },
+        { "value": "3/2", "label": "Photo (3:2)" },
+        { "value": "16/9", "label": "Widescreen (16:9)" },
+        { "value": "2/3", "label": "Portrait (2:3)" }
+      ],
+      "default": "3/2"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Content Padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "excerpt_length",
+      "label": "Excerpt Length",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "default": 20,
+      "unit": "words"
+    },
+    {
+      "type": "text",
+      "id": "read_more_text",
+      "label": "Read More Text",
+      "default": "Read more"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Card"
+    }
+  ]
+}
+{% endschema %}

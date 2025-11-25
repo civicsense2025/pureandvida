@@ -85,7 +85,11 @@
               {%- if section.settings.content_mode == 'blocks' -%}
                 {%- for block in section.blocks -%}
                   <div class="ingredients-carousel__slide" data-carousel-slide>
-                    {%- render 'block-ingredient', block: block -%}
+                    {%- if block.type contains '@theme' -%}
+                      {{ block }}
+                    {%- else -%}
+                      {%- render 'block-ingredient', block: block -%}
+                    {%- endif -%}
                   </div>
                 {%- endfor -%}
               {%- else -%}
@@ -147,7 +151,11 @@
         <div class="ingredients-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
           {%- if section.settings.content_mode == 'blocks' -%}
             {%- for block in section.blocks -%}
-              {%- render 'block-ingredient', block: block -%}
+              {%- if block.type contains '@theme' -%}
+                {{ block }}
+              {%- else -%}
+                {%- render 'block-ingredient', block: block -%}
+              {%- endif -%}
             {%- endfor -%}
           {%- else -%}
             {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
@@ -747,6 +755,10 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@theme/ingredient",
+      "name": "Theme Ingredient"
+    },
     {
       "type": "ingredient",
       "name": "🌱 Ingredient: {{ block.settings.name }}",

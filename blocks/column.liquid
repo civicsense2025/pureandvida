@@ -1,0 +1,337 @@
+{%- comment -%}
+  Theme Block: Column
+  -------------------
+  Multi-purpose column block with icon/image, title, description, and optional link.
+  Perfect for multicolumn layouts, feature grids, and info sections.
+{%- endcomment -%}
+
+{%- liquid
+  assign col_image_ratio = block.settings.image_ratio | default: 'square'
+  assign col_image_width = block.settings.image_width | default: 100
+  assign col_image_radius = block.settings.image_border_radius | default: 8
+  assign col_icon_size = block.settings.icon_size | default: 48
+  assign col_icon_color = block.settings.icon_color | default: 'var(--color-primary, #2c5530)'
+  assign col_alignment = block.settings.content_alignment | default: 'center'
+  assign col_heading_color = block.settings.heading_color
+  assign col_text_color = block.settings.text_color
+-%}
+
+<div class="block-column" style="text-align: {{ col_alignment }};" {{ block.shopify_attributes }}>
+  {%- comment -%} Media (Image or Icon) {%- endcomment -%}
+  {%- if block.settings.image != blank -%}
+    <div
+      class="block-column__media"
+      style="
+        {% case col_image_ratio %}
+          {% when 'square' %}aspect-ratio: 1 / 1;
+          {% when 'portrait' %}aspect-ratio: 3 / 4;
+          {% when 'landscape' %}aspect-ratio: 4 / 3;
+          {% when 'circle' %}aspect-ratio: 1 / 1; border-radius: 50%; overflow: hidden;
+          {% when 'adapt' %}aspect-ratio: {{ block.settings.image.aspect_ratio }};
+        {% endcase %}
+        max-width: {{ col_image_width }}%;
+        border-radius: {{ col_image_radius }}px;
+        {% if col_alignment == 'center' %}margin: 0 auto;{% endif %}
+        {% if col_alignment == 'right' %}margin-left: auto;{% endif %}
+      "
+    >
+      <img
+        src="{{ block.settings.image | image_url: width: 600 }}"
+        srcset="
+          {{ block.settings.image | image_url: width: 200 }} 200w,
+          {{ block.settings.image | image_url: width: 400 }} 400w,
+          {{ block.settings.image | image_url: width: 600 }} 600w
+        "
+        sizes="(max-width: 768px) 50vw, 25vw"
+        alt="{{ block.settings.image.alt | escape | default: block.settings.title | escape }}"
+        width="{{ block.settings.image.width }}"
+        height="{{ block.settings.image.height }}"
+        loading="lazy"
+        class="block-column__image"
+      >
+    </div>
+  {%- elsif block.settings.icon != blank and block.settings.icon != 'none' -%}
+    <div
+      class="block-column__icon"
+      style="
+        --icon-size: {{ col_icon_size }}px;
+        --icon-color: {{ col_icon_color }};
+        {% if col_alignment == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+        {% if col_alignment == 'right' %}margin-left: auto;{% endif %}
+      "
+    >
+      {% render 'render-icon', icon: block.settings.icon, size: col_icon_size, color: col_icon_color %}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Content {%- endcomment -%}
+  <div class="block-column__content">
+    {%- if block.settings.title != blank -%}
+      <h3 class="block-column__title" {% if col_heading_color != blank %}style="color: {{ col_heading_color }};"{% endif %}>
+        {{ block.settings.title }}
+      </h3>
+    {%- endif -%}
+
+    {%- if block.settings.text != blank -%}
+      <div class="block-column__text rte" {% if col_text_color != blank %}style="color: {{ col_text_color }};"{% endif %}>
+        {{ block.settings.text }}
+      </div>
+    {%- endif -%}
+
+    {%- if block.settings.link_label != blank -%}
+      <a
+        href="{{ block.settings.link }}"
+        class="block-column__link{% if block.settings.button_style != 'link' %} button button--{{ block.settings.button_style }}{% endif %}"
+        {% if block.settings.link == blank %}aria-disabled="true"{% endif %}
+      >
+        {{ block.settings.link_label }}
+        {%- if block.settings.button_style == 'link' -%}
+          <span aria-hidden="true">&rarr;</span>
+        {%- endif -%}
+      </a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .block-column {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .block-column__media {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .block-column__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .block-column__icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    margin-bottom: 20px;
+    color: var(--icon-color);
+  }
+
+  .block-column__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .block-column__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .block-column__title {
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 12px;
+  }
+
+  .block-column__text {
+    font-family: var(--font-body-family);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    flex: 1;
+  }
+
+  .block-column__text p {
+    margin: 0;
+  }
+
+  .block-column__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary, #2c5530);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: auto;
+  }
+
+  .block-column__link:not(.button):hover {
+    gap: 10px;
+  }
+
+  .block-column__link.button {
+    padding: 12px 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Column",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "gift", "label": "Gift" },
+        { "value": "clock", "label": "Clock" },
+        { "value": "arrow-right", "label": "Arrow" }
+      ],
+      "default": "none",
+      "info": "Only shown if no image is selected"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Column Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Add your column description here.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Link"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link Label"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link URL"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Link Style",
+      "options": [
+        { "value": "link", "label": "Text Link" },
+        { "value": "primary", "label": "Primary Button" },
+        { "value": "secondary", "label": "Secondary Button" }
+      ],
+      "default": "link"
+    },
+    {
+      "type": "header",
+      "content": "Image Settings"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to Image" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "circle", "label": "Circle" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image Width",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Icon Settings"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon Color",
+      "default": "#2c5530"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Column"
+    }
+  ]
+}
+{% endschema %}

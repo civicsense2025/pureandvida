@@ -61,7 +61,11 @@
               {%- if section.settings.content_mode == 'blocks' -%}
                 {%- for block in section.blocks -%}
                   <div class="benefits-carousel__slide" data-carousel-slide>
-                    {%- render 'block-benefit', block: block -%}
+                    {%- if block.type contains '@theme' -%}
+                      {{ block }}
+                    {%- else -%}
+                      {%- render 'block-benefit', block: block -%}
+                    {%- endif -%}
                   </div>
                 {%- endfor -%}
               {%- else -%}
@@ -123,7 +127,11 @@
         <div class="benefits-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
           {%- if section.settings.content_mode == 'blocks' -%}
             {%- for block in section.blocks -%}
-              {%- render 'block-benefit', block: block -%}
+              {%- if block.type contains '@theme' -%}
+                {{ block }}
+              {%- else -%}
+                {%- render 'block-benefit', block: block -%}
+              {%- endif -%}
             {%- endfor -%}
           {%- else -%}
             {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
@@ -698,6 +706,10 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@theme/benefit",
+      "name": "Theme Benefit"
+    },
     {
       "type": "benefit",
       "name": "⭐ Benefit: {{ block.settings.title }}",

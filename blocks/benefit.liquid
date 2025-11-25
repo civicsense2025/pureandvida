@@ -1,0 +1,356 @@
+{%- comment -%}
+  Theme Block: Benefit
+  --------------------
+  Reusable benefit/feature item with icon image, title, and description.
+  Can be added to any section that supports @theme blocks.
+  Supports grouped overrides for colors, typography, and spacing.
+{%- endcomment -%}
+
+{%- liquid
+  # Content
+  assign benefit_icon = block.settings.icon
+  assign benefit_icon_asset = block.settings.icon_asset
+  assign benefit_title = block.settings.title
+  assign benefit_description = block.settings.description
+
+  # Icon settings
+  assign icon_size = block.settings.icon_size | default: 80
+
+  # Color overrides (blank = inherit from theme)
+  assign bg_color = block.settings.background_color
+  assign title_color = block.settings.title_color
+  assign text_color = block.settings.text_color
+  assign icon_color = block.settings.icon_color
+  assign border_color = block.settings.border_color
+
+  # Typography overrides
+  assign title_size = block.settings.title_size
+  assign title_weight = block.settings.title_weight
+  assign text_size = block.settings.text_size
+  assign line_height = block.settings.line_height
+
+  # Spacing overrides
+  assign padding_y = block.settings.padding_vertical
+  assign padding_x = block.settings.padding_horizontal
+  assign gap = block.settings.internal_gap
+  assign border_width = block.settings.border_width
+  assign border_radius = block.settings.border_radius
+  assign alignment = block.settings.alignment | default: 'center'
+-%}
+
+<div
+  class="block-benefit block-benefit--align-{{ alignment }}"
+  {{ block.shopify_attributes }}
+  style="
+    --block-icon-size: {{ icon_size }}px;
+    {% if bg_color != blank %}--block-bg: {{ bg_color }};{% endif %}
+    {% if title_color != blank %}--block-title-color: {{ title_color }};{% endif %}
+    {% if text_color != blank %}--block-text-color: {{ text_color }};{% endif %}
+    {% if icon_color != blank %}--block-icon-color: {{ icon_color }};{% endif %}
+    {% if border_color != blank %}--block-border-color: {{ border_color }};{% endif %}
+    {% if title_size != blank %}--block-title-size: {{ title_size }}px;{% endif %}
+    {% if title_weight != blank %}--block-title-weight: {{ title_weight }};{% endif %}
+    {% if text_size != blank %}--block-text-size: {{ text_size }}px;{% endif %}
+    {% if line_height != blank %}--block-line-height: {{ line_height }};{% endif %}
+    {% if padding_y != blank %}--block-padding-y: {{ padding_y }}px;{% endif %}
+    {% if padding_x != blank %}--block-padding-x: {{ padding_x }}px;{% endif %}
+    {% if gap != blank %}--block-gap: {{ gap }}px;{% endif %}
+    {% if border_width != blank %}--block-border-width: {{ border_width }}px;{% endif %}
+    {% if border_radius != blank %}--block-border-radius: {{ border_radius }}px;{% endif %}
+  "
+>
+  {%- if benefit_icon != blank -%}
+    <div class="block-benefit__icon">
+      <img
+        src="{{ benefit_icon | image_url: width: 200 }}"
+        alt="{{ benefit_title | escape }}"
+        loading="lazy"
+        width="100"
+        height="100"
+      >
+    </div>
+  {%- elsif benefit_icon_asset != blank -%}
+    <div class="block-benefit__icon">
+      <img
+        src="{{ benefit_icon_asset | asset_url }}"
+        alt="{{ benefit_title | escape }}"
+        loading="lazy"
+      >
+    </div>
+  {%- endif -%}
+
+  {%- if benefit_title != blank -%}
+    <h3 class="block-benefit__title">
+      {{ benefit_title | escape }}
+    </h3>
+  {%- endif -%}
+
+  {%- if benefit_description != blank -%}
+    <p class="block-benefit__description">
+      {{ benefit_description }}
+    </p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .block-benefit {
+    display: flex;
+    flex-direction: column;
+    background: var(--block-bg, transparent);
+    padding: var(--block-padding-y, 0) var(--block-padding-x, 0);
+    gap: var(--block-gap, var(--spacing-sm, 8px));
+    border: var(--block-border-width, 0) solid var(--block-border-color, transparent);
+    border-radius: var(--block-border-radius, 0);
+  }
+
+  .block-benefit--align-left {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .block-benefit--align-center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .block-benefit--align-right {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .block-benefit__icon {
+    color: var(--block-icon-color, inherit);
+  }
+
+  .block-benefit__icon img {
+    width: clamp(48px, 10vw, var(--block-icon-size, 80px));
+    height: auto;
+  }
+
+  .block-benefit__title {
+    font-size: var(--block-title-size, clamp(1rem, 3vw, 1.25rem));
+    font-weight: var(--block-title-weight, 600);
+    color: var(--block-title-color, inherit);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .block-benefit__description {
+    font-size: var(--block-text-size, clamp(0.875rem, 2.5vw, 1rem));
+    line-height: var(--block-line-height, 1.6);
+    color: var(--block-text-color, var(--color-text-secondary, inherit));
+    margin: 0;
+    opacity: 0.85;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Benefit",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Benefit Title",
+      "default": "Benefit Title",
+      "info": "Short, impactful headline for this benefit"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Benefit Description",
+      "default": "Benefit description",
+      "info": "Explain the benefit in 1-2 sentences"
+    },
+    {
+      "type": "header",
+      "content": "Icon & Visuals"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon",
+      "label": "Icon Image",
+      "info": "Recommended: 100x100px square, PNG with transparency"
+    },
+    {
+      "type": "text",
+      "id": "icon_asset",
+      "label": "Icon Asset Filename",
+      "info": "Alternative: enter asset filename (e.g., 'shipping-icon.svg')"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Color Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon Tint Color",
+      "info": "Only affects SVG icons"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color"
+    },
+    {
+      "type": "header",
+      "content": "📝 Typography Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Size",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: responsive 16-20px"
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title Weight",
+      "options": [
+        { "value": "", "label": "Default" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Description Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: responsive 14-16px"
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Line Height",
+      "min": 1.2,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.6,
+      "info": "Default: 1.6"
+    },
+    {
+      "type": "header",
+      "content": "📏 Spacing Overrides"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave blank to inherit from theme defaults"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical Padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "info": "Default: 0"
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal Padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "info": "Default: 0"
+    },
+    {
+      "type": "range",
+      "id": "internal_gap",
+      "label": "Internal Gap",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "info": "Space between icon, title, and description. Default: 8px"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border Width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "info": "Default: 0 (no border)"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "info": "Default: 0 (square corners)"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefit"
+    }
+  ]
+}
+{% endschema %}

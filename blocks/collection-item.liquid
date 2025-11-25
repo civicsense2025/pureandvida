@@ -1,0 +1,228 @@
+{%- comment -%}
+  Theme Block: Collection Item
+  ----------------------------
+  Collection card displaying image, title, and optional product count.
+{%- endcomment -%}
+
+{%- liquid
+  assign collection = block.settings.collection
+  assign custom_image = block.settings.custom_image
+  assign item_aspect_ratio = block.settings.image_ratio | default: '4/3'
+  assign item_show_title = block.settings.show_title | default: true
+  assign item_show_count = block.settings.show_product_count | default: false
+  assign item_title_color = block.settings.title_color
+  assign item_count_color = block.settings.count_color
+  assign item_border_radius = block.settings.border_radius | default: 0
+
+  # Get the image to display
+  if custom_image != blank
+    assign display_image = custom_image
+  elsif collection.featured_image != blank
+    assign display_image = collection.featured_image
+  else
+    assign display_image = blank
+  endif
+-%}
+
+{%- if collection != blank -%}
+  <div class="block-collection-item" {{ block.shopify_attributes }}>
+    <a href="{{ collection.url }}" class="block-collection-item__link">
+      {%- if display_image != blank -%}
+        <div class="block-collection-item__image" style="aspect-ratio: {{ item_aspect_ratio }}; border-radius: {{ item_border_radius }}px;">
+          <img
+            src="{{ display_image | image_url: width: 600 }}"
+            srcset="
+              {{ display_image | image_url: width: 300 }} 300w,
+              {{ display_image | image_url: width: 450 }} 450w,
+              {{ display_image | image_url: width: 600 }} 600w
+            "
+            sizes="(max-width: 479px) 100vw, (max-width: 767px) 50vw, 25vw"
+            alt="{{ collection.title | escape }}"
+            loading="lazy"
+            class="block-collection-item__img"
+          >
+        </div>
+      {%- else -%}
+        <div class="block-collection-item__placeholder" style="aspect-ratio: {{ item_aspect_ratio }}; border-radius: {{ item_border_radius }}px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
+            <rect width="525" height="525" fill="#E8E8E8"/>
+            <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
+          </svg>
+        </div>
+      {%- endif -%}
+
+      {%- if item_show_title -%}
+        <h3
+          class="block-collection-item__title"
+          {% if item_title_color != blank %}style="color: {{ item_title_color }};"{% endif %}
+        >
+          {{ collection.title | escape }}
+        </h3>
+      {%- endif -%}
+
+      {%- if item_show_count -%}
+        <p
+          class="block-collection-item__count"
+          {% if item_count_color != blank %}style="color: {{ item_count_color }};"{% endif %}
+        >
+          {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
+        </p>
+      {%- endif -%}
+    </a>
+  </div>
+{%- else -%}
+  <div class="block-collection-item block-collection-item--placeholder" {{ block.shopify_attributes }}>
+    <div class="block-collection-item__placeholder" style="aspect-ratio: {{ item_aspect_ratio }}; border-radius: {{ item_border_radius }}px;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
+        <rect width="525" height="525" fill="#E8E8E8"/>
+        <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
+      </svg>
+    </div>
+    <p class="block-collection-item__placeholder-text">Select a collection</p>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .block-collection-item {
+    position: relative;
+  }
+
+  .block-collection-item__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .block-collection-item__image {
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+
+  .block-collection-item__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .block-collection-item:hover .block-collection-item__img {
+    transform: scale(1.05);
+  }
+
+  .block-collection-item__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    margin-bottom: 15px;
+  }
+
+  .block-collection-item__placeholder svg {
+    width: 50%;
+    height: auto;
+    opacity: 0.5;
+  }
+
+  .block-collection-item__title {
+    font-family: var(--font-heading-family);
+    font-size: clamp(0.9rem, 2.5vw, 1.125rem);
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .block-collection-item__count {
+    font-family: var(--font-body-family);
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+    text-align: center;
+    margin: 5px 0 0;
+    opacity: 0.7;
+  }
+
+  .block-collection-item__placeholder-text {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection Item",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_image",
+      "label": "Custom Image",
+      "info": "Override the collection's featured image"
+    },
+    {
+      "type": "header",
+      "content": "Display Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show Title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show Product Count",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "4/3", "label": "Landscape (4:3)" },
+        { "value": "3/4", "label": "Portrait (3:4)" },
+        { "value": "16/9", "label": "Widescreen (16:9)" }
+      ],
+      "default": "4/3"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "color",
+      "id": "count_color",
+      "label": "Count Color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Item"
+    }
+  ]
+}
+{% endschema %}

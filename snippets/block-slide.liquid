@@ -1,0 +1,335 @@
+{%- comment -%}
+  Block Slide Snippet
+  -------------------
+  Reusable slide block for slideshow sections.
+  Displays background image with overlay and content (heading, text, buttons).
+
+  Parameters:
+    Required:
+    - block: The block object containing settings
+
+    Slide State:
+    - is_first: Boolean - whether this is the first/active slide
+    - slide_index: Number - the slide index (0-based)
+
+  Block Settings Expected:
+    - image: Image picker
+    - show_overlay: Boolean
+    - overlay_color: Color
+    - overlay_opacity: Number (0-100)
+    - subheading: Text
+    - heading: Text
+    - heading_size: Number (px)
+    - text: Richtext
+    - text_color: Color
+    - content_position: Select (top-left, top-center, etc.)
+    - text_alignment: Select (left, center, right)
+    - content_width: Number (px)
+    - button_label: Text
+    - button_link: URL
+    - button_style: Select
+    - secondary_button_label: Text
+    - secondary_button_link: URL
+    - secondary_button_style: Select
+
+  Usage:
+    {% render 'block-slide',
+      block: block,
+      is_first: forloop.first,
+      slide_index: forloop.index0
+    %}
+{%- endcomment -%}
+
+{%- liquid
+  assign slide_is_first = is_first | default: false
+  assign slide_index = slide_index | default: 0
+-%}
+
+<div
+  class="block-slide{% if slide_is_first %} block-slide--active{% endif %}"
+  data-slide-index="{{ slide_index }}"
+  role="listitem"
+  aria-hidden="{% unless slide_is_first %}true{% endunless %}"
+  {{ block.shopify_attributes }}
+>
+  {%- comment -%} Background Image {%- endcomment -%}
+  <div class="block-slide__media">
+    {%- if block.settings.image != blank -%}
+      <img
+        src="{{ block.settings.image | image_url: width: 1920 }}"
+        srcset="
+          {{ block.settings.image | image_url: width: 640 }} 640w,
+          {{ block.settings.image | image_url: width: 960 }} 960w,
+          {{ block.settings.image | image_url: width: 1280 }} 1280w,
+          {{ block.settings.image | image_url: width: 1600 }} 1600w,
+          {{ block.settings.image | image_url: width: 1920 }} 1920w
+        "
+        sizes="100vw"
+        alt="{{ block.settings.image.alt | escape | default: block.settings.heading | escape }}"
+        width="{{ block.settings.image.width }}"
+        height="{{ block.settings.image.height }}"
+        {% if slide_is_first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+        class="block-slide__image"
+      >
+    {%- else -%}
+      <div class="block-slide__placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" fill="none" preserveAspectRatio="xMidYMid slice">
+          <rect width="1920" height="1080" fill="#E8E8E8"/>
+          <text x="50%" y="50%" text-anchor="middle" fill="#CACACA" font-size="48" font-family="sans-serif">Slide {{ slide_index | plus: 1 }}</text>
+        </svg>
+      </div>
+    {%- endif -%}
+
+    {%- if block.settings.show_overlay -%}
+      <div
+        class="block-slide__overlay"
+        style="
+          background: {{ block.settings.overlay_color | default: '#000000' }};
+          opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+        "
+      ></div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Content {%- endcomment -%}
+  <div
+    class="block-slide__content block-slide__content--{{ block.settings.content_position }}"
+    style="
+      text-align: {{ block.settings.text_alignment }};
+      max-width: {{ block.settings.content_width }}px;
+    "
+  >
+    <div class="block-slide__content-inner">
+      {%- if block.settings.subheading != blank -%}
+        <span
+          class="block-slide__subheading"
+          style="color: {{ block.settings.text_color | default: '#ffffff' }};"
+        >
+          {{ block.settings.subheading }}
+        </span>
+      {%- endif -%}
+
+      {%- if block.settings.heading != blank -%}
+        <h2
+          class="block-slide__heading"
+          style="
+            font-size: {{ block.settings.heading_size }}px;
+            color: {{ block.settings.text_color | default: '#ffffff' }};
+          "
+        >
+          {{ block.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      {%- if block.settings.text != blank -%}
+        <div
+          class="block-slide__text"
+          style="color: {{ block.settings.text_color | default: '#ffffff' }};"
+        >
+          {{ block.settings.text }}
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.button_label != blank -%}
+        <div class="block-slide__buttons">
+          <a
+            href="{{ block.settings.button_link }}"
+            class="block-slide__button button button--{{ block.settings.button_style }}"
+            {% if block.settings.button_link == blank %}aria-disabled="true"{% endif %}
+          >
+            {{ block.settings.button_label }}
+          </a>
+
+          {%- if block.settings.secondary_button_label != blank -%}
+            <a
+              href="{{ block.settings.secondary_button_link }}"
+              class="block-slide__button block-slide__button--secondary button button--{{ block.settings.secondary_button_style }}"
+              {% if block.settings.secondary_button_link == blank %}aria-disabled="true"{% endif %}
+            >
+              {{ block.settings.secondary_button_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .block-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .block-slide--active {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .block-slide__media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .block-slide__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .block-slide__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+  }
+
+  .block-slide__placeholder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .block-slide__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .block-slide__content {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+    width: 100%;
+  }
+
+  .block-slide__content--top-left {
+    align-self: flex-start;
+  }
+
+  .block-slide__content--top-center {
+    align-self: flex-start;
+    margin: 0 auto;
+  }
+
+  .block-slide__content--top-right {
+    align-self: flex-start;
+    margin-left: auto;
+  }
+
+  .block-slide__content--center-left {
+    align-self: center;
+  }
+
+  .block-slide__content--center-center {
+    align-self: center;
+    margin: 0 auto;
+  }
+
+  .block-slide__content--center-right {
+    align-self: center;
+    margin-left: auto;
+  }
+
+  .block-slide__content--bottom-left {
+    align-self: flex-end;
+  }
+
+  .block-slide__content--bottom-center {
+    align-self: flex-end;
+    margin: 0 auto;
+  }
+
+  .block-slide__content--bottom-right {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+
+  .block-slide__content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .block-slide__subheading {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .block-slide__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight, 700);
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .block-slide__text {
+    font-family: var(--font-body-family);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  .block-slide__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .block-slide__button {
+    display: inline-block;
+    padding: 14px 32px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .block-slide__content {
+      padding: 24px;
+    }
+
+    .block-slide__heading {
+      font-size: calc(var(--heading-size, 48px) * 0.6) !important;
+    }
+
+    .block-slide__text {
+      font-size: 1rem;
+    }
+
+    .block-slide__buttons {
+      flex-direction: column;
+    }
+
+    .block-slide__button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

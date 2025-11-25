@@ -1,0 +1,296 @@
+{%- comment -%}
+  Theme Block: FAQ Item
+  ---------------------
+  Accordion-style FAQ item using details/summary pattern.
+  Question/answer format with customizable styling.
+{%- endcomment -%}
+
+{%- liquid
+  assign faq_open = block.settings.open_by_default | default: false
+  assign faq_icon_text = block.settings.icon_text | default: '+'
+  assign faq_icon_size = block.settings.icon_size | default: 24
+  assign faq_item_padding = block.settings.question_padding | default: 15
+  assign faq_answer_padding = block.settings.answer_padding | default: 15
+  assign faq_question_size = block.settings.question_size | default: 18
+  assign faq_question_weight = block.settings.question_weight | default: '500'
+  assign faq_answer_size = block.settings.answer_size | default: 16
+  assign faq_border_radius = block.settings.border_radius | default: 0
+-%}
+
+<details
+  class="block-faq-item"
+  {% if faq_open %}open{% endif %}
+  {{ block.shopify_attributes }}
+>
+  <summary
+    class="block-faq-item__question"
+    style="
+      {% if block.settings.question_color != blank %}color: {{ block.settings.question_color }};{% endif %}
+      font-size: {{ faq_question_size }}px;
+      font-weight: {{ faq_question_weight }};
+      padding: {{ faq_item_padding }}px;
+      background: {% if block.settings.question_background != blank %}{{ block.settings.question_background }}{% else %}transparent{% endif %};
+      border: 1px solid {% if block.settings.border_color != blank %}{{ block.settings.border_color }}{% else %}rgba(0,0,0,0.1){% endif %};
+      border-radius: {{ faq_border_radius }}px;
+    "
+  >
+    <span class="block-faq-item__question-text">{{ block.settings.question | escape }}</span>
+    <span
+      class="block-faq-item__icon"
+      style="
+        {% if block.settings.icon_color != blank %}color: {{ block.settings.icon_color }};{% endif %}
+        font-size: {{ faq_icon_size }}px;
+      "
+      aria-hidden="true"
+    >
+      {{ faq_icon_text }}
+    </span>
+  </summary>
+  <div
+    class="block-faq-item__answer"
+    style="
+      {% if block.settings.answer_color != blank %}color: {{ block.settings.answer_color }};{% endif %}
+      font-size: {{ faq_answer_size }}px;
+      line-height: 1.6;
+      padding: {{ faq_answer_padding }}px;
+      background: {% if block.settings.answer_background != blank %}{{ block.settings.answer_background }}{% else %}transparent{% endif %};
+    "
+  >
+    <div class="block-faq-item__answer-content rte">
+      {%- if block.settings.answer != blank -%}
+        {{ block.settings.answer }}
+      {%- endif -%}
+    </div>
+  </div>
+</details>
+
+{% stylesheet %}
+  .block-faq-item {
+    margin: 0;
+  }
+
+  .block-faq-item + .block-faq-item {
+    margin-top: -1px;
+  }
+
+  .block-faq-item__question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    list-style: none;
+    transition: all 0.3s ease;
+    min-height: 48px;
+    gap: 16px;
+  }
+
+  .block-faq-item__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .block-faq-item__question:hover {
+    opacity: 0.85;
+  }
+
+  .block-faq-item__question-text {
+    flex: 1;
+  }
+
+  .block-faq-item__icon {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .block-faq-item[open] .block-faq-item__icon {
+    transform: rotate(45deg);
+  }
+
+  .block-faq-item__answer {
+    transition: all 0.3s ease;
+  }
+
+  .block-faq-item__answer-content p {
+    margin: 0;
+  }
+
+  .block-faq-item__answer-content p + p {
+    margin-top: 1em;
+  }
+
+  /* Responsive */
+  @media screen and (max-width: 767px) {
+    .block-faq-item__question {
+      font-size: clamp(0.9rem, 2.5vw, 1.125rem) !important;
+      padding: clamp(12px, 3vw, 15px) !important;
+    }
+
+    .block-faq-item__answer {
+      padding: clamp(12px, 3vw, 15px) !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FAQ Item",
+  "settings": [
+    {
+      "type": "text",
+      "id": "question",
+      "label": "Question",
+      "default": "What is your question?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer",
+      "label": "Answer",
+      "default": "<p>Your answer goes here.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_by_default",
+      "label": "Open by Default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Question Style"
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Question Font Size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "question_weight",
+      "label": "Question Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "question_padding",
+      "label": "Question Padding",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Answer Style"
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "label": "Answer Font Size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "answer_padding",
+      "label": "Answer Padding",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "icon_text",
+      "label": "Toggle Icon",
+      "default": "+",
+      "info": "Symbol shown on the toggle button"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border Radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question Text Color"
+    },
+    {
+      "type": "color",
+      "id": "question_background",
+      "label": "Question Background"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer Text Color"
+    },
+    {
+      "type": "color",
+      "id": "answer_background",
+      "label": "Answer Background"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon Color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Item"
+    }
+  ]
+}
+{% endschema %}

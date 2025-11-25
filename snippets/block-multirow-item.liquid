@@ -1,0 +1,360 @@
+{%- comment -%}
+  Block Multirow Item Snippet
+  ---------------------------
+  Reusable row block with image and content for multi-row sections.
+  Supports alternating layouts, row numbers, and connector lines.
+
+  Parameters:
+    Required:
+    - block: The block object containing settings
+
+    Layout Settings:
+    - image_position: 'left' or 'right'
+    - content_alignment: 'left' or 'center'
+    - vertical_alignment: 'start', 'center', 'end'
+    - column_gap: Pixels
+    - row_gap: Pixels
+    - content_padding: Pixels
+
+    Row Number Settings:
+    - show_row_numbers: Boolean
+    - row_index: Current row index (1-based)
+    - number_position: 'left' or 'right'
+    - number_background_color: Color
+    - number_text_color: Color
+    - show_connector: Boolean
+    - connector_color: Color
+    - is_last: Boolean (for connector visibility)
+
+    Image Settings:
+    - image_ratio: 'adapt', 'square', 'portrait', 'landscape', 'wide'
+    - image_border_radius: Pixels
+
+    Content Settings:
+    - heading_size: Pixels
+    - heading_color: Color
+    - text_color: Color
+    - button_style: 'primary', 'secondary', 'link'
+
+  Usage:
+    {% render 'block-multirow-item',
+      block: block,
+      image_position: image_position,
+      row_index: forloop.index,
+      is_last: forloop.last,
+      show_row_numbers: section.settings.show_row_numbers,
+      image_ratio: section.settings.image_ratio,
+      heading_size: section.settings.heading_size
+    %}
+{%- endcomment -%}
+
+{%- liquid
+  assign row_image_position = image_position | default: 'left'
+  assign row_content_alignment = content_alignment | default: 'left'
+  assign row_vertical_alignment = vertical_alignment | default: 'center'
+  assign row_column_gap = column_gap | default: 60
+  assign row_row_gap = row_gap | default: 80
+  assign row_content_padding = content_padding | default: 20
+
+  assign row_show_numbers = show_row_numbers | default: false
+  assign row_number_index = row_index | default: 1
+  assign row_number_position = number_position | default: 'left'
+  assign row_number_bg = number_background_color | default: '#2c5530'
+  assign row_number_text = number_text_color | default: '#ffffff'
+  assign row_show_connector = show_connector | default: false
+  assign row_connector_color = connector_color | default: 'rgba(44, 85, 48, 0.2)'
+  assign row_is_last = is_last | default: false
+
+  assign row_image_ratio = image_ratio | default: 'landscape'
+  assign row_image_radius = image_border_radius | default: 12
+
+  assign row_heading_size = heading_size | default: 28
+  assign row_heading_color = heading_color | default: 'var(--color-text, #333)'
+  assign row_text_color = text_color | default: 'var(--color-text, #666)'
+  assign row_button_style = button_style | default: 'secondary'
+
+  # Format row number with leading zero
+  assign formatted_number = row_number_index | prepend: '0' | slice: -2, 2
+-%}
+
+<div
+  class="block-multirow-item block-multirow-item--image-{{ row_image_position }}{% if row_show_numbers %} block-multirow-item--numbered{% endif %}"
+  style="--row-gap: {{ row_row_gap }}px;"
+  {{ block.shopify_attributes }}
+>
+  {%- if row_show_numbers -%}
+    <div class="block-multirow-item__number block-multirow-item__number--{{ row_number_position }}">
+      <span style="background: {{ row_number_bg }}; color: {{ row_number_text }};">
+        {{ formatted_number }}
+      </span>
+    </div>
+  {%- endif -%}
+
+  {%- if row_show_connector and row_is_last == false -%}
+    <div
+      class="block-multirow-item__connector block-multirow-item__connector--{{ row_number_position }}"
+      style="background: {{ row_connector_color }};"
+    ></div>
+  {%- endif -%}
+
+  <div class="block-multirow-item__grid" style="gap: {{ row_column_gap }}px; align-items: {{ row_vertical_alignment }};">
+    {%- comment -%} Image Column {%- endcomment -%}
+    <div class="block-multirow-item__media-wrapper">
+      <div
+        class="block-multirow-item__media"
+        style="
+          {% case row_image_ratio %}
+            {% when 'square' %}aspect-ratio: 1 / 1;
+            {% when 'portrait' %}aspect-ratio: 3 / 4;
+            {% when 'landscape' %}aspect-ratio: 4 / 3;
+            {% when 'wide' %}aspect-ratio: 16 / 9;
+            {% when 'adapt' %}
+              {% if block.settings.image != blank %}
+                aspect-ratio: {{ block.settings.image.aspect_ratio }};
+              {% else %}
+                aspect-ratio: 4 / 3;
+              {% endif %}
+          {% endcase %}
+          border-radius: {{ row_image_radius }}px;
+        "
+      >
+        {%- if block.settings.image != blank -%}
+          <img
+            src="{{ block.settings.image | image_url: width: 800 }}"
+            srcset="
+              {{ block.settings.image | image_url: width: 400 }} 400w,
+              {{ block.settings.image | image_url: width: 600 }} 600w,
+              {{ block.settings.image | image_url: width: 800 }} 800w,
+              {{ block.settings.image | image_url: width: 1000 }} 1000w
+            "
+            sizes="(max-width: 768px) 100vw, 50vw"
+            alt="{{ block.settings.image.alt | escape | default: block.settings.heading | escape }}"
+            width="{{ block.settings.image.width }}"
+            height="{{ block.settings.image.height }}"
+            loading="lazy"
+            class="block-multirow-item__image"
+          >
+        {%- else -%}
+          <div class="block-multirow-item__placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
+              <rect width="525" height="525" fill="#E8E8E8"/>
+              <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
+              <path d="M157.5 382.5L202.5 322.5L247.5 352.5L307.5 277.5L367.5 382.5" stroke="#CACACA" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Content Column {%- endcomment -%}
+    <div class="block-multirow-item__content" style="text-align: {{ row_content_alignment }}; padding: {{ row_content_padding }}px;">
+      {%- if block.settings.caption != blank -%}
+        <span class="block-multirow-item__caption">{{ block.settings.caption }}</span>
+      {%- endif -%}
+
+      {%- if block.settings.heading != blank -%}
+        <h3 class="block-multirow-item__heading" style="font-size: {{ row_heading_size }}px; color: {{ row_heading_color }};">
+          {{ block.settings.heading }}
+        </h3>
+      {%- endif -%}
+
+      {%- if block.settings.text != blank -%}
+        <div class="block-multirow-item__text rte" style="color: {{ row_text_color }};">
+          {{ block.settings.text }}
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.button_label != blank -%}
+        <a
+          href="{{ block.settings.button_link }}"
+          class="block-multirow-item__button button button--{{ row_button_style }}"
+          {% if block.settings.button_link == blank %}aria-disabled="true"{% endif %}
+        >
+          {{ block.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .block-multirow-item {
+    position: relative;
+    margin-bottom: var(--row-gap);
+  }
+
+  .block-multirow-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .block-multirow-item__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Image positioning */
+  .block-multirow-item--image-right .block-multirow-item__media-wrapper {
+    order: 2;
+  }
+
+  .block-multirow-item--image-right .block-multirow-item__content {
+    order: 1;
+  }
+
+  /* Row numbering */
+  .block-multirow-item__number {
+    position: absolute;
+    top: 0;
+    z-index: 2;
+  }
+
+  .block-multirow-item__number--left {
+    left: -80px;
+  }
+
+  .block-multirow-item__number--right {
+    right: -80px;
+  }
+
+  .block-multirow-item__number span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  /* Connector line */
+  .block-multirow-item__connector {
+    position: absolute;
+    top: 56px;
+    bottom: calc(-1 * var(--row-gap));
+    width: 2px;
+  }
+
+  .block-multirow-item__connector--left {
+    left: -52px;
+  }
+
+  .block-multirow-item__connector--right {
+    right: -52px;
+  }
+
+  .block-multirow-item__media-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .block-multirow-item__media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .block-multirow-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .block-multirow-item__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    min-height: 300px;
+  }
+
+  .block-multirow-item__placeholder svg {
+    width: 50%;
+    height: auto;
+    max-width: 200px;
+  }
+
+  .block-multirow-item__content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .block-multirow-item__caption {
+    font-family: var(--font-body-family);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #2c5530);
+  }
+
+  .block-multirow-item__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight, 600);
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .block-multirow-item__text {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .block-multirow-item__text p {
+    margin: 0 0 1em;
+  }
+
+  .block-multirow-item__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .block-multirow-item__button {
+    display: inline-block;
+    padding: 14px 28px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    width: fit-content;
+    margin-top: 8px;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .block-multirow-item__grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .block-multirow-item--image-right .block-multirow-item__media-wrapper,
+    .block-multirow-item--image-left .block-multirow-item__media-wrapper {
+      order: 1;
+    }
+
+    .block-multirow-item--image-right .block-multirow-item__content,
+    .block-multirow-item--image-left .block-multirow-item__content {
+      order: 2;
+    }
+
+    .block-multirow-item__number {
+      position: relative;
+      left: 0 !important;
+      right: auto !important;
+      margin-bottom: 16px;
+    }
+
+    .block-multirow-item__connector {
+      display: none;
+    }
+  }
+</style>

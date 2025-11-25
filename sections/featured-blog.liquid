@@ -67,93 +67,26 @@
         "
       >
         {%- for article in selected_blog.articles limit: post_count -%}
-          <article class="blog-card" style="border-radius: {{ section.settings.card_border_radius }}px;">
-            {%- if section.settings.show_image -%}
-              <a href="{{ article.url }}" class="blog-card__image-link">
-                {%- if article.image != blank -%}
-                  <div class="blog-card__image-wrapper" style="aspect-ratio: {{ section.settings.image_ratio }};">
-                    <img
-                      src="{{ article.image | image_url: width: 800 }}"
-                      srcset="
-                        {{ article.image | image_url: width: 400 }} 400w,
-                        {{ article.image | image_url: width: 600 }} 600w,
-                        {{ article.image | image_url: width: 800 }} 800w
-                      "
-                      sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                      alt="{{ article.image.alt | default: article.title | escape }}"
-                      class="blog-card__image"
-                      loading="lazy"
-                      style="border-radius: {{ section.settings.card_border_radius }}px {{ section.settings.card_border_radius }}px 0 0;"
-                    >
-                  </div>
-                {%- else -%}
-                  <div class="blog-card__image-placeholder" style="aspect-ratio: {{ section.settings.image_ratio }};">
-                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
-                  </div>
-                {%- endif -%}
-              </a>
-            {%- endif -%}
-
-            <div class="blog-card__content" style="padding: {{ section.settings.card_padding }}px;">
-              {%- if section.settings.show_tags and article.tags.size > 0 -%}
-                <div class="blog-card__tags">
-                  {%- for tag in article.tags limit: 2 -%}
-                    <span
-                      class="blog-card__tag"
-                      style="{% if section.settings.tag_color != blank %}background-color: {{ section.settings.tag_color }};{% endif %}"
-                    >
-                      {{ tag }}
-                    </span>
-                  {%- endfor -%}
-                </div>
-              {%- endif -%}
-
-              <h3 class="blog-card__title" style="{% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}">
-                <a href="{{ article.url }}">{{ article.title | escape }}</a>
-              </h3>
-
-              {%- if section.settings.show_excerpt and article.excerpt_or_content != blank -%}
-                <p
-                  class="blog-card__excerpt"
-                  style="{% if section.settings.excerpt_color != blank %}color: {{ section.settings.excerpt_color }};{% endif %}"
-                >
-                  {{ article.excerpt_or_content | strip_html | truncatewords: section.settings.excerpt_length }}
-                </p>
-              {%- endif -%}
-
-              <div class="blog-card__meta">
-                {%- if section.settings.show_author -%}
-                  <span class="blog-card__author" style="{% if section.settings.meta_color != blank %}color: {{ section.settings.meta_color }};{% endif %}">
-                    {{ article.author }}
-                  </span>
-                {%- endif -%}
-
-                {%- if section.settings.show_date -%}
-                  {%- if section.settings.show_author -%}
-                    <span class="blog-card__separator" aria-hidden="true">|</span>
-                  {%- endif -%}
-                  <time
-                    datetime="{{ article.published_at | date: '%Y-%m-%d' }}"
-                    class="blog-card__date"
-                    style="{% if section.settings.meta_color != blank %}color: {{ section.settings.meta_color }};{% endif %}"
-                  >
-                    {{ article.published_at | date: section.settings.date_format }}
-                  </time>
-                {%- endif -%}
-              </div>
-
-              {%- if section.settings.show_read_more -%}
-                <a
-                  href="{{ article.url }}"
-                  class="blog-card__read-more"
-                  style="{% if section.settings.link_color != blank %}color: {{ section.settings.link_color }};{% endif %}"
-                >
-                  {{ section.settings.read_more_text | default: 'Read more' }}
-                  <span aria-hidden="true">&rarr;</span>
-                </a>
-              {%- endif -%}
-            </div>
-          </article>
+          {% render 'block-blog-card',
+            article: article,
+            show_image: section.settings.show_image,
+            show_tags: section.settings.show_tags,
+            show_excerpt: section.settings.show_excerpt,
+            show_author: section.settings.show_author,
+            show_date: section.settings.show_date,
+            show_read_more: section.settings.show_read_more,
+            image_ratio: section.settings.image_ratio,
+            card_border_radius: section.settings.card_border_radius,
+            card_padding: section.settings.card_padding,
+            excerpt_length: section.settings.excerpt_length,
+            date_format: section.settings.date_format,
+            read_more_text: section.settings.read_more_text,
+            title_color: section.settings.title_color,
+            excerpt_color: section.settings.excerpt_color,
+            meta_color: section.settings.meta_color,
+            tag_color: section.settings.tag_color,
+            link_color: section.settings.link_color
+          %}
         {%- endfor -%}
       </div>
 

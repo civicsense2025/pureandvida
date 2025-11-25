@@ -2,8 +2,8 @@
   # @description Product hero section for landing pages
   # Displays product image, title, pricing, description, and add-to-cart button
   # All content is configurable via Theme Editor settings
-  # @settings product {product} - Product to display (optional, can use manual settings)
-  # @settings use_product_data {Boolean} - Pull data from product or use manual settings
+  # @settings product (product) - Product to display (optional, can use manual settings)
+  # @settings use_product_data (Boolean) - Pull data from product or use manual settings
   assign use_product = section.settings.use_product_data and section.settings.product != blank
   if use_product
     assign product_obj = section.settings.product

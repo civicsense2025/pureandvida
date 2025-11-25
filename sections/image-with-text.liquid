@@ -1,0 +1,787 @@
+{%- liquid
+  # @description Image with Text section for side-by-side content layouts
+  # Supports flexible image positioning, overlays, and call-to-action buttons
+  # @settings heading {text} - Section heading
+  # @settings text {richtext} - Description text
+  # @settings image {image_picker} - Featured image
+  # @settings image_position {select} - Image left or right
+  # @settings layout_style {select} - Standard, overlap, or split layouts
+  # @example
+  #   Use for product storytelling, about us sections, or feature highlights
+-%}
+
+{% if request.design_mode %}
+  <div class="editor-controls editor-controls--image-text">
+    <span class="editor-label">Image with Text</span>
+    <span class="editor-info">
+      Layout: {{ section.settings.layout_style | capitalize }} |
+      Image: {{ section.settings.image_position | capitalize }}
+    </span>
+  </div>
+{% endif %}
+
+<section
+  class="image-with-text image-with-text--{{ section.settings.layout_style }} image-with-text--image-{{ section.settings.image_position }}"
+  style="
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  aria-label="{{ section.settings.heading | default: 'Image with text section' | escape }}"
+>
+  <div class="image-with-text__container page-width">
+    <div class="image-with-text__grid">
+      {%- comment -%} Image Column {%- endcomment -%}
+      <div class="image-with-text__media-wrapper">
+        <div
+          class="image-with-text__media"
+          style="
+            {% if section.settings.image_ratio == 'custom' %}
+              aspect-ratio: {{ section.settings.image_aspect_width }} / {{ section.settings.image_aspect_height }};
+            {% endif %}
+          "
+        >
+          {%- if section.settings.image != blank -%}
+            <img
+              src="{{ section.settings.image | image_url: width: 1200 }}"
+              srcset="
+                {{ section.settings.image | image_url: width: 400 }} 400w,
+                {{ section.settings.image | image_url: width: 600 }} 600w,
+                {{ section.settings.image | image_url: width: 800 }} 800w,
+                {{ section.settings.image | image_url: width: 1000 }} 1000w,
+                {{ section.settings.image | image_url: width: 1200 }} 1200w
+              "
+              sizes="(max-width: 768px) 100vw, 50vw"
+              alt="{{ section.settings.image.alt | escape | default: section.settings.heading | escape }}"
+              width="{{ section.settings.image.width }}"
+              height="{{ section.settings.image.height }}"
+              loading="lazy"
+              class="image-with-text__image"
+            >
+          {%- else -%}
+            <div class="image-with-text__placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
+                <rect width="525" height="525" fill="#E8E8E8"/>
+                <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
+                <path d="M157.5 382.5L202.5 322.5L247.5 352.5L307.5 277.5L367.5 382.5" stroke="#CACACA" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_overlay -%}
+            <div
+              class="image-with-text__overlay"
+              style="
+                background: {{ section.settings.overlay_color }};
+                opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+              "
+            ></div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Content Column {%- endcomment -%}
+      <div class="image-with-text__content" style="text-align: {{ section.settings.content_alignment }};">
+        {%- if section.settings.subheading != blank -%}
+          <span class="image-with-text__subheading">{{ section.settings.subheading }}</span>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h2 class="image-with-text__heading" style="font-size: {{ section.settings.heading_size }}px;">
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="image-with-text__text rte">
+            {{ section.settings.text }}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.button_label != blank -%}
+          <a
+            href="{{ section.settings.button_link }}"
+            class="image-with-text__button button button--{{ section.settings.button_style }}"
+            {% if section.settings.button_link == blank %}aria-disabled="true"{% endif %}
+          >
+            {{ section.settings.button_label }}
+          </a>
+        {%- endif -%}
+
+        {%- if section.settings.secondary_button_label != blank -%}
+          <a
+            href="{{ section.settings.secondary_button_link }}"
+            class="image-with-text__button image-with-text__button--secondary button button--{{ section.settings.secondary_button_style }}"
+            {% if section.settings.secondary_button_link == blank %}aria-disabled="true"{% endif %}
+          >
+            {{ section.settings.secondary_button_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .image-with-text {
+    position: relative;
+  }
+
+  .image-with-text__container {
+    width: 100%;
+  }
+
+  .image-with-text__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.column_gap }}px;
+    align-items: {{ section.settings.vertical_alignment }};
+  }
+
+  /* Image positioning */
+  .image-with-text--image-right .image-with-text__media-wrapper {
+    order: 2;
+  }
+
+  .image-with-text--image-right .image-with-text__content {
+    order: 1;
+  }
+
+  .image-with-text__media-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .image-with-text__media {
+    position: relative;
+    width: 100%;
+    border-radius: {{ section.settings.image_border_radius }}px;
+    overflow: hidden;
+    {% case section.settings.image_ratio %}
+      {% when 'square' %}
+        aspect-ratio: 1 / 1;
+      {% when 'portrait' %}
+        aspect-ratio: 3 / 4;
+      {% when 'landscape' %}
+        aspect-ratio: 4 / 3;
+      {% when 'wide' %}
+        aspect-ratio: 16 / 9;
+      {% when 'adapt' %}
+        {% if section.settings.image != blank %}
+          aspect-ratio: {{ section.settings.image.aspect_ratio }};
+        {% else %}
+          aspect-ratio: 1 / 1;
+        {% endif %}
+    {% endcase %}
+  }
+
+  .image-with-text__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .image-with-text__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+  }
+
+  .image-with-text__placeholder svg {
+    width: 60%;
+    height: auto;
+    max-width: 300px;
+  }
+
+  .image-with-text__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  /* Content styles */
+  .image-with-text__content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: {{ section.settings.content_padding }}px;
+  }
+
+  .image-with-text__subheading {
+    font-family: var(--font-body-family);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #2c5530);
+  }
+
+  .image-with-text__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight, 600);
+    line-height: 1.2;
+    margin: 0;
+    color: {{ section.settings.heading_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .image-with-text__text {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color | default: 'var(--color-text, #333)' }};
+  }
+
+  .image-with-text__text p {
+    margin: 0 0 1em;
+  }
+
+  .image-with-text__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .image-with-text__button {
+    display: inline-block;
+    padding: 14px 32px;
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    width: fit-content;
+  }
+
+  .image-with-text__button--secondary {
+    margin-left: 12px;
+  }
+
+  /* Button styles */
+  .button--primary {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+    border: 2px solid var(--color-primary, #2c5530);
+  }
+
+  .button--primary:hover {
+    background-color: var(--color-primary-dark, #1e3a21);
+    border-color: var(--color-primary-dark, #1e3a21);
+  }
+
+  .button--secondary {
+    background-color: transparent;
+    color: var(--color-primary, #2c5530);
+    border: 2px solid var(--color-primary, #2c5530);
+  }
+
+  .button--secondary:hover {
+    background-color: var(--color-primary, #2c5530);
+    color: white;
+  }
+
+  .button--outline {
+    background-color: transparent;
+    color: var(--color-text, #333);
+    border: 2px solid var(--color-text, #333);
+  }
+
+  .button--outline:hover {
+    background-color: var(--color-text, #333);
+    color: white;
+  }
+
+  /* Layout variations */
+  .image-with-text--overlap .image-with-text__content {
+    position: relative;
+    background: white;
+    padding: 40px;
+    margin-top: -60px;
+    margin-left: -40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+  }
+
+  .image-with-text--overlap.image-with-text--image-right .image-with-text__content {
+    margin-left: 0;
+    margin-right: -40px;
+  }
+
+  .image-with-text--split .image-with-text__grid {
+    gap: 0;
+  }
+
+  .image-with-text--split .image-with-text__media {
+    border-radius: 0;
+    height: 100%;
+  }
+
+  .image-with-text--split .image-with-text__content {
+    background: {{ section.settings.content_background_color | default: '#f9f9f9' }};
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 400px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .image-with-text__grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .image-with-text--image-right .image-with-text__media-wrapper,
+    .image-with-text__media-wrapper {
+      order: {% if section.settings.mobile_image_first %}1{% else %}2{% endif %};
+    }
+
+    .image-with-text--image-right .image-with-text__content,
+    .image-with-text__content {
+      order: {% if section.settings.mobile_image_first %}2{% else %}1{% endif %};
+      text-align: {{ section.settings.mobile_content_alignment }} !important;
+    }
+
+    .image-with-text__heading {
+      font-size: {{ section.settings.heading_size | times: 0.7 | round }}px !important;
+    }
+
+    .image-with-text--overlap .image-with-text__content {
+      margin: -30px 20px 0;
+      padding: 30px;
+    }
+
+    .image-with-text--overlap.image-with-text--image-right .image-with-text__content {
+      margin-right: 20px;
+    }
+
+    .image-with-text--split .image-with-text__content {
+      padding: 40px 24px;
+      min-height: auto;
+    }
+
+    .image-with-text__button--secondary {
+      margin-left: 0;
+      margin-top: 8px;
+    }
+  }
+
+  /* Editor mode styles */
+  {% if request.design_mode %}
+    .image-with-text {
+      outline: 2px dashed rgba(44, 85, 48, 0.3);
+      outline-offset: -2px;
+      min-height: 200px;
+    }
+
+    .image-with-text::before {
+      content: 'IMAGE WITH TEXT';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(44, 85, 48, 0.95);
+      color: white;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .editor-controls--image-text {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.90);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-body-family);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      border: 2px solid rgba(44, 85, 48, 0.5);
+    }
+
+    .editor-controls--image-text .editor-label {
+      font-weight: 600;
+      color: var(--color-primary, #2c5530);
+      font-size: 12px;
+    }
+
+    .editor-controls--image-text .editor-info {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "🖼️ Image with Text",
+  "tag": "section",
+  "class": "section-image-with-text",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "**Page Builder Controls:** Create compelling side-by-side layouts with image and text content. Perfect for product features, about sections, or storytelling."
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to Image" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "wide", "label": "Wide (16:9)" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "adapt"
+    },
+    {
+      "type": "range",
+      "id": "image_aspect_width",
+      "label": "Custom Aspect Width",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "info": "Only used when Image Ratio is set to Custom"
+    },
+    {
+      "type": "range",
+      "id": "image_aspect_height",
+      "label": "Custom Aspect Height",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 9,
+      "info": "Only used when Image Ratio is set to Custom"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Corner Radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "🎭 Image Overlay"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show Overlay",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "info": "Small text above the heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Image with Text"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+    },
+    {
+      "type": "header",
+      "content": "🔗 Primary Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary (Filled)" },
+        { "value": "secondary", "label": "Secondary (Outline)" },
+        { "value": "outline", "label": "Outline (Dark)" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "🔗 Secondary Button"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_label",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "select",
+      "id": "secondary_button_style",
+      "label": "Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary (Filled)" },
+        { "value": "secondary", "label": "Secondary (Outline)" },
+        { "value": "outline", "label": "Outline (Dark)" }
+      ],
+      "default": "secondary"
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout Style",
+      "options": [
+        { "value": "standard", "label": "Standard" },
+        { "value": "overlap", "label": "Overlapping Content" },
+        { "value": "split", "label": "Split Screen" }
+      ],
+      "default": "standard",
+      "info": "Overlap creates a card effect, Split removes gaps"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image Position",
+      "options": [
+        { "value": "left", "label": "Image Left" },
+        { "value": "right", "label": "Image Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical Alignment",
+      "options": [
+        { "value": "start", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column Gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Content Padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "📱 Mobile Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_image_first",
+      "label": "Show Image First on Mobile",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "label": "Mobile Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "content_background_color",
+      "label": "Content Background",
+      "info": "Used in Split layout style",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "header",
+      "content": "📏 Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with Text - Standard",
+      "settings": {
+        "layout_style": "standard",
+        "image_position": "left",
+        "heading": "Tell Your Story",
+        "text": "<p>Share your brand story, highlight product features, or introduce your team. This versatile section works great for any content that benefits from visual support.</p>",
+        "button_label": "Learn More",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    {
+      "name": "Image with Text - Overlap",
+      "settings": {
+        "layout_style": "overlap",
+        "image_position": "left",
+        "heading": "Premium Quality",
+        "text": "<p>Discover the difference that quality makes. Our products are crafted with care using only the finest materials.</p>",
+        "button_label": "Shop Now",
+        "button_style": "primary",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    {
+      "name": "Image with Text - Split",
+      "settings": {
+        "layout_style": "split",
+        "image_position": "right",
+        "image_ratio": "portrait",
+        "heading": "Our Mission",
+        "text": "<p>We believe in creating products that make a positive impact on people's lives and the environment.</p>",
+        "button_label": "About Us",
+        "button_style": "secondary",
+        "content_background_color": "#f5f5f5",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  ]
+}
+{% endschema %}

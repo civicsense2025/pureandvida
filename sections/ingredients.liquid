@@ -1,12 +1,12 @@
-{% liquid %}
+{%- liquid
   # @description Ingredients section displaying product ingredients with images and descriptions
   # Supports dual content management: blocks (dynamic) or settings (fixed fields)
   # Supports both grid and carousel layouts
-  # @settings content_mode {String} - Content mode: 'blocks' or 'settings'
-  # @settings layout_style {String} - Layout style: 'grid' or 'carousel'
-  # @settings heading {String} - Section heading
-  # @settings show_hero_image {Boolean} - Display hero ingredients image
-  # @settings columns_desktop {Number} - Number of columns on desktop
+  # @settings content_mode (String) - Content mode: 'blocks' or 'settings'
+  # @settings layout_style (String) - Layout style: 'grid' or 'carousel'
+  # @settings heading (String) - Section heading
+  # @settings show_hero_image (Boolean) - Display hero ingredients image
+  # @settings columns_desktop (Number) - Number of columns on desktop
   # @blocks ingredient_item - Individual ingredient with image, name, and description
   # @example
   #   Use blocks mode for dynamic ingredients, settings mode for fixed 8-item layout

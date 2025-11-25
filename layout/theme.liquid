@@ -69,9 +69,6 @@
         assign body_font_italic = settings.font_body | font_modify: 'style', 'italic'
         assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
       endif
-      if settings.custom_font_heading == 'shopify_font'
-        assign heading_font_to_load = settings.font_heading
-      endif
     %}
 
     {% style %}
@@ -456,21 +453,22 @@
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'pure-vida.css' | asset_url | stylesheet_tag }}
 
+    {%- comment -%}
+      Font preloading: Only preload critical fonts used above-the-fold.
+      Preloading all font weights hurts performance.
+      Using manual link tags as preload_tag doesn't support font attributes.
+      theme-check-disable AssetPreload
+    {%- endcomment -%}
     {%- if settings.custom_font_body == 'shopify_font' and settings.font_body.system? == false -%}
       <link rel="preload" as="font" href="{{ settings.font_body | font_url }}" type="font/woff2" crossorigin>
     {%- endif -%}
     {%- if settings.custom_font_heading == 'shopify_font' and settings.font_heading.system? == false -%}
       <link rel="preload" as="font" href="{{ settings.font_heading | font_url }}" type="font/woff2" crossorigin>
     {%- endif -%}
-
-    {%- comment -%} Preload custom fonts from assets {%- endcomment -%}
-    <link rel="preload" as="font" href="{{ 'Nohemi-Light.otf' | asset_url }}" type="font/otf" crossorigin>
+    {%- comment -%} Preload only critical custom fonts (Regular for body, Versailles for titles) {%- endcomment -%}
     <link rel="preload" as="font" href="{{ 'Nohemi-Regular.otf' | asset_url }}" type="font/otf" crossorigin>
-    <link rel="preload" as="font" href="{{ 'Nohemi-Medium.otf' | asset_url }}" type="font/otf" crossorigin>
-    <link rel="preload" as="font" href="{{ 'Nohemi-SemiBold.otf' | asset_url }}" type="font/otf" crossorigin>
-    <link rel="preload" as="font" href="{{ 'Nohemi-Bold.otf' | asset_url }}" type="font/otf" crossorigin>
     <link rel="preload" as="font" href="{{ 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url }}" type="font/ttf" crossorigin>
-    <link rel="preload" as="font" href="{{ 'MyriadPro-Regular.otf' | asset_url }}" type="font/otf" crossorigin>
+    {%- comment -%} theme-check-enable AssetPreload {%- endcomment -%}
 
     <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
   </head>

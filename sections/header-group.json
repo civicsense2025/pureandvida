@@ -32,55 +32,9 @@
         "header_height": 80,
         "background_color": ""
       }
-    },
-    "contact_form_H6i3nf": {
-      "type": "contact-form",
-      "name": "Contact Form - Split Layout",
-      "settings": {
-        "layout": "split",
-        "form_width": 600,
-        "grid_gap": 60,
-        "heading": "Contact Us",
-        "heading_size": 36,
-        "heading_color": "",
-        "heading_alignment": "center",
-        "heading_spacing": 20,
-        "description": "",
-        "text_color": "",
-        "description_spacing": 30,
-        "info_heading": "Contact Information",
-        "info_text": "<p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>",
-        "show_address": true,
-        "show_email": true,
-        "show_phone_number": true,
-        "phone_number": "",
-        "show_hours": false,
-        "business_hours": "<p>Monday - Friday: 9am - 5pm<br>Saturday - Sunday: Closed</p>",
-        "show_phone_field": false,
-        "phone_required": false,
-        "show_subject": true,
-        "subject_options": "General Inquiry, Order Question, Product Question, Feedback, Other",
-        "message_rows": 5,
-        "show_labels": true,
-        "show_placeholders": true,
-        "field_gap": 16,
-        "input_padding": 14,
-        "input_border_width": 1,
-        "input_border_radius": 4,
-        "input_background": "",
-        "submit_text": "Send Message",
-        "button_width": "auto",
-        "button_color": "",
-        "button_text_color": "",
-        "button_border_radius": 4,
-        "background_color": "",
-        "padding_top": 60,
-        "padding_bottom": 60
-      }
     }
   },
   "order": [
-    "header",
-    "contact_form_H6i3nf"
+    "header"
   ]
 }

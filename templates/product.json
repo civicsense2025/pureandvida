@@ -169,11 +169,91 @@
         "section_padding_top": 0,
         "section_padding_bottom": 0
       }
+    },
+    "collage_VdDeFC": {
+      "type": "collage",
+      "blocks": {
+        "image_EtAfte": {
+          "type": "image",
+          "settings": {
+            "image_position": "center center",
+            "show_overlay": true,
+            "overlay_color": "rgba(0,0,0,0.4)",
+            "heading": "",
+            "text": "",
+            "text_color": "#ffffff",
+            "link": "",
+            "button_text": "",
+            "button_link": "",
+            "button_color": "",
+            "button_text_color": "",
+            "custom_height": ""
+          }
+        },
+        "image_tYRQej": {
+          "type": "image",
+          "settings": {
+            "image_position": "center center",
+            "show_overlay": true,
+            "overlay_color": "rgba(0,0,0,0.4)",
+            "heading": "",
+            "text": "",
+            "text_color": "#ffffff",
+            "link": "",
+            "button_text": "",
+            "button_link": "",
+            "button_color": "",
+            "button_text_color": "",
+            "custom_height": ""
+          }
+        },
+        "image_k6kqJb": {
+          "type": "image",
+          "settings": {
+            "image_position": "center center",
+            "show_overlay": true,
+            "overlay_color": "rgba(0,0,0,0.4)",
+            "heading": "",
+            "text": "",
+            "text_color": "#ffffff",
+            "link": "",
+            "button_text": "",
+            "button_link": "",
+            "button_color": "",
+            "button_text_color": "",
+            "custom_height": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_EtAfte",
+        "image_tYRQej",
+        "image_k6kqJb"
+      ],
+      "name": "Collage - Three Equal",
+      "settings": {
+        "heading": "",
+        "heading_size": 36,
+        "heading_color": "",
+        "heading_alignment": "center",
+        "heading_spacing": 30,
+        "description": "",
+        "description_color": "",
+        "description_spacing": 30,
+        "layout": "equal-three",
+        "grid_gap": 16,
+        "full_width": false,
+        "background_color": "",
+        "border_radius": 0,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
     }
   },
   "order": [
     "main",
     "product-recommendations",
-    "image_banner_XkYJfH"
+    "image_banner_XkYJfH",
+    "collage_VdDeFC"
   ]
 }

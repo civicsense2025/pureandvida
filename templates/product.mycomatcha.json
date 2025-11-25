@@ -1,0 +1,347 @@
+{
+  "sections": {
+    "product_hero": {
+      "type": "product-hero-landing",
+      "settings": {
+        "use_product_data": false,
+        "product_title": "MycoMatcha",
+        "badge_text": "Get 33% off today",
+        "original_price": "$45",
+        "sale_price": "$34.99",
+        "product_description": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently.\n\nCeremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience.",
+        "button_text": "Add to cart",
+        "show_quantity": true,
+        "show_payment_icons": true,
+        "background_color": "#F5F3EE",
+        "title_color": "#000000",
+        "price_color": "#000000",
+        "compare_price_color": "#5E8778",
+        "badge_bg_color": "#4E4E33",
+        "badge_text_color": "#FFFFFF",
+        "button_color": "#5E8778",
+        "button_text_color": "#FFFFFF"
+      },
+      "blocks": {
+        "payment_1": {
+          "type": "payment_icon",
+          "settings": {
+            "icon_alt": "Visa"
+          }
+        },
+        "payment_2": {
+          "type": "payment_icon",
+          "settings": {
+            "icon_alt": "Mastercard"
+          }
+        },
+        "payment_3": {
+          "type": "payment_icon",
+          "settings": {
+            "icon_alt": "Apple Pay"
+          }
+        },
+        "payment_4": {
+          "type": "payment_icon",
+          "settings": {
+            "icon_alt": "PayPal"
+          }
+        }
+      },
+      "block_order": ["payment_1", "payment_2", "payment_3", "payment_4"]
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "heading": "What Our Customers Say",
+        "heading_alignment": "center",
+        "layout_style": "carousel",
+        "carousel_items_desktop": 1,
+        "carousel_items_mobile": 1,
+        "carousel_show_arrows": true,
+        "carousel_show_dots": true,
+        "carousel_autoplay": true,
+        "carousel_autoplay_speed": 5000,
+        "show_rating": true,
+        "default_rating": 5,
+        "content_mode": "blocks",
+        "section_padding": 60,
+        "background_color": "#FFFFFF"
+      },
+      "blocks": {
+        "review_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "MycoMatcha has completely replaced my morning coffee. I feel mentally sharp, energized, and focused without the jittery crash I used to get. I love knowing that Lion's Mane and L-theanine are actually supporting my brain, not just stimulating it.",
+            "author_name": "Megan T.",
+            "rating": 5
+          }
+        },
+        "review_2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I started drinking this before my morning runs and noticed a real difference. I don't get winded as quickly, and I can push myself further. I didn't expect Cordyceps to work this fast, but it's become my favorite pre-workout.",
+            "author_name": "Michael F.",
+            "rating": 5
+          }
+        },
+        "review_3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I used to have trouble falling asleep when I drank coffee, even early in the day. I switched to MycoMatcha and now I still get that energy boost, but I sleep like a baby. My mood during the day is way better too.",
+            "author_name": "Nicole F.",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3"]
+    },
+    "benefits": {
+      "type": "benefits",
+      "settings": {
+        "heading": "Why Choose MycoMatcha",
+        "heading_alignment": "center",
+        "layout_style": "grid",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "item_spacing": 40,
+        "content_mode": "blocks",
+        "section_padding": 60,
+        "background_color": "#F5F3EE"
+      },
+      "blocks": {
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "title": "Natural Energy",
+            "description": "Energize your body and mind. No jitters, just flow."
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Elevated Mood",
+            "description": "Brings a gentle boost to your mood and mindset."
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Focused Mind",
+            "description": "Keeps distractions low and productivity high."
+          }
+        }
+      },
+      "block_order": ["benefit_1", "benefit_2", "benefit_3"]
+    },
+    "comparison": {
+      "type": "comparison-table",
+      "settings": {
+        "heading": "Matcha vs. Coffee",
+        "heading_alignment": "center",
+        "heading_size": 36,
+        "column_1_label": "MycoMatcha",
+        "column_2_label": "Coffee",
+        "column_1_bg_color": "#5E8778",
+        "column_1_text_color": "#FFFFFF",
+        "column_2_bg_color": "#8B7355",
+        "column_2_text_color": "#FFFFFF",
+        "check_color": "#22C55E",
+        "x_color": "#EF4444",
+        "max_width": 900,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "background_color": "#FFFFFF"
+      },
+      "blocks": {
+        "row_1": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Enhanced Focus & Clarity",
+            "column_1_value": "check",
+            "column_2_value": "check"
+          }
+        },
+        "row_2": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Packed with Antioxidants",
+            "column_1_value": "check",
+            "column_2_value": "check"
+          }
+        },
+        "row_3": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Smooth, Sustained Energy (4-6 hours)",
+            "column_1_value": "check",
+            "column_2_value": "x"
+          }
+        },
+        "row_4": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "No Jitters or Anxiety",
+            "column_1_value": "check",
+            "column_2_value": "x"
+          }
+        },
+        "row_5": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "No Afternoon Crash",
+            "column_1_value": "check",
+            "column_2_value": "x"
+          }
+        },
+        "row_6": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Gentle on Digestion",
+            "column_1_value": "check",
+            "column_2_value": "x"
+          }
+        },
+        "row_7": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Won't Disrupt Sleep",
+            "column_1_value": "check",
+            "column_2_value": "x"
+          }
+        },
+        "row_8": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Supports Immune Health",
+            "column_1_value": "check",
+            "column_2_value": "x"
+          }
+        },
+        "row_9": {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Builds Tolerance Over Time",
+            "column_1_value": "x",
+            "column_2_value": "check"
+          }
+        }
+      },
+      "block_order": ["row_1", "row_2", "row_3", "row_4", "row_5", "row_6", "row_7", "row_8", "row_9"]
+    },
+    "shipping": {
+      "type": "shipping-info",
+      "settings": {
+        "heading": "Shipping & Returns",
+        "heading_alignment": "center",
+        "layout": "accordion",
+        "first_open": true,
+        "max_width": 800,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "background_color": "#F5F3EE"
+      },
+      "blocks": {
+        "shipping_1": {
+          "type": "info_block",
+          "settings": {
+            "icon": "📦",
+            "title": "Processing & Delivery",
+            "content": "<p>Orders ship within 1-2 business days. Expect delivery within 2-4 business days after shipping. Free shipping on all orders with full tracking provided.</p>"
+          }
+        },
+        "shipping_2": {
+          "type": "info_block",
+          "settings": {
+            "icon": "💯",
+            "title": "60-Day Money-Back Guarantee",
+            "content": "<p>Not fully satisfied? Return your product within 60 days for a full refund, risk-free.</p>"
+          }
+        },
+        "shipping_3": {
+          "type": "info_block",
+          "settings": {
+            "icon": "↩️",
+            "title": "Easy Returns Process",
+            "content": "<p>Reach out to support@pureandvida.com. Our team will guide you through the return process. Your satisfaction is our top priority.</p>"
+          }
+        }
+      },
+      "block_order": ["shipping_1", "shipping_2", "shipping_3"]
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "heading": "Frequently Asked Questions",
+        "heading_alignment": "center",
+        "content_mode": "blocks",
+        "default_open": false,
+        "item_spacing": 10,
+        "item_padding": 20,
+        "content_width": 800,
+        "section_padding_top": 60,
+        "section_padding_bottom": 60,
+        "background_color": "#FFFFFF"
+      },
+      "blocks": {
+        "faq_1": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What does MycoMatcha taste like?",
+            "answer": "MycoMatcha has a smooth, earthy flavor with subtle notes of umami. The ceremonial-grade matcha provides a clean, slightly sweet taste that pairs well with milk or water."
+          }
+        },
+        "faq_2": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How much caffeine is in MycoMatcha?",
+            "answer": "Each serving contains 25-35mg of caffeine, about one-third the amount in a cup of coffee. Combined with L-theanine, it provides smooth, sustained energy without the jitters."
+          }
+        },
+        "faq_3": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How soon will I feel the benefits?",
+            "answer": "Many people notice improved focus and sustained energy within the first few days. The adaptogenic benefits of the mushrooms may take 2-4 weeks of consistent use to fully experience."
+          }
+        },
+        "faq_4": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Is it safe to drink everyday?",
+            "answer": "Yes! MycoMatcha is made with natural, organic ingredients and is designed for daily use. All ingredients are third-party tested for purity and potency."
+          }
+        },
+        "faq_5": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What benefits do the mushrooms have?",
+            "answer": "Our blend includes Lion's Mane for cognitive support, Cordyceps for energy and endurance, Reishi for stress relief and immune support, and Chaga for antioxidant protection."
+          }
+        },
+        "faq_6": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How do I prepare MycoMatcha?",
+            "answer": "Add 1 teaspoon to 8oz of hot or cold water, milk, or your favorite plant-based milk. Whisk until smooth. Enjoy hot or over ice."
+          }
+        },
+        "faq_7": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Is it vegan, gluten-free, and made with clean ingredients?",
+            "answer": "Absolutely! MycoMatcha is 100% vegan, gluten-free, non-GMO, and made with organic ingredients. No artificial additives, fillers, or preservatives."
+          }
+        }
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6", "faq_7"]
+    }
+  },
+  "order": [
+    "product_hero",
+    "testimonials",
+    "benefits",
+    "comparison",
+    "shipping",
+    "faq"
+  ]
+}

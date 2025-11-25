@@ -1,0 +1,946 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web/src/regular/style.css" />
+
+<style>
+  {%- if section.settings.custom_font -%}
+    @font-face {
+      font-family: 'CustomFont';
+      src: url('{{ section.settings.custom_font | file_url }}');
+      font-weight: normal;
+      font-style: normal;
+    }
+    .shopdev * {
+      font-family: 'CustomFont', sans-serif;
+    }
+  {%- endif -%}
+  .shopdev .bg-cream { background-color: #F5F3EE; }
+  .shopdev .bg-teal { background-color: #5E8778; }
+  .shopdev .bg-orange { background-color: #E8983B; }
+  .shopdev .bg-dark-green { background-color: #516D55; }
+  .shopdev .bg-dark-olive { background-color: #4E4E33; }
+  .shopdev .bg-amber { background-color: #F9A000; }
+  
+  .shopdev .text-teal { color: #5E8778; }
+  .shopdev .text-orange { color: #E8983B; }
+  .shopdev .text-dark-green { color: #314339; }
+  
+  .shopdev .border-teal { border-color: #5E8778; }
+  .shopdev .border-black { border-color: #000000; }
+  
+  .shopdev .line-through-teal {
+    position: relative;
+  }
+  .shopdev .line-through-teal::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background-color: #5E8778;
+  }
+  
+  .shopdev .faq-item {
+    border: 1px solid #000000;
+    cursor: pointer;
+  }
+  
+  .shopdev .faq-item:hover {
+    background-color: #f9f9f9;
+  }
+  .shopdev .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .shopdev .faq-item.active .faq-answer {
+    max-height: 500px;
+  }
+  .shopdev .mobile-menu {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .shopdev .mobile-menu.active {
+    transform: translateX(0);
+  }
+  .shopdev .testimonial-carousel {
+    overflow: hidden;
+  }
+  .shopdev .testimonial-track {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+  .shopdev .testimonial-slide {
+    min-width: 100%;
+    flex-shrink: 0;
+  }
+  @media (min-width: 768px) {
+    .shopdev .testimonial-slide {
+      min-width: 33.333%;
+    }
+  }
+  
+  /* Utility Classes */
+  .shopdev .w-full { width: 100%; }
+  .shopdev .flex { display: flex; }
+  .shopdev .flex-col { flex-direction: column; }
+  .shopdev .flex-row { flex-direction: row; }
+  .shopdev .items-center { align-items: center; }
+  .shopdev .items-start { align-items: flex-start; }
+  .shopdev .items-stretch { align-items: stretch; }
+  .shopdev .justify-between { justify-content: space-between; }
+  .shopdev .justify-center { justify-content: center; }
+  .shopdev .justify-start { justify-content: flex-start; }
+  .shopdev .gap-4 { gap: 1rem; }
+  .shopdev .gap-\[7px\] { gap: 7px; }
+  .shopdev .gap-\[8px\] { gap: 8px; }
+  .shopdev .gap-\[10px\] { gap: 10px; }
+  .shopdev .gap-\[15px\] { gap: 15px; }
+  .shopdev .gap-\[18px\] { gap: 18px; }
+  .shopdev .gap-\[20px\] { gap: 20px; }
+  .shopdev .gap-\[24px\] { gap: 24px; }
+  .shopdev .gap-\[29px\] { gap: 29px; }
+  .shopdev .gap-\[30px\] { gap: 30px; }
+  .shopdev .gap-\[38px\] { gap: 38px; }
+  .shopdev .gap-\[40px\] { gap: 40px; }
+  .shopdev .gap-\[48px\] { gap: 48px; }
+  .shopdev .gap-\[60px\] { gap: 60px; }
+  .shopdev .gap-\[115px\] { gap: 115px; }
+  .shopdev .max-w-\[1440px\] { max-width: 1440px; }
+  .shopdev .mx-auto { margin-left: auto; margin-right: auto; }
+  .shopdev .px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .shopdev .px-\[17px\] { padding-left: 17px; padding-right: 17px; }
+  .shopdev .px-\[20px\] { padding-left: 20px; padding-right: 20px; }
+  .shopdev .px-\[22px\] { padding-left: 22px; padding-right: 22px; }
+  .shopdev .px-\[30px\] { padding-left: 30px; padding-right: 30px; }
+  .shopdev .px-\[47px\] { padding-left: 47px; padding-right: 47px; }
+  .shopdev .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  .shopdev .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+  .shopdev .py-\[10px\] { padding-top: 10px; padding-bottom: 10px; }
+  .shopdev .py-\[12px\] { padding-top: 12px; padding-bottom: 12px; }
+  .shopdev .py-\[15px\] { padding-top: 15px; padding-bottom: 15px; }
+  .shopdev .py-\[23px\] { padding-top: 23px; padding-bottom: 23px; }
+  .shopdev .py-\[30px\] { padding-top: 30px; padding-bottom: 30px; }
+  .shopdev .py-\[62px\] { padding-top: 62px; padding-bottom: 62px; }
+  .shopdev .pt-\[10px\] { padding-top: 10px; }
+  .shopdev .pb-\[10px\] { padding-bottom: 10px; }
+  .shopdev .pb-\[15px\] { padding-bottom: 15px; }
+  .shopdev .pb-\[20px\] { padding-bottom: 20px; }
+  .shopdev .pb-\[26px\] { padding-bottom: 26px; }
+  .shopdev .pb-\[38px\] { padding-bottom: 38px; }
+  .shopdev .pb-\[40px\] { padding-bottom: 40px; }
+  .shopdev .pb-\[50px\] { padding-bottom: 50px; }
+  .shopdev .pb-\[82px\] { padding-bottom: 82px; }
+  .shopdev .pb-\[100px\] { padding-bottom: 100px; }
+  .shopdev .mb-\[8px\] { margin-bottom: 8px; }
+  .shopdev .mb-\[10px\] { margin-bottom: 10px; }
+  .shopdev .mb-\[15px\] { margin-bottom: 15px; }
+  .shopdev .mb-\[20px\] { margin-bottom: 20px; }
+  .shopdev .mb-\[26px\] { margin-bottom: 26px; }
+  .shopdev .mb-\[38px\] { margin-bottom: 38px; }
+  .shopdev .mb-\[40px\] { margin-bottom: 40px; }
+  .shopdev .mt-4 { margin-top: 1rem; }
+  .shopdev .mt-8 { margin-top: 2rem; }
+  .shopdev .mt-\[10px\] { margin-top: 10px; }
+  .shopdev .pr-4 { padding-right: 1rem; }
+  .shopdev .p-4 { padding: 1rem; }
+  .shopdev .p-\[12px\] { padding: 12px; }
+  .shopdev .p-\[15px\] { padding: 15px; }
+  .shopdev .p-\[20px\] { padding: 20px; }
+  .shopdev .p-\[40px\] { padding: 40px; }
+  .shopdev .text-center { text-align: center; }
+  .shopdev .text-justify { text-align: justify; }
+  .shopdev .text-left { text-align: left; }
+  .shopdev .text-white { color: #ffffff; }
+  .shopdev .text-\[14px\] { font-size: 14px; }
+  .shopdev .text-\[16px\] { font-size: 16px; }
+  .shopdev .text-\[18px\] { font-size: 18px; }
+  .shopdev .text-\[20px\] { font-size: 20px; }
+  .shopdev .text-\[24px\] { font-size: 24px; }
+  .shopdev .text-\[28px\] { font-size: 28px; }
+  .shopdev .text-\[32px\] { font-size: 32px; }
+  .shopdev .text-\[35px\] { font-size: 35px; }
+  .shopdev .text-\[36px\] { font-size: 36px; }
+  .shopdev .text-\[40px\] { font-size: 40px; }
+  .shopdev .text-\[52px\] { font-size: 52px; }
+  .shopdev .text-\[72px\] { font-size: 72px; }
+  .shopdev .text-\[94px\] { font-size: 94px; }
+  .shopdev .font-light { font-weight: 300; }
+  .shopdev .font-semibold { font-weight: 600; }
+  .shopdev .font-bold { font-weight: 700; }
+  .shopdev .font-medium { font-weight: 500; }
+  .shopdev .leading-\[100%\] { line-height: 100%; }
+  .shopdev .leading-\[120%\] { line-height: 120%; }
+  .shopdev .leading-\[140%\] { line-height: 140%; }
+  .shopdev .tracking-\[-0\.01em\] { letter-spacing: -0.01em; }
+  .shopdev .tracking-\[0\.02em\] { letter-spacing: 0.02em; }
+  .shopdev .tracking-\[0\.04em\] { letter-spacing: 0.04em; }
+  .shopdev .tracking-\[0\.06em\] { letter-spacing: 0.06em; }
+  .shopdev .tracking-\[0\.08em\] { letter-spacing: 0.08em; }
+  .shopdev .tracking-\[0\.12em\] { letter-spacing: 0.12em; }
+  .shopdev .whitespace-pre-line { white-space: pre-line; }
+  .shopdev .rounded { border-radius: 0.25rem; }
+  .shopdev .rounded-\[10px\] { border-radius: 10px; }
+  .shopdev .rounded-\[20px\] { border-radius: 20px; }
+  .shopdev .rounded-\[40px\] { border-radius: 40px; }
+  .shopdev .rounded-\[46px\] { border-radius: 46px; }
+  .shopdev .rounded-\[72px\] { border-radius: 72px; }
+  .shopdev .rounded-\[91px\] { border-radius: 91px; }
+  .shopdev .rounded-full { border-radius: 9999px; }
+  .shopdev .border { border-width: 1px; }
+  .shopdev .border-b { border-bottom-width: 1px; }
+  .shopdev .border-gray-200 { border-color: #e5e7eb; }
+  .shopdev .border-gray-300 { border-color: #d1d5db; }
+  .shopdev .h-auto { height: auto; }
+  .shopdev .h-\[34px\] { height: 34px; }
+  .shopdev .h-\[35px\] { height: 35px; }
+  .shopdev .h-\[40px\] { height: 40px; }
+  .shopdev .h-full { height: 100%; }
+  .shopdev .w-\[20px\] { width: 20px; }
+  .shopdev .w-\[40px\] { width: 40px; }
+  .shopdev .w-\[50px\] { width: 50px; }
+  .shopdev .w-\[51px\] { width: 51px; }
+  .shopdev .w-\[116px\] { width: 116px; }
+  .shopdev .w-\[602px\] { width: 602px; }
+  .shopdev .flex-1 { flex: 1 1 0%; }
+  .shopdev .flex-shrink-0 { flex-shrink: 0; }
+  .shopdev .min-w-\[100%\] { min-width: 100%; }
+  .shopdev .space-y-\[10px\] > * + * { margin-top: 10px; }
+  .shopdev .space-y-\[15px\] > * + * { margin-top: 15px; }
+  .shopdev .space-y-\[20px\] > * + * { margin-top: 20px; }
+  .shopdev .relative { position: relative; }
+  .shopdev .absolute { position: absolute; }
+  .shopdev .fixed { position: fixed; }
+  .shopdev .top-0 { top: 0; }
+  .shopdev .left-0 { left: 0; }
+  .shopdev .z-10 { z-index: 10; }
+  .shopdev .z-50 { z-index: 50; }
+  .shopdev .overflow-hidden { overflow: hidden; }
+  .shopdev .cursor-pointer { cursor: pointer; }
+  .shopdev .grid { display: grid; }
+  .shopdev .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .shopdev .bg-white { background-color: #ffffff; }
+  .shopdev .bg-opacity-10 { background-color: rgba(255, 255, 255, 0.1); }
+  .shopdev .bg-\[#1F72CD\] { background-color: #1F72CD; }
+  .shopdev .text-gray-600 { color: #4b5563; }
+  
+  @media (min-width: 640px) {
+    .shopdev .sm\:px-8 { padding-left: 2rem; padding-right: 2rem; }
+    .shopdev .sm\:flex-row { flex-direction: row; }
+    .shopdev .sm\:items-center { align-items: center; }
+    .shopdev .sm\:gap-\[24px\] { gap: 24px; }
+    .shopdev .sm\:gap-\[38px\] { gap: 38px; }
+    .shopdev .sm\:text-\[52px\] { font-size: 52px; }
+    .shopdev .sm\:w-auto { width: auto; }
+  }
+  
+  @media (min-width: 768px) {
+    .shopdev .md\:px-\[60px\] { padding-left: 60px; padding-right: 60px; }
+    .shopdev .md\:px-\[85px\] { padding-left: 85px; padding-right: 85px; }
+    .shopdev .md\:px-\[163px\] { padding-left: 163px; padding-right: 163px; }
+    .shopdev .md\:px-\[283px\] { padding-left: 283px; padding-right: 283px; }
+    .shopdev .md\:px-\[369px\] { padding-left: 369px; padding-right: 369px; }
+    .shopdev .md\:px-\[8\] { padding-left: 2rem; padding-right: 2rem; }
+    .shopdev .md\:px-\[30px\] { padding-left: 30px; padding-right: 30px; }
+    .shopdev .md\:py-\[15px\] { padding-top: 15px; padding-bottom: 15px; }
+    .shopdev .md\:py-\[23px\] { padding-top: 23px; padding-bottom: 23px; }
+    .shopdev .md\:py-\[54px\] { padding-top: 54px; padding-bottom: 54px; }
+    .shopdev .md\:py-\[62px\] { padding-top: 62px; padding-bottom: 62px; }
+    .shopdev .md\:pb-\[26px\] { padding-bottom: 26px; }
+    .shopdev .md\:pb-\[38px\] { padding-bottom: 38px; }
+    .shopdev .md\:pb-\[82px\] { padding-bottom: 82px; }
+    .shopdev .md\:pb-\[100px\] { padding-bottom: 100px; }
+    .shopdev .md\:mb-\[26px\] { margin-bottom: 26px; }
+    .shopdev .md\:mb-\[38px\] { margin-bottom: 38px; }
+    .shopdev .md\:mb-\[82px\] { margin-bottom: 82px; }
+    .shopdev .md\:text-\[16px\] { font-size: 16px; }
+    .shopdev .md\:text-\[20px\] { font-size: 20px; }
+    .shopdev .md\:text-\[22px\] { font-size: 22px; }
+    .shopdev .md\:text-\[23px\] { font-size: 23px; }
+    .shopdev .md\:text-\[24px\] { font-size: 24px; }
+    .shopdev .md\:text-\[25px\] { font-size: 25px; }
+    .shopdev .md\:text-\[35px\] { font-size: 35px; }
+    .shopdev .md\:text-\[40px\] { font-size: 40px; }
+    .shopdev .md\:text-\[52px\] { font-size: 52px; }
+    .shopdev .md\:text-\[94px\] { font-size: 94px; }
+    .shopdev .md\:leading-\[100%\] { line-height: 100%; }
+    .shopdev .md\:rounded-\[40px\] { border-radius: 40px; }
+    .shopdev .md\:gap-\[29px\] { gap: 29px; }
+    .shopdev .md\:gap-\[60px\] { gap: 60px; }
+    .shopdev .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .shopdev .md\:flex { display: flex; }
+    .shopdev .md\:flex-row { flex-direction: row; }
+    .shopdev .md\:hidden { display: none; }
+    .shopdev .md\:space-y-\[20px\] > * + * { margin-top: 20px; }
+    .shopdev .md\:p-\[40px\] { padding: 40px; }
+    .shopdev .md\:w-\[45px\] { width: 45px; }
+    .shopdev .md\:h-\[45px\] { height: 45px; }
+    .shopdev .md\:block { display: block; }
+  }
+  
+  @media (min-width: 1024px) {
+    .shopdev .lg\:px-\[95px\] { padding-left: 95px; padding-right: 95px; }
+    .shopdev .lg\:px-\[127px\] { padding-left: 127px; padding-right: 127px; }
+    .shopdev .lg\:px-\[163px\] { padding-left: 163px; padding-right: 163px; }
+    .shopdev .lg\:flex { display: flex; }
+    .shopdev .lg\:flex-row { flex-direction: row; }
+    .shopdev .lg\:hidden { display: none; }
+    .shopdev .lg\:gap-\[60px\] { gap: 60px; }
+    .shopdev .lg\:w-\[120px\] { width: 120px; }
+    .shopdev .lg\:w-\[40px\] { width: 40px; }
+    .shopdev .lg\:w-\[646px\] { width: 646px; }
+    .shopdev .lg\:text-\[20px\] { font-size: 20px; }
+    .shopdev .lg\:py-\[13px\] { padding-top: 13px; padding-bottom: 13px; }
+  }
+</style>
+
+<div class="w-full bg-cream">
+  <!-- Header -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[60px] py-4 md:py-[54px]">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-[8px]">
+        <h1 class="text-dark-green text-[32px] md:text-[52px] font-light">PURE  VIDA</h1>
+        <span class="text-teal text-[16px] md:text-[24px] font-bold">+</span>
+      </div>
+      
+      <!-- Mobile Menu Button -->
+      <button class="lg:hidden text-dark-green text-[32px]" onclick="toggleMobileMenu()">
+        <i class="ph ph-list"></i>
+      </button>
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:flex items-center gap-[48px]">
+        <a href="#" class="text-teal text-[24px] font-semibold tracking-[0.06em]">MycoMatcha</a>
+        <a href="#" class="text-[24px] tracking-[0.06em]">Order Tracking</a>
+        <a href="#" class="text-[24px] tracking-[0.06em]">About</a>
+        <a href="#" class="bg-orange text-white px-[22px] py-[15px] rounded-[91px] text-[20px] font-semibold tracking-[0.06em]">View Cart</a>
+      </nav>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu fixed top-0 left-0 w-full h-full bg-cream z-50 lg:hidden">
+      <div class="flex justify-between items-center px-4 py-4 border-b border-gray-300">
+        <div class="flex items-center gap-[8px]">
+          <h1 class="text-dark-green text-[32px] font-light">PURE  VIDA</h1>
+          <span class="text-teal text-[16px] font-bold">+</span>
+        </div>
+        <button class="text-dark-green text-[32px]" onclick="toggleMobileMenu()">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <nav class="flex flex-col p-4 gap-4">
+        <a href="#" class="text-teal text-[20px] font-semibold tracking-[0.06em] py-3 border-b border-gray-200">MycoMatcha</a>
+        <a href="#" class="text-[20px] tracking-[0.06em] py-3 border-b border-gray-200">Order Tracking</a>
+        <a href="#" class="text-[20px] tracking-[0.06em] py-3 border-b border-gray-200">About</a>
+        <a href="#" class="bg-orange text-white px-[22px] py-[15px] rounded-[91px] text-[18px] font-semibold tracking-[0.06em] text-center mt-4">View Cart</a>
+      </nav>
+    </div>
+  </div>
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.querySelector('.mobile-menu');
+      menu.classList.toggle('active');
+    }
+  </script>
+  <!-- Hero Section with Product -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[60px] pb-[50px] md:pb-[100px]">
+    <div class="flex flex-col lg:flex-row gap-[30px] lg:gap-[60px]">
+      <!-- Product Images -->
+      <div class="w-full lg:w-[602px]">
+        {%- if section.settings.product_image -%}
+          {{ section.settings.product_image | image_url: width: 602 | image_tag: class: 'w-full h-auto' }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'w-full h-auto bg-gray-200' }}
+        {%- endif -%}
+      </div>
+      <!-- Product Details -->
+      <div class="flex-1 pt-[10px]">
+        <div class="mb-[20px] md:mb-[38px]">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-[15px] sm:gap-[38px] mb-[20px] md:mb-[38px]">
+            <h2 class="text-[36px] sm:text-[52px] md:text-[72px] leading-[100%] tracking-[0.02em]">{{ section.settings.product_title }}</h2>
+            <div class="bg-dark-olive text-white px-[20px] md:px-[30px] py-[10px] md:py-[15px] rounded-[46px]">
+              <p class="text-[16px] md:text-[22px] leading-[100%] tracking-[0.12em]">{{ section.settings.badge_text }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-start gap-[10px] mb-[20px] md:mb-[38px]">
+          <div class="relative">
+            <span class="text-teal text-[24px] md:text-[35px] tracking-[0.12em] line-through-teal">{{ section.settings.original_price }}</span>
+          </div>
+          <span class="text-[52px] md:text-[94px] tracking-[-0.01em]">{{ section.settings.sale_price }}</span>
+        </div>
+        <div class="mb-[20px] md:mb-[38px]">
+          <p class="text-[16px] md:text-[23px] leading-[120%] md:leading-[100%] tracking-[0.08em] whitespace-pre-line">{{ section.settings.product_description | newline_to_br }}</p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-[15px] sm:gap-[24px] mb-[20px] md:mb-[38px]">
+          <div class="border border-teal rounded-[72px] px-[17px] py-[15px] md:py-[23px] w-full sm:w-[116px]">
+            <p class="text-[24px] md:text-[35px] leading-[100%] text-center">+ 1</p>
+          </div>
+          <button class="bg-teal text-white px-[30px] md:px-[47px] py-[15px] md:py-[23px] rounded-[72px] text-[24px] md:text-[35px] leading-[100%] tracking-[0.12em] w-full sm:w-auto">
+            {{ section.settings.button_text }}
+          </button>
+        </div>
+        <div class="flex gap-[7px]">
+          <div class="w-[50px] h-[34px] bg-white border border-gray-300 rounded flex items-center justify-center">
+            <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/22131a881663a5537e3980a3d571d5a61ec7bd7d.svg" />
+          </div>
+          <div class="w-[50px] h-[34px] bg-white border border-gray-300 rounded flex items-center justify-center">
+            <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/0902198dda288f244b470588af55e74e8facd4fc.svg" />
+          </div>
+          <div class="w-[50px] h-[34px] bg-white border border-gray-300 rounded flex items-center justify-center">
+            <svg width="29" height="9" viewBox="0 0 29 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 8.2099L28.1993 0V4.64038C28.1993 6.61177 26.6011 8.2099 24.6297 8.2099H0Z" fill="#FD6020"/>
+</svg>
+          </div>
+          <div class="w-[50px] h-[34px] bg-[#1F72CD] border border-gray-300 rounded flex items-center justify-center">
+            <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/bfba9b9e11ec6200260302d3e952df331df200e7.svg" />
+          </div>
+          <div class="w-[50px] h-[34px] bg-white border border-gray-300 rounded flex items-center justify-center">
+            <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/86700408f70341c2d7fdf34d756567c802955bb2.svg" />
+          </div>
+          <div class="w-[50px] h-[34px] bg-white border border-gray-300 rounded flex items-center justify-center">
+            <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/6d8a0f2ef3cb91c11062e4fcb5c29a0be7daf438.svg" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Customer Reviews Carousel -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[60px] lg:px-[127px] pb-[50px] md:pb-[100px]">
+    <div class="testimonial-carousel relative">
+      <div class="testimonial-track">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'review' -%}
+            <div class="testimonial-slide px-4 md:px-8" {{ block.shopify_attributes }}>
+              <div class="flex gap-[10px] mb-[15px]">
+                {%- for i in (1..5) -%}
+                  <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/210b2ce3d0f16f17b660c3752ed11ef8c3c23668.svg" class="w-[20px] h-[20px]" />
+                {%- endfor -%}
+              </div>
+              <p class="text-[14px] md:text-[16px] leading-[120%] tracking-[0.12em] mb-[15px] text-justify">{{ block.settings.review_text }}</p>
+              <div class="flex items-center gap-[18px]">
+                <p class="text-[14px] md:text-[16px] leading-[120%] tracking-[0.12em] font-semibold">{{ block.settings.reviewer_name }}</p>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      
+      <!-- Carousel Controls -->
+      <div class="flex justify-center gap-4 mt-8">
+        <button onclick="prevTestimonial()" class="bg-teal text-white w-[40px] h-[40px] rounded-full flex items-center justify-center">
+          <i class="ph ph-caret-left text-[20px]"></i>
+        </button>
+        <button onclick="nextTestimonial()" class="bg-teal text-white w-[40px] h-[40px] rounded-full flex items-center justify-center">
+          <i class="ph ph-caret-right text-[20px]"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script>
+    let currentTestimonial = 0;
+    const testimonialTrack = document.querySelector('.testimonial-track');
+    const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+    const totalTestimonials = testimonialSlides.length;
+    function updateCarousel() {
+      const slideWidth = window.innerWidth >= 768 ? 33.333 : 100;
+      testimonialTrack.style.transform = `translateX(-${currentTestimonial * slideWidth}%)`;
+    }
+    function nextTestimonial() {
+      const maxSlide = window.innerWidth >= 768 ? totalTestimonials - 3 : totalTestimonials - 1;
+      currentTestimonial = currentTestimonial >= maxSlide ? 0 : currentTestimonial + 1;
+      updateCarousel();
+    }
+    function prevTestimonial() {
+      const maxSlide = window.innerWidth >= 768 ? totalTestimonials - 3 : totalTestimonials - 1;
+      currentTestimonial = currentTestimonial <= 0 ? maxSlide : currentTestimonial - 1;
+      updateCarousel();
+    }
+    window.addEventListener('resize', updateCarousel);
+  </script>
+  <!-- Benefits Section -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[85px] pb-[50px] md:pb-[100px]">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-[20px] md:gap-[29px]">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'benefit' -%}
+          <div class="w-full" {{ block.shopify_attributes }}>
+            <div class="flex justify-center mb-[20px] md:mb-[26px]">
+              <svg data-vector-hash="{{ block.settings.icon_hash }}" class="w-[40px] h-[40px] md:w-[45px] md:h-[45px]" />
+            </div>
+            <h3 class="text-[20px] md:text-[25px] tracking-[0.12em] text-center mb-[15px] md:mb-[26px]">{{ block.settings.benefit_title }}</h3>
+            <p class="text-[14px] md:text-[16px] leading-[140%] tracking-[0.06em] text-center">{{ block.settings.benefit_description }}</p>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+  <!-- Comparison Table -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[60px] lg:px-[163px] pb-[50px] md:pb-[100px]">
+    <h2 class="text-[28px] md:text-[40px] leading-[140%] tracking-[0.12em] text-center mb-[40px] md:mb-[82px]">{{ section.settings.comparison_title }}</h2>
+    
+    <div class="bg-amber rounded-[20px] md:rounded-[40px] p-[20px] md:p-[40px] relative overflow-hidden">
+      <div class="hidden md:block absolute left-0 top-0 w-[50%] lg:w-[646px] h-full bg-teal"></div>
+      
+      <div class="relative z-10">
+        <!-- Desktop Header -->
+        <div class="hidden md:flex justify-between mb-[25px]">
+          <div class="flex-1"></div>
+          <div class="flex gap-[30px] lg:gap-[60px]">
+            <span class="text-[16px] lg:text-[20px] leading-[140%] tracking-[0.12em] font-bold w-[100px] lg:w-[120px]">MycoMatcha</span>
+            <span class="text-[16px] lg:text-[20px] leading-[140%] tracking-[0.12em] font-bold w-[60px] lg:w-[40px]">Coffee</span>
+          </div>
+        </div>
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'comparison_row' -%}
+            <!-- Desktop Row -->
+            <div class="hidden md:flex justify-between items-center py-[10px] lg:py-[13px]" {{ block.shopify_attributes }}>
+              <span class="text-white text-[14px] lg:text-[20px] leading-[140%] tracking-[0.12em] font-medium flex-1 pr-4">{{ block.settings.feature_name }}</span>
+              <div class="flex gap-[30px] lg:gap-[60px]">
+                <span class="text-[14px] lg:text-[20px] leading-[140%] tracking-[0.12em] w-[100px] lg:w-[120px]">{{ block.settings.myco_value }}</span>
+                <span class="text-[14px] lg:text-[20px] leading-[140%] tracking-[0.12em] w-[60px] lg:w-[40px]">{{ block.settings.coffee_value }}</span>
+              </div>
+            </div>
+            <!-- Mobile Row -->
+            <div class="md:hidden bg-white bg-opacity-10 rounded-[10px] p-[15px] mb-[10px]" {{ block.shopify_attributes }}>
+              <p class="text-[14px] leading-[140%] tracking-[0.12em] font-bold mb-[10px]">{{ block.settings.feature_name }}</p>
+              <div class="flex justify-between">
+                <div>
+                  <p class="text-[12px] leading-[140%] tracking-[0.12em] text-gray-600 mb-[5px]">MycoMatcha</p>
+                  <p class="text-[14px] leading-[140%] tracking-[0.12em] font-semibold">{{ block.settings.myco_value }}</p>
+                </div>
+                <div>
+                  <p class="text-[12px] leading-[140%] tracking-[0.12em] text-gray-600 mb-[5px]">Coffee</p>
+                  <p class="text-[14px] leading-[140%] tracking-[0.12em] font-semibold">{{ block.settings.coffee_value }}</p>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+  <!-- Shipping & Returns -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[60px] lg:px-[283px] pb-[50px] md:pb-[100px]">
+    <h2 class="text-[28px] md:text-[40px] leading-[140%] tracking-[0.12em] text-center mb-[10px]">{{ section.settings.shipping_title }}</h2>
+    <div class="text-[14px] md:text-[20px] leading-[140%] tracking-[0.04em]">
+      {{ section.settings.shipping_content | newline_to_br }}
+    </div>
+  </div>
+  <!-- FAQ Section -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[60px] lg:px-[369px] pb-[50px] md:pb-[100px]">
+    <h2 class="text-[28px] md:text-[40px] leading-[140%] tracking-[0.12em] text-center mb-[10px]">{{ section.settings.faq_title }}</h2>
+    
+    <div class="space-y-[15px] md:space-y-[20px]">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'faq' -%}
+          <div class="faq-item p-[12px] rounded" onclick="toggleFaq(this)" {{ block.shopify_attributes }}>
+            <div class="flex justify-between items-center cursor-pointer">
+              <span class="text-[16px] md:text-[20px] tracking-[0.12em] pr-4">{{ block.settings.question }}</span>
+              <span class="text-[20px] md:text-[24px] tracking-[0.12em] faq-icon">+</span>
+            </div>
+            {%- if block.settings.answer -%}
+              <div class="faq-answer mt-[10px]">
+                <p class="text-[14px] md:text-[16px] leading-[140%] tracking-[0.06em]">{{ block.settings.answer }}</p>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+  <script>
+    function toggleFaq(element) {
+      const isActive = element.classList.contains('active');
+      
+      // Close all FAQ items
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('.faq-icon').textContent = '+';
+      });
+      
+      // Open clicked item if it wasn't active
+      if (!isActive) {
+        element.classList.add('active');
+        element.querySelector('.faq-icon').textContent = '−';
+      }
+    }
+  </script>
+  <!-- Footer -->
+  <div class="bg-dark-green">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-[60px] lg:px-[95px] py-[30px] md:py-[62px]">
+      <div class="flex flex-col lg:flex-row justify-between gap-[40px]">
+        <div class="text-center lg:text-left">
+          <div class="flex items-center gap-[8px] mb-[8px] justify-center lg:justify-start">
+            <h3 class="text-white text-[32px] md:text-[52px] font-light">PURE  VIDA</h3>
+            <span class="text-amber text-[16px] md:text-[20px] font-bold">+</span>
+          </div>
+          <p class="text-white text-[12px] md:text-[15px] tracking-[0.12em] font-light">Copyright Pura Vida 2025. All rights reserved.</p>
+        </div>
+        <div class="flex flex-col md:flex-row gap-[30px] md:gap-[60px] lg:gap-[115px]">
+          <div>
+            <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light mb-[10px]">Shop MycoMatcha</p>
+            <h4 class="text-white text-[18px] md:text-[20px] tracking-[0.12em] font-medium mb-[10px]">About Us</h4>
+            <div class="space-y-[10px]">
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">The Company</p>
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">Terms of Service</p>
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">Privacy Policy</p>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-white text-[18px] md:text-[20px] tracking-[0.12em] font-medium mb-[10px]">For You</h4>
+            <div class="space-y-[10px]">
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">Shipping Information</p>
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">Return & Refund Policy</p>
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">Track Your Order</p>
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">Contact Us</p>
+              <p class="text-white text-[14px] md:text-[15px] tracking-[0.12em] font-light">Privacy Choices</p>
+            </div>
+          </div>
+          <div class="flex flex-row md:flex-col gap-[7px] justify-center lg:justify-start">
+            <div class="w-[51px] h-[35px] bg-white border border-gray-300 rounded flex items-center justify-center">
+              <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/06cfb31974dbc19d991ce3d6092463e8660795b5.svg" />
+            </div>
+            <div class="w-[51px] h-[35px] bg-white border border-gray-300 rounded flex items-center justify-center">
+              <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/93f7af38e2ba7538fa535d6ba7e3e40b44ebbc14.svg" />
+            </div>
+            <div class="w-[51px] h-[35px] bg-white border border-gray-300 rounded flex items-center justify-center">
+              <svg width="29" height="9" viewBox="0 0 29 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 8.44593L29.01 0V4.77379C29.01 6.80186 27.3659 8.44593 25.3378 8.44593H0Z" fill="#FD6020"/>
+</svg>
+            </div>
+            <div class="w-[51px] h-[35px] bg-[#1F72CD] border border-gray-300 rounded flex items-center justify-center">
+              <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/9628c063b747d06050dd879c2a69048cbc2beea1.svg" />
+            </div>
+            <div class="w-[51px] h-[35px] bg-white border border-gray-300 rounded flex items-center justify-center">
+              <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/a9c5d21d1d5ca17ce14538a8a9afa0e23a8c7b99.svg" />
+            </div>
+            <div class="w-[51px] h-[35px] bg-white border border-gray-300 rounded flex items-center justify-center">
+              <img src="https://assets.shopdev.ai/figma-imports/85973a7c-3882-48dd-8da7-c2b3cb2bee23/787e2bd70ea9fba4a83e89bb3f11013d75e688cd.svg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MycoMatcha Product Page",
+  "class": "shopdev",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "file",
+      "id": "custom_font",
+      "label": "Custom Font File",
+      "info": "Upload a custom font file (.woff, .woff2, .ttf, .otf)"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product Image"
+    },
+    {
+      "type": "text",
+      "id": "product_title",
+      "label": "Product Title",
+      "default": "MycoMatcha"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Get 33% off today"
+    },
+    {
+      "type": "text",
+      "id": "original_price",
+      "label": "Original Price",
+      "default": "$45"
+    },
+    {
+      "type": "text",
+      "id": "sale_price",
+      "label": "Sale Price",
+      "default": "$34.99"
+    },
+    {
+      "type": "textarea",
+      "id": "product_description",
+      "label": "Product Description",
+      "default": "Your morning coffee spikes cortisol, burns through your adrenal reserves, and leaves you crashing by 2 PM. MycoMatcha works differently.\n\nCeremonial-grade matcha delivers 25-35mg of caffeine paired with L-theanine, which crosses the blood-brain barrier to promote alpha wave activity. The result: 4-6 hours of sustained energy without the spike-crash cycle. Add four adaptogenic mushrooms that have been used in traditional medicine for over 2,000 years, and you have a formula that doesn't just wake you up. It builds resilience."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "comparison_title",
+      "label": "Comparison Title",
+      "default": "Matcha vs. Coffee"
+    },
+    {
+      "type": "text",
+      "id": "shipping_title",
+      "label": "Shipping Title",
+      "default": "Shipping & Returns"
+    },
+    {
+      "type": "textarea",
+      "id": "shipping_content",
+      "label": "Shipping Content",
+      "default": "Processing & Delivery\nOrders ship within 1-2 business days. Expect delivery within 2-4 business days after shipping. Free shipping on all orders with full tracking provided.\n\n60-Day Money-Back Guarantee\nNot fully satisfied? Return your product within 60 days for a full refund, risk-free.\n\nEasy Returns Process\nReach out to support@pureandvida.com. Our team will guide you through the return process. Your satisfaction is our top priority."
+    },
+    {
+      "type": "text",
+      "id": "faq_title",
+      "label": "FAQ Title",
+      "default": "Frequently Asked Questions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Customer Review",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text"
+        },
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer Name"
+        }
+      ]
+    },
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon_hash",
+          "label": "Icon Hash"
+        },
+        {
+          "type": "text",
+          "id": "benefit_title",
+          "label": "Benefit Title"
+        },
+        {
+          "type": "text",
+          "id": "benefit_description",
+          "label": "Benefit Description"
+        }
+      ]
+    },
+    {
+      "type": "comparison_row",
+      "name": "Comparison Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "feature_name",
+          "label": "Feature Name"
+        },
+        {
+          "type": "text",
+          "id": "myco_value",
+          "label": "MycoMatcha Value"
+        },
+        {
+          "type": "text",
+          "id": "coffee_value",
+          "label": "Coffee Value"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MycoMatcha Product Page",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "\"MycoMatcha has completely replaced my morning coffee. I feel mentally sharp, energized, and focused without the jittery crash I used to get. I love knowing that Lion's Mane and L-theanine are actually supporting my brain, not just stimulating it.\"",
+            "reviewer_name": "—Megan T."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "\"I started drinking this before my morning runs and noticed a real difference. I don't get winded as quickly, and I can push myself further. I didn't expect Cordyceps to work this fast, but it's become my favorite pre-workout\"",
+            "reviewer_name": "—Michael F."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "\"I used to have trouble falling asleep when I drank coffee, even early in the day. I switched to MycoMatcha and now I still get that energy boost, but I sleep like a baby. My mood during the day is way better too.\"",
+            "reviewer_name": "—Nicole F."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon_hash": "3c200e8b599da8ff246ae3454d468ea28d9bc778",
+            "benefit_title": "Natural energy",
+            "benefit_description": "+ Energize your body and mind.  No jitters, just flow."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon_hash": "67b81edfce0a847bf76c8bb68ec3b44e7f57d847",
+            "benefit_title": "Elevated mood",
+            "benefit_description": "+ Brings a gentle boost to your mood  and mindset."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon_hash": "571b1a830e2090d6dfff6afe5fdc324d7bd1da4f",
+            "benefit_title": "Focused mind",
+            "benefit_description": "+ Keeps distractions low and  productivity high."
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Enhanced Focus & Clarity",
+            "myco_value": "✓",
+            "coffee_value": "✓"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Packed with Antioxidants",
+            "myco_value": "✓",
+            "coffee_value": "✓"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Smooth, Sustained Energy (4-6 hours)",
+            "myco_value": "✓",
+            "coffee_value": "✗"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "No Jitters or Anxiety",
+            "myco_value": "✓",
+            "coffee_value": "✗"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "No Afternoon Crash",
+            "myco_value": "✓",
+            "coffee_value": "✗"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Gentle on Digestion",
+            "myco_value": "✓",
+            "coffee_value": "✗"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Won't Disrupt Sleep",
+            "myco_value": "✓",
+            "coffee_value": "✗"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Supports Immune Health",
+            "myco_value": "✓",
+            "coffee_value": "✗"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "feature_name": "Builds Tolerance Over Time",
+            "myco_value": "✗",
+            "coffee_value": "✓"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What does MycoMatcha taste like?"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How much caffeine is in MycoMatcha?"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How soon will I feel the benefits?"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Is it safe to drink everyday?"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What benefits do the mushrooms have?"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How do I prepare MycoMatcha?"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Is it vegan, gluten-free, and made with clean ingredients?"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

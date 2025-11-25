@@ -22,7 +22,12 @@
           <div class="stock-indicator stock-indicator--low">
             <span class="stock-indicator__icon">⚠️</span>
             <span class="stock-indicator__text">
-              {{ 'products.product.stock.low_stock' | t: count: inventory_quantity | default: 'Only {{ count }} left in stock' }}
+              {%- assign low_stock_text = 'products.product.stock.low_stock' | t: count: inventory_quantity -%}
+              {%- if low_stock_text == blank or low_stock_text == 'products.product.stock.low_stock' -%}
+                Only {{ inventory_quantity }} left in stock
+              {%- else -%}
+                {{ low_stock_text }}
+              {%- endif -%}
             </span>
           </div>
         {%- else -%}

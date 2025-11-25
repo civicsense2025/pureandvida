@@ -1,0 +1,620 @@
+{%- liquid
+  # @description Product hero section for landing pages
+  # Displays product image, title, pricing, description, and add-to-cart button
+  # All content is configurable via Theme Editor settings
+  # @settings product {product} - Product to display (optional, can use manual settings)
+  # @settings use_product_data {Boolean} - Pull data from product or use manual settings
+  assign use_product = section.settings.use_product_data and section.settings.product != blank
+  if use_product
+    assign product_obj = section.settings.product
+    assign display_title = product_obj.title
+    assign display_description = product_obj.description
+    assign display_price = product_obj.price | money
+    assign display_compare_price = product_obj.compare_at_price | money
+    assign product_image = product_obj.featured_image
+  else
+    assign display_title = section.settings.product_title
+    assign display_description = section.settings.product_description
+    assign display_price = section.settings.sale_price
+    assign display_compare_price = section.settings.original_price
+    assign product_image = section.settings.product_image
+  endif
+-%}
+
+<section class="product-hero-landing" style="background-color: {{ section.settings.background_color | default: '#F5F3EE' }}; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0;">
+  <div class="page-width">
+    <div class="product-hero-landing__container" style="display: flex; flex-direction: column; gap: {{ section.settings.content_gap }}px;">
+
+      {%- comment -%} Desktop: Side by side, Mobile: Stacked {%- endcomment -%}
+      <div class="product-hero-landing__grid">
+
+        {%- comment -%} Product Image {%- endcomment -%}
+        <div class="product-hero-landing__image">
+          {%- if product_image != blank -%}
+            {{ product_image | image_url: width: 800 | image_tag:
+              class: 'product-hero-landing__img',
+              alt: display_title,
+              loading: 'eager'
+            }}
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'product-hero-landing__img placeholder' }}
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Product Details {%- endcomment -%}
+        <div class="product-hero-landing__details">
+
+          {%- comment -%} Title and Badge {%- endcomment -%}
+          <div class="product-hero-landing__header">
+            <h1 class="product-hero-landing__title" style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_size }}px;">
+              {{ display_title }}
+            </h1>
+
+            {%- if section.settings.badge_text != blank -%}
+              <div class="product-hero-landing__badge" style="background-color: {{ section.settings.badge_bg_color }}; color: {{ section.settings.badge_text_color }};">
+                {{ section.settings.badge_text }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} Pricing {%- endcomment -%}
+          <div class="product-hero-landing__pricing">
+            {%- if display_compare_price != blank -%}
+              <span class="product-hero-landing__compare-price" style="color: {{ section.settings.compare_price_color }};">
+                {{ display_compare_price }}
+              </span>
+            {%- endif -%}
+            <span class="product-hero-landing__price" style="color: {{ section.settings.price_color }}; font-size: {{ section.settings.price_size }}px;">
+              {{ display_price }}
+            </span>
+          </div>
+
+          {%- comment -%} Description {%- endcomment -%}
+          {%- if display_description != blank -%}
+            <div class="product-hero-landing__description" style="color: {{ section.settings.description_color }}; font-size: {{ section.settings.description_size }}px;">
+              {{ display_description | newline_to_br }}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Add to Cart {%- endcomment -%}
+          <div class="product-hero-landing__actions">
+            {%- if section.settings.show_quantity -%}
+              <div class="product-hero-landing__quantity" style="border-color: {{ section.settings.button_color }};">
+                <button type="button" class="quantity-btn" onclick="updateQuantity(-1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1" id="hero-quantity-{{ section.id }}">
+                <button type="button" class="quantity-btn" onclick="updateQuantity(1)">+</button>
+              </div>
+            {%- endif -%}
+
+            <button type="button"
+                    class="product-hero-landing__button"
+                    style="background-color: {{ section.settings.button_color }}; color: {{ section.settings.button_text_color }};"
+                    {%- if use_product -%}
+                      data-product-id="{{ product_obj.id }}"
+                      data-variant-id="{{ product_obj.selected_or_first_available_variant.id }}"
+                      onclick="addToCart(this)"
+                    {%- elsif section.settings.button_url != blank -%}
+                      onclick="window.location.href='{{ section.settings.button_url }}'"
+                    {%- endif -%}>
+              {{ section.settings.button_text | default: 'Add to cart' }}
+            </button>
+          </div>
+
+          {%- comment -%} Payment Icons {%- endcomment -%}
+          {%- if section.settings.show_payment_icons -%}
+            <div class="product-hero-landing__payment-icons">
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'payment_icon' -%}
+                  <div class="payment-icon" {{ block.shopify_attributes }}>
+                    {%- if block.settings.icon_image != blank -%}
+                      {{ block.settings.icon_image | image_url: width: 60 | image_tag: alt: block.settings.icon_alt }}
+                    {%- elsif block.settings.icon_svg != blank -%}
+                      {{ block.settings.icon_svg }}
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .product-hero-landing {
+    width: 100%;
+  }
+
+  .product-hero-landing__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: {{ section.settings.grid_gap }}px;
+    align-items: start;
+  }
+
+  @media screen and (min-width: 768px) {
+    .product-hero-landing__grid {
+      grid-template-columns: {{ section.settings.image_width }}% 1fr;
+    }
+  }
+
+  .product-hero-landing__image {
+    width: 100%;
+  }
+
+  .product-hero-landing__img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .product-hero-landing__details {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.details_gap }}px;
+  }
+
+  .product-hero-landing__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .product-hero-landing__title {
+    margin: 0;
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    line-height: 1.1;
+  }
+
+  .product-hero-landing__badge {
+    padding: 10px 20px;
+    border-radius: 46px;
+    font-size: 16px;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  .product-hero-landing__pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+  }
+
+  .product-hero-landing__compare-price {
+    text-decoration: line-through;
+    opacity: 0.7;
+    font-size: 0.6em;
+  }
+
+  .product-hero-landing__price {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    line-height: 1;
+  }
+
+  .product-hero-landing__description {
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+  }
+
+  .product-hero-landing__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .product-hero-landing__quantity {
+    display: flex;
+    align-items: center;
+    border: 1px solid;
+    border-radius: 72px;
+    padding: 10px 15px;
+  }
+
+  .product-hero-landing__quantity .quantity-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+  }
+
+  .product-hero-landing__quantity .quantity-input {
+    width: 40px;
+    text-align: center;
+    border: none;
+    font-size: 20px;
+    background: transparent;
+  }
+
+  .product-hero-landing__button {
+    flex: 1;
+    min-width: 200px;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 72px;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .product-hero-landing__button:hover {
+    opacity: 0.9;
+  }
+
+  .product-hero-landing__payment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .payment-icon {
+    width: 50px;
+    height: 34px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .payment-icon img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 767px) {
+    .product-hero-landing__title {
+      font-size: 36px !important;
+    }
+
+    .product-hero-landing__price {
+      font-size: 52px !important;
+    }
+
+    .product-hero-landing__badge {
+      font-size: 14px;
+      padding: 8px 15px;
+    }
+
+    .product-hero-landing__button {
+      width: 100%;
+      font-size: 20px;
+    }
+  }
+</style>
+
+<script>
+  function updateQuantity(change) {
+    const input = document.querySelector('#hero-quantity-{{ section.id }}');
+    if (input) {
+      let value = parseInt(input.value) + change;
+      if (value < 1) value = 1;
+      input.value = value;
+    }
+  }
+
+  function addToCart(button) {
+    const variantId = button.dataset.variantId;
+    const quantityInput = document.querySelector('#hero-quantity-{{ section.id }}');
+    const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+
+    if (!variantId) return;
+
+    fetch(window.routes.cart_add_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: quantity
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Trigger cart notification or redirect
+      document.dispatchEvent(new CustomEvent('cart:item-added', { detail: data }));
+    })
+    .catch(error => console.error('Error:', error));
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Product Hero Landing",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product Data Source"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_product_data",
+      "label": "Use Product Data",
+      "default": false,
+      "info": "When enabled, pulls title, description, and pricing from the selected product. When disabled, uses manual settings below."
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Select a product to pull data from (only used when 'Use Product Data' is enabled)"
+    },
+    {
+      "type": "header",
+      "content": "Manual Content (when not using product data)"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product Image"
+    },
+    {
+      "type": "text",
+      "id": "product_title",
+      "label": "Product Title",
+      "default": "Product Name"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "info": "Optional promotional badge (e.g., 'Get 33% off today')"
+    },
+    {
+      "type": "text",
+      "id": "original_price",
+      "label": "Compare at Price",
+      "info": "Strikethrough price (e.g., '$45')"
+    },
+    {
+      "type": "text",
+      "id": "sale_price",
+      "label": "Sale Price",
+      "default": "$34.99"
+    },
+    {
+      "type": "textarea",
+      "id": "product_description",
+      "label": "Product Description"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Add to cart"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL",
+      "info": "Only used when not linked to a product"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity",
+      "label": "Show Quantity Selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show Payment Icons",
+      "default": true,
+      "info": "Add payment icons using blocks below"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image Width (%)",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "default": 45,
+      "info": "Percentage of container width for image on desktop"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Gap Between Image and Details",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "details_gap",
+      "label": "Gap Between Detail Elements",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Content Gap",
+      "min": 20,
+      "max": 80,
+      "step": 10,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title Size (Desktop)",
+      "min": 36,
+      "max": 96,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "label": "Price Size (Desktop)",
+      "min": 36,
+      "max": 120,
+      "step": 4,
+      "default": 94,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description Size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#F5F3EE"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare Price Color",
+      "default": "#5E8778"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Badge Background",
+      "default": "#4E4E33"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#5E8778"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "payment_icon",
+      "name": "Payment Icon",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon Image",
+          "info": "Upload a payment icon image (recommended: 60x40px)"
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Icon SVG (Alternative)",
+          "info": "Paste SVG code if not using an image"
+        },
+        {
+          "type": "text",
+          "id": "icon_alt",
+          "label": "Alt Text",
+          "default": "Payment method"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Hero Landing",
+      "settings": {
+        "product_title": "Product Name",
+        "sale_price": "$34.99",
+        "button_text": "Add to cart"
+      }
+    }
+  ]
+}
+{% endschema %}

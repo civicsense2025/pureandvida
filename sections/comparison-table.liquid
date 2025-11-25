@@ -1,0 +1,548 @@
+{%- liquid
+  # @description Comparison table section for comparing products/features
+  # Displays a table comparing two items with checkmarks/x marks
+  # All content is fully customizable via Theme Editor
+  # @settings heading {String} - Section heading
+  # @settings column_1_label {String} - First column header
+  # @settings column_2_label {String} - Second column header
+  # @blocks comparison_row - Individual row with feature and values
+-%}
+
+<section class="comparison-table-section" style="background-color: {{ section.settings.background_color }}; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0;">
+  <div class="page-width" style="max-width: {{ section.settings.max_width }}px; margin: 0 auto;">
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="comparison-table__heading" style="color: {{ section.settings.heading_color }}; font-size: {{ section.settings.heading_size }}px; text-align: {{ section.settings.heading_alignment }}; margin-bottom: {{ section.settings.heading_spacing }}px;">
+        {{ section.settings.heading | escape }}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <p class="comparison-table__description" style="color: {{ section.settings.description_color }}; text-align: {{ section.settings.heading_alignment }}; margin-bottom: 40px;">
+        {{ section.settings.description }}
+      </p>
+    {%- endif -%}
+
+    <div class="comparison-table__wrapper">
+      <table class="comparison-table" style="border-radius: {{ section.settings.table_border_radius }}px;">
+        <thead>
+          <tr>
+            <th class="comparison-table__feature-header" style="background-color: {{ section.settings.header_bg_color }}; color: {{ section.settings.header_text_color }};">
+              {{ section.settings.feature_label | default: 'Feature' }}
+            </th>
+            <th class="comparison-table__col-header comparison-table__col-header--1" style="background-color: {{ section.settings.column_1_bg_color }}; color: {{ section.settings.column_1_text_color }};">
+              {{ section.settings.column_1_label | default: 'Product A' }}
+            </th>
+            <th class="comparison-table__col-header comparison-table__col-header--2" style="background-color: {{ section.settings.column_2_bg_color }}; color: {{ section.settings.column_2_text_color }};">
+              {{ section.settings.column_2_label | default: 'Product B' }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'comparison_row' -%}
+              <tr class="comparison-table__row{% cycle ' comparison-table__row--odd', '' %}" {{ block.shopify_attributes }}>
+                <td class="comparison-table__feature" style="color: {{ section.settings.feature_text_color }};">
+                  {{ block.settings.feature_name | escape }}
+                </td>
+                <td class="comparison-table__value comparison-table__value--1" style="color: {{ section.settings.value_text_color }};">
+                  {%- case block.settings.column_1_value -%}
+                    {%- when 'check' -%}
+                      <span class="comparison-check" style="color: {{ section.settings.check_color }};" aria-label="Yes">{{ section.settings.check_icon | default: '&#10003;' }}</span>
+                    {%- when 'x' -%}
+                      <span class="comparison-x" style="color: {{ section.settings.x_color }};" aria-label="No">{{ section.settings.x_icon | default: '&#10007;' }}</span>
+                    {%- when 'custom' -%}
+                      {{ block.settings.column_1_custom }}
+                    {%- endcase -%}
+                </td>
+                <td class="comparison-table__value comparison-table__value--2" style="color: {{ section.settings.value_text_color }};">
+                  {%- case block.settings.column_2_value -%}
+                    {%- when 'check' -%}
+                      <span class="comparison-check" style="color: {{ section.settings.check_color }};" aria-label="Yes">{{ section.settings.check_icon | default: '&#10003;' }}</span>
+                    {%- when 'x' -%}
+                      <span class="comparison-x" style="color: {{ section.settings.x_color }};" aria-label="No">{{ section.settings.x_icon | default: '&#10007;' }}</span>
+                    {%- when 'custom' -%}
+                      {{ block.settings.column_2_custom }}
+                    {%- endcase -%}
+                </td>
+              </tr>
+            {%- endif -%}
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .comparison-table-section {
+    width: 100%;
+  }
+
+  .comparison-table__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .comparison-table__description {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .comparison-table__wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    font-size: {{ section.settings.table_font_size }}px;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: {{ section.settings.cell_padding }}px;
+    text-align: center;
+    border-bottom: 1px solid {{ section.settings.border_color | default: '#e5e7eb' }};
+  }
+
+  .comparison-table__feature-header,
+  .comparison-table__feature {
+    text-align: left;
+    width: {{ section.settings.feature_column_width }}%;
+  }
+
+  .comparison-table__col-header {
+    font-weight: 600;
+    font-size: {{ section.settings.header_font_size }}px;
+  }
+
+  .comparison-table__row--odd {
+    background-color: {{ section.settings.row_alt_bg_color | default: 'transparent' }};
+  }
+
+  .comparison-table__feature {
+    font-weight: {{ section.settings.feature_font_weight }};
+  }
+
+  .comparison-check,
+  .comparison-x {
+    font-size: {{ section.settings.icon_size }}px;
+    font-weight: bold;
+  }
+
+  /* Mobile optimization */
+  @media screen and (max-width: 767px) {
+    .comparison-table {
+      font-size: 14px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 12px 8px;
+    }
+
+    .comparison-table__col-header {
+      font-size: 14px;
+    }
+  }
+
+  {% if request.design_mode %}
+  .comparison-table-section {
+    position: relative;
+    outline: 2px dashed rgba(100, 150, 255, 0.3);
+    outline-offset: -2px;
+  }
+
+  .comparison-table__row:hover {
+    outline: 1px dashed rgba(100, 150, 255, 0.5);
+    background: rgba(100, 150, 255, 0.05);
+  }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "Comparison Table",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Product Comparison"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "info": "Optional description below heading"
+    },
+    {
+      "type": "header",
+      "content": "Column Labels"
+    },
+    {
+      "type": "text",
+      "id": "feature_label",
+      "label": "Feature Column Label",
+      "default": "Feature"
+    },
+    {
+      "type": "text",
+      "id": "column_1_label",
+      "label": "Column 1 Label",
+      "default": "Our Product"
+    },
+    {
+      "type": "text",
+      "id": "column_2_label",
+      "label": "Column 2 Label",
+      "default": "Competitor"
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "text",
+      "id": "check_icon",
+      "label": "Check Icon",
+      "default": "✓",
+      "info": "Character or emoji for positive values"
+    },
+    {
+      "type": "text",
+      "id": "x_icon",
+      "label": "X Icon",
+      "default": "✗",
+      "info": "Character or emoji for negative values"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Width",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "default": 900,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "feature_column_width",
+      "label": "Feature Column Width",
+      "min": 40,
+      "max": 70,
+      "step": 5,
+      "default": 55,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "cell_padding",
+      "label": "Cell Padding",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "table_border_radius",
+      "label": "Table Border Radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading Bottom Spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "table_font_size",
+      "label": "Table Font Size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "label": "Header Font Size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "feature_font_weight",
+      "label": "Feature Text Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "header_bg_color",
+      "label": "Header Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "header_text_color",
+      "label": "Header Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "column_1_bg_color",
+      "label": "Column 1 Header Background",
+      "default": "#5E8778"
+    },
+    {
+      "type": "color",
+      "id": "column_1_text_color",
+      "label": "Column 1 Header Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "column_2_bg_color",
+      "label": "Column 2 Header Background",
+      "default": "#8B7355"
+    },
+    {
+      "type": "color",
+      "id": "column_2_text_color",
+      "label": "Column 2 Header Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "feature_text_color",
+      "label": "Feature Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "value_text_color",
+      "label": "Value Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "check_color",
+      "label": "Check Icon Color",
+      "default": "#22C55E"
+    },
+    {
+      "type": "color",
+      "id": "x_color",
+      "label": "X Icon Color",
+      "default": "#EF4444"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "color",
+      "id": "row_alt_bg_color",
+      "label": "Alternate Row Background",
+      "info": "Leave blank for no alternating rows"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "comparison_row",
+      "name": "Comparison Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "feature_name",
+          "label": "Feature Name",
+          "default": "Feature description here"
+        },
+        {
+          "type": "select",
+          "id": "column_1_value",
+          "label": "Column 1 Value",
+          "options": [
+            { "value": "check", "label": "Check (Yes)" },
+            { "value": "x", "label": "X (No)" },
+            { "value": "custom", "label": "Custom Text" }
+          ],
+          "default": "check"
+        },
+        {
+          "type": "text",
+          "id": "column_1_custom",
+          "label": "Column 1 Custom Text",
+          "info": "Only used when 'Custom Text' is selected above"
+        },
+        {
+          "type": "select",
+          "id": "column_2_value",
+          "label": "Column 2 Value",
+          "options": [
+            { "value": "check", "label": "Check (Yes)" },
+            { "value": "x", "label": "X (No)" },
+            { "value": "custom", "label": "Custom Text" }
+          ],
+          "default": "x"
+        },
+        {
+          "type": "text",
+          "id": "column_2_custom",
+          "label": "Column 2 Custom Text",
+          "info": "Only used when 'Custom Text' is selected above"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison Table",
+      "settings": {
+        "heading": "Product Comparison",
+        "column_1_label": "Our Product",
+        "column_2_label": "Competitor"
+      },
+      "blocks": [
+        { "type": "comparison_row", "settings": { "feature_name": "Premium Quality", "column_1_value": "check", "column_2_value": "x" } },
+        { "type": "comparison_row", "settings": { "feature_name": "Fast Shipping", "column_1_value": "check", "column_2_value": "check" } },
+        { "type": "comparison_row", "settings": { "feature_name": "Money-Back Guarantee", "column_1_value": "check", "column_2_value": "x" } }
+      ]
+    },
+    {
+      "name": "Matcha vs Coffee",
+      "settings": {
+        "heading": "Matcha vs. Coffee",
+        "column_1_label": "MycoMatcha",
+        "column_2_label": "Coffee",
+        "column_1_bg_color": "#5E8778",
+        "column_2_bg_color": "#8B7355"
+      },
+      "blocks": [
+        { "type": "comparison_row", "settings": { "feature_name": "Enhanced Focus & Clarity", "column_1_value": "check", "column_2_value": "check" } },
+        { "type": "comparison_row", "settings": { "feature_name": "Smooth, Sustained Energy (4-6 hours)", "column_1_value": "check", "column_2_value": "x" } },
+        { "type": "comparison_row", "settings": { "feature_name": "No Jitters or Anxiety", "column_1_value": "check", "column_2_value": "x" } },
+        { "type": "comparison_row", "settings": { "feature_name": "No Afternoon Crash", "column_1_value": "check", "column_2_value": "x" } },
+        { "type": "comparison_row", "settings": { "feature_name": "Gentle on Digestion", "column_1_value": "check", "column_2_value": "x" } }
+      ]
+    }
+  ],
+  "templates": ["index", "page", "product", "collection"]
+}
+{% endschema %}

@@ -31,7 +31,7 @@
   "
   aria-label="Newsletter signup"
 >
-  {%- if section.settings.background_image != blank and section.settings.show_overlay -%}
+  {% if section.settings.background_image != blank and section.settings.show_overlay %}
     <div
       class="newsletter__overlay"
       style="
@@ -39,43 +39,43 @@
         opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
       "
     ></div>
-  {%- endif -%}
+  {% endif %}
 
   <div class="newsletter__container page-width">
     <div class="newsletter__wrapper" style="text-align: {{ section.settings.text_alignment }};">
-      {%- comment -%} Icon {%- endcomment -%}
-      {%- if section.settings.show_icon -%}
+      {% comment %} Icon {% endcomment %}
+      {% if section.settings.show_icon %}
         <div class="newsletter__icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
             <polyline points="22,6 12,13 2,6"></polyline>
           </svg>
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- comment -%} Content {%- endcomment -%}
+      {% comment %} Content {% endcomment %}
       <div class="newsletter__content">
-        {%- if section.settings.subheading != blank -%}
+        {% if section.settings.subheading != blank %}
           <span class="newsletter__subheading">{{ section.settings.subheading }}</span>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if section.settings.heading != blank -%}
+        {% if section.settings.heading != blank %}
           <h2 class="newsletter__heading" style="font-size: {{ section.settings.heading_size }}px;">
             {{ section.settings.heading }}
           </h2>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if section.settings.description != blank -%}
+        {% if section.settings.description != blank %}
           <div class="newsletter__description">{{ section.settings.description }}</div>
-        {%- endif -%}
+        {% endif %}
       </div>
 
-      {%- comment -%} Form {%- endcomment -%}
+      {% comment %} Form {% endcomment %}
       <div class="newsletter__form-wrapper">
         {% form 'customer', class: 'newsletter__form' %}
           <input type="hidden" name="contact[tags]" value="newsletter">
 
-          {%- if form.posted_successfully? -%}
+          {% if form.posted_successfully? %}
             <div class="newsletter__success" role="status">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -83,7 +83,7 @@
               </svg>
               <p>{{ section.settings.success_message | default: 'Thanks for subscribing!' }}</p>
             </div>
-          {%- else -%}
+          {% else %}
             <div class="newsletter__form-inner newsletter__form-inner--{{ section.settings.form_layout }}">
               <div class="newsletter__field">
                 <label for="newsletter-email-{{ section.id }}" class="visually-hidden">
@@ -106,21 +106,21 @@
               </div>
 
               <button type="submit" class="newsletter__button button button--{{ section.settings.button_style }}">
-                {%- if section.settings.button_label != blank -%}
+                {% if section.settings.button_label != blank %}
                   {{ section.settings.button_label }}
-                {%- else -%}
+                {% else %}
                   {{ 'general.newsletter.submit' | t | default: 'Subscribe' }}
-                {%- endif -%}
-                {%- if section.settings.show_button_icon -%}
+                {% endif %}
+                {% if section.settings.show_button_icon %}
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
-                {%- endif -%}
+                {% endif %}
               </button>
             </div>
 
-            {%- if form.errors contains 'email' -%}
+            {% if form.errors contains 'email' %}
               <p class="newsletter__error" id="newsletter-error-{{ section.id }}" role="alert">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
@@ -129,13 +129,13 @@
                 </svg>
                 {{ form.errors.messages.email }}
               </p>
-            {%- endif -%}
-          {%- endif -%}
+            {% endif %}
+          {% endif %}
         {% endform %}
 
-        {%- if section.settings.disclaimer != blank -%}
+        {% if section.settings.disclaimer != blank %}
           <p class="newsletter__disclaimer">{{ section.settings.disclaimer }}</p>
-        {%- endif -%}
+        {% endif %}
       </div>
     </div>
   </div>
@@ -457,7 +457,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content"
+      "content": "Content"
     },
     {
       "type": "text",
@@ -495,7 +495,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Form Settings"
+      "content": "Form Settings"
     },
     {
       "type": "text",
@@ -585,7 +585,7 @@
     },
     {
       "type": "header",
-      "content": "🖼️ Background"
+      "content": "Background"
     },
     {
       "type": "image_picker",
@@ -627,7 +627,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",
@@ -657,7 +657,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Input Styling"
+      "content": "Input Styling"
     },
     {
       "type": "color",
@@ -693,7 +693,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Section Spacing"
+      "content": "Section Spacing"
     },
     {
       "type": "range",

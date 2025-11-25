@@ -26,13 +26,13 @@
   "
 >
   <div class="apps-section__container{% if section.settings.full_width %} apps-section__container--full{% else %} page-width{% endif %}">
-    {%- if section.blocks.size > 0 -%}
-      {%- for block in section.blocks -%}
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
         <div class="apps-section__block" {{ block.shopify_attributes }}>
           {% render block %}
         </div>
-      {%- endfor -%}
-    {%- elsif request.design_mode -%}
+      {% endfor %}
+    {% elsif request.design_mode %}
       <div class="apps-section__placeholder">
         <div class="apps-section__placeholder-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -48,7 +48,7 @@
           Click "Add block" and select an app block to get started.
         </p>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </div>
 
@@ -227,7 +227,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Styling"
+      "content": "Styling"
     },
     {
       "type": "color",
@@ -237,7 +237,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",

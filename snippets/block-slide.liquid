@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Slide Snippet
   -------------------
   Reusable slide block for slideshow sections.
@@ -38,12 +38,12 @@
       is_first: forloop.first,
       slide_index: forloop.index0
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign slide_is_first = is_first | default: false
   assign slide_index = slide_index | default: 0
--%}
+%}
 
 <div
   class="block-slide{% if slide_is_first %} block-slide--active{% endif %}"
@@ -52,9 +52,9 @@
   aria-hidden="{% unless slide_is_first %}true{% endunless %}"
   {{ block.shopify_attributes }}
 >
-  {%- comment -%} Background Image {%- endcomment -%}
+  {% comment %} Background Image {% endcomment %}
   <div class="block-slide__media">
-    {%- if block.settings.image != blank -%}
+    {% if block.settings.image != blank %}
       <img
         src="{{ block.settings.image | image_url: width: 1920 }}"
         srcset="
@@ -71,16 +71,16 @@
         {% if slide_is_first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
         class="block-slide__image"
       >
-    {%- else -%}
+    {% else %}
       <div class="block-slide__placeholder">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" fill="none" preserveAspectRatio="xMidYMid slice">
           <rect width="1920" height="1080" fill="#E8E8E8"/>
           <text x="50%" y="50%" text-anchor="middle" fill="#CACACA" font-size="48" font-family="sans-serif">Slide {{ slide_index | plus: 1 }}</text>
         </svg>
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if block.settings.show_overlay -%}
+    {% if block.settings.show_overlay %}
       <div
         class="block-slide__overlay"
         style="
@@ -88,10 +88,10 @@
           opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
         "
       ></div>
-    {%- endif -%}
+    {% endif %}
   </div>
 
-  {%- comment -%} Content {%- endcomment -%}
+  {% comment %} Content {% endcomment %}
   <div
     class="block-slide__content block-slide__content--{{ block.settings.content_position }}"
     style="
@@ -100,16 +100,16 @@
     "
   >
     <div class="block-slide__content-inner">
-      {%- if block.settings.subheading != blank -%}
+      {% if block.settings.subheading != blank %}
         <span
           class="block-slide__subheading"
           style="color: {{ block.settings.text_color | default: '#ffffff' }};"
         >
           {{ block.settings.subheading }}
         </span>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if block.settings.heading != blank -%}
+      {% if block.settings.heading != blank %}
         <h2
           class="block-slide__heading"
           style="
@@ -119,18 +119,18 @@
         >
           {{ block.settings.heading }}
         </h2>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if block.settings.text != blank -%}
+      {% if block.settings.text != blank %}
         <div
           class="block-slide__text"
           style="color: {{ block.settings.text_color | default: '#ffffff' }};"
         >
           {{ block.settings.text }}
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if block.settings.button_label != blank -%}
+      {% if block.settings.button_label != blank %}
         <div class="block-slide__buttons">
           <a
             href="{{ block.settings.button_link }}"
@@ -140,7 +140,7 @@
             {{ block.settings.button_label }}
           </a>
 
-          {%- if block.settings.secondary_button_label != blank -%}
+          {% if block.settings.secondary_button_label != blank %}
             <a
               href="{{ block.settings.secondary_button_link }}"
               class="block-slide__button block-slide__button--secondary button button--{{ block.settings.secondary_button_style }}"
@@ -148,9 +148,9 @@
             >
               {{ block.settings.secondary_button_label }}
             </a>
-          {%- endif -%}
+          {% endif %}
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 </div>

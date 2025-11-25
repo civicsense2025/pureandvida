@@ -1,12 +1,12 @@
-{%- liquid
+{% liquid
   # @description Renders tabbed product information with lazy loading support
   # @param product {Product} - The product object
   # @param block {Block} - The block object for settings
   # @example
   #   {% render 'product-tabs', product: product, block: block %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign tabs = ''
   if block.settings.tab_description
     assign tabs = tabs | append: 'description,'
@@ -27,12 +27,12 @@
     assign tabs = tabs | append: 'faq,'
   endif
   assign tabs_array = tabs | split: ','
--%}
+%}
 
-{%- if tabs_array.size > 0 -%}
+{% if tabs_array.size > 0 %}
   <div class="product-tabs" data-product-tabs role="tablist" aria-label="{{ 'products.product.product_information_tabs' | t | default: 'Product Information' }}">
     <div class="product-tabs__header" role="tablist">
-      {%- if block.settings.tab_description -%}
+      {% if block.settings.tab_description %}
         <button 
           type="button" 
           class="product-tabs__tab{% if forloop.first %} product-tabs__tab--active{% endif %}" 
@@ -42,8 +42,8 @@
         >
           {{ 'products.product.tabs.description' | t | default: 'Description' }}
         </button>
-      {%- endif -%}
-      {%- if block.settings.tab_specifications and product.metafields.custom.specifications != blank -%}
+      {% endif %}
+      {% if block.settings.tab_specifications and product.metafields.custom.specifications != blank %}
         <button 
           type="button" 
           class="product-tabs__tab" 
@@ -53,8 +53,8 @@
         >
           {{ 'products.product.tabs.specifications' | t | default: 'Specifications' }}
         </button>
-      {%- endif -%}
-      {%- if block.settings.tab_ingredients and product.metafields.custom.ingredients != blank -%}
+      {% endif %}
+      {% if block.settings.tab_ingredients and product.metafields.custom.ingredients != blank %}
         <button 
           type="button" 
           class="product-tabs__tab" 
@@ -64,8 +64,8 @@
         >
           {{ 'products.product.tabs.ingredients' | t | default: 'Ingredients' }}
         </button>
-      {%- endif -%}
-      {%- if block.settings.tab_benefits and product.metafields.custom.benefits != blank -%}
+      {% endif %}
+      {% if block.settings.tab_benefits and product.metafields.custom.benefits != blank %}
         <button 
           type="button" 
           class="product-tabs__tab" 
@@ -75,8 +75,8 @@
         >
           {{ 'products.product.tabs.benefits' | t | default: 'Benefits' }}
         </button>
-      {%- endif -%}
-      {%- if block.settings.tab_reviews -%}
+      {% endif %}
+      {% if block.settings.tab_reviews %}
         <button 
           type="button" 
           class="product-tabs__tab" 
@@ -86,8 +86,8 @@
         >
           {{ 'products.product.tabs.reviews' | t | default: 'Reviews' }}
         </button>
-      {%- endif -%}
-      {%- if block.settings.tab_faq and product.metafields.custom.faq != blank -%}
+      {% endif %}
+      {% if block.settings.tab_faq and product.metafields.custom.faq != blank %}
         <button 
           type="button" 
           class="product-tabs__tab" 
@@ -97,11 +97,11 @@
         >
           {{ 'products.product.tabs.faq' | t | default: 'FAQ' }}
         </button>
-      {%- endif -%}
+      {% endif %}
     </div>
 
     <div class="product-tabs__content">
-      {%- if block.settings.tab_description -%}
+      {% if block.settings.tab_description %}
         <div 
           class="product-tabs__panel{% if forloop.first %} product-tabs__panel--active{% endif %}" 
           role="tabpanel" 
@@ -112,8 +112,8 @@
             {{ product.description }}
           </div>
         </div>
-      {%- endif -%}
-      {%- if block.settings.tab_specifications and product.metafields.custom.specifications != blank -%}
+      {% endif %}
+      {% if block.settings.tab_specifications and product.metafields.custom.specifications != blank %}
         <div 
           class="product-tabs__panel" 
           role="tabpanel" 
@@ -125,8 +125,8 @@
             {{ product.metafields.custom.specifications }}
           </div>
         </div>
-      {%- endif -%}
-      {%- if block.settings.tab_ingredients and product.metafields.custom.ingredients != blank -%}
+      {% endif %}
+      {% if block.settings.tab_ingredients and product.metafields.custom.ingredients != blank %}
         <div 
           class="product-tabs__panel" 
           role="tabpanel" 
@@ -138,8 +138,8 @@
             {{ product.metafields.custom.ingredients }}
           </div>
         </div>
-      {%- endif -%}
-      {%- if block.settings.tab_benefits and product.metafields.custom.benefits != blank -%}
+      {% endif %}
+      {% if block.settings.tab_benefits and product.metafields.custom.benefits != blank %}
         <div 
           class="product-tabs__panel" 
           role="tabpanel" 
@@ -151,8 +151,8 @@
             {{ product.metafields.custom.benefits }}
           </div>
         </div>
-      {%- endif -%}
-      {%- if block.settings.tab_reviews -%}
+      {% endif %}
+      {% if block.settings.tab_reviews %}
         <div 
           class="product-tabs__panel" 
           role="tabpanel" 
@@ -161,12 +161,12 @@
           data-lazy-load
         >
           <div class="product-reviews">
-            {%- comment -%} Reviews integration placeholder - integrate with review app {%- endcomment -%}
+            {% comment %} Reviews integration placeholder - integrate with review app {% endcomment %}
             <p>{{ 'products.product.reviews_coming_soon' | t | default: 'Reviews coming soon' }}</p>
           </div>
         </div>
-      {%- endif -%}
-      {%- if block.settings.tab_faq and product.metafields.custom.faq != blank -%}
+      {% endif %}
+      {% if block.settings.tab_faq and product.metafields.custom.faq != blank %}
         <div 
           class="product-tabs__panel" 
           role="tabpanel" 
@@ -178,8 +178,8 @@
             {{ product.metafields.custom.faq }}
           </div>
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
-{%- endif -%}
+{% endif %}
 

@@ -1,12 +1,12 @@
-{%- comment -%}
+{% comment %}
   Theme Block: Benefit
   --------------------
   Reusable benefit/feature item with icon image, title, and description.
   Can be added to any section that supports @theme blocks.
   Supports grouped overrides for colors, typography, and spacing.
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   # Content
   assign benefit_icon = block.settings.icon
   assign benefit_icon_asset = block.settings.icon_asset
@@ -36,7 +36,7 @@
   assign border_width = block.settings.border_width
   assign border_radius = block.settings.border_radius
   assign alignment = block.settings.alignment | default: 'center'
--%}
+%}
 
 <div
   class="block-benefit block-benefit--align-{{ alignment }}"
@@ -59,7 +59,7 @@
     {% if border_radius != blank %}--block-border-radius: {{ border_radius }}px;{% endif %}
   "
 >
-  {%- if benefit_icon != blank -%}
+  {% if benefit_icon != blank %}
     <div class="block-benefit__icon">
       <img
         src="{{ benefit_icon | image_url: width: 200 }}"
@@ -69,7 +69,7 @@
         height="100"
       >
     </div>
-  {%- elsif benefit_icon_asset != blank -%}
+  {% elsif benefit_icon_asset != blank %}
     <div class="block-benefit__icon">
       <img
         src="{{ benefit_icon_asset | asset_url }}"
@@ -77,19 +77,19 @@
         loading="lazy"
       >
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if benefit_title != blank -%}
+  {% if benefit_title != blank %}
     <h3 class="block-benefit__title">
       {{ benefit_title | escape }}
     </h3>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if benefit_description != blank -%}
+  {% if benefit_description != blank %}
     <p class="block-benefit__description">
       {{ benefit_description }}
     </p>
-  {%- endif -%}
+  {% endif %}
 </div>
 
 {% stylesheet %}
@@ -194,7 +194,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Color Overrides"
+      "content": "Color Overrides"
     },
     {
       "type": "paragraph",
@@ -228,7 +228,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Typography Overrides"
+      "content": "Typography Overrides"
     },
     {
       "type": "paragraph",
@@ -279,7 +279,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing Overrides"
+      "content": "Spacing Overrides"
     },
     {
       "type": "paragraph",

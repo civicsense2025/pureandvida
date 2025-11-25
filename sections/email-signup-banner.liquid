@@ -31,7 +31,7 @@
     padding-bottom: {{ section.settings.padding_bottom }}px;
   "
 >
-  {%- if section.settings.show_overlay and section.settings.background_image != blank -%}
+  {% if section.settings.show_overlay and section.settings.background_image != blank %}
     <div
       class="email-signup-banner__overlay"
       style="
@@ -39,16 +39,16 @@
         opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
       "
     ></div>
-  {%- endif -%}
+  {% endif %}
 
   <div class="email-signup-banner__container{% if section.settings.full_width %} email-signup-banner__container--full{% else %} page-width{% endif %}">
     <div class="email-signup-banner__content" style="max-width: {{ section.settings.content_width }}px; text-align: {{ section.settings.text_alignment }};">
 
-      {%- if section.settings.show_icon and section.settings.icon != blank -%}
+      {% if section.settings.show_icon and section.settings.icon != blank %}
         <span class="email-signup-banner__icon" aria-hidden="true">{{ section.settings.icon }}</span>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.subheading != blank -%}
+      {% if section.settings.subheading != blank %}
         <p
           class="email-signup-banner__subheading"
           style="
@@ -58,9 +58,9 @@
         >
           {{ section.settings.subheading | escape }}
         </p>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.heading != blank -%}
+      {% if section.settings.heading != blank %}
         <h2
           class="email-signup-banner__heading"
           style="
@@ -71,9 +71,9 @@
         >
           {{ section.settings.heading | escape }}
         </h2>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.show_discount and section.settings.discount_text != blank -%}
+      {% if section.settings.show_discount and section.settings.discount_text != blank %}
         <div
           class="email-signup-banner__discount"
           style="
@@ -83,9 +83,9 @@
         >
           {{ section.settings.discount_text | escape }}
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.description != blank -%}
+      {% if section.settings.description != blank %}
         <p
           class="email-signup-banner__description"
           style="
@@ -95,20 +95,20 @@
         >
           {{ section.settings.description }}
         </p>
-      {%- endif -%}
+      {% endif %}
 
       <div class="email-signup-banner__form-wrapper">
-        {%- form 'customer', id: form_id, class: 'email-signup-banner__form' -%}
+        {% form 'customer', id: form_id, class: 'email-signup-banner__form' %}
           <input type="hidden" name="contact[tags]" value="newsletter,{{ section.settings.additional_tags }}">
 
-          {%- if form.posted_successfully? -%}
+          {% if form.posted_successfully? %}
             <div class="email-signup-banner__success" role="alert">
               <span class="success-icon" aria-hidden="true">✓</span>
               <p>{{ section.settings.success_message | default: 'Thanks for subscribing!' }}</p>
             </div>
-          {%- else -%}
+          {% else %}
             <div class="email-signup-banner__input-group email-signup-banner__input-group--{{ section.settings.form_layout }}">
-              {%- if section.settings.show_name_field -%}
+              {% if section.settings.show_name_field %}
                 <input
                   type="text"
                   name="contact[{{ 'customer.first_name' | t | default: 'First Name' }}]"
@@ -122,7 +122,7 @@
                     border-radius: {{ section.settings.input_border_radius }}px;
                   "
                 >
-              {%- endif -%}
+              {% endif %}
 
               <input
                 type="email"
@@ -153,35 +153,35 @@
               </button>
             </div>
 
-            {%- if form.errors -%}
+            {% if form.errors %}
               <p class="email-signup-banner__error" role="alert">
                 {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
               </p>
-            {%- endif -%}
-          {%- endif -%}
-        {%- endform -%}
+            {% endif %}
+          {% endif %}
+        {% endform %}
 
-        {%- if section.settings.privacy_text != blank -%}
+        {% if section.settings.privacy_text != blank %}
           <p class="email-signup-banner__privacy" style="{% if section.settings.privacy_color != blank %}color: {{ section.settings.privacy_color }};{% endif %}">
             {{ section.settings.privacy_text }}
           </p>
-        {%- endif -%}
+        {% endif %}
       </div>
 
-      {%- if section.settings.show_features -%}
+      {% if section.settings.show_features %}
         <div class="email-signup-banner__features">
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'feature' -%}
+          {% for block in section.blocks %}
+            {% if block.type == 'feature' %}
               <div class="email-signup-banner__feature" {{ block.shopify_attributes }}>
-                {%- if block.settings.icon != blank -%}
+                {% if block.settings.icon != blank %}
                   <span class="feature-icon" aria-hidden="true">{{ block.settings.icon }}</span>
-                {%- endif -%}
+                {% endif %}
                 <span class="feature-text">{{ block.settings.text }}</span>
               </div>
-            {%- endif -%}
-          {%- endfor -%}
+            {% endif %}
+          {% endfor %}
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 </section>
@@ -555,7 +555,7 @@
     },
     {
       "type": "header",
-      "content": "🖼️ Background"
+      "content": "Background"
     },
     {
       "type": "image_picker",
@@ -725,7 +725,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Form"
+      "content": "Form"
     },
     {
       "type": "select",
@@ -781,7 +781,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Form Styling"
+      "content": "Form Styling"
     },
     {
       "type": "color",
@@ -841,7 +841,7 @@
     },
     {
       "type": "header",
-      "content": "✨ Features"
+      "content": "Features"
     },
     {
       "type": "checkbox",
@@ -852,7 +852,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",
@@ -878,13 +878,13 @@
   "blocks": [
     {
       "type": "feature",
-      "name": "✨ Feature",
+      "name": "Feature",
       "settings": [
         {
           "type": "text",
           "id": "icon",
           "label": "Icon",
-          "default": "✓"
+          "default": ""
         },
         {
           "type": "text",
@@ -918,8 +918,8 @@
       },
       "blocks": [
         { "type": "feature", "settings": { "icon": "🎁", "text": "Exclusive offers" } },
-        { "type": "feature", "settings": { "icon": "🚚", "text": "Free shipping" } },
-        { "type": "feature", "settings": { "icon": "🔔", "text": "New arrivals alerts" } }
+        { "type": "feature", "settings": { "icon": "", "text": "Free shipping" } },
+        { "type": "feature", "settings": { "icon": "", "text": "New arrivals alerts" } }
       ]
     }
   ]

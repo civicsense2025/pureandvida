@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Logo component for header and footer
   # Reusable logo snippet that supports both image and text logos
   # @param logo_image {Image} - Logo image (optional)
@@ -12,13 +12,13 @@
   # @param class_name {String} - Additional CSS classes
   # @example
   #   {% render 'logo', logo_image: section.settings.logo_image, logo_text: section.settings.logo_text %}
--%}
+%}
 
-{%- assign logo_link = logo_link | default: routes.root_url -%}
-{%- assign class_name = class_name | default: 'logo' -%}
+{% assign logo_link = logo_link | default: routes.root_url %}
+{% assign class_name = class_name | default: 'logo' %}
 
 <a href="{{ logo_link }}" class="{{ class_name }}__link" style="text-decoration: none; display: inline-block;">
-  {%- if logo_image != blank -%}
+  {% if logo_image != blank %}
     <img 
       src="{{ logo_image | image_url: width: logo_width }}" 
       alt="{{ shop.name | escape }}" 
@@ -28,13 +28,13 @@
       width="{{ logo_width }}"
       height="{{ logo_height }}"
     >
-  {%- elsif logo_text != blank -%}
+  {% elsif logo_text != blank %}
     <span class="{{ class_name }}__text" style="{% if logo_text_color != blank %}color: {{ logo_text_color }};{% endif %} font-size: {{ logo_text_size }}px; font-weight: bold; display: inline-block;">
       {{ logo_text }}
-      {%- if show_plus -%}
+      {% if show_plus %}
         <span class="{{ class_name }}__plus" style="{% if logo_text_color != blank %}color: {{ logo_text_color }};{% endif %}">+</span>
-      {%- endif -%}
+      {% endif %}
     </span>
-  {%- endif -%}
+  {% endif %}
 </a>
 

@@ -28,31 +28,31 @@
      {% if request.design_mode %}data-section-type="faq" data-items="{{ faq_count }}" data-mode="{{ section.settings.content_mode }}"{% endif %}
      style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
 
-  {%- if request.design_mode -%}
+  {% if request.design_mode %}
     <div class="editor-controls editor-controls--faq">
-      <span class="editor-label">❓ FAQ</span>
+      <span class="editor-label">FAQ</span>
       <span class="editor-info">{{ faq_count }} questions | {% if section.settings.default_open %}First open{% else %}All closed{% endif %} | Max-width: {{ section.settings.content_width }}px</span>
     </div>
-  {%- endif -%}
+  {% endif %}
 
   <div class="faq-content page-width" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="faq-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
+    {% endif %}
     
-    {%- if section.settings.description != blank -%}
+    {% if section.settings.description != blank %}
       <p class="faq-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.description_size }}px; margin-bottom: {{ section.settings.description_spacing }}px;">{{ section.settings.description }}</p>
-    {%- endif -%}
+    {% endif %}
     
     <div class="faq-list">
-      {%- comment -%} Determine which mode to use: blocks mode if set AND blocks exist, otherwise use settings mode {%- endcomment -%}
-      {%- if section.settings.content_mode == 'blocks' and section.blocks.size > 0 -%}
-        {%- comment -%} Blocks mode - Dynamic FAQ items {%- endcomment -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type contains '@theme' -%}
+      {% comment %} Determine which mode to use: blocks mode if set AND blocks exist, otherwise use settings mode {% endcomment %}
+      {% if section.settings.content_mode == 'blocks' and section.blocks.size > 0 %}
+        {% comment %} Blocks mode - Dynamic FAQ items {% endcomment %}
+        {% for block in section.blocks %}
+          {% if block.type contains '@theme' %}
             {{ block }}
-          {%- else -%}
-            {%- render 'block-faq-item',
+          {% else %}
+            {% render 'block-faq-item',
               block: block,
               question: block.settings.question,
               answer: block.settings.answer,
@@ -73,18 +73,18 @@
               question_weight: section.settings.question_weight,
               answer_size: section.settings.answer_size,
               answer_line_height: section.settings.answer_line_height
-            -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- else -%}
-        {%- comment -%} Settings mode - Fixed fields (used when content_mode is 'settings' OR when blocks mode has no blocks) {%- endcomment -%}
-        {%- for i in (1..10) -%}
-          {%- assign question_key = 'faq_' | append: i | append: '_question' -%}
-          {%- assign answer_key = 'faq_' | append: i | append: '_answer' -%}
-          {%- assign question = section.settings[question_key] -%}
-          {%- assign answer = section.settings[answer_key] -%}
-          {%- if question != blank or answer != blank -%}
-            {%- render 'block-faq-item',
+            %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        {% comment %} Settings mode - Fixed fields (used when content_mode is 'settings' OR when blocks mode has no blocks) {% endcomment %}
+        {% for i in (1..10) %}
+          {% assign question_key = 'faq_' | append: i | append: '_question' %}
+          {% assign answer_key = 'faq_' | append: i | append: '_answer' %}
+          {% assign question = section.settings[question_key] %}
+          {% assign answer = section.settings[answer_key] %}
+          {% if question != blank or answer != blank %}
+            {% render 'block-faq-item',
               question: question,
               answer: answer,
               open: section.settings.default_open and forloop.first,
@@ -104,10 +104,10 @@
               question_weight: section.settings.question_weight,
               answer_size: section.settings.answer_size,
               answer_line_height: section.settings.answer_line_height
-            -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
+            %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
 </{{ structural_element }}>
@@ -224,15 +224,15 @@
   }
 
   .faq-question:hover {
-    {%- if section.settings.item_hover_background_color != blank -%}
+    {% if section.settings.item_hover_background_color != blank %}
       background-color: {{ section.settings.item_hover_background_color }} !important;
-    {%- endif -%}
+    {% endif %}
   }
 
   .faq-item[open] .faq-question {
-    {%- if section.settings.item_open_background_color != blank -%}
+    {% if section.settings.item_open_background_color != blank %}
       background-color: {{ section.settings.item_open_background_color }};
-    {%- endif -%}
+    {% endif %}
   }
 
   .faq-icon {
@@ -292,7 +292,7 @@
 
 {% schema %}
 {
-  "name": "❓ FAQ Section",
+  "name": "FAQ Section",
   "tag": "section",
   "class": "section",
   "settings": [
@@ -302,7 +302,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content Management Mode"
+      "content": "Content Management Mode"
     },
     {
       "type": "select",

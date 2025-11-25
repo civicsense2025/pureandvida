@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Image SEO helper for automatic alt text generation and optimization
   # Supports custom alt text via metafields with intelligent fallbacks
   # Includes width/height attributes for CLS prevention and lazy loading
@@ -11,11 +11,11 @@
   # @param sizes {String} - Responsive image sizes attribute (optional)
   # @example
   #   {% render 'image-seo', image: product.featured_media, alt_text: 'Custom alt text', width: 800 %}
--%}
+%}
 
-{%- if image == blank -%}
+{% if image == blank %}
   <!-- Image SEO: No image provided -->
-{%- else -%}
+{% else %}
   
   assign image_width = width | default: 1200
   assign image_height = height
@@ -69,10 +69,10 @@
   if lazy_loading
     assign image_classes = image_classes | append: ' lazy-load'
   endif
--%}
+%}
 
-{%- comment -%} Generate responsive image srcset {%- endcomment -%}
-{%- liquid
+{% comment %} Generate responsive image srcset {% endcomment %}
+{% liquid
   assign srcset_sizes = '375,768,1200,1920' | split: ','
   assign srcset_parts = ''
   
@@ -85,64 +85,64 @@
       assign srcset_parts = srcset_parts | append: image | image_url: width: size_num | append: ' ' | append: size_num | append: 'w'
     endif
   endfor
--%}
+%}
 
 <img 
   src="{{ image | image_url: width: image_width }}"
-  {%- if srcset_parts != blank -%}
+  {% if srcset_parts != blank %}
   srcset="{{ srcset_parts }}"
   sizes="{{ image_sizes }}"
-  {%- endif -%}
+  {% endif %}
   alt="{{ image_alt | escape }}"
-  {%- if image_width != blank -%}
+  {% if image_width != blank %}
   width="{{ image_width }}"
-  {%- endif -%}
-  {%- if image_height != blank -%}
+  {% endif %}
+  {% if image_height != blank %}
   height="{{ image_height }}"
-  {%- endif -%}
-  {%- if lazy_loading -%}
+  {% endif %}
+  {% if lazy_loading %}
   loading="lazy"
   decoding="async"
-  {%- else -%}
+  {% else %}
   loading="eager"
-  {%- endif -%}
-  {%- if image_classes != blank -%}
+  {% endif %}
+  {% if image_classes != blank %}
   class="{{ image_classes }}"
-  {%- endif -%}
-  {%- if image.focal_point != blank -%}
+  {% endif %}
+  {% if image.focal_point != blank %}
   style="object-position: {{ image.focal_point }}"
-  {%- endif -%}
+  {% endif %}
 >
 
-{%- comment -%} WebP format support (if available) {%- endcomment -%}
-{%- if settings.seo_enable_webp -%}
+{% comment %} WebP format support (if available) {% endcomment %}
+{% if settings.seo_enable_webp %}
 <picture>
   <source 
     srcset="{{ image | image_url: width: image_width, format: 'webp' }}"
     type="image/webp"
-    {%- if lazy_loading -%}
+    {% if lazy_loading %}
     loading="lazy"
-    {%- endif -%}
+    {% endif %}
   >
   <img 
     src="{{ image | image_url: width: image_width }}"
     alt="{{ image_alt | escape }}"
-    {%- if image_width != blank -%}
+    {% if image_width != blank %}
     width="{{ image_width }}"
-    {%- endif -%}
-    {%- if image_height != blank -%}
+    {% endif %}
+    {% if image_height != blank %}
     height="{{ image_height }}"
-    {%- endif -%}
-    {%- if lazy_loading -%}
+    {% endif %}
+    {% if lazy_loading %}
     loading="lazy"
     decoding="async"
-    {%- else -%}
+    {% else %}
     loading="eager"
-    {%- endif -%}
-    {%- if image_classes != blank -%}
+    {% endif %}
+    {% if image_classes != blank %}
     class="{{ image_classes }}"
-    {%- endif -%}
+    {% endif %}
   >
 </picture>
-{%- endif -%}
-{%- endif -%}
+{% endif %}
+{% endif %}

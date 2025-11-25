@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block FAQ Item Snippet
   ----------------------
   Reusable accordion/FAQ item using details/summary pattern.
@@ -38,9 +38,9 @@
       question_color: section.settings.default_question_color,
       answer_color: section.settings.default_answer_color
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign faq_open = open | default: false
   assign faq_icon_text = icon_text | default: '+'
   assign faq_icon_size = icon_size | default: 24
@@ -52,7 +52,7 @@
   assign faq_question_weight = question_weight | default: 500
   assign faq_answer_size = answer_size | default: 16
   assign faq_answer_line_height = answer_line_height | default: 1.6
--%}
+%}
 
 <details
   class="block-faq-item"
@@ -94,11 +94,11 @@
     "
   >
     <div class="block-faq-item__answer-content rte">
-      {%- if answer contains '<p>' -%}
+      {% if answer contains '<p>' %}
         {{ answer }}
-      {%- else -%}
+      {% else %}
         <p>{{ answer }}</p>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 </details>

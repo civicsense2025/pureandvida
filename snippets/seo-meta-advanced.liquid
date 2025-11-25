@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Advanced meta tag generator with template-specific logic, metafield support, and intelligent fallbacks
   # Provides character limit validation, truncation, and support for all template types
   # @param template_type {String} - Template type override (optional)
@@ -6,18 +6,18 @@
   # @param custom_description {String} - Custom description override (optional)
   # @example
   #   {% render 'seo-meta-advanced' %}
--%}
+%}
 
-{%- comment -%} Character limits for SEO {%- endcomment -%}
-{%- liquid
+{% comment %} Character limits for SEO {% endcomment %}
+{% liquid
   assign title_max_length = 60
   assign description_max_length = 160
   assign title_min_length = 30
   assign description_min_length = 120
--%}
+%}
 
-{%- comment -%} Get meta title with priority: custom > metafield > template-specific > default {%- endcomment -%}
-{%- liquid
+{% comment %} Get meta title with priority: custom > metafield > template-specific > default {% endcomment %}
+{% liquid
   assign seo_title = custom_title
   
   if seo_title == blank
@@ -64,10 +64,10 @@
   if seo_title_length > title_max_length
     assign seo_title = seo_title | truncate: title_max_length
   endif
--%}
+%}
 
-{%- comment -%} Get meta description with priority: custom > metafield > template-specific > default {%- endcomment -%}
-{%- liquid
+{% comment %} Get meta description with priority: custom > metafield > template-specific > default {% endcomment %}
+{% liquid
   assign seo_description = custom_description
   
   if seo_description == blank
@@ -116,10 +116,10 @@
       assign seo_description = seo_description | truncate: description_max_length
     endif
   endif
--%}
+%}
 
-{%- comment -%} Get SEO image {%- endcomment -%}
-{%- liquid
+{% comment %} Get SEO image {% endcomment %}
+{% liquid
   assign seo_image = null
   assign seo_image_width = 1200
   assign seo_image_height = 630
@@ -140,33 +140,33 @@
     assign seo_image_width = 1200
     assign seo_image_height = seo_image_width | divided_by: seo_image.aspect_ratio | round
   endif
--%}
+%}
 
-{%- comment -%} Output meta title {%- endcomment -%}
-{%- if seo_title != blank -%}
+{% comment %} Output meta title {% endcomment %}
+{% if seo_title != blank %}
   <meta name="title" content="{{ seo_title | escape }}">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Output meta description {%- endcomment -%}
-{%- if seo_description != blank -%}
+{% comment %} Output meta description {% endcomment %}
+{% if seo_description != blank %}
   <meta name="description" content="{{ seo_description | escape }}">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Output meta keywords (legacy support) {%- endcomment -%}
-{%- if template.name == 'product' and product.metafields.seo.keywords != blank -%}
+{% comment %} Output meta keywords (legacy support) {% endcomment %}
+{% if template.name == 'product' and product.metafields.seo.keywords != blank %}
   <meta name="keywords" content="{{ product.metafields.seo.keywords | escape }}">
-{%- elsif template.name == 'collection' and collection.metafields.seo.keywords != blank -%}
+{% elsif template.name == 'collection' and collection.metafields.seo.keywords != blank %}
   <meta name="keywords" content="{{ collection.metafields.seo.keywords | escape }}">
-{%- elsif template.name == 'article' and article.metafields.seo.keywords != blank -%}
+{% elsif template.name == 'article' and article.metafields.seo.keywords != blank %}
   <meta name="keywords" content="{{ article.metafields.seo.keywords | escape }}">
-{%- elsif template.name == 'page' and page.metafields.seo.keywords != blank -%}
+{% elsif template.name == 'page' and page.metafields.seo.keywords != blank %}
   <meta name="keywords" content="{{ page.metafields.seo.keywords | escape }}">
-{%- elsif settings.seo_default_keywords != blank -%}
+{% elsif settings.seo_default_keywords != blank %}
   <meta name="keywords" content="{{ settings.seo_default_keywords | escape }}">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Output SEO image meta tags {%- endcomment -%}
-{%- if seo_image != null -%}
+{% comment %} Output SEO image meta tags {% endcomment %}
+{% if seo_image != null %}
   <meta property="og:image" content="https:{{ seo_image | image_url: width: seo_image_width }}">
   <meta property="og:image:secure_url" content="https:{{ seo_image | image_url: width: seo_image_width }}">
   <meta property="og:image:width" content="{{ seo_image_width }}">
@@ -174,13 +174,13 @@
   <meta property="og:image:alt" content="{{ seo_image.alt | default: seo_title | escape }}">
   <meta name="twitter:image" content="https:{{ seo_image | image_url: width: seo_image_width }}">
   <meta name="twitter:image:alt" content="{{ seo_image.alt | default: seo_title | escape }}">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} SEO Validation Data (for development/debugging) {%- endcomment -%}
-{%- if settings.seo_enable_validation -%}
+{% comment %} SEO Validation Data (for development/debugging) {% endcomment %}
+{% if settings.seo_enable_validation %}
   <meta name="seo:title-length" content="{{ seo_title_length }}">
   <meta name="seo:description-length" content="{{ seo_description | size }}">
   <meta name="seo:title-valid" content="{% if seo_title_length >= title_min_length and seo_title_length <= title_max_length %}true{% else %}false{% endif %}">
   <meta name="seo:description-valid" content="{% if seo_description != blank and seo_description.size >= description_min_length and seo_description.size <= description_max_length %}true{% else %}false{% endif %}">
-{%- endif -%}
+{% endif %}
 

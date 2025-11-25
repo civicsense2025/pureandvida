@@ -25,97 +25,97 @@
   <div class="page-width">
     <div class="product-hero-landing__container" style="display: flex; flex-direction: column; gap: {{ section.settings.content_gap }}px;">
 
-      {%- comment -%} Desktop: Side by side, Mobile: Stacked {%- endcomment -%}
+      {% comment %} Desktop: Side by side, Mobile: Stacked {% endcomment %}
       <div class="product-hero-landing__grid">
 
-        {%- comment -%} Product Image {%- endcomment -%}
+        {% comment %} Product Image {% endcomment %}
         <div class="product-hero-landing__image">
-          {%- if product_image != blank -%}
+          {% if product_image != blank %}
             {{ product_image | image_url: width: 800 | image_tag:
               class: 'product-hero-landing__img',
               alt: display_title,
               loading: 'eager'
             }}
-          {%- else -%}
+          {% else %}
             {{ 'product-1' | placeholder_svg_tag: 'product-hero-landing__img placeholder' }}
-          {%- endif -%}
+          {% endif %}
         </div>
 
-        {%- comment -%} Product Details {%- endcomment -%}
+        {% comment %} Product Details {% endcomment %}
         <div class="product-hero-landing__details">
 
-          {%- comment -%} Title and Badge {%- endcomment -%}
+          {% comment %} Title and Badge {% endcomment %}
           <div class="product-hero-landing__header">
             <h1 class="product-hero-landing__title" style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_size }}px;">
               {{ display_title }}
             </h1>
 
-            {%- if section.settings.badge_text != blank -%}
+            {% if section.settings.badge_text != blank %}
               <div class="product-hero-landing__badge" style="background-color: {{ section.settings.badge_bg_color }}; color: {{ section.settings.badge_text_color }};">
                 {{ section.settings.badge_text }}
               </div>
-            {%- endif -%}
+            {% endif %}
           </div>
 
-          {%- comment -%} Pricing {%- endcomment -%}
+          {% comment %} Pricing {% endcomment %}
           <div class="product-hero-landing__pricing">
-            {%- if display_compare_price != blank -%}
+            {% if display_compare_price != blank %}
               <span class="product-hero-landing__compare-price" style="color: {{ section.settings.compare_price_color }};">
                 {{ display_compare_price }}
               </span>
-            {%- endif -%}
+            {% endif %}
             <span class="product-hero-landing__price" style="color: {{ section.settings.price_color }}; font-size: {{ section.settings.price_size }}px;">
               {{ display_price }}
             </span>
           </div>
 
-          {%- comment -%} Description {%- endcomment -%}
-          {%- if display_description != blank -%}
+          {% comment %} Description {% endcomment %}
+          {% if display_description != blank %}
             <div class="product-hero-landing__description" style="color: {{ section.settings.description_color }}; font-size: {{ section.settings.description_size }}px;">
               {{ display_description | newline_to_br }}
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- comment -%} Add to Cart {%- endcomment -%}
+          {% comment %} Add to Cart {% endcomment %}
           <div class="product-hero-landing__actions">
-            {%- if section.settings.show_quantity -%}
+            {% if section.settings.show_quantity %}
               <div class="product-hero-landing__quantity" style="border-color: {{ section.settings.button_color }};">
                 <button type="button" class="quantity-btn" onclick="updateQuantity(-1)">-</button>
                 <input type="number" class="quantity-input" value="1" min="1" id="hero-quantity-{{ section.id }}">
                 <button type="button" class="quantity-btn" onclick="updateQuantity(1)">+</button>
               </div>
-            {%- endif -%}
+            {% endif %}
 
             <button type="button"
                     class="product-hero-landing__button"
                     style="background-color: {{ section.settings.button_color }}; color: {{ section.settings.button_text_color }};"
-                    {%- if use_product -%}
+                    {% if use_product %}
                       data-product-id="{{ product_obj.id }}"
                       data-variant-id="{{ product_obj.selected_or_first_available_variant.id }}"
                       onclick="addToCart(this)"
-                    {%- elsif section.settings.button_url != blank -%}
+                    {% elsif section.settings.button_url != blank %}
                       onclick="window.location.href='{{ section.settings.button_url }}'"
-                    {%- endif -%}>
+                    {% endif %}>
               {{ section.settings.button_text | default: 'Add to cart' }}
             </button>
           </div>
 
-          {%- comment -%} Payment Icons {%- endcomment -%}
-          {%- if section.settings.show_payment_icons -%}
+          {% comment %} Payment Icons {% endcomment %}
+          {% if section.settings.show_payment_icons %}
             <div class="product-hero-landing__payment-icons">
-              {%- for block in section.blocks -%}
-                {%- if block.type == 'payment_icon' -%}
+              {% for block in section.blocks %}
+                {% if block.type == 'payment_icon' %}
                   <div class="payment-icon" {{ block.shopify_attributes }}>
-                    {%- if block.settings.icon_image != blank -%}
+                    {% if block.settings.icon_image != blank %}
                       {{ block.settings.icon_image | image_url: width: 60 | image_tag: alt: block.settings.icon_alt }}
-                    {%- elsif block.settings.icon_svg != blank -%}
+                    {% elsif block.settings.icon_svg != blank %}
                       {{ block.settings.icon_svg }}
-                    {%- endif -%}
+                    {% endif %}
                   </div>
-                {%- endif -%}
-              {%- endfor -%}
+                {% endif %}
+              {% endfor %}
             </div>
-          {%- endif -%}
+          {% endif %}
 
         </div>
       </div>

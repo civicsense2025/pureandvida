@@ -10,37 +10,37 @@
 %}
 
 <div class="page-width{% if section.settings.custom_css_class != blank %} {{ section.settings.custom_css_class }}{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
-  {%- if section.settings.show_page_title and page.title != blank -%}
+  {% if section.settings.show_page_title and page.title != blank %}
     <h1 class="page-title" style="{% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %} text-align: {{ section.settings.title_alignment }};">{{ page.title | escape }}</h1>
-  {%- endif -%}
+  {% endif %}
   
-  {%- if section.settings.show_featured_image and page.featured_image != blank -%}
+  {% if section.settings.show_featured_image and page.featured_image != blank %}
     <div class="page-featured-image" style="text-align: {{ section.settings.image_alignment }}; margin-bottom: {{ section.settings.image_spacing }}px;">
       <img src="{{ page.featured_image | image_url: width: 1200 }}" alt="{{ page.title | escape }}" width="1200" height="auto">
     </div>
-  {%- endif -%}
+  {% endif %}
   
   <div class="rte" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}{% if section.settings.text_color != blank %}color: {{ section.settings.text_color }};{% endif %} text-align: {{ section.settings.text_alignment }};">
     {{ page.content }}
   </div>
 </div>
 
-{%- comment -%} Page Structured Data {%- endcomment -%}
-{%- if section.settings.enable_structured_data -%}
+{% comment %} Page Structured Data {% endcomment %}
+{% if section.settings.enable_structured_data %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "{{ page.title | escape }}",
   "url": "{{ shop.url }}{{ page.url }}",
-  {%- if page.description != blank -%}
+  {% if page.description != blank %}
   "description": "{{ page.description | strip_html | escape }}",
-  {%- elsif page.content != blank -%}
+  {% elsif page.content != blank %}
   "description": "{{ page.content | strip_html | truncate: 160 | escape }}",
-  {%- endif -%}
-  {%- if page.featured_image -%}
+  {% endif %}
+  {% if page.featured_image %}
   "image": "https:{{ page.featured_image | image_url: width: 1200 }}",
-  {%- endif -%}
+  {% endif %}
   "mainEntity": {
     "@type": "Article",
     "headline": "{{ page.title | escape }}",
@@ -55,7 +55,7 @@
   }
 }
 </script>
-{%- endif -%}
+{% endif %}
 
 <style>
   /* Main Page Section - Responsive Styles */

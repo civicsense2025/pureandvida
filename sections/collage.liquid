@@ -34,7 +34,7 @@
   "
 >
   <div class="collage-section__container{% if section.settings.full_width %} collage-section__container--full{% else %} page-width{% endif %}">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2
         class="collage-section__heading"
         style="
@@ -46,9 +46,9 @@
       >
         {{ section.settings.heading | escape }}
       </h2>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if section.settings.description != blank -%}
+    {% if section.settings.description != blank %}
       <p
         class="collage-section__description"
         style="
@@ -59,23 +59,23 @@
       >
         {{ section.settings.description }}
       </p>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if section.blocks.size > 0 -%}
+    {% if section.blocks.size > 0 %}
       <div
         class="collage-grid collage-grid--{{ section.settings.layout }}"
         style="gap: {{ section.settings.grid_gap }}px;"
       >
-        {%- for block in section.blocks -%}
+        {% for block in section.blocks %}
           <div
             class="collage-item collage-item--{{ forloop.index }}"
             {{ block.shopify_attributes }}
             style="{% if block.settings.custom_height != blank %}min-height: {{ block.settings.custom_height }}px;{% endif %}"
           >
-            {%- case block.type -%}
-              {%- when 'image' -%}
+            {% case block.type %}
+              {% when 'image' %}
                 <div class="collage-item__image-wrapper">
-                  {%- if block.settings.image != blank -%}
+                  {% if block.settings.image != blank %}
                     <img
                       src="{{ block.settings.image | image_url: width: 1200 }}"
                       srcset="
@@ -90,34 +90,34 @@
                       loading="lazy"
                       style="object-position: {{ block.settings.image_position }};"
                     >
-                  {%- else -%}
+                  {% else %}
                     <div class="collage-item__placeholder">
                       {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
                     </div>
-                  {%- endif -%}
+                  {% endif %}
 
-                  {%- if block.settings.show_overlay -%}
+                  {% if block.settings.show_overlay %}
                     <div
                       class="collage-item__overlay"
                       style="background-color: {{ block.settings.overlay_color | default: 'rgba(0,0,0,0.4)' }};"
                     >
-                      {%- if block.settings.heading != blank -%}
+                      {% if block.settings.heading != blank %}
                         <h3
                           class="collage-item__heading"
                           style="{% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}"
                         >
                           {{ block.settings.heading | escape }}
                         </h3>
-                      {%- endif -%}
-                      {%- if block.settings.text != blank -%}
+                      {% endif %}
+                      {% if block.settings.text != blank %}
                         <p
                           class="collage-item__text"
                           style="{% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}"
                         >
                           {{ block.settings.text }}
                         </p>
-                      {%- endif -%}
-                      {%- if block.settings.button_text != blank and block.settings.button_link != blank -%}
+                      {% endif %}
+                      {% if block.settings.button_text != blank and block.settings.button_link != blank %}
                         <a
                           href="{{ block.settings.button_link }}"
                           class="collage-item__button"
@@ -128,102 +128,102 @@
                         >
                           {{ block.settings.button_text }}
                         </a>
-                      {%- endif -%}
+                      {% endif %}
                     </div>
-                  {%- endif -%}
+                  {% endif %}
 
-                  {%- if block.settings.link != blank and block.settings.button_text == blank -%}
+                  {% if block.settings.link != blank and block.settings.button_text == blank %}
                     <a href="{{ block.settings.link }}" class="collage-item__full-link" aria-label="{{ block.settings.heading | default: 'View more' }}"></a>
-                  {%- endif -%}
+                  {% endif %}
                 </div>
 
-              {%- when 'product' -%}
-                {%- if block.settings.product != blank -%}
+              {% when 'product' %}
+                {% if block.settings.product != blank %}
                   <div class="collage-item__product">
                     <a href="{{ block.settings.product.url }}" class="collage-item__product-link">
-                      {%- if block.settings.product.featured_image != blank -%}
+                      {% if block.settings.product.featured_image != blank %}
                         <img
                           src="{{ block.settings.product.featured_image | image_url: width: 800 }}"
                           alt="{{ block.settings.product.featured_image.alt | default: block.settings.product.title | escape }}"
                           class="collage-item__image"
                           loading="lazy"
                         >
-                      {%- else -%}
+                      {% else %}
                         <div class="collage-item__placeholder">
                           {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                         </div>
-                      {%- endif -%}
-                      {%- if block.settings.show_product_info -%}
+                      {% endif %}
+                      {% if block.settings.show_product_info %}
                         <div class="collage-item__product-info">
                           <h3 class="collage-item__product-title">{{ block.settings.product.title }}</h3>
                           <p class="collage-item__product-price">{{ block.settings.product.price | money }}</p>
                         </div>
-                      {%- endif -%}
+                      {% endif %}
                     </a>
                   </div>
-                {%- else -%}
+                {% else %}
                   <div class="collage-item__placeholder collage-item__placeholder--product">
                     {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                     <p>Select a product</p>
                   </div>
-                {%- endif -%}
+                {% endif %}
 
-              {%- when 'collection' -%}
-                {%- if block.settings.collection != blank -%}
+              {% when 'collection' %}
+                {% if block.settings.collection != blank %}
                   <div class="collage-item__collection">
                     <a href="{{ block.settings.collection.url }}" class="collage-item__collection-link">
-                      {%- if block.settings.collection.image != blank -%}
+                      {% if block.settings.collection.image != blank %}
                         <img
                           src="{{ block.settings.collection.image | image_url: width: 800 }}"
                           alt="{{ block.settings.collection.image.alt | default: block.settings.collection.title | escape }}"
                           class="collage-item__image"
                           loading="lazy"
                         >
-                      {%- elsif block.settings.collection.products.first.featured_image != blank -%}
+                      {% elsif block.settings.collection.products.first.featured_image != blank %}
                         <img
                           src="{{ block.settings.collection.products.first.featured_image | image_url: width: 800 }}"
                           alt="{{ block.settings.collection.title | escape }}"
                           class="collage-item__image"
                           loading="lazy"
                         >
-                      {%- else -%}
+                      {% else %}
                         <div class="collage-item__placeholder">
                           {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
                         </div>
-                      {%- endif -%}
+                      {% endif %}
                       <div class="collage-item__collection-info">
                         <h3 class="collage-item__collection-title">{{ block.settings.collection.title }}</h3>
-                        {%- if block.settings.show_product_count -%}
+                        {% if block.settings.show_product_count %}
                           <p class="collage-item__collection-count">{{ block.settings.collection.products_count }} {{ block.settings.collection.products_count | pluralize: 'product', 'products' }}</p>
-                        {%- endif -%}
+                        {% endif %}
                       </div>
                     </a>
                   </div>
-                {%- else -%}
+                {% else %}
                   <div class="collage-item__placeholder collage-item__placeholder--collection">
                     {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
                     <p>Select a collection</p>
                   </div>
-                {%- endif -%}
+                {% endif %}
 
-              {%- when 'video' -%}
+              {% when 'video' %}
                 <div class="collage-item__video">
-                  {%- if block.settings.video_url != blank -%}
-                    {%- assign video_id = '' -%}
-                    {%- assign video_type = '' -%}
-                    {%- if block.settings.video_url contains 'youtube.com' or block.settings.video_url contains 'youtu.be' -%}
-                      {%- assign video_type = 'youtube' -%}
-                      {%- if block.settings.video_url contains 'youtu.be' -%}
-                        {%- assign video_id = block.settings.video_url | split: 'youtu.be/' | last | split: '?' | first -%}
-                      {%- else -%}
-                        {%- assign video_id = block.settings.video_url | split: 'v=' | last | split: '&' | first -%}
-                      {%- endif -%}
-                    {%- elsif block.settings.video_url contains 'vimeo.com' -%}
-                      {%- assign video_type = 'vimeo' -%}
-                      {%- assign video_id = block.settings.video_url | split: 'vimeo.com/' | last | split: '?' | first -%}
-                    {%- endif -%}
+                  {% if block.settings.video_url != blank %}
+                    {% assign video_id = '' %}
+                    {% assign video_type = '' %}
+                    {% if block.settings.video_url contains 'youtube.com' or block.settings.video_url contains 'youtu.be' %}
+                      {% assign video_type = 'youtube' %}
+                      {% if block.settings.video_url contains 'youtu.be' %}
+                        {% assign video_id = block.settings.video_url | split: 'youtu.be/' | last | split: '?' | first %}
+                      {% else %}
+                        {% assign video_id = block.settings.video_url | split: 'v=' | last | split: '&' | first %}
+                      {% endif %}
+                    {% elsif block.settings.video_url contains 'vimeo.com' %}
+                      {% assign video_type = 'vimeo' %}
+                      {% assign video_id = block.settings.video_url | split: 'vimeo.com/' | last | split: '?' | first %}
+                    {% endif %}
 
-                    {%- if block.settings.cover_image != blank -%}
+                    {% if block.settings.cover_image != blank %}
                       <div class="collage-item__video-cover" data-video-cover>
                         <img
                           src="{{ block.settings.cover_image | image_url: width: 800 }}"
@@ -239,8 +239,8 @@
                         </button>
                       </div>
                       <div class="collage-item__video-embed" data-video-embed style="display: none;"></div>
-                    {%- else -%}
-                      {%- if video_type == 'youtube' -%}
+                    {% else %}
+                      {% if video_type == 'youtube' %}
                         <iframe
                           src="https://www.youtube.com/embed/{{ video_id }}?autoplay=0&rel=0"
                           title="YouTube video"
@@ -250,7 +250,7 @@
                           loading="lazy"
                           class="collage-item__iframe"
                         ></iframe>
-                      {%- elsif video_type == 'vimeo' -%}
+                      {% elsif video_type == 'vimeo' %}
                         <iframe
                           src="https://player.vimeo.com/video/{{ video_id }}?autoplay=0"
                           title="Vimeo video"
@@ -260,26 +260,26 @@
                           loading="lazy"
                           class="collage-item__iframe"
                         ></iframe>
-                      {%- endif -%}
-                    {%- endif -%}
-                  {%- else -%}
+                      {% endif %}
+                    {% endif %}
+                  {% else %}
                     <div class="collage-item__placeholder collage-item__placeholder--video">
                       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <polygon points="5,3 19,12 5,21"></polygon>
                       </svg>
                       <p>Add a video URL</p>
                     </div>
-                  {%- endif -%}
+                  {% endif %}
                 </div>
-            {%- endcase -%}
+            {% endcase %}
           </div>
-        {%- endfor -%}
+        {% endfor %}
       </div>
-    {%- elsif request.design_mode -%}
+    {% elsif request.design_mode %}
       <div class="collage-section__placeholder">
         <p>Add blocks to create your collage layout</p>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -663,7 +663,7 @@
 
 {% schema %}
 {
-  "name": "🖼️ Collage",
+  "name": "Collage",
   "tag": "section",
   "class": "section-collage",
   "settings": [
@@ -775,7 +775,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Styling"
+      "content": "Styling"
     },
     {
       "type": "color",
@@ -794,7 +794,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",
@@ -820,7 +820,7 @@
   "blocks": [
     {
       "type": "image",
-      "name": "🖼️ Image",
+      "name": "Image",
       "settings": [
         {
           "type": "image_picker",
@@ -916,7 +916,7 @@
     },
     {
       "type": "product",
-      "name": "📦 Product",
+      "name": "Product",
       "settings": [
         {
           "type": "product",

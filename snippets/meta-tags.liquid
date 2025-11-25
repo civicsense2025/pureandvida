@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Generates comprehensive Open Graph, Twitter Card, and meta robots tags for SEO and social media sharing
   # Automatically detects template type (index, product, article, collection, page) and generates appropriate meta tags
   # Supports custom meta titles/descriptions via metafields with fallbacks
@@ -6,10 +6,10 @@
   # @param page_description {String} - Page description for meta tags (optional)
   # @example
   #   {% render 'meta-tags' %}
--%}
+%}
 
-{%- comment -%} Determine meta title and description with priority: metafields > template-specific > defaults {%- endcomment -%}
-{%- liquid
+{% comment %} Determine meta title and description with priority: metafields > template-specific > defaults {% endcomment %}
+{% liquid
   assign meta_title = page_title
   assign meta_description = page_description
   
@@ -68,149 +68,149 @@
   if meta_description == blank and settings.seo_default_description != blank
     assign meta_description = settings.seo_default_description
   endif
--%}
+%}
 
-{%- comment -%} Meta Robots Tags {%- endcomment -%}
-{%- if template.name == 'product' and product.metafields.seo.robots != blank -%}
+{% comment %} Meta Robots Tags {% endcomment %}
+{% if template.name == 'product' and product.metafields.seo.robots != blank %}
   <meta name="robots" content="{{ product.metafields.seo.robots }}">
-{%- elsif template.name == 'collection' and collection.metafields.seo.robots != blank -%}
+{% elsif template.name == 'collection' and collection.metafields.seo.robots != blank %}
   <meta name="robots" content="{{ collection.metafields.seo.robots }}">
-{%- elsif template.name == 'article' and article.metafields.seo.robots != blank -%}
+{% elsif template.name == 'article' and article.metafields.seo.robots != blank %}
   <meta name="robots" content="{{ article.metafields.seo.robots }}">
-{%- elsif template.name == 'page' and page.metafields.seo.robots != blank -%}
+{% elsif template.name == 'page' and page.metafields.seo.robots != blank %}
   <meta name="robots" content="{{ page.metafields.seo.robots }}">
-{%- elsif settings.seo_robots_default != blank -%}
+{% elsif settings.seo_robots_default != blank %}
   <meta name="robots" content="{{ settings.seo_robots_default }}">
-{%- else -%}
+{% else %}
   <meta name="robots" content="index, follow">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Open Graph Tags {%- endcomment -%}
-{%- if template.name == 'index' -%}
+{% comment %} Open Graph Tags {% endcomment %}
+{% if template.name == 'index' %}
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ meta_title | escape }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="{{ shop.name | escape }}">
-  {%- if settings.seo_og_image != blank -%}
+  {% if settings.seo_og_image != blank %}
     <meta property="og:image" content="https:{{ settings.seo_og_image | image_url: width: 1200 }}">
     <meta property="og:image:secure_url" content="https:{{ settings.seo_og_image | image_url: width: 1200 }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="{{ 1200 | divided_by: settings.seo_og_image.aspect_ratio | round }}">
-  {%- endif -%}
-{%- elsif template.name == 'product' -%}
+  {% endif %}
+{% elsif template.name == 'product' %}
   <meta property="og:type" content="product">
   <meta property="og:title" content="{{ meta_title | escape }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="{{ shop.name | escape }}">
-  {%- if product.featured_media -%}
+  {% if product.featured_media %}
     <meta property="og:image" content="https:{{ product.featured_media | image_url: width: 1200 }}">
     <meta property="og:image:secure_url" content="https:{{ product.featured_media | image_url: width: 1200 }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="{{ 1200 | divided_by: product.featured_media.aspect_ratio | round }}">
     <meta property="og:image:alt" content="{{ product.featured_media.alt | default: product.title | escape }}">
-  {%- endif -%}
+  {% endif %}
   <meta property="product:price:amount" content="{{ product.selected_or_first_available_variant.price | money_without_currency | remove: ',' }}">
   <meta property="product:price:currency" content="{{ cart.currency.iso_code }}">
-  {%- if product.vendor != blank -%}
+  {% if product.vendor != blank %}
     <meta property="product:brand" content="{{ product.vendor | escape }}">
-  {%- endif -%}
-  {%- if product.available -%}
+  {% endif %}
+  {% if product.available %}
     <meta property="product:availability" content="in stock">
-  {%- else -%}
+  {% else %}
     <meta property="product:availability" content="out of stock">
-  {%- endif -%}
-{%- elsif template.name == 'article' -%}
+  {% endif %}
+{% elsif template.name == 'article' %}
   <meta property="og:type" content="article">
   <meta property="og:title" content="{{ meta_title | escape }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="{{ shop.name | escape }}">
-  {%- if article.image -%}
+  {% if article.image %}
     <meta property="og:image" content="https:{{ article.image | image_url: width: 1200 }}">
     <meta property="og:image:secure_url" content="https:{{ article.image | image_url: width: 1200 }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="{{ 1200 | divided_by: article.image.aspect_ratio | round }}">
     <meta property="og:image:alt" content="{{ article.image.alt | default: article.title | escape }}">
-  {%- endif -%}
+  {% endif %}
   <meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">
   <meta property="article:modified_time" content="{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">
-  {%- if article.author != blank -%}
+  {% if article.author != blank %}
     <meta property="article:author" content="{{ article.author | escape }}">
-  {%- endif -%}
-  {%- for tag in article.tags -%}
+  {% endif %}
+  {% for tag in article.tags %}
     <meta property="article:tag" content="{{ tag | escape }}">
-  {%- endfor -%}
-{%- elsif template.name == 'collection' -%}
+  {% endfor %}
+{% elsif template.name == 'collection' %}
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ meta_title | escape }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="{{ shop.name | escape }}">
-  {%- if collection.featured_image -%}
+  {% if collection.featured_image %}
     <meta property="og:image" content="https:{{ collection.featured_image | image_url: width: 1200 }}">
     <meta property="og:image:secure_url" content="https:{{ collection.featured_image | image_url: width: 1200 }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="{{ 1200 | divided_by: collection.featured_image.aspect_ratio | round }}">
     <meta property="og:image:alt" content="{{ collection.featured_image.alt | default: collection.title | escape }}">
-  {%- endif -%}
-{%- else -%}
+  {% endif %}
+{% else %}
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ meta_title | escape }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="{{ shop.name | escape }}">
-  {%- if template.name == 'page' and page.featured_image -%}
+  {% if template.name == 'page' and page.featured_image %}
     <meta property="og:image" content="https:{{ page.featured_image | image_url: width: 1200 }}">
     <meta property="og:image:secure_url" content="https:{{ page.featured_image | image_url: width: 1200 }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="{{ 1200 | divided_by: page.featured_image.aspect_ratio | round }}">
     <meta property="og:image:alt" content="{{ page.featured_image.alt | default: page.title | escape }}">
-  {%- elsif settings.seo_og_image != blank -%}
+  {% elsif settings.seo_og_image != blank %}
     <meta property="og:image" content="https:{{ settings.seo_og_image | image_url: width: 1200 }}">
     <meta property="og:image:secure_url" content="https:{{ settings.seo_og_image | image_url: width: 1200 }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="{{ 1200 | divided_by: settings.seo_og_image.aspect_ratio | round }}">
-  {%- endif -%}
-{%- endif -%}
+  {% endif %}
+{% endif %}
 
-{%- if meta_description != blank -%}
+{% if meta_description != blank %}
   <meta property="og:description" content="{{ meta_description | escape }}">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Twitter Card Tags {%- endcomment -%}
-{%- if settings.social_twitter_link != blank -%}
-  {%- assign twitter_handle = settings.social_twitter_link | split: 'twitter.com/' | last | split: '/' | last | prepend: '@' -%}
+{% comment %} Twitter Card Tags {% endcomment %}
+{% if settings.social_twitter_link != blank %}
+  {% assign twitter_handle = settings.social_twitter_link | split: 'twitter.com/' | last | split: '/' | last | prepend: '@' %}
   <meta name="twitter:site" content="{{ twitter_handle }}">
   <meta name="twitter:creator" content="{{ twitter_handle }}">
-{%- endif -%}
+{% endif %}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ meta_title | escape }}">
-{%- if meta_description != blank -%}
+{% if meta_description != blank %}
   <meta name="twitter:description" content="{{ meta_description | escape }}">
-{%- endif -%}
-{%- if template.name == 'product' and product.featured_media -%}
+{% endif %}
+{% if template.name == 'product' and product.featured_media %}
   <meta name="twitter:image" content="https:{{ product.featured_media | image_url: width: 1200 }}">
   <meta name="twitter:image:alt" content="{{ product.featured_media.alt | default: product.title | escape }}">
-{%- elsif template.name == 'article' and article.image -%}
+{% elsif template.name == 'article' and article.image %}
   <meta name="twitter:image" content="https:{{ article.image | image_url: width: 1200 }}">
   <meta name="twitter:image:alt" content="{{ article.image.alt | default: article.title | escape }}">
-{%- elsif template.name == 'collection' and collection.featured_image -%}
+{% elsif template.name == 'collection' and collection.featured_image %}
   <meta name="twitter:image" content="https:{{ collection.featured_image | image_url: width: 1200 }}">
   <meta name="twitter:image:alt" content="{{ collection.featured_image.alt | default: collection.title | escape }}">
-{%- elsif template.name == 'page' and page.featured_image -%}
+{% elsif template.name == 'page' and page.featured_image %}
   <meta name="twitter:image" content="https:{{ page.featured_image | image_url: width: 1200 }}">
   <meta name="twitter:image:alt" content="{{ page.featured_image.alt | default: page.title | escape }}">
-{%- elsif settings.seo_og_image != blank -%}
+{% elsif settings.seo_og_image != blank %}
   <meta name="twitter:image" content="https:{{ settings.seo_og_image | image_url: width: 1200 }}">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Hreflang Tags for Multi-language Support {%- endcomment -%}
-{%- if shop.published_locales.size > 1 -%}
-  {%- for locale in shop.published_locales -%}
+{% comment %} Hreflang Tags for Multi-language Support {% endcomment %}
+{% if shop.published_locales.size > 1 %}
+  {% for locale in shop.published_locales %}
     <link rel="alternate" hreflang="{{ locale.iso_code }}" href="{{ canonical_url | replace: request.locale.root_url, locale.root_url }}">
-  {%- endfor -%}
+  {% endfor %}
   <link rel="alternate" hreflang="x-default" href="{{ canonical_url }}">
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Additional Meta Tags {%- endcomment -%}
+{% comment %} Additional Meta Tags {% endcomment %}
 <meta name="author" content="{{ shop.name | escape }}">
-{%- if template.name == 'product' and product.vendor != blank -%}
+{% if template.name == 'product' and product.vendor != blank %}
   <meta name="brand" content="{{ product.vendor | escape }}">
-{%- endif -%}
+{% endif %}

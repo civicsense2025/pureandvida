@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Color Scheme Snippet
   --------------------
   Outputs CSS custom properties for section-specific color schemes.
@@ -23,39 +23,39 @@
         %}
       }
     </style>
-{%- endcomment -%}
+{% endcomment %}
 
-{%- case scheme -%}
-  {%- when 'default' -%}
+{% case scheme %}
+  {% when 'default' %}
     --section-bg: var(--scheme-default-bg);
     --section-text: var(--scheme-default-text);
     --section-heading: var(--scheme-default-heading);
     --section-accent: var(--scheme-default-accent);
-  {%- when 'inverse' -%}
+  {% when 'inverse' %}
     --section-bg: var(--scheme-inverse-bg);
     --section-text: var(--scheme-inverse-text);
     --section-heading: var(--scheme-inverse-heading);
     --section-accent: var(--scheme-inverse-accent);
-  {%- when 'accent' -%}
+  {% when 'accent' %}
     --section-bg: var(--scheme-accent-bg);
     --section-text: var(--scheme-accent-text);
     --section-heading: var(--scheme-accent-heading);
     --section-accent: var(--scheme-accent-accent);
-  {%- when 'subtle' -%}
+  {% when 'subtle' %}
     --section-bg: var(--scheme-subtle-bg);
     --section-text: var(--scheme-subtle-text);
     --section-heading: var(--scheme-subtle-heading);
     --section-accent: var(--scheme-subtle-accent);
-  {%- when 'custom' -%}
+  {% when 'custom' %}
     --section-bg: {{ custom_bg | default: 'var(--scheme-default-bg)' }};
     --section-text: {{ custom_text | default: 'var(--scheme-default-text)' }};
     --section-heading: {{ custom_heading | default: 'var(--scheme-default-heading)' }};
     --section-accent: {{ custom_accent | default: 'var(--scheme-default-accent)' }};
-  {%- else -%}
+  {% else %}
     --section-bg: var(--scheme-default-bg);
     --section-text: var(--scheme-default-text);
     --section-heading: var(--scheme-default-heading);
     --section-accent: var(--scheme-default-accent);
-{%- endcase -%}
+{% endcase %}
 background-color: var(--section-bg);
 color: var(--section-text);

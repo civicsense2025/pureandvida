@@ -15,7 +15,7 @@
 
 {% if request.design_mode %}
   <div class="editor-controls editor-controls--testimonials">
-    <span class="editor-label">💬 Testimonials</span>
+    <span class="editor-label">Testimonials</span>
     <span class="editor-info">
       Mode: {{ section.settings.content_mode | capitalize }} |
       Layout: {{ section.settings.layout_style | capitalize }} |
@@ -26,33 +26,33 @@
 
 <{{ structural_element }} class="testimonials-section{% if layout_style == 'carousel' %} testimonials-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
   <div class="testimonials-content page-width" style="{% if section.settings.content_width != blank %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="testimonials-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
+    {% endif %}
     
-    {%- if section.settings.description != blank -%}
+    {% if section.settings.description != blank %}
       <p class="testimonials-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.description_size }}px; margin-bottom: {{ section.settings.description_spacing }}px;">{{ section.settings.description }}</p>
-    {%- endif -%}
+    {% endif %}
     
-    {%- comment -%} Count testimonial items {%- endcomment -%}
-    {%- assign testimonial_count = 0 -%}
-    {%- if section.settings.content_mode == 'blocks' -%}
-      {%- assign testimonial_count = section.blocks.size -%}
-    {%- else -%}
-      {%- for i in (1..6) -%}
-        {%- assign text_key = 'testimonial_' | append: i | append: '_text' -%}
-        {%- assign author_key = 'testimonial_' | append: i | append: '_author' -%}
-        {%- assign text = section.settings[text_key] -%}
-        {%- assign author = section.settings[author_key] -%}
-        {%- if text != blank or author != blank -%}
-          {%- assign testimonial_count = testimonial_count | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endif -%}
+    {% comment %} Count testimonial items {% endcomment %}
+    {% assign testimonial_count = 0 %}
+    {% if section.settings.content_mode == 'blocks' %}
+      {% assign testimonial_count = section.blocks.size %}
+    {% else %}
+      {% for i in (1..6) %}
+        {% assign text_key = 'testimonial_' | append: i | append: '_text' %}
+        {% assign author_key = 'testimonial_' | append: i | append: '_author' %}
+        {% assign text = section.settings[text_key] %}
+        {% assign author = section.settings[author_key] %}
+        {% if text != blank or author != blank %}
+          {% assign testimonial_count = testimonial_count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
     
-    {%- if testimonial_count > 0 -%}
-      {%- if layout_style == 'carousel' -%}
-        {%- comment -%} Carousel Layout {%- endcomment -%}
+    {% if testimonial_count > 0 %}
+      {% if layout_style == 'carousel' %}
+        {% comment %} Carousel Layout {% endcomment %}
         <div class="testimonials-carousel__wrapper" 
              data-carousel-id="testimonials-{{ section.id }}"
              data-items-desktop="{{ section.settings.carousel_items_desktop }}"
@@ -63,8 +63,8 @@
           
           <div class="testimonials-carousel__container" role="region" aria-label="Testimonials carousel">
             <div class="testimonials-carousel__track" data-carousel-track>
-              {%- if section.settings.content_mode == 'blocks' -%}
-                {%- for block in section.blocks -%}
+              {% if section.settings.content_mode == 'blocks' %}
+                {% for block in section.blocks %}
                   <div class="testimonials-carousel__slide" data-carousel-slide>
                     {% render 'testimonial-card',
                       show_stars: block.settings.show_stars,
@@ -80,18 +80,18 @@
                       date_color: block.settings.date_color
                     %}
                   </div>
-                {%- endfor -%}
-              {%- else -%}
-                {%- for i in (1..6) -%}
-                  {%- assign text_key = 'testimonial_' | append: i | append: '_text' -%}
-                  {%- assign author_key = 'testimonial_' | append: i | append: '_author' -%}
-                  {%- assign avatar_key = 'testimonial_' | append: i | append: '_avatar' -%}
-                  {%- assign date_key = 'testimonial_' | append: i | append: '_date' -%}
-                  {%- assign text = section.settings[text_key] -%}
-                  {%- assign author = section.settings[author_key] -%}
-                  {%- assign avatar = section.settings[avatar_key] -%}
-                  {%- assign date = section.settings[date_key] -%}
-                  {%- if text != blank or author != blank -%}
+                {% endfor %}
+              {% else %}
+                {% for i in (1..6) %}
+                  {% assign text_key = 'testimonial_' | append: i | append: '_text' %}
+                  {% assign author_key = 'testimonial_' | append: i | append: '_author' %}
+                  {% assign avatar_key = 'testimonial_' | append: i | append: '_avatar' %}
+                  {% assign date_key = 'testimonial_' | append: i | append: '_date' %}
+                  {% assign text = section.settings[text_key] %}
+                  {% assign author = section.settings[author_key] %}
+                  {% assign avatar = section.settings[avatar_key] %}
+                  {% assign date = section.settings[date_key] %}
+                  {% if text != blank or author != blank %}
                     <div class="testimonials-carousel__slide" data-carousel-slide>
                       {% render 'testimonial-card',
                         show_stars: true,
@@ -107,13 +107,13 @@
                         date_color: section.settings.default_date_color
                       %}
                     </div>
-                  {%- endif -%}
-                {%- endfor -%}
-              {%- endif -%}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             </div>
           </div>
 
-          {%- if section.settings.carousel_show_arrows -%}
+          {% if section.settings.carousel_show_arrows %}
             <button class="testimonials-carousel__button testimonials-carousel__button--prev" 
                     data-carousel-prev 
                     aria-label="Previous testimonials"
@@ -126,12 +126,12 @@
                     type="button">
               <span aria-hidden="true">›</span>
             </button>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.carousel_show_dots and testimonial_count > section.settings.carousel_items_desktop -%}
+          {% if section.settings.carousel_show_dots and testimonial_count > section.settings.carousel_items_desktop %}
             <div class="testimonials-carousel__dots" data-carousel-dots role="tablist" aria-label="Testimonials navigation">
-              {%- assign total_slides = testimonial_count | divided_by: section.settings.carousel_items_desktop | ceil -%}
-              {%- for i in (1..total_slides) -%}
+              {% assign total_slides = testimonial_count | divided_by: section.settings.carousel_items_desktop | ceil %}
+              {% for i in (1..total_slides) %}
                 <button class="testimonials-carousel__dot{% if forloop.first %} testimonials-carousel__dot--active{% endif %}" 
                         data-carousel-dot 
                         data-slide-index="{{ forloop.index0 }}"
@@ -141,15 +141,15 @@
                         aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
                   <span class="visually-hidden">Slide {{ forloop.index }}</span>
                 </button>
-              {%- endfor -%}
+              {% endfor %}
             </div>
-          {%- endif -%}
+          {% endif %}
         </div>
-      {%- else -%}
-        {%- comment -%} Grid Layout {%- endcomment -%}
+      {% else %}
+        {% comment %} Grid Layout {% endcomment %}
         <div class="testimonials-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
-          {%- if section.settings.content_mode == 'blocks' -%}
-            {%- for block in section.blocks -%}
+          {% if section.settings.content_mode == 'blocks' %}
+            {% for block in section.blocks %}
               <div class="testimonial-card" {{ block.shopify_attributes }}>
                 {% render 'testimonial-card',
                   show_stars: block.settings.show_stars,
@@ -165,18 +165,18 @@
                   date_color: block.settings.date_color
                 %}
               </div>
-            {%- endfor -%}
-          {%- else -%}
-            {%- for i in (1..6) -%}
-              {%- assign text_key = 'testimonial_' | append: i | append: '_text' -%}
-              {%- assign author_key = 'testimonial_' | append: i | append: '_author' -%}
-              {%- assign avatar_key = 'testimonial_' | append: i | append: '_avatar' -%}
-              {%- assign date_key = 'testimonial_' | append: i | append: '_date' -%}
-              {%- assign text = section.settings[text_key] -%}
-              {%- assign author = section.settings[author_key] -%}
-              {%- assign avatar = section.settings[avatar_key] -%}
-              {%- assign date = section.settings[date_key] -%}
-              {%- if text != blank or author != blank -%}
+            {% endfor %}
+          {% else %}
+            {% for i in (1..6) %}
+              {% assign text_key = 'testimonial_' | append: i | append: '_text' %}
+              {% assign author_key = 'testimonial_' | append: i | append: '_author' %}
+              {% assign avatar_key = 'testimonial_' | append: i | append: '_avatar' %}
+              {% assign date_key = 'testimonial_' | append: i | append: '_date' %}
+              {% assign text = section.settings[text_key] %}
+              {% assign author = section.settings[author_key] %}
+              {% assign avatar = section.settings[avatar_key] %}
+              {% assign date = section.settings[date_key] %}
+              {% if text != blank or author != blank %}
                 <div class="testimonial-card">
                   {% render 'testimonial-card',
                     show_stars: true,
@@ -192,12 +192,12 @@
                     date_color: section.settings.default_date_color
                   %}
                 </div>
-              {%- endif -%}
-            {%- endfor -%}
-          {%- endif -%}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
         </div>
-      {%- endif -%}
-    {%- endif -%}
+      {% endif %}
+    {% endif %}
   </div>
 </{{ structural_element }}>
 
@@ -295,12 +295,12 @@
     background: {% if section.settings.card_background_color != blank %}{{ section.settings.card_background_color }}{% else %}transparent{% endif %};
     padding: {{ section.settings.card_padding }}px;
     border-radius: {{ section.settings.card_border_radius }}px;
-    {%- if section.settings.card_border_width > 0 -%}
+    {% if section.settings.card_border_width > 0 %}
       border: {{ section.settings.card_border_width }}px solid {% if section.settings.card_border_color != blank %}{{ section.settings.card_border_color }}{% else %}rgba(0,0,0,0.1){% endif %};
-    {%- endif -%}
-    {%- if section.settings.card_shadow -%}
+    {% endif %}
+    {% if section.settings.card_shadow %}
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    {%- endif -%}
+    {% endif %}
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -308,9 +308,9 @@
 
   .testimonial-stars {
     margin-bottom: {{ section.settings.stars_spacing }}px;
-    {%- if section.settings.stars_color != blank -%}
+    {% if section.settings.stars_color != blank %}
       color: {{ section.settings.stars_color }};
-    {%- endif -%}
+    {% endif %}
   }
 
   .testimonial-stars img {
@@ -490,7 +490,7 @@
 
 {% schema %}
 {
-  "name": "💬 Testimonials",
+  "name": "Testimonials",
   "tag": "section",
   "class": "section",
   "settings": [
@@ -720,7 +720,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Card Styling"
+      "content": "Card Styling"
     },
     {
       "type": "color",
@@ -773,7 +773,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Typography Settings"
+      "content": "Typography Settings"
     },
     {
       "type": "range",
@@ -858,7 +858,7 @@
     },
     {
       "type": "header",
-      "content": "⭐ Stars & Avatar"
+      "content": "Stars & Avatar"
     },
     {
       "type": "range",
@@ -898,7 +898,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Section Spacing"
+      "content": "Section Spacing"
     },
     {
       "type": "range",
@@ -932,7 +932,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Section Colors"
+      "content": "Section Colors"
     },
     {
       "type": "color",
@@ -959,7 +959,7 @@
     },
     {
       "type": "header",
-      "content": "⭐ Default Stars Image (Settings Mode Only)"
+      "content": "Default Stars Image (Settings Mode Only)"
     },
     {
       "type": "image_picker",
@@ -969,7 +969,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Fixed Testimonials (Settings Mode Only)"
+      "content": "Fixed Testimonials (Settings Mode Only)"
     },
     {
       "type": "paragraph",
@@ -1099,7 +1099,7 @@
   "blocks": [
     {
       "type": "testimonial",
-      "name": "⭐ Testimonial: {{ block.settings.author_name }}",
+      "name": "Testimonial: {{ block.settings.author_name }}",
       "settings": [
         {
           "type": "paragraph",
@@ -1107,7 +1107,7 @@
         },
         {
           "type": "header",
-          "content": "💬 Testimonial Content"
+          "content": "Testimonial Content"
         },
         {
           "type": "textarea",
@@ -1131,7 +1131,7 @@
         },
         {
           "type": "header",
-          "content": "⭐ Star Rating"
+          "content": "Star Rating"
         },
         {
           "type": "checkbox",
@@ -1170,7 +1170,7 @@
         },
         {
           "type": "header",
-          "content": "🎨 Custom Colors (Optional)"
+          "content": "Custom Colors (Optional)"
         },
         {
           "type": "color",
@@ -1195,7 +1195,7 @@
   ],
   "presets": [
     {
-      "name": "💬 Testimonials (Standard Grid)",
+      "name": "Testimonials (Standard Grid)",
       "settings": {
         "heading": "What Our Customers Say",
         "layout_style": "grid",
@@ -1234,7 +1234,7 @@
       ]
     },
     {
-      "name": "💬 Testimonials (Carousel)",
+      "name": "Testimonials (Carousel)",
       "settings": {
         "heading": "Real Reviews from Real People",
         "layout_style": "carousel",
@@ -1280,7 +1280,7 @@
       ]
     },
     {
-      "name": "💬 Testimonials (Minimal)",
+      "name": "Testimonials (Minimal)",
       "settings": {
         "heading": "Customer Reviews",
         "layout_style": "grid",
@@ -1314,7 +1314,7 @@
       ]
     },
     {
-      "name": "💬 Testimonials (Card Style)",
+      "name": "Testimonials (Card Style)",
       "settings": {
         "heading": "Why Customers Love Us",
         "description": "Join thousands of satisfied customers",
@@ -1362,7 +1362,7 @@
       ]
     },
     {
-      "name": "💬 Testimonials (Compact)",
+      "name": "Testimonials (Compact)",
       "settings": {
         "heading": "Quick Reviews",
         "layout_style": "grid",

@@ -1,12 +1,12 @@
-{%- liquid
+{% liquid
   # @description Renders dynamic product badges (new, sale, featured, custom) based on product data and metafields
   # @param product {Product} - The product object
   # @param block {Block} - The block object for settings (optional)
   # @example
   #   {% render 'product-badges', product: product, block: block %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign badges = ''
   assign new_product_days = 30
   assign product_created_date = product.created_at | date: '%s'
@@ -26,49 +26,49 @@
   endif
   assign custom_badge_text = product.metafields.custom.badge_text
   assign custom_badge_color = product.metafields.custom.badge_color
--%}
+%}
 
 <div class="product-badges">
-  {%- if block.settings.badge_new != blank and block.settings.badge_new != false -%}
-    {%- if is_new -%}
+  {% if block.settings.badge_new != blank and block.settings.badge_new != false %}
+    {% if is_new %}
       <span class="product-badge product-badge--new" style="background-color: var(--color-product-badge-new);">
         {{ 'products.product.badge.new' | t | default: 'New' }}
       </span>
-    {%- endif -%}
-  {%- elsif is_new -%}
+    {% endif %}
+  {% elsif is_new %}
     <span class="product-badge product-badge--new" style="background-color: var(--color-product-badge-new);">
       {{ 'products.product.badge.new' | t | default: 'New' }}
     </span>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if block.settings.badge_sale != blank and block.settings.badge_sale != false -%}
-    {%- if is_on_sale -%}
+  {% if block.settings.badge_sale != blank and block.settings.badge_sale != false %}
+    {% if is_on_sale %}
       <span class="product-badge product-badge--sale" style="background-color: var(--color-product-badge-sale);">
         {{ 'products.product.badge.sale' | t | default: 'Sale' }}
       </span>
-    {%- endif -%}
-  {%- elsif is_on_sale -%}
+    {% endif %}
+  {% elsif is_on_sale %}
     <span class="product-badge product-badge--sale" style="background-color: var(--color-product-badge-sale);">
       {{ 'products.product.badge.sale' | t | default: 'Sale' }}
     </span>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if block.settings.badge_featured != blank and block.settings.badge_featured != false -%}
-    {%- if is_featured -%}
+  {% if block.settings.badge_featured != blank and block.settings.badge_featured != false %}
+    {% if is_featured %}
       <span class="product-badge product-badge--featured" style="background-color: var(--color-product-badge-featured);">
         {{ 'products.product.badge.featured' | t | default: 'Featured' }}
       </span>
-    {%- endif -%}
-  {%- elsif is_featured -%}
+    {% endif %}
+  {% elsif is_featured %}
     <span class="product-badge product-badge--featured" style="background-color: var(--color-product-badge-featured);">
       {{ 'products.product.badge.featured' | t | default: 'Featured' }}
     </span>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if custom_badge_text != blank -%}
+  {% if custom_badge_text != blank %}
     <span class="product-badge product-badge--custom" style="{% if custom_badge_color != blank %}background-color: {{ custom_badge_color }};{% endif %}">
       {{ custom_badge_text }}
     </span>
-  {%- endif -%}
+  {% endif %}
 </div>
 

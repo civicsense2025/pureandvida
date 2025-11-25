@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Section Header Snippet
   ----------------------
   Renders a reusable section header with heading and optional description.
@@ -20,26 +20,26 @@
       heading_size: section.settings.heading_size,
       heading_alignment: section.settings.heading_alignment
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- if heading != blank or description != blank -%}
-  {%- liquid
+{% if heading != blank or description != blank %}
+  {% liquid
     assign size = heading_size | default: 'h2'
     assign align = heading_alignment | default: 'center'
-  -%}
+  %}
 
   <div class="section-header section-header--{{ align }}{% if container_class %} {{ container_class }}{% endif %}">
-    {%- if heading != blank -%}
+    {% if heading != blank %}
       <{{ size }} class="section-header__heading{% if heading_class %} {{ heading_class }}{% endif %}">
         {{- heading | escape -}}
       </{{ size }}>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if description != blank -%}
+    {% if description != blank %}
       <div class="section-header__description{% if description_class %} {{ description_class }}{% endif %}">
         {{ description }}
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 
   <style>
@@ -87,4 +87,4 @@
       margin-left: auto;
     }
   </style>
-{%- endif -%}
+{% endif %}

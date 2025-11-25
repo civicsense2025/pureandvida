@@ -25,22 +25,22 @@
   </div>
 {% endif %}
 
-{%- if section.settings.collection != blank -%}
-  {%- assign collection = section.settings.collection -%}
+{% if section.settings.collection != blank %}
+  {% assign collection = section.settings.collection %}
   <section class="featured-collection-section{% if layout_style == 'carousel' %} featured-collection-section--carousel{% endif %}" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
     <div class="page-width">
-      {%- if section.settings.heading != blank -%}
+      {% if section.settings.heading != blank %}
         <h2 class="featured-collection-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
-      {%- endif -%}
+      {% endif %}
       
-      {%- if section.settings.description != blank -%}
+      {% if section.settings.description != blank %}
         <p class="featured-collection-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; margin-bottom: 40px;">{{ section.settings.description | escape }}</p>
-      {%- endif -%}
+      {% endif %}
       
-      {%- assign products = collection.products | limit: section.settings.products_to_show -%}
-      {%- if products.size > 0 -%}
-        {%- if layout_style == 'carousel' -%}
-          {%- comment -%} Carousel Layout {%- endcomment -%}
+      {% assign products = collection.products | limit: section.settings.products_to_show %}
+      {% if products.size > 0 %}
+        {% if layout_style == 'carousel' %}
+          {% comment %} Carousel Layout {% endcomment %}
           <div class="featured-collection-carousel__wrapper" 
                data-carousel-id="featured-collection-{{ section.id }}"
                data-items-desktop="{{ section.settings.carousel_items_desktop }}"
@@ -51,15 +51,15 @@
             
             <div class="featured-collection-carousel__container" role="region" aria-label="Products carousel">
               <div class="featured-collection-carousel__track" data-carousel-track>
-                {%- for product in products -%}
+                {% for product in products %}
                   <div class="featured-collection-carousel__slide" data-carousel-slide>
                     {% render 'product-card', product: product %}
                   </div>
-                {%- endfor -%}
+                {% endfor %}
               </div>
             </div>
 
-            {%- if section.settings.carousel_show_arrows -%}
+            {% if section.settings.carousel_show_arrows %}
               <button class="featured-collection-carousel__button featured-collection-carousel__button--prev" 
                       data-carousel-prev 
                       aria-label="Previous products"
@@ -72,12 +72,12 @@
                       type="button">
                 <span aria-hidden="true">›</span>
               </button>
-            {%- endif -%}
+            {% endif %}
 
-            {%- if section.settings.carousel_show_dots and products.size > section.settings.carousel_items_desktop -%}
+            {% if section.settings.carousel_show_dots and products.size > section.settings.carousel_items_desktop %}
               <div class="featured-collection-carousel__dots" data-carousel-dots role="tablist" aria-label="Products navigation">
-                {%- assign total_slides = products.size | divided_by: section.settings.carousel_items_desktop | ceil -%}
-                {%- for i in (1..total_slides) -%}
+                {% assign total_slides = products.size | divided_by: section.settings.carousel_items_desktop | ceil %}
+                {% for i in (1..total_slides) %}
                   <button class="featured-collection-carousel__dot{% if forloop.first %} featured-collection-carousel__dot--active{% endif %}" 
                           data-carousel-dot 
                           data-slide-index="{{ forloop.index0 }}"
@@ -87,32 +87,32 @@
                           aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
                     <span class="visually-hidden">Slide {{ forloop.index }}</span>
                   </button>
-                {%- endfor -%}
+                {% endfor %}
               </div>
-            {%- endif -%}
+            {% endif %}
           </div>
-        {%- else -%}
-          {%- comment -%} Grid Layout {%- endcomment -%}
+        {% else %}
+          {% comment %} Grid Layout {% endcomment %}
           <ul class="grid product-grid featured-collection-grid" role="list" style="gap: {{ section.settings.item_spacing }}px;">
-            {%- for product in products -%}
+            {% for product in products %}
               <li class="grid__item">
                 {% render 'product-card', product: product %}
               </li>
-            {%- endfor -%}
+            {% endfor %}
           </ul>
-        {%- endif -%}
-      {%- endif -%}
+        {% endif %}
+      {% endif %}
       
-      {%- if section.settings.show_view_all and section.settings.view_all_text != blank -%}
+      {% if section.settings.show_view_all and section.settings.view_all_text != blank %}
         <div class="featured-collection-view-all" style="text-align: center; margin-top: 40px;">
           <a href="{{ collection.url }}" class="button" style="{% if section.settings.view_all_button_color != blank %}background-color: {{ section.settings.view_all_button_color }};{% endif %}{% if section.settings.view_all_button_text_color != blank %}color: {{ section.settings.view_all_button_text_color }};{% endif %} padding: 15px 30px; text-decoration: none; display: inline-block; border-radius: 4px;">
             {{ section.settings.view_all_text | escape }}
           </a>
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
   </section>
-{%- endif -%}
+{% endif %}
 
 <style>
   /* Featured Collection Responsive Grid */
@@ -244,7 +244,7 @@
     },
     {
       "type": "header",
-      "content": "📦 Collection Selection"
+      "content": "Collection Selection"
     },
     {
       "type": "collection",
@@ -254,7 +254,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content & Headings"
+      "content": "Content & Headings"
     },
     {
       "type": "text",
@@ -306,7 +306,7 @@
     },
     {
       "type": "header",
-      "content": "🛒 Product Display"
+      "content": "Product Display"
     },
     {
       "type": "range",
@@ -422,7 +422,7 @@
     },
     {
       "type": "header",
-      "content": "🔗 View All Button"
+      "content": "View All Button"
     },
     {
       "type": "checkbox",
@@ -452,7 +452,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Section Styling"
+      "content": "Section Styling"
     },
     {
       "type": "range",

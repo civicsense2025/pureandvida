@@ -3,11 +3,11 @@
   # Displays account overview with orders, addresses, and profile info
 %}
 
-{%- render 'visibility-classes',
+{% render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,
   show_on_desktop: section.settings.show_on_desktop,
   section_id: section.id
--%}
+%}
 
 <div
   id="{{ section.id }}"
@@ -71,13 +71,13 @@
     /* Account Layout */
     #{{ section.id }} .account-layout {
       display: grid;
-      {%- if section.settings.layout == 'sidebar' -%}
+      {% if section.settings.layout == 'sidebar' %}
         grid-template-columns: 250px 1fr;
         gap: var(--spacing-xxl);
-      {%- else -%}
+      {% else %}
         grid-template-columns: 1fr;
         gap: var(--spacing-xl);
-      {%- endif -%}
+      {% endif %}
     }
 
     @media screen and (max-width: 989px) {
@@ -89,30 +89,30 @@
 
     /* Account Navigation */
     #{{ section.id }} .account-nav {
-      {%- if section.settings.layout == 'sidebar' -%}
+      {% if section.settings.layout == 'sidebar' %}
         position: sticky;
         top: var(--spacing-lg);
         align-self: start;
-      {%- else -%}
+      {% else %}
         display: flex;
         gap: var(--spacing-sm);
         flex-wrap: wrap;
         padding-bottom: var(--spacing-lg);
         border-bottom: 1px solid var(--section-border, rgba(0,0,0,0.1));
-      {%- endif -%}
+      {% endif %}
     }
 
     #{{ section.id }} .account-nav-list {
       list-style: none;
       padding: 0;
       margin: 0;
-      {%- if section.settings.layout == 'sidebar' -%}
+      {% if section.settings.layout == 'sidebar' %}
         display: flex;
         flex-direction: column;
         gap: var(--spacing-xs);
-      {%- else -%}
+      {% else %}
         display: contents;
-      {%- endif -%}
+      {% endif %}
     }
 
     #{{ section.id }} .account-nav-link {
@@ -199,10 +199,10 @@
     }
 
     #{{ section.id }} .order-card:hover {
-      {%- if section.settings.card_hover_effect -%}
+      {% if section.settings.card_hover_effect %}
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      {%- endif -%}
+      {% endif %}
     }
 
     @media screen and (max-width: 749px) {
@@ -365,27 +365,27 @@
   </style>
 
   <div class="account-container">
-    {%- comment -%} Account Header {%- endcomment -%}
+    {% comment %} Account Header {% endcomment %}
     <header class="account-header">
       <div>
         <h1 class="account-title">{{ section.settings.title | default: 'My Account' }}</h1>
-        {%- if section.settings.show_welcome and customer -%}
+        {% if section.settings.show_welcome and customer %}
           <p class="account-welcome">
             {{ section.settings.welcome_text | default: 'Welcome back,' }} {{ customer.first_name | default: customer.email }}
           </p>
-        {%- endif -%}
+        {% endif %}
       </div>
-      {%- if section.settings.show_logout -%}
+      {% if section.settings.show_logout %}
         <a href="{{ routes.account_logout_url }}" class="account-logout">
           {{ section.settings.logout_text | default: 'Sign Out' }}
         </a>
-      {%- endif -%}
+      {% endif %}
     </header>
 
-    {%- comment -%} Account Layout {%- endcomment -%}
+    {% comment %} Account Layout {% endcomment %}
     <div class="account-layout">
-      {%- comment -%} Navigation {%- endcomment -%}
-      {%- if section.settings.show_navigation -%}
+      {% comment %} Navigation {% endcomment %}
+      {% if section.settings.show_navigation %}
         <nav class="account-nav" aria-label="Account navigation">
           <ul class="account-nav-list">
             <li>
@@ -418,20 +418,20 @@
             </li>
           </ul>
         </nav>
-      {%- endif -%}
+      {% endif %}
 
-      {%- comment -%} Main Content {%- endcomment -%}
+      {% comment %} Main Content {% endcomment %}
       <div class="account-content">
-        {%- comment -%} Orders Section {%- endcomment -%}
+        {% comment %} Orders Section {% endcomment %}
         <section class="account-section">
           <div class="section-header">
             <h2 class="section-title">{{ section.settings.orders_title | default: 'Order History' }}</h2>
           </div>
 
-          {%- if customer.orders.size > 0 -%}
+          {% if customer.orders.size > 0 %}
             <div class="orders-list">
-              {%- assign orders_limit = section.settings.orders_per_page | default: 5 -%}
-              {%- for order in customer.orders limit: orders_limit -%}
+              {% assign orders_limit = section.settings.orders_per_page | default: 5 %}
+              {% for order in customer.orders limit: orders_limit %}
                 <div class="order-card">
                   <div class="order-info">
                     <h3 class="order-number">
@@ -442,11 +442,11 @@
                       <span class="status-badge status-badge--{% if order.financial_status == 'paid' %}paid{% else %}pending{% endif %}">
                         {{ order.financial_status_label }}
                       </span>
-                      {%- if order.fulfillment_status_label != blank -%}
+                      {% if order.fulfillment_status_label != blank %}
                         <span class="status-badge status-badge--fulfilled">
                           {{ order.fulfillment_status_label }}
                         </span>
-                      {%- endif -%}
+                      {% endif %}
                     </div>
                   </div>
                   <div class="order-total">
@@ -454,22 +454,22 @@
                     <p class="order-items">{{ order.line_items.size }} {{ order.line_items.size | pluralize: 'item', 'items' }}</p>
                   </div>
                 </div>
-              {%- endfor -%}
+              {% endfor %}
             </div>
-          {%- else -%}
+          {% else %}
             <div class="empty-state">
-              <div class="empty-icon">📦</div>
+              <div class="empty-icon"></div>
               <h3 class="empty-title">{{ section.settings.empty_orders_title | default: 'No orders yet' }}</h3>
               <p class="empty-text">{{ section.settings.empty_orders_text | default: "You haven't placed any orders yet." }}</p>
               <a href="{{ routes.all_products_collection_url }}" class="empty-action">
                 {{ section.settings.empty_orders_button | default: 'Start Shopping' }}
               </a>
             </div>
-          {%- endif -%}
+          {% endif %}
         </section>
 
-        {%- comment -%} Default Address Section {%- endcomment -%}
-        {%- if section.settings.show_address -%}
+        {% comment %} Default Address Section {% endcomment %}
+        {% if section.settings.show_address %}
           <section class="account-section">
             <div class="section-header">
               <h2 class="section-title">{{ section.settings.address_title | default: 'Default Address' }}</h2>
@@ -478,43 +478,43 @@
               </a>
             </div>
 
-            {%- if customer.default_address -%}
+            {% if customer.default_address %}
               <div class="address-card">
                 <span class="address-default">{{ section.settings.default_badge | default: 'Default' }}</span>
                 <div class="address-content">
                   {{ customer.default_address | format_address }}
                 </div>
               </div>
-            {%- else -%}
+            {% else %}
               <div class="empty-state" style="padding: var(--spacing-xl);">
                 <p class="empty-text" style="margin-bottom: 0;">{{ section.settings.no_address_text | default: 'No addresses saved yet.' }}</p>
               </div>
-            {%- endif -%}
+            {% endif %}
           </section>
-        {%- endif -%}
+        {% endif %}
 
-        {%- comment -%} Additional Blocks {%- endcomment -%}
-        {%- for block in section.blocks -%}
-          {%- case block.type -%}
-            {%- when 'quick_links' -%}
+        {% comment %} Additional Blocks {% endcomment %}
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'quick_links' %}
               <section class="account-section" {{ block.shopify_attributes }}>
                 <div class="section-header">
                   <h2 class="section-title">{{ block.settings.title | default: 'Quick Links' }}</h2>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-md);">
-                  {%- for i in (1..4) -%}
-                    {%- assign link_key = 'link_' | append: i -%}
-                    {%- assign text_key = 'link_' | append: i | append: '_text' -%}
-                    {%- if block.settings[link_key] != blank -%}
+                  {% for i in (1..4) %}
+                    {% assign link_key = 'link_' | append: i %}
+                    {% assign text_key = 'link_' | append: i | append: '_text' %}
+                    {% if block.settings[link_key] != blank %}
                       <a href="{{ block.settings[link_key] }}" style="padding: var(--spacing-md); text-align: center; background: rgba(0,0,0,0.03); border-radius: {{ section.settings.card_border_radius }}px; text-decoration: none; color: var(--section-text); transition: background var(--transition-fast);">
                         {{ block.settings[text_key] | default: 'Link' }}
                       </a>
-                    {%- endif -%}
-                  {%- endfor -%}
+                    {% endif %}
+                  {% endfor %}
                 </div>
               </section>
-          {%- endcase -%}
-        {%- endfor -%}
+          {% endcase %}
+        {% endfor %}
       </div>
     </div>
   </div>

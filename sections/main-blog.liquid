@@ -8,11 +8,11 @@
   assign columns_mobile = section.settings.columns_mobile | default: 1
 %}
 
-{%- render 'visibility-classes',
+{% render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,
   show_on_desktop: section.settings.show_on_desktop,
   section_id: section.id
--%}
+%}
 
 <style>
   #shopify-section-{{ section.id }} {
@@ -98,21 +98,21 @@
     border-radius: {{ section.settings.card_border_radius | default: 8 }}px;
     overflow: hidden;
     transition: transform var(--transition-base), box-shadow var(--transition-base);
-    {%- case section.settings.card_shadow -%}
-      {%- when 'small' -%}
+    {% case section.settings.card_shadow %}
+      {% when 'small' %}
         box-shadow: var(--shadow-sm);
-      {%- when 'medium' -%}
+      {% when 'medium' %}
         box-shadow: var(--shadow-md);
-      {%- when 'large' -%}
+      {% when 'large' %}
         box-shadow: var(--shadow-lg);
-    {%- endcase -%}
+    {% endcase %}
   }
 
   #{{ section.id }} .article-card:hover {
-    {%- if section.settings.card_hover_lift -%}
+    {% if section.settings.card_hover_lift %}
       transform: translateY(-4px);
       box-shadow: var(--shadow-lg);
-    {%- endif -%}
+    {% endif %}
   }
 
   #{{ section.id }} .article-card__image-wrapper {
@@ -129,9 +129,9 @@
   }
 
   #{{ section.id }} .article-card:hover .article-card__image {
-    {%- if section.settings.image_zoom_hover -%}
+    {% if section.settings.image_zoom_hover %}
       transform: scale(1.05);
-    {%- endif -%}
+    {% endif %}
   }
 
   #{{ section.id }} .article-card__content {
@@ -177,12 +177,12 @@
     color: var(--section-text);
     line-height: 1.6;
     margin-bottom: var(--spacing-md);
-    {%- if section.settings.excerpt_lines > 0 -%}
+    {% if section.settings.excerpt_lines > 0 %}
       display: -webkit-box;
       -webkit-line-clamp: {{ section.settings.excerpt_lines }};
       -webkit-box-orient: vertical;
       overflow: hidden;
-    {%- endif -%}
+    {% endif %}
   }
 
   #{{ section.id }} .article-card__meta {
@@ -392,52 +392,52 @@
 
 <div id="{{ section.id }}" class="blog-section">
   <div class="blog-container">
-    {%- comment -%} Blog Header {%- endcomment -%}
+    {% comment %} Blog Header {% endcomment %}
     <header class="blog-header">
-      {%- if section.settings.show_title -%}
+      {% if section.settings.show_title %}
         <h1 class="blog-title">
           {{ section.settings.heading | default: blog.title | escape }}
         </h1>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.description != blank -%}
+      {% if section.settings.description != blank %}
         <p class="blog-description">{{ section.settings.description }}</p>
-      {%- endif -%}
+      {% endif %}
     </header>
 
-    {%- comment -%} Tag Filter Block {%- endcomment -%}
-    {%- for block in section.blocks -%}
-      {%- if block.type == 'tag_filter' -%}
+    {% comment %} Tag Filter Block {% endcomment %}
+    {% for block in section.blocks %}
+      {% if block.type == 'tag_filter' %}
         <div class="tag-filter" {{ block.shopify_attributes }}>
           <a href="{{ blog.url }}" class="tag-filter__btn{% unless current_tags %} tag-filter__btn--active{% endunless %}">
             {{ block.settings.all_text | default: 'All' }}
           </a>
-          {%- for tag in blog.all_tags -%}
-            {%- if block.settings.tags_to_show == blank or block.settings.tags_to_show contains tag -%}
+          {% for tag in blog.all_tags %}
+            {% if block.settings.tags_to_show == blank or block.settings.tags_to_show contains tag %}
               <a
                 href="{{ blog.url }}/tagged/{{ tag | handleize }}"
                 class="tag-filter__btn{% if current_tags contains tag %} tag-filter__btn--active{% endif %}"
               >
                 {{ tag }}
               </a>
-            {%- endif -%}
-          {%- endfor -%}
+            {% endif %}
+          {% endfor %}
         </div>
-      {%- endif -%}
-    {%- endfor -%}
+      {% endif %}
+    {% endfor %}
 
-    {%- if blog.articles.size > 0 -%}
-      {%- comment -%} Featured Article Block {%- endcomment -%}
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'featured_article' -%}
-          {%- assign featured = blog.articles.first -%}
-          {%- if block.settings.article != blank -%}
-            {%- assign featured = block.settings.article -%}
-          {%- endif -%}
+    {% if blog.articles.size > 0 %}
+      {% comment %} Featured Article Block {% endcomment %}
+      {% for block in section.blocks %}
+        {% if block.type == 'featured_article' %}
+          {% assign featured = blog.articles.first %}
+          {% if block.settings.article != blank %}
+            {% assign featured = block.settings.article %}
+          {% endif %}
 
           <div class="featured-article" {{ block.shopify_attributes }}>
             <article class="article-card">
-              {%- if featured.image != blank -%}
+              {% if featured.image != blank %}
                 <div class="article-card__image-wrapper">
                   <a href="{{ featured.url }}">
                     <img
@@ -448,35 +448,35 @@
                     >
                   </a>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
               <div class="article-card__content">
-                {%- if block.settings.show_tags and featured.tags.size > 0 -%}
+                {% if block.settings.show_tags and featured.tags.size > 0 %}
                   <div class="article-card__tags">
-                    {%- for tag in featured.tags limit: 2 -%}
+                    {% for tag in featured.tags limit: 2 %}
                       <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="article-card__tag">{{ tag }}</a>
-                    {%- endfor -%}
+                    {% endfor %}
                   </div>
-                {%- endif -%}
+                {% endif %}
 
                 <h2 class="article-card__title">
                   <a href="{{ featured.url }}">{{ featured.title | escape }}</a>
                 </h2>
 
-                {%- if featured.excerpt != blank -%}
+                {% if featured.excerpt != blank %}
                   <p class="article-card__excerpt">{{ featured.excerpt | strip_html | truncate: 200 }}</p>
-                {%- endif -%}
+                {% endif %}
 
                 <div class="article-card__meta">
-                  {%- if block.settings.show_date -%}
+                  {% if block.settings.show_date %}
                     <time datetime="{{ featured.published_at | date: '%Y-%m-%d' }}">
                       {{ featured.published_at | date: section.settings.date_format | default: '%B %d, %Y' }}
                     </time>
-                  {%- endif -%}
-                  {%- if block.settings.show_author and featured.author -%}
+                  {% endif %}
+                  {% if block.settings.show_author and featured.author %}
                     <span class="article-card__meta-divider"></span>
                     <span>{{ featured.author }}</span>
-                  {%- endif -%}
+                  {% endif %}
                 </div>
 
                 <a href="{{ featured.url }}" class="article-card__read-more">
@@ -486,27 +486,27 @@
               </div>
             </article>
           </div>
-        {%- endif -%}
-      {%- endfor -%}
+        {% endif %}
+      {% endfor %}
 
-      {%- comment -%} Articles Grid/List {%- endcomment -%}
+      {% comment %} Articles Grid/List {% endcomment %}
       <div class="blog-{{ layout }}">
-        {%- for article in blog.articles -%}
-          {%- comment -%} Skip featured article if block exists {%- endcomment -%}
-          {%- assign skip_featured = false -%}
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'featured_article' -%}
-              {%- if block.settings.article == blank and forloop.parentloop.first -%}
-                {%- assign skip_featured = true -%}
-              {%- elsif block.settings.article == article -%}
-                {%- assign skip_featured = true -%}
-              {%- endif -%}
-            {%- endif -%}
-          {%- endfor -%}
+        {% for article in blog.articles %}
+          {% comment %} Skip featured article if block exists {% endcomment %}
+          {% assign skip_featured = false %}
+          {% for block in section.blocks %}
+            {% if block.type == 'featured_article' %}
+              {% if block.settings.article == blank and forloop.parentloop.first %}
+                {% assign skip_featured = true %}
+              {% elsif block.settings.article == article %}
+                {% assign skip_featured = true %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
 
-          {%- unless skip_featured -%}
+          {% unless skip_featured %}
             <article class="article-card">
-              {%- if section.settings.show_image and article.image != blank -%}
+              {% if section.settings.show_image and article.image != blank %}
                 <div class="article-card__image-wrapper">
                   <a href="{{ article.url }}">
                     <img
@@ -517,98 +517,98 @@
                     >
                   </a>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
               <div class="article-card__content">
-                {%- if section.settings.show_tags and article.tags.size > 0 -%}
+                {% if section.settings.show_tags and article.tags.size > 0 %}
                   <div class="article-card__tags">
-                    {%- for tag in article.tags limit: 2 -%}
+                    {% for tag in article.tags limit: 2 %}
                       <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="article-card__tag">{{ tag }}</a>
-                    {%- endfor -%}
+                    {% endfor %}
                   </div>
-                {%- endif -%}
+                {% endif %}
 
                 <h2 class="article-card__title">
                   <a href="{{ article.url }}">{{ article.title | escape }}</a>
                 </h2>
 
-                {%- if section.settings.show_excerpt and article.excerpt != blank -%}
+                {% if section.settings.show_excerpt and article.excerpt != blank %}
                   <p class="article-card__excerpt">
                     {{ article.excerpt | strip_html | truncate: section.settings.excerpt_length | default: 150 }}
                   </p>
-                {%- endif -%}
+                {% endif %}
 
                 <div class="article-card__meta">
-                  {%- if section.settings.show_date -%}
+                  {% if section.settings.show_date %}
                     <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
                       {{ article.published_at | date: section.settings.date_format | default: '%B %d, %Y' }}
                     </time>
-                  {%- endif -%}
+                  {% endif %}
 
-                  {%- if section.settings.show_author and article.author -%}
-                    {%- if section.settings.show_date -%}
+                  {% if section.settings.show_author and article.author %}
+                    {% if section.settings.show_date %}
                       <span class="article-card__meta-divider"></span>
-                    {%- endif -%}
+                    {% endif %}
                     <span class="article-card__author">
                       {{ article.author }}
                     </span>
-                  {%- endif -%}
+                  {% endif %}
 
-                  {%- if section.settings.show_comments_count and article.comments_count > 0 -%}
-                    {%- if section.settings.show_date or section.settings.show_author -%}
+                  {% if section.settings.show_comments_count and article.comments_count > 0 %}
+                    {% if section.settings.show_date or section.settings.show_author %}
                       <span class="article-card__meta-divider"></span>
-                    {%- endif -%}
+                    {% endif %}
                     <span>{{ article.comments_count }} {{ article.comments_count | pluralize: 'comment', 'comments' }}</span>
-                  {%- endif -%}
+                  {% endif %}
                 </div>
 
-                {%- if section.settings.show_read_more -%}
+                {% if section.settings.show_read_more %}
                   <a href="{{ article.url }}" class="article-card__read-more">
                     {{ section.settings.read_more_text | default: 'Read more' }}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </a>
-                {%- endif -%}
+                {% endif %}
               </div>
             </article>
-          {%- endunless -%}
-        {%- endfor -%}
+          {% endunless %}
+        {% endfor %}
       </div>
 
-      {%- comment -%} Pagination {%- endcomment -%}
-      {%- if paginate.pages > 1 -%}
+      {% comment %} Pagination {% endcomment %}
+      {% if paginate.pages > 1 %}
         <nav class="blog-pagination" aria-label="Pagination">
-          {%- if paginate.previous -%}
+          {% if paginate.previous %}
             <a href="{{ paginate.previous.url }}">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </a>
-          {%- endif -%}
+          {% endif %}
 
-          {%- for part in paginate.parts -%}
-            {%- if part.is_link -%}
+          {% for part in paginate.parts %}
+            {% if part.is_link %}
               <a href="{{ part.url }}">{{ part.title }}</a>
-            {%- else -%}
+            {% else %}
               <span class="{% if part.title == paginate.current_page %}current{% endif %}">{{ part.title }}</span>
-            {%- endif -%}
-          {%- endfor -%}
+            {% endif %}
+          {% endfor %}
 
-          {%- if paginate.next -%}
+          {% if paginate.next %}
             <a href="{{ paginate.next.url }}">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </a>
-          {%- endif -%}
+          {% endif %}
         </nav>
-      {%- endif -%}
+      {% endif %}
 
-      {%- comment -%} Newsletter Block {%- endcomment -%}
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'newsletter' -%}
+      {% comment %} Newsletter Block {% endcomment %}
+      {% for block in section.blocks %}
+        {% if block.type == 'newsletter' %}
           <div class="newsletter-cta" {{ block.shopify_attributes }}>
             <h3 class="newsletter-cta__heading">{{ block.settings.heading | default: 'Subscribe to our newsletter' }}</h3>
-            {%- if block.settings.text != blank -%}
+            {% if block.settings.text != blank %}
               <p class="newsletter-cta__text">{{ block.settings.text }}</p>
-            {%- endif -%}
+            {% endif %}
 
-            {%- form 'customer', class: 'newsletter-cta__form' -%}
+            {% form 'customer', class: 'newsletter-cta__form' %}
               <input type="hidden" name="contact[tags]" value="newsletter">
               <input
                 type="email"
@@ -618,23 +618,23 @@
                 required
               >
               {% render 'button', text: block.settings.button_text | default: 'Subscribe', type: 'submit', style: 'primary' %}
-            {%- endform -%}
+            {% endform %}
           </div>
-        {%- endif -%}
-      {%- endfor -%}
+        {% endif %}
+      {% endfor %}
 
-    {%- else -%}
+    {% else %}
       <div class="blog-empty">
         <h2 class="blog-empty__heading">{{ section.settings.empty_heading | default: 'No articles yet' }}</h2>
         <p class="blog-empty__text">{{ section.settings.empty_text | default: 'Check back soon for new content.' }}</p>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </div>
 
-{%- comment -%} Wrap in paginate for pagination support {%- endcomment -%}
-{%- paginate blog.articles by section.settings.articles_per_page | default: 12 -%}
-{%- endpaginate -%}
+{% comment %} Wrap in paginate for pagination support {% endcomment %}
+{% paginate blog.articles by section.settings.articles_per_page | default: 12 %}
+{% endpaginate %}
 
 {% schema %}
 {

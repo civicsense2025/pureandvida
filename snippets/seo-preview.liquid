@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description SEO preview snippets showing how content appears in search results and social media
   # Displays Google, Facebook, and Twitter previews
   # @param title {String} - Preview title (optional)
@@ -7,9 +7,9 @@
   # @param image {Object} - Preview image (optional)
   # @example
   #   {% render 'seo-preview' %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign preview_title = title
   assign preview_description = description
   assign preview_url = url
@@ -60,13 +60,13 @@
       assign preview_image = settings.seo_og_image
     endif
   endif
--%}
+%}
 
-{%- if settings.seo_enable_preview -%}
+{% if settings.seo_enable_preview %}
 <div class="seo-preview" style="max-width: 600px; margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
   <h3 style="margin-top: 0;">SEO Preview</h3>
   
-  {%- comment -%} Google Search Preview {%- endcomment -%}
+  {% comment %} Google Search Preview {% endcomment %}
   <div style="margin-bottom: 30px;">
     <h4 style="margin-bottom: 10px; font-size: 14px; color: #666;">Google Search Result</h4>
     <div style="border: 1px solid #e0e0e0; padding: 15px; background: white; border-radius: 4px;">
@@ -82,15 +82,15 @@
     </div>
   </div>
 
-  {%- comment -%} Facebook Preview {%- endcomment -%}
+  {% comment %} Facebook Preview {% endcomment %}
   <div style="margin-bottom: 30px;">
     <h4 style="margin-bottom: 10px; font-size: 14px; color: #666;">Facebook Share Preview</h4>
     <div style="border: 1px solid #dadde1; border-radius: 8px; overflow: hidden; background: white; max-width: 500px;">
-      {%- if preview_image -%}
+      {% if preview_image %}
       <div style="width: 100%; height: 262px; background: #f2f3f5; overflow: hidden;">
         <img src="{{ preview_image | image_url: width: 500 }}" alt="{{ preview_title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
-      {%- endif -%}
+      {% endif %}
       <div style="padding: 10px 12px;">
         <div style="color: #606770; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
           {{ shop.url | replace: 'https://', '' | replace: 'http://', '' | truncate: 30 }}
@@ -105,15 +105,15 @@
     </div>
   </div>
 
-  {%- comment -%} Twitter Preview {%- endcomment -%}
+  {% comment %} Twitter Preview {% endcomment %}
   <div>
     <h4 style="margin-bottom: 10px; font-size: 14px; color: #666;">Twitter Card Preview</h4>
     <div style="border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: white; max-width: 500px;">
-      {%- if preview_image -%}
+      {% if preview_image %}
       <div style="width: 100%; height: 262px; background: #e1e8ed; overflow: hidden;">
         <img src="{{ preview_image | image_url: width: 500 }}" alt="{{ preview_title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
-      {%- endif -%}
+      {% endif %}
       <div style="padding: 12px;">
         <div style="color: #1da1f2; font-size: 15px; font-weight: 700; line-height: 1.3125; margin-bottom: 2px;">
           {{ preview_title | truncate: 70 }}
@@ -128,5 +128,5 @@
     </div>
   </div>
 </div>
-{%- endif -%}
+{% endif %}
 

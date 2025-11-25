@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Form Field Snippet
   ------------------
   Renders a styled form input field with label and optional error state.
@@ -21,24 +21,24 @@
     {% render 'form-field', type: 'email', name: 'email', label: 'Email', required: true %}
     {% render 'form-field', type: 'textarea', name: 'message', label: 'Message', rows: 6 %}
     {% render 'form-field', type: 'select', name: 'country', label: 'Country', options: country_options %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign field_type = type | default: 'text'
   assign field_id = id | default: name
   assign field_rows = rows | default: 4
--%}
+%}
 
 <div class="form-field{% if error %} form-field--error{% endif %}{% if class %} {{ class }}{% endif %}">
-  {%- if label != blank -%}
+  {% if label != blank %}
     <label class="form-field__label" for="{{ field_id }}">
       {{- label -}}
-      {%- if required -%}<span class="form-field__required" aria-hidden="true">*</span>{%- endif -%}
+      {% if required %}<span class="form-field__required" aria-hidden="true">*</span>{% endif %}
     </label>
-  {%- endif -%}
+  {% endif %}
 
-  {%- case field_type -%}
-    {%- when 'textarea' -%}
+  {% case field_type %}
+    {% when 'textarea' %}
       <textarea
         class="form-field__input form-field__textarea"
         name="{{ name }}"
@@ -50,7 +50,7 @@
         {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
       >{{ value }}</textarea>
 
-    {%- when 'select' -%}
+    {% when 'select' %}
       <select
         class="form-field__input form-field__select"
         name="{{ name }}"
@@ -58,17 +58,17 @@
         {% if required %}required aria-required="true"{% endif %}
         {% if error %}aria-invalid="true" aria-describedby="{{ field_id }}-error"{% endif %}
       >
-        {%- if placeholder -%}
+        {% if placeholder %}
           <option value="" disabled {% unless value %}selected{% endunless %}>{{ placeholder }}</option>
-        {%- endif -%}
-        {%- for option in options -%}
+        {% endif %}
+        {% for option in options %}
           <option value="{{ option.value }}" {% if value == option.value %}selected{% endif %}>
             {{- option.label -}}
           </option>
-        {%- endfor -%}
+        {% endfor %}
       </select>
 
-    {%- else -%}
+    {% else %}
       <input
         class="form-field__input"
         type="{{ field_type }}"
@@ -80,13 +80,13 @@
         {% if error %}aria-invalid="true" aria-describedby="{{ field_id }}-error"{% endif %}
         {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
       >
-  {%- endcase -%}
+  {% endcase %}
 
-  {%- if error -%}
+  {% if error %}
     <span class="form-field__error" id="{{ field_id }}-error" role="alert">
       {{- error -}}
     </span>
-  {%- endif -%}
+  {% endif %}
 </div>
 
 <style>

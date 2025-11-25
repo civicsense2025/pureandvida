@@ -24,13 +24,13 @@
     padding-bottom: {{ section.settings.padding_bottom }}px;
   "
 >
-  {%- if section.settings.use_page_width -%}
+  {% if section.settings.use_page_width %}
     <div class="custom-liquid-section__container page-width">
-  {%- endif -%}
+  {% endif %}
 
-  {%- if section.settings.custom_liquid != blank -%}
+  {% if section.settings.custom_liquid != blank %}
     {{ section.settings.custom_liquid }}
-  {%- elsif request.design_mode -%}
+  {% elsif request.design_mode %}
     <div class="custom-liquid-section__placeholder">
       <div class="custom-liquid-section__placeholder-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -53,11 +53,11 @@
         </ul>
       </div>
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if section.settings.use_page_width -%}
+  {% if section.settings.use_page_width %}
     </div>
-  {%- endif -%}
+  {% endif %}
 </div>
 
 <style>
@@ -220,7 +220,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Styling"
+      "content": "Styling"
     },
     {
       "type": "color",
@@ -229,7 +229,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",

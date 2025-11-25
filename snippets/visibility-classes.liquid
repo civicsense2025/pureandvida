@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Visibility Classes Snippet
   --------------------------
   Outputs CSS classes for responsive visibility based on section settings.
@@ -18,31 +18,31 @@
 
   Then add the appropriate class to your section wrapper:
     <div class="{% unless show_on_mobile %}hide-mobile{% endunless %} {% unless show_on_desktop %}hide-desktop{% endunless %}">
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign mobile = show_on_mobile | default: true
   assign desktop = show_on_desktop | default: true
--%}
+%}
 
-{%- unless mobile and desktop -%}
+{% unless mobile and desktop %}
   <style>
-    {%- unless mobile -%}
+    {% unless mobile %}
       @media screen and (max-width: 749px) {
         #shopify-section-{{ section_id }},
         #{{ section_id }} {
           display: none !important;
         }
       }
-    {%- endunless -%}
+    {% endunless %}
 
-    {%- unless desktop -%}
+    {% unless desktop %}
       @media screen and (min-width: 750px) {
         #shopify-section-{{ section_id }},
         #{{ section_id }} {
           display: none !important;
         }
       }
-    {%- endunless -%}
+    {% endunless %}
   </style>
-{%- endunless -%}
+{% endunless %}

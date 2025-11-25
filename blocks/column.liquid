@@ -1,11 +1,11 @@
-{%- comment -%}
+{% comment %}
   Theme Block: Column
   -------------------
   Multi-purpose column block with icon/image, title, description, and optional link.
   Supports grouped override settings for colors, typography, and spacing.
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   # Content
   assign col_image = block.settings.image
   assign col_icon = block.settings.icon
@@ -42,7 +42,7 @@
   assign gap = block.settings.internal_gap
   assign border_width = block.settings.border_width
   assign card_radius = block.settings.border_radius
--%}
+%}
 
 <div
   class="block-column block-column--align-{{ alignment }}"
@@ -66,8 +66,8 @@
     {% if card_radius != blank %}--block-radius: {{ card_radius }}px;{% endif %}
   "
 >
-  {%- comment -%} Media (Image or Icon) {%- endcomment -%}
-  {%- if col_image != blank -%}
+  {% comment %} Media (Image or Icon) {% endcomment %}
+  {% if col_image != blank %}
     <div
       class="block-column__media"
       style="
@@ -97,34 +97,34 @@
         class="block-column__image"
       >
     </div>
-  {%- elsif col_icon != blank and col_icon != 'none' -%}
+  {% elsif col_icon != blank and col_icon != 'none' %}
     <div class="block-column__icon">
       {% render 'render-icon', icon: col_icon, size: icon_size, color: icon_color %}
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- comment -%} Content {%- endcomment -%}
+  {% comment %} Content {% endcomment %}
   <div class="block-column__content">
-    {%- if col_title != blank -%}
+    {% if col_title != blank %}
       <h3 class="block-column__title">{{ col_title }}</h3>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if col_text != blank -%}
+    {% if col_text != blank %}
       <div class="block-column__text rte">{{ col_text }}</div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if col_link_label != blank -%}
+    {% if col_link_label != blank %}
       <a
         href="{{ col_link }}"
         class="block-column__link{% if btn_style != 'link' %} button button--{{ btn_style }}{% endif %}"
         {% if col_link == blank %}aria-disabled="true"{% endif %}
       >
         {{ col_link_label }}
-        {%- if btn_style == 'link' -%}
+        {% if btn_style == 'link' %}
           <span aria-hidden="true">&rarr;</span>
-        {%- endif -%}
+        {% endif %}
       </a>
-    {%- endif -%}
+    {% endif %}
   </div>
 </div>
 
@@ -362,7 +362,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Color Overrides"
+      "content": "Color Overrides"
     },
     {
       "type": "paragraph",
@@ -401,7 +401,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Typography Overrides"
+      "content": "Typography Overrides"
     },
     {
       "type": "paragraph",
@@ -451,7 +451,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing Overrides"
+      "content": "Spacing Overrides"
     },
     {
       "type": "paragraph",

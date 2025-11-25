@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Button Snippet
   --------------
   Renders a styled button with multiple variants.
@@ -21,27 +21,27 @@
     {% render 'button', text: 'Add to Cart', style: 'primary' %}
     {% render 'button', text: 'Learn More', url: '/about', style: 'secondary' %}
     {% render 'button', text: 'View Details', url: product.url, style: 'link', new_tab: true %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign button_style = style | default: 'primary'
   assign button_size = size | default: 'medium'
   assign is_link = false
   if url != blank
     assign is_link = true
   endif
--%}
+%}
 
-{%- capture button_classes -%}
+{% capture button_classes %}
   button button--{{ button_style }} button--{{ button_size }}{% if full_width %} button--full-width{% endif %}{% if disabled %} button--disabled{% endif %}{% if class %} {{ class }}{% endif %}
-{%- endcapture -%}
+{% endcapture %}
 
-{%- capture button_content -%}
-  {%- if icon -%}<span class="button__icon">{{ icon }}</span>{%- endif -%}
+{% capture button_content %}
+  {% if icon %}<span class="button__icon">{{ icon }}</span>{% endif %}
   <span class="button__text">{{ text }}</span>
-{%- endcapture -%}
+{% endcapture %}
 
-{%- if is_link -%}
+{% if is_link %}
   <a
     href="{{ url }}"
     class="{{ button_classes | strip }}"
@@ -52,7 +52,7 @@
   >
     {{- button_content -}}
   </a>
-{%- else -%}
+{% else %}
   <button
     type="{{ type | default: 'button' }}"
     class="{{ button_classes | strip }}"
@@ -62,7 +62,7 @@
   >
     {{- button_content -}}
   </button>
-{%- endif -%}
+{% endif %}
 
 <style>
   .button {

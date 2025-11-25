@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Multirow Item Snippet
   ---------------------------
   Reusable row block with image and content for multi-row sections.
@@ -46,9 +46,9 @@
       image_ratio: section.settings.image_ratio,
       heading_size: section.settings.heading_size
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign row_image_position = image_position | default: 'left'
   assign row_content_alignment = content_alignment | default: 'left'
   assign row_vertical_alignment = vertical_alignment | default: 'center'
@@ -75,30 +75,30 @@
 
   # Format row number with leading zero
   assign formatted_number = row_number_index | prepend: '0' | slice: -2, 2
--%}
+%}
 
 <div
   class="block-multirow-item block-multirow-item--image-{{ row_image_position }}{% if row_show_numbers %} block-multirow-item--numbered{% endif %}"
   style="--row-gap: {{ row_row_gap }}px;"
   {{ block.shopify_attributes }}
 >
-  {%- if row_show_numbers -%}
+  {% if row_show_numbers %}
     <div class="block-multirow-item__number block-multirow-item__number--{{ row_number_position }}">
       <span style="background: {{ row_number_bg }}; color: {{ row_number_text }};">
         {{ formatted_number }}
       </span>
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if row_show_connector and row_is_last == false -%}
+  {% if row_show_connector and row_is_last == false %}
     <div
       class="block-multirow-item__connector block-multirow-item__connector--{{ row_number_position }}"
       style="background: {{ row_connector_color }};"
     ></div>
-  {%- endif -%}
+  {% endif %}
 
   <div class="block-multirow-item__grid" style="gap: {{ row_column_gap }}px; align-items: {{ row_vertical_alignment }};">
-    {%- comment -%} Image Column {%- endcomment -%}
+    {% comment %} Image Column {% endcomment %}
     <div class="block-multirow-item__media-wrapper">
       <div
         class="block-multirow-item__media"
@@ -118,7 +118,7 @@
           border-radius: {{ row_image_radius }}px;
         "
       >
-        {%- if block.settings.image != blank -%}
+        {% if block.settings.image != blank %}
           <img
             src="{{ block.settings.image | image_url: width: 800 }}"
             srcset="
@@ -134,7 +134,7 @@
             loading="lazy"
             class="block-multirow-item__image"
           >
-        {%- else -%}
+        {% else %}
           <div class="block-multirow-item__placeholder">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
               <rect width="525" height="525" fill="#E8E8E8"/>
@@ -142,29 +142,29 @@
               <path d="M157.5 382.5L202.5 322.5L247.5 352.5L307.5 277.5L367.5 382.5" stroke="#CACACA" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-        {%- endif -%}
+        {% endif %}
       </div>
     </div>
 
-    {%- comment -%} Content Column {%- endcomment -%}
+    {% comment %} Content Column {% endcomment %}
     <div class="block-multirow-item__content" style="text-align: {{ row_content_alignment }}; padding: {{ row_content_padding }}px;">
-      {%- if block.settings.caption != blank -%}
+      {% if block.settings.caption != blank %}
         <span class="block-multirow-item__caption">{{ block.settings.caption }}</span>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if block.settings.heading != blank -%}
+      {% if block.settings.heading != blank %}
         <h3 class="block-multirow-item__heading" style="font-size: {{ row_heading_size }}px; color: {{ row_heading_color }};">
           {{ block.settings.heading }}
         </h3>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if block.settings.text != blank -%}
+      {% if block.settings.text != blank %}
         <div class="block-multirow-item__text rte" style="color: {{ row_text_color }};">
           {{ block.settings.text }}
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if block.settings.button_label != blank -%}
+      {% if block.settings.button_label != blank %}
         <a
           href="{{ block.settings.button_link }}"
           class="block-multirow-item__button button button--{{ row_button_style }}"
@@ -172,7 +172,7 @@
         >
           {{ block.settings.button_label }}
         </a>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 </div>

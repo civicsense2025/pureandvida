@@ -30,14 +30,14 @@
   "
 >
   <div class="featured-product-section__container page-width">
-    {%- if featured_product != blank -%}
+    {% if featured_product != blank %}
       <div class="featured-product-grid" style="gap: {{ section.settings.grid_gap }}px;">
-        {%- comment -%} Media Column {%- endcomment -%}
+        {% comment %} Media Column {% endcomment %}
         <div class="featured-product__media">
-          {%- if section.settings.show_gallery and featured_product.images.size > 1 -%}
+          {% if section.settings.show_gallery and featured_product.images.size > 1 %}
             <div class="featured-product__gallery">
               <div class="featured-product__main-image" id="main-image-{{ section.id }}">
-                {%- assign first_image = featured_product.featured_image -%}
+                {% assign first_image = featured_product.featured_image %}
                 <img
                   src="{{ first_image | image_url: width: 1000 }}"
                   alt="{{ first_image.alt | default: featured_product.title | escape }}"
@@ -47,7 +47,7 @@
                 >
               </div>
               <div class="featured-product__thumbnails">
-                {%- for image in featured_product.images limit: 5 -%}
+                {% for image in featured_product.images limit: 5 %}
                   <button
                     type="button"
                     class="featured-product__thumbnail{% if forloop.first %} featured-product__thumbnail--active{% endif %}"
@@ -62,11 +62,11 @@
                       loading="lazy"
                     >
                   </button>
-                {%- endfor -%}
+                {% endfor %}
               </div>
             </div>
-          {%- else -%}
-            {%- if featured_product.featured_image != blank -%}
+          {% else %}
+            {% if featured_product.featured_image != blank %}
               <img
                 src="{{ featured_product.featured_image | image_url: width: 1000 }}"
                 srcset="
@@ -79,16 +79,16 @@
                 class="featured-product__image"
                 style="border-radius: {{ section.settings.image_border_radius }}px;"
               >
-            {%- else -%}
+            {% else %}
               <div class="featured-product__image-placeholder">
                 {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
               </div>
-            {%- endif -%}
-          {%- endif -%}
+            {% endif %}
+          {% endif %}
 
-          {%- if section.settings.show_badge and featured_product.compare_at_price > featured_product.price -%}
-            {%- assign savings = featured_product.compare_at_price | minus: featured_product.price -%}
-            {%- assign savings_percent = savings | times: 100.0 | divided_by: featured_product.compare_at_price | round -%}
+          {% if section.settings.show_badge and featured_product.compare_at_price > featured_product.price %}
+            {% assign savings = featured_product.compare_at_price | minus: featured_product.price %}
+            {% assign savings_percent = savings | times: 100.0 | divided_by: featured_product.compare_at_price | round %}
             <div
               class="featured-product__badge"
               style="
@@ -98,16 +98,16 @@
             >
               {{ section.settings.badge_text | default: 'Sale' }} {{ savings_percent }}% Off
             </div>
-          {%- endif -%}
+          {% endif %}
         </div>
 
-        {%- comment -%} Info Column {%- endcomment -%}
+        {% comment %} Info Column {% endcomment %}
         <div class="featured-product__info">
-          {%- if section.settings.show_vendor and featured_product.vendor != blank -%}
+          {% if section.settings.show_vendor and featured_product.vendor != blank %}
             <p class="featured-product__vendor" style="{% if section.settings.vendor_color != blank %}color: {{ section.settings.vendor_color }};{% endif %}">
               {{ featured_product.vendor }}
             </p>
-          {%- endif -%}
+          {% endif %}
 
           <h2
             class="featured-product__title"
@@ -116,50 +116,50 @@
               {% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}
             "
           >
-            {%- if section.settings.link_title -%}
+            {% if section.settings.link_title %}
               <a href="{{ featured_product.url }}">{{ featured_product.title }}</a>
-            {%- else -%}
+            {% else %}
               {{ featured_product.title }}
-            {%- endif -%}
+            {% endif %}
           </h2>
 
-          {%- if section.settings.show_price -%}
+          {% if section.settings.show_price %}
             <div class="featured-product__price" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">
-              {%- if featured_product.compare_at_price > featured_product.price -%}
+              {% if featured_product.compare_at_price > featured_product.price %}
                 <span class="featured-product__price-compare">{{ featured_product.compare_at_price | money }}</span>
-              {%- endif -%}
+              {% endif %}
               <span class="featured-product__price-current">{{ featured_product.price | money }}</span>
-              {%- if featured_product.price_varies -%}
+              {% if featured_product.price_varies %}
                 <span class="featured-product__price-from">{{ 'products.product.from' | t | default: 'from' }}</span>
-              {%- endif -%}
+              {% endif %}
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.show_rating -%}
+          {% if section.settings.show_rating %}
             <div class="featured-product__rating">
               <span class="stars" aria-hidden="true">★★★★★</span>
               <span class="rating-text">{{ section.settings.rating_text | default: '5.0 (120 reviews)' }}</span>
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.show_description and featured_product.description != blank -%}
+          {% if section.settings.show_description and featured_product.description != blank %}
             <div
               class="featured-product__description rte"
               style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}"
             >
-              {%- if section.settings.truncate_description -%}
+              {% if section.settings.truncate_description %}
                 {{ featured_product.description | strip_html | truncatewords: section.settings.description_length }}
-              {%- else -%}
+              {% else %}
                 {{ featured_product.description }}
-              {%- endif -%}
+              {% endif %}
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- comment -%} Product Form {%- endcomment -%}
-          {%- form 'product', featured_product, id: 'featured-product-form', class: 'featured-product__form' -%}
-            {%- if section.settings.show_variants and featured_product.has_only_default_variant == false -%}
+          {% comment %} Product Form {% endcomment %}
+          {% form 'product', featured_product, id: 'featured-product-form', class: 'featured-product__form' %}
+            {% if section.settings.show_variants and featured_product.has_only_default_variant == false %}
               <div class="featured-product__variants">
-                {%- for option in featured_product.options_with_values -%}
+                {% for option in featured_product.options_with_values %}
                   <div class="featured-product__option">
                     <label class="featured-product__option-label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
                       {{ option.name }}
@@ -169,23 +169,23 @@
                       class="featured-product__option-select"
                       name="options[{{ option.name | escape }}]"
                     >
-                      {%- for value in option.values -%}
+                      {% for value in option.values %}
                         <option
                           value="{{ value | escape }}"
                           {% if option.selected_value == value %}selected{% endif %}
                         >
                           {{ value }}
                         </option>
-                      {%- endfor -%}
+                      {% endfor %}
                     </select>
                   </div>
-                {%- endfor -%}
+                {% endfor %}
               </div>
-            {%- endif -%}
+            {% endif %}
 
             <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
 
-            {%- if section.settings.show_quantity -%}
+            {% if section.settings.show_quantity %}
               <div class="featured-product__quantity">
                 <label class="featured-product__quantity-label" for="Quantity-{{ section.id }}">
                   {{ 'products.product.quantity' | t | default: 'Quantity' }}
@@ -204,7 +204,7 @@
                   <button type="button" class="quantity-btn" data-action="increase" aria-label="Increase quantity">+</button>
                 </div>
               </div>
-            {%- endif -%}
+            {% endif %}
 
             <button
               type="submit"
@@ -215,14 +215,14 @@
                 {% if section.settings.button_text_color != blank %}color: {{ section.settings.button_text_color }};{% endif %}
               "
             >
-              {%- if featured_product.available -%}
+              {% if featured_product.available %}
                 {{ section.settings.add_to_cart_text | default: 'Add to Cart' }}
-              {%- else -%}
+              {% else %}
                 {{ 'products.product.sold_out' | t | default: 'Sold Out' }}
-              {%- endif -%}
+              {% endif %}
             </button>
 
-            {%- if section.settings.show_buy_now and featured_product.available -%}
+            {% if section.settings.show_buy_now and featured_product.available %}
               <button
                 type="submit"
                 class="featured-product__buy-now"
@@ -234,33 +234,33 @@
               >
                 {{ section.settings.buy_now_text | default: 'Buy Now' }}
               </button>
-            {%- endif -%}
-          {%- endform -%}
+            {% endif %}
+          {% endform %}
 
-          {%- if section.settings.show_features -%}
+          {% if section.settings.show_features %}
             <div class="featured-product__features">
-              {%- for block in section.blocks -%}
-                {%- if block.type == 'feature' -%}
+              {% for block in section.blocks %}
+                {% if block.type == 'feature' %}
                   <div class="featured-product__feature" {{ block.shopify_attributes }}>
-                    {%- if block.settings.icon != blank -%}
+                    {% if block.settings.icon != blank %}
                       <span class="feature-icon" aria-hidden="true">{{ block.settings.icon }}</span>
-                    {%- endif -%}
+                    {% endif %}
                     <span class="feature-text">{{ block.settings.text }}</span>
                   </div>
-                {%- endif -%}
-              {%- endfor -%}
+                {% endif %}
+              {% endfor %}
             </div>
-          {%- endif -%}
+          {% endif %}
         </div>
       </div>
-    {%- elsif request.design_mode -%}
+    {% elsif request.design_mode %}
       <div class="featured-product-section__placeholder">
         <div class="placeholder-icon">
           {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
         </div>
         <p>Select a product in the section settings</p>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -709,7 +709,7 @@
 
 {% schema %}
 {
-  "name": "📦 Featured Product",
+  "name": "Featured Product",
   "tag": "section",
   "class": "section-featured-product",
   "settings": [
@@ -719,7 +719,7 @@
     },
     {
       "type": "header",
-      "content": "📦 Product"
+      "content": "Product"
     },
     {
       "type": "product",
@@ -762,7 +762,7 @@
     },
     {
       "type": "header",
-      "content": "🖼️ Gallery"
+      "content": "Gallery"
     },
     {
       "type": "checkbox",
@@ -773,7 +773,7 @@
     },
     {
       "type": "header",
-      "content": "🏷️ Badge"
+      "content": "Badge"
     },
     {
       "type": "checkbox",
@@ -864,7 +864,7 @@
     },
     {
       "type": "header",
-      "content": "🛒 Purchase Options"
+      "content": "Purchase Options"
     },
     {
       "type": "checkbox",
@@ -898,7 +898,7 @@
     },
     {
       "type": "header",
-      "content": "✨ Features"
+      "content": "Features"
     },
     {
       "type": "checkbox",
@@ -909,7 +909,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",
@@ -953,7 +953,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Section Styling"
+      "content": "Section Styling"
     },
     {
       "type": "color",
@@ -962,7 +962,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",
@@ -988,13 +988,13 @@
   "blocks": [
     {
       "type": "feature",
-      "name": "✨ Feature",
+      "name": "Feature",
       "settings": [
         {
           "type": "text",
           "id": "icon",
           "label": "Icon",
-          "default": "✓"
+          "default": ""
         },
         {
           "type": "text",
@@ -1015,8 +1015,8 @@
         "show_quantity": true
       },
       "blocks": [
-        { "type": "feature", "settings": { "icon": "🚚", "text": "Free shipping over $50" } },
-        { "type": "feature", "settings": { "icon": "↩️", "text": "30-day returns" } },
+        { "type": "feature", "settings": { "icon": "", "text": "Free shipping over $50" } },
+        { "type": "feature", "settings": { "icon": "", "text": "30-day returns" } },
         { "type": "feature", "settings": { "icon": "🔒", "text": "Secure checkout" } }
       ]
     },

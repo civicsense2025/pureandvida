@@ -7,11 +7,11 @@
     <meta name="theme-color" content="{{ settings.color_primary }}">
     <link rel="canonical" href="{{ canonical_url }}">
 
-    {%- if settings.favicon != blank -%}
+    {% if settings.favicon != blank %}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
-    {%- endif -%}
+    {% endif %}
 
-    {%- liquid
+    {% liquid
       assign load_shopify_fonts = false
       if settings.custom_font_heading == 'shopify_font' and settings.font_heading.system? == false
         assign load_shopify_fonts = true
@@ -19,43 +19,43 @@
       if settings.custom_font_body == 'shopify_font' and settings.font_body.system? == false
         assign load_shopify_fonts = true
       endif
-    -%}
-    {%- if load_shopify_fonts -%}
+    %}
+    {% if load_shopify_fonts %}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-    {%- endif -%}
+    {% endif %}
 
     <title>
       {{ page_title }}
-      {%- if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags.join(', ') }}{% endif -%}
-      {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
-      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {% if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags.join(', ') }}{% endif %}
+      {% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}
+      {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
     </title>
 
     {% if page_description %}
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
 
-    {%- comment -%} Enhanced Meta Tags {%- endcomment -%}
+    {% comment %} Enhanced Meta Tags {% endcomment %}
     {% render 'meta-tags' %}
     {% render 'seo-meta-advanced' %}
 
-    {%- comment -%} Site Verification Codes {%- endcomment -%}
-    {%- if settings.seo_google_verification != blank -%}
+    {% comment %} Site Verification Codes {% endcomment %}
+    {% if settings.seo_google_verification != blank %}
       <meta name="google-site-verification" content="{{ settings.seo_google_verification }}">
-    {%- endif -%}
-    {%- if settings.seo_bing_verification != blank -%}
+    {% endif %}
+    {% if settings.seo_bing_verification != blank %}
       <meta name="msvalidate.01" content="{{ settings.seo_bing_verification }}">
-    {%- endif -%}
-    {%- if settings.seo_pinterest_verification != blank -%}
+    {% endif %}
+    {% if settings.seo_pinterest_verification != blank %}
       <meta name="p:domain_verify" content="{{ settings.seo_pinterest_verification }}">
-    {%- endif -%}
+    {% endif %}
 
-    {%- comment -%} Structured Data {%- endcomment -%}
-    {%- if settings.seo_enable_organization_schema != false -%}
+    {% comment %} Structured Data {% endcomment %}
+    {% if settings.seo_enable_organization_schema != false %}
       {% render 'structured-data', include_organization: true, include_website: settings.seo_enable_website_schema != false, include_breadcrumbs: settings.seo_enable_breadcrumbs != false %}
-    {%- else -%}
+    {% else %}
       {% render 'structured-data', include_organization: false, include_website: settings.seo_enable_website_schema != false, include_breadcrumbs: settings.seo_enable_breadcrumbs != false %}
-    {%- endif -%}
+    {% endif %}
 
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'carousel.js' | asset_url }}" defer="defer"></script>
@@ -63,7 +63,7 @@
     <script src="{{ 'product-tabs.js' | asset_url }}" defer="defer"></script>
     {{ content_for_header }}
 
-    {%- liquid
+    {% liquid
       if settings.custom_font_body == 'shopify_font'
         assign body_font_bold = settings.font_body | font_modify: 'weight', 'bold'
         assign body_font_italic = settings.font_body | font_modify: 'style', 'italic'
@@ -72,39 +72,39 @@
     %}
 
     {% style %}
-      {%- if settings.custom_font_body == 'shopify_font' -%}
+      {% if settings.custom_font_body == 'shopify_font' %}
         {{ settings.font_body | font_face: font_display: 'swap' }}
         {{ body_font_bold | font_face: font_display: 'swap' }}
         {{ body_font_italic | font_face: font_display: 'swap' }}
         {{ body_font_bold_italic | font_face: font_display: 'swap' }}
-      {%- endif -%}
-      {%- if settings.custom_font_heading == 'shopify_font' -%}
+      {% endif %}
+      {% if settings.custom_font_heading == 'shopify_font' %}
         {{ settings.font_heading | font_face: font_display: 'swap' }}
-      {%- endif -%}
+      {% endif %}
 
       /* Custom Fonts from Assets - Multiple formats for browser compatibility */
-      {%- assign nohemi_light_woff = 'Nohemi-Light-BF6438cc5702321.woff' | asset_url -%}
-      {%- assign nohemi_light_otf = 'Nohemi-Light.otf' | asset_url -%}
-      {%- assign nohemi_light_ttf = 'Nohemi-Light-BF6438cc5899919.ttf' | asset_url -%}
+      {% assign nohemi_light_woff = 'Nohemi-Light-BF6438cc5702321.woff' | asset_url %}
+      {% assign nohemi_light_otf = 'Nohemi-Light.otf' | asset_url %}
+      {% assign nohemi_light_ttf = 'Nohemi-Light-BF6438cc5899919.ttf' | asset_url %}
 
-      {%- assign nohemi_regular_woff = 'Nohemi-Regular-BF6438cc579d934.woff' | asset_url -%}
-      {%- assign nohemi_regular_otf = 'Nohemi-Regular.otf' | asset_url -%}
-      {%- assign nohemi_regular_ttf = 'Nohemi-Regular-BF6438cc4d0e493.ttf' | asset_url -%}
+      {% assign nohemi_regular_woff = 'Nohemi-Regular-BF6438cc579d934.woff' | asset_url %}
+      {% assign nohemi_regular_otf = 'Nohemi-Regular.otf' | asset_url %}
+      {% assign nohemi_regular_ttf = 'Nohemi-Regular-BF6438cc4d0e493.ttf' | asset_url %}
 
-      {%- assign nohemi_medium_woff = 'Nohemi-Medium-BF6438cc57ddecd.woff' | asset_url -%}
-      {%- assign nohemi_medium_otf = 'Nohemi-Medium.otf' | asset_url -%}
-      {%- assign nohemi_medium_ttf = 'Nohemi-Medium-BF6438cc5883899.ttf' | asset_url -%}
+      {% assign nohemi_medium_woff = 'Nohemi-Medium-BF6438cc57ddecd.woff' | asset_url %}
+      {% assign nohemi_medium_otf = 'Nohemi-Medium.otf' | asset_url %}
+      {% assign nohemi_medium_ttf = 'Nohemi-Medium-BF6438cc5883899.ttf' | asset_url %}
 
-      {%- assign nohemi_semibold_woff = 'Nohemi-SemiBold-BF6438cc57db2ff.woff' | asset_url -%}
-      {%- assign nohemi_semibold_otf = 'Nohemi-SemiBold.otf' | asset_url -%}
-      {%- assign nohemi_semibold_ttf = 'Nohemi-SemiBold-BF6438cc588a48a.ttf' | asset_url -%}
+      {% assign nohemi_semibold_woff = 'Nohemi-SemiBold-BF6438cc57db2ff.woff' | asset_url %}
+      {% assign nohemi_semibold_otf = 'Nohemi-SemiBold.otf' | asset_url %}
+      {% assign nohemi_semibold_ttf = 'Nohemi-SemiBold-BF6438cc588a48a.ttf' | asset_url %}
 
-      {%- assign nohemi_bold_woff = 'Nohemi-Bold-BF6438cc577b524.woff' | asset_url -%}
-      {%- assign nohemi_bold_otf = 'Nohemi-Bold.otf' | asset_url -%}
-      {%- assign nohemi_bold_ttf = 'Nohemi-Bold-BF6438cc587b5b5.ttf' | asset_url -%}
+      {% assign nohemi_bold_woff = 'Nohemi-Bold-BF6438cc577b524.woff' | asset_url %}
+      {% assign nohemi_bold_otf = 'Nohemi-Bold.otf' | asset_url %}
+      {% assign nohemi_bold_ttf = 'Nohemi-Bold-BF6438cc587b5b5.ttf' | asset_url %}
 
-      {%- assign versailles = 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url -%}
-      {%- assign myriad = 'MyriadPro-Regular.otf' | asset_url -%}
+      {% assign versailles = 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url %}
+      {% assign myriad = 'MyriadPro-Regular.otf' | asset_url %}
 
       @font-face {
         font-family: 'Nohemi';
@@ -174,7 +174,7 @@
 
       :root {
         /* Typography - Font Families */
-        {%- liquid
+        {% liquid
           if settings.custom_font_body == 'nohemi'
             assign body_font_family = 'Nohemi'
             assign body_font_style = 'normal'
@@ -225,7 +225,7 @@
           else
             assign accent_font_family = 'Versailles'
           endif
-        -%}
+        %}
         --font-body-family: {{ body_font_family }}{% if settings.custom_font_body == 'shopify_font' %}, {{ settings.font_body.fallback_families }}{% else %}, sans-serif{% endif %};
         --font-body-style: {{ body_font_style }};
         --font-body-weight: {{ settings.font_weight_body | default: body_font_weight }};
@@ -365,7 +365,7 @@
         --button-outline-border: {{ settings.button_outline_border | default: '#5E877A' }};
         --button-outline-text: {{ settings.button_outline_text | default: '#1E1E1E' }};
         --button-letter-spacing: {{ settings.button_letter_spacing | default: 12 | divided_by: 100.0 }}em;
-        {%- liquid
+        {% liquid
           case settings.button_border_radius
             when 'none'
               assign button_radius = '0px'
@@ -380,7 +380,7 @@
             else
               assign button_radius = '4px'
           endcase
-        -%}
+        %}
         --button-radius: {{ button_radius }};
         --button-padding-y: {{ settings.button_padding_vertical | default: 12 }}px;
         --button-padding-x: {{ settings.button_padding_horizontal | default: 24 }}px;
@@ -393,7 +393,7 @@
         --input-placeholder: {{ settings.input_placeholder | default: '#999999' }};
         --input-border: {{ settings.input_border | default: '#cccccc' }};
         --input-focus-border: {{ settings.input_focus_border | default: '#000000' }};
-        {%- liquid
+        {% liquid
           case settings.input_border_radius
             when 'none'
               assign input_radius = '0px'
@@ -404,7 +404,7 @@
             else
               assign input_radius = '4px'
           endcase
-        -%}
+        %}
         --input-radius: {{ input_radius }};
         --input-height: {{ settings.input_height | default: 44 }}px;
         --form-error-color: {{ settings.form_error_color | default: '#dc2626' }};
@@ -413,7 +413,7 @@
         /* Links */
         --link-color: {{ settings.link_color | default: settings.color_primary }};
         --link-hover-color: {{ settings.link_hover_color | default: settings.color_accent }};
-        {%- liquid
+        {% liquid
           case settings.link_underline
             when 'none'
               assign link_decoration = 'none'
@@ -428,7 +428,7 @@
               assign link_decoration = 'none'
               assign link_hover_decoration = 'underline'
           endcase
-        -%}
+        %}
         --link-decoration: {{ link_decoration }};
         --link-hover-decoration: {{ link_hover_decoration }};
 
@@ -478,23 +478,23 @@
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'pure-vida.css' | asset_url | stylesheet_tag }}
 
-    {%- comment -%}
+    {% comment %}
       Font preloading: Only preload critical fonts used above-the-fold.
       Preloading all font weights hurts performance.
       Using manual link tags as preload_tag doesn't support font attributes.
       theme-check-disable AssetPreload
-    {%- endcomment -%}
-    {%- if settings.custom_font_body == 'shopify_font' and settings.font_body.system? == false -%}
+    {% endcomment %}
+    {% if settings.custom_font_body == 'shopify_font' and settings.font_body.system? == false %}
       <link rel="preload" as="font" href="{{ settings.font_body | font_url }}" type="font/woff2" crossorigin>
-    {%- endif -%}
-    {%- if settings.custom_font_heading == 'shopify_font' and settings.font_heading.system? == false -%}
+    {% endif %}
+    {% if settings.custom_font_heading == 'shopify_font' and settings.font_heading.system? == false %}
       <link rel="preload" as="font" href="{{ settings.font_heading | font_url }}" type="font/woff2" crossorigin>
-    {%- endif -%}
-    {%- comment -%} Preload only critical custom fonts (Regular for body, Versailles for titles) {%- endcomment -%}
+    {% endif %}
+    {% comment %} Preload only critical custom fonts (Regular for body, Versailles for titles) {% endcomment %}
     <link rel="preload" as="font" href="{{ 'Nohemi-Regular-BF6438cc579d934.woff' | asset_url }}" type="font/woff" crossorigin>
     <link rel="preload" as="font" href="{{ 'Nohemi-Medium-BF6438cc57ddecd.woff' | asset_url }}" type="font/woff" crossorigin>
     <link rel="preload" as="font" href="{{ 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url }}" type="font/ttf" crossorigin>
-    {%- comment -%} theme-check-enable AssetPreload {%- endcomment -%}
+    {% comment %} theme-check-enable AssetPreload {% endcomment %}
 
     <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
   </head>
@@ -504,7 +504,7 @@
       {{ 'accessibility.skip_to_text' | t }}
     </a>
 
-    {%- render 'cart-notification' -%}
+    {% render 'cart-notification' %}
 
     {% sections 'header-group' %}
 

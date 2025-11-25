@@ -1,21 +1,21 @@
-{%- liquid
+{% liquid
   # @description SEO audit tool for development mode - validates meta tags, structured data, and image SEO
   # Only renders when shop.metafields.seo.enable_audit is true or in development mode
   # @param show_audit {Boolean} - Force show audit (optional)
   # @example
   #   {% render 'seo-audit' %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign show_audit = show_audit | default: false
   if shop.metafields.seo.enable_audit == true or request.host contains 'myshopify.com' or show_audit
     assign enable_audit = true
   else
     assign enable_audit = false
   endif
--%}
+%}
 
-{%- if enable_audit -%}
+{% if enable_audit %}
 <style>
   .seo-audit {
     position: fixed;
@@ -80,8 +80,8 @@
 <div id="seo-audit-panel" class="seo-audit" style="display: none;">
   <h3>SEO Audit Report</h3>
   
-  {%- comment -%} Meta Title Check {%- endcomment -%}
-  {%- liquid
+  {% comment %} Meta Title Check {% endcomment %}
+  {% liquid
     assign meta_title = page_title
     if template.name == 'product'
       assign meta_title = product.title | escape
@@ -93,15 +93,15 @@
       assign meta_title = page.title | escape
     endif
     assign title_length = meta_title | size
-  -%}
+  %}
   <div class="seo-audit-item {% if title_length < 30 %}error{% elsif title_length > 60 %}warning{% else %}success{% endif %}">
     <strong>Meta Title</strong>
     <div>Length: {{ title_length }} characters (Recommended: 30-60)</div>
     <div>Value: {{ meta_title | truncate: 70 }}</div>
   </div>
 
-  {%- comment -%} Meta Description Check {%- endcomment -%}
-  {%- liquid
+  {% comment %} Meta Description Check {% endcomment %}
+  {% liquid
     assign meta_description = page_description
     if template.name == 'product' and product.description != blank
       assign meta_description = product.description | strip_html | truncate: 160
@@ -113,19 +113,19 @@
       assign meta_description = page.content | strip_html | truncate: 160
     endif
     assign desc_length = meta_description | size
-  -%}
+  %}
   <div class="seo-audit-item {% if desc_length == 0 %}error{% elsif desc_length < 120 or desc_length > 160 %}warning{% else %}success{% endif %}">
     <strong>Meta Description</strong>
     <div>Length: {{ desc_length }} characters (Recommended: 120-160)</div>
-    {%- if meta_description != blank -%}
+    {% if meta_description != blank %}
       <div>Value: {{ meta_description | truncate: 100 }}</div>
-    {%- else -%}
+    {% else %}
       <div>Missing!</div>
-    {%- endif -%}
+    {% endif %}
   </div>
 
-  {%- comment -%} Open Graph Image Check {%- endcomment -%}
-  {%- liquid
+  {% comment %} Open Graph Image Check {% endcomment %}
+  {% liquid
     assign og_image_exists = false
     if template.name == 'product' and product.featured_media
       assign og_image_exists = true
@@ -138,14 +138,14 @@
     elsif settings.seo_og_image != blank
       assign og_image_exists = true
     endif
-  -%}
+  %}
   <div class="seo-audit-item {% if og_image_exists %}success{% else %}warning{% endif %}">
     <strong>Open Graph Image</strong>
     <div>{% if og_image_exists %}Present{% else %}Missing (recommended for social sharing){% endif %}</div>
   </div>
 
-  {%- comment -%} Structured Data Check {%- endcomment -%}
-  {%- liquid
+  {% comment %} Structured Data Check {% endcomment %}
+  {% liquid
     assign structured_data_count = 0
     if settings.seo_enable_organization_schema != false
       assign structured_data_count = structured_data_count | plus: 1
@@ -163,41 +163,41 @@
     elsif template.name == 'article'
       assign structured_data_count = structured_data_count | plus: 1
     endif
-  -%}
+  %}
   <div class="seo-audit-item {% if structured_data_count > 0 %}success{% else %}error{% endif %}">
     <strong>Structured Data</strong>
     <div>{{ structured_data_count }} schema(s) detected</div>
   </div>
 
-  {%- comment -%} Canonical URL Check {%- endcomment -%}
+  {% comment %} Canonical URL Check {% endcomment %}
   <div class="seo-audit-item success">
     <strong>Canonical URL</strong>
     <div>{{ canonical_url }}</div>
   </div>
 
-  {%- comment -%} Image Alt Text Check (for products) {%- endcomment -%}
-  {%- if template.name == 'product' -%}
-    {%- liquid
+  {% comment %} Image Alt Text Check (for products) {% endcomment %}
+  {% if template.name == 'product' %}
+    {% liquid
       assign images_without_alt = 0
       for image in product.images
         if image.alt == blank
           assign images_without_alt = images_without_alt | plus: 1
         endif
       endfor
-    -%}
+    %}
     <div class="seo-audit-item {% if images_without_alt == 0 %}success{% elsif images_without_alt <= 2 %}warning{% else %}error{% endif %}">
       <strong>Product Images Alt Text</strong>
       <div>{{ images_without_alt }} of {{ product.images.size }} images missing alt text</div>
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- comment -%} H1 Tag Check {%- endcomment -%}
+  {% comment %} H1 Tag Check {% endcomment %}
   <div class="seo-audit-item warning">
     <strong>H1 Tag</strong>
     <div>Check manually: Should have exactly one H1 tag per page</div>
   </div>
 
-  {%- comment -%} Mobile Friendly Check {%- endcomment -%}
+  {% comment %} Mobile Friendly Check {% endcomment %}
   <div class="seo-audit-item success">
     <strong>Mobile Viewport</strong>
     <div>Meta viewport tag present</div>
@@ -221,5 +221,5 @@
     }
   });
 </script>
-{%- endif -%}
+{% endif %}
 

@@ -22,19 +22,19 @@
 
 <section class="rich-text-section" style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;">
   <div class="page-width{% if section.settings.full_width %} full-width{% endif %}" style="{% if section.settings.content_width != blank and section.settings.full_width == false %}max-width: {{ section.settings.content_width }}px; margin: 0 auto;{% endif %}">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="rich-text-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; margin-bottom: {{ section.settings.heading_spacing }}px;">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
+    {% endif %}
     
-    {%- if section.settings.description != blank -%}
+    {% if section.settings.description != blank %}
       <p class="rich-text-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %} text-align: {{ section.settings.heading_alignment }}; font-size: {{ section.settings.description_size }}px; margin-bottom: {{ section.settings.description_spacing }}px;">{{ section.settings.description }}</p>
-    {%- endif -%}
+    {% endif %}
     
-    {%- if section.settings.content != blank -%}
+    {% if section.settings.content != blank %}
       <div class="rich-text-content rte" style="{% if section.settings.text_color != blank %}color: {{ section.settings.text_color }};{% endif %} text-align: {{ section.settings.text_alignment }}; font-size: {{ section.settings.text_size }}px; line-height: {{ section.settings.text_line_height }};">
         {{ section.settings.content }}
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -228,7 +228,7 @@
 
 {% schema %}
 {
-  "name": "📄 Rich Text",
+  "name": "Rich Text",
   "tag": "section",
   "class": "section",
   "settings": [
@@ -238,7 +238,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content"
+      "content": "Content"
     },
     {
       "type": "text",
@@ -408,7 +408,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",

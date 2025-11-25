@@ -1,10 +1,10 @@
-{%- liquid
+{% liquid
   # @description Renders a shopping cart icon SVG
   # @param class {String} - Additional CSS classes (optional)
   # @param size {Number} - Icon size in pixels (optional, default: 18)
   # @example
   #   {% render 'icon-cart', class: 'header-cart-icon', size: 24 %}
--%}
+%}
 <svg aria-hidden="true" focusable="false" class="icon icon-cart{% if class != blank %} {{ class }}{% endif %}" viewBox="0 0 18 19" fill="none"{% if size != blank %} width="{{ size }}" height="{{ size }}"{% endif %}>
   <path d="M3.09375 0.84375C2.55078 0.84375 2.10938 1.28516 2.10938 1.82812C2.10938 2.00781 2.15625 2.1875 2.25 2.34375L4.35938 6.75H15.75C16.0312 6.75 16.2891 6.89062 16.4531 7.125L18.7031 10.5C18.8438 10.7109 18.9375 10.9688 18.9375 11.25C18.9375 12.0703 18.2578 12.75 17.4375 12.75H5.625L6.1875 14.25H17.4375C17.9805 14.25 18.4219 14.6914 18.4219 15.2344C18.4219 15.7773 17.9805 16.2188 17.4375 16.2188H5.625C5.12109 16.2188 4.6875 15.8438 4.57031 15.3516L2.10938 3.375H0.5625C0.0195312 3.375 -0.421875 2.93359 -0.421875 2.39062C-0.421875 1.84766 0.0195312 1.40625 0.5625 1.40625H2.8125L3.09375 0.84375ZM5.625 13.5L3.9375 7.875H15.1875L13.5 9.5625H5.625V13.5Z" fill="currentColor"/>
 </svg>

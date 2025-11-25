@@ -33,45 +33,45 @@
 <{{ structural_element }} class="ingredients-section{% if layout_style == 'carousel' %} ingredients-section--carousel{% endif %}"
      {% if request.design_mode %}data-section-type="ingredients" data-layout="{{ layout_style }}" data-columns="{{ section.settings.columns_desktop }}" data-items="{{ ingredient_count }}"{% endif %}
      style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
-  {%- if section.settings.show_gradient -%}
+  {% if section.settings.show_gradient %}
     <div class="ingredients-gradient"></div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if request.design_mode -%}
+  {% if request.design_mode %}
     <div class="editor-controls editor-controls--ingredients">
       <span class="editor-label">🌿 Ingredients</span>
       <span class="editor-info">{{ layout_style | capitalize }} | {% if layout_style == 'grid' %}{{ section.settings.columns_desktop }} cols{% else %}{{ section.settings.carousel_items_desktop }} per slide{% endif %} | {{ ingredient_count }} items{% if section.settings.show_hero_image %} | Hero Image{% endif %}</span>
     </div>
-  {%- endif -%}
+  {% endif %}
 
   <div class="ingredients-content page-width">
     <div class="ingredients-header">
-      {%- if section.settings.heading != blank -%}
+      {% if section.settings.heading != blank %}
         <h2 class="ingredients-title" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">
-          {%- if section.settings.heading_small != blank -%}
+          {% if section.settings.heading_small != blank %}
             <span class="ingredients-title-small">{{ section.settings.heading_small | escape }}</span>
-          {%- endif -%}
+          {% endif %}
           <span class="ingredients-title-large">{{ section.settings.heading | escape }}</span>
         </h2>
-      {%- endif -%}
-      {%- if section.settings.description != blank -%}
+      {% endif %}
+      {% if section.settings.description != blank %}
         <p class="ingredients-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}">{{ section.settings.description }}</p>
-      {%- endif -%}
+      {% endif %}
     </div>
 
-    {%- if section.settings.show_hero_image -%}
+    {% if section.settings.show_hero_image %}
       <div class="ingredients-image">
-        {%- if section.settings.ingredients_image != blank -%}
+        {% if section.settings.ingredients_image != blank %}
           <img src="{{ section.settings.ingredients_image | image_url: width: 548 }}" alt="MycoMatcha Ingredients" loading="lazy">
-        {%- else -%}
+        {% else %}
           <img src="{{ '55839acdac0cccc8f69f297d49bbcfde60b91904.png' | asset_url }}" alt="MycoMatcha Ingredients" loading="lazy">
-        {%- endif -%}
+        {% endif %}
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if ingredient_count > 0 -%}
-      {%- if layout_style == 'carousel' -%}
-        {%- comment -%} Carousel Layout {%- endcomment -%}
+    {% if ingredient_count > 0 %}
+      {% if layout_style == 'carousel' %}
+        {% comment %} Carousel Layout {% endcomment %}
         <div class="ingredients-carousel__wrapper" 
              data-carousel-id="ingredients-{{ section.id }}"
              data-items-desktop="{{ section.settings.carousel_items_desktop }}"
@@ -82,39 +82,39 @@
           
           <div class="ingredients-carousel__container" role="region" aria-label="Ingredients carousel">
             <div class="ingredients-carousel__track" data-carousel-track>
-              {%- if section.settings.content_mode == 'blocks' -%}
-                {%- for block in section.blocks -%}
+              {% if section.settings.content_mode == 'blocks' %}
+                {% for block in section.blocks %}
                   <div class="ingredients-carousel__slide" data-carousel-slide>
-                    {%- if block.type contains '@theme' -%}
+                    {% if block.type contains '@theme' %}
                       {{ block }}
-                    {%- else -%}
-                      {%- render 'block-ingredient', block: block -%}
-                    {%- endif -%}
+                    {% else %}
+                      {% render 'block-ingredient', block: block %}
+                    {% endif %}
                   </div>
-                {%- endfor -%}
-              {%- else -%}
-                {%- for i in (1..8) -%}
-                  {%- assign name_key = 'ingredient_' | append: i | append: '_name' -%}
-                  {%- assign desc_key = 'ingredient_' | append: i | append: '_description' -%}
-                  {%- assign image_key = 'ingredient_' | append: i | append: '_image' -%}
-                  {%- assign name = section.settings[name_key] -%}
-                  {%- assign desc = section.settings[desc_key] -%}
-                  {%- assign image = section.settings[image_key] -%}
-                  {%- if name != blank or desc != blank -%}
+                {% endfor %}
+              {% else %}
+                {% for i in (1..8) %}
+                  {% assign name_key = 'ingredient_' | append: i | append: '_name' %}
+                  {% assign desc_key = 'ingredient_' | append: i | append: '_description' %}
+                  {% assign image_key = 'ingredient_' | append: i | append: '_image' %}
+                  {% assign name = section.settings[name_key] %}
+                  {% assign desc = section.settings[desc_key] %}
+                  {% assign image = section.settings[image_key] %}
+                  {% if name != blank or desc != blank %}
                     <div class="ingredients-carousel__slide" data-carousel-slide>
-                      {%- render 'block-ingredient',
+                      {% render 'block-ingredient',
                         image: image,
                         name: name,
                         description: desc
-                      -%}
+                      %}
                     </div>
-                  {%- endif -%}
-                {%- endfor -%}
-              {%- endif -%}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             </div>
           </div>
 
-          {%- if section.settings.carousel_show_arrows -%}
+          {% if section.settings.carousel_show_arrows %}
             <button class="ingredients-carousel__button ingredients-carousel__button--prev" 
                     data-carousel-prev 
                     aria-label="Previous ingredients"
@@ -127,12 +127,12 @@
                     type="button">
               <span aria-hidden="true">›</span>
             </button>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.carousel_show_dots and ingredient_count > section.settings.carousel_items_desktop -%}
+          {% if section.settings.carousel_show_dots and ingredient_count > section.settings.carousel_items_desktop %}
             <div class="ingredients-carousel__dots" data-carousel-dots role="tablist" aria-label="Ingredients navigation">
-              {%- assign total_slides = ingredient_count | divided_by: section.settings.carousel_items_desktop | ceil -%}
-              {%- for i in (1..total_slides) -%}
+              {% assign total_slides = ingredient_count | divided_by: section.settings.carousel_items_desktop | ceil %}
+              {% for i in (1..total_slides) %}
                 <button class="ingredients-carousel__dot{% if forloop.first %} ingredients-carousel__dot--active{% endif %}" 
                         data-carousel-dot 
                         data-slide-index="{{ forloop.index0 }}"
@@ -142,42 +142,42 @@
                         aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
                   <span class="visually-hidden">Slide {{ forloop.index }}</span>
                 </button>
-              {%- endfor -%}
+              {% endfor %}
             </div>
-          {%- endif -%}
+          {% endif %}
         </div>
-      {%- else -%}
-        {%- comment -%} Grid Layout {%- endcomment -%}
+      {% else %}
+        {% comment %} Grid Layout {% endcomment %}
         <div class="ingredients-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
-          {%- if section.settings.content_mode == 'blocks' -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type contains '@theme' -%}
+          {% if section.settings.content_mode == 'blocks' %}
+            {% for block in section.blocks %}
+              {% if block.type contains '@theme' %}
                 {{ block }}
-              {%- else -%}
-                {%- render 'block-ingredient', block: block -%}
-              {%- endif -%}
-            {%- endfor -%}
-          {%- else -%}
-            {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
-            {%- for i in (1..8) -%}
-              {%- assign name_key = 'ingredient_' | append: i | append: '_name' -%}
-              {%- assign desc_key = 'ingredient_' | append: i | append: '_description' -%}
-              {%- assign image_key = 'ingredient_' | append: i | append: '_image' -%}
-              {%- assign name = section.settings[name_key] -%}
-              {%- assign desc = section.settings[desc_key] -%}
-              {%- assign image = section.settings[image_key] -%}
-              {%- if name != blank or desc != blank -%}
-                {%- render 'block-ingredient',
+              {% else %}
+                {% render 'block-ingredient', block: block %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            {% comment %} Settings mode - Fixed fields {% endcomment %}
+            {% for i in (1..8) %}
+              {% assign name_key = 'ingredient_' | append: i | append: '_name' %}
+              {% assign desc_key = 'ingredient_' | append: i | append: '_description' %}
+              {% assign image_key = 'ingredient_' | append: i | append: '_image' %}
+              {% assign name = section.settings[name_key] %}
+              {% assign desc = section.settings[desc_key] %}
+              {% assign image = section.settings[image_key] %}
+              {% if name != blank or desc != blank %}
+                {% render 'block-ingredient',
                   image: image,
                   name: name,
                   description: desc
-                -%}
-              {%- endif -%}
-            {%- endfor -%}
-          {%- endif -%}
+                %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
         </div>
-      {%- endif -%}
-    {%- endif -%}
+      {% endif %}
+    {% endif %}
   </div>
 </{{ structural_element }}>
 
@@ -389,7 +389,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content Management Mode"
+      "content": "Content Management Mode"
     },
     {
       "type": "select",
@@ -453,7 +453,7 @@
     },
     {
       "type": "header",
-      "content": "🖼️ Hero Image (Optional)"
+      "content": "Hero Image (Optional)"
     },
     {
       "type": "paragraph",
@@ -586,7 +586,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Styling & Colors"
+      "content": "Styling & Colors"
     },
     {
       "type": "range",
@@ -614,7 +614,7 @@
     },
     {
       "type": "header",
-      "content": "⚙️ Advanced Settings"
+      "content": "Advanced Settings"
     },
     {
       "type": "select",
@@ -769,7 +769,7 @@
         },
         {
           "type": "header",
-          "content": "📝 Ingredient Details"
+          "content": "Ingredient Details"
         },
         {
           "type": "text",
@@ -793,7 +793,7 @@
         },
         {
           "type": "header",
-          "content": "🖼️ Ingredient Image"
+          "content": "Ingredient Image"
         },
         {
           "type": "image_picker",
@@ -809,7 +809,7 @@
         },
         {
           "type": "header",
-          "content": "🎨 Custom Colors"
+          "content": "Custom Colors"
         },
         {
           "type": "color",

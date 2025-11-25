@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Testimonial card component for use in testimonials section
   # @param testimonial {Object} - Testimonial block or settings object
   # @param show_stars {Boolean} - Show star rating
@@ -14,39 +14,39 @@
   # @param date_color {String} - Date color
   # @example
   #   {% render 'testimonial-card', testimonial: block, show_stars: block.settings.show_stars %}
--%}
+%}
 
 <div class="testimonial-card">
-  {%- if show_stars -%}
+  {% if show_stars %}
     <div class="testimonial-stars">
-      {%- if stars_image != blank -%}
+      {% if stars_image != blank %}
         <img src="{{ stars_image | image_url: width: 100 }}" alt="5 Stars" loading="lazy">
-      {%- elsif stars_asset != blank -%}
+      {% elsif stars_asset != blank %}
         <img src="{{ stars_asset | asset_url }}" alt="5 Stars" loading="lazy">
-      {%- else -%}
+      {% else %}
         <span aria-label="5 stars">★★★★★</span>
-      {%- endif -%}
+      {% endif %}
     </div>
-  {%- endif -%}
+  {% endif %}
   
-  {%- if text != blank -%}
+  {% if text != blank %}
     <p class="testimonial-text" style="{% if text_color != blank %}color: {{ text_color }};{% endif %}">{{ text }}</p>
-  {%- endif -%}
+  {% endif %}
   
   <div class="testimonial-author">
-    {%- if avatar != blank -%}
+    {% if avatar != blank %}
       <img src="{{ avatar | image_url: width: 50 }}" alt="{{ author_name | escape }}" class="testimonial-avatar" loading="lazy">
-    {%- elsif avatar_asset != blank -%}
+    {% elsif avatar_asset != blank %}
       <img src="{{ avatar_asset | asset_url }}" alt="{{ author_name | escape }}" class="testimonial-avatar" loading="lazy">
-    {%- endif -%}
+    {% endif %}
     
     <div class="testimonial-author-info">
-      {%- if author_name != blank -%}
+      {% if author_name != blank %}
         <span class="testimonial-name" style="{% if author_color != blank %}color: {{ author_color }};{% endif %}">—{{ author_name | escape }}</span>
-      {%- endif -%}
-      {%- if date != blank -%}
+      {% endif %}
+      {% if date != blank %}
         <span class="testimonial-date" style="{% if date_color != blank %}color: {{ date_color }};{% endif %}">{{ date | escape }}</span>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 </div>

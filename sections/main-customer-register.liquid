@@ -3,11 +3,11 @@
   # Displays registration form with customizable styling, layout, and messaging
 %}
 
-{%- render 'visibility-classes',
+{% render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,
   show_on_desktop: section.settings.show_on_desktop,
   section_id: section.id
--%}
+%}
 
 <div
   id="{{ section.id }}"
@@ -49,17 +49,17 @@
 
     /* Form Card */
     #{{ section.id }} .register-card {
-      {%- if section.settings.card_style != 'none' -%}
+      {% if section.settings.card_style != 'none' %}
         padding: var(--spacing-xl);
         background: {% if section.settings.card_style == 'filled' %}rgba(0,0,0,0.03){% else %}var(--section-bg, #fff){% endif %};
         border-radius: {{ section.settings.card_border_radius }}px;
-        {%- if section.settings.card_style == 'outlined' or section.settings.card_style == 'elevated' -%}
+        {% if section.settings.card_style == 'outlined' or section.settings.card_style == 'elevated' %}
           border: 1px solid var(--section-border, rgba(0,0,0,0.1));
-        {%- endif -%}
-        {%- if section.settings.card_style == 'elevated' -%}
+        {% endif %}
+        {% if section.settings.card_style == 'elevated' %}
           box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-        {%- endif -%}
-      {%- endif -%}
+        {% endif %}
+      {% endif %}
     }
 
     /* Form Elements */
@@ -237,24 +237,24 @@
   </style>
 
   <div class="register-container">
-    {%- comment -%} Header {%- endcomment -%}
+    {% comment %} Header {% endcomment %}
     <header class="register-header">
       <h1 class="register-title">{{ section.settings.title | default: 'Create Account' }}</h1>
-      {%- if section.settings.subtitle != blank -%}
+      {% if section.settings.subtitle != blank %}
         <p class="register-subtitle">{{ section.settings.subtitle }}</p>
-      {%- endif -%}
+      {% endif %}
     </header>
 
-    {%- comment -%} Register Card {%- endcomment -%}
+    {% comment %} Register Card {% endcomment %}
     <div class="register-card">
-      {%- form 'create_customer', novalidate: 'novalidate', class: 'register-form' -%}
-        {%- if form.errors -%}
+      {% form 'create_customer', novalidate: 'novalidate', class: 'register-form' %}
+        {% if form.errors %}
           <div class="form-error" role="alert">
             {{ form.errors | default_errors }}
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if section.settings.show_name_fields -%}
+        {% if section.settings.show_name_fields %}
           <div class="form-row">
             <div class="form-field">
               <label for="register_first_name" class="form-label">
@@ -284,7 +284,7 @@
               >
             </div>
           </div>
-        {%- endif -%}
+        {% endif %}
 
         <div class="form-field">
           <label for="register_email" class="form-label">
@@ -318,21 +318,21 @@
             aria-required="true"
             placeholder="{{ section.settings.password_placeholder }}"
           >
-          {%- if section.settings.password_hint != blank -%}
+          {% if section.settings.password_hint != blank %}
             <p class="password-hint">{{ section.settings.password_hint }}</p>
-          {%- endif -%}
+          {% endif %}
         </div>
 
-        {%- if section.settings.terms_text != blank -%}
+        {% if section.settings.terms_text != blank %}
           <p class="register-terms">{{ section.settings.terms_text }}</p>
-        {%- endif -%}
+        {% endif %}
 
         <button type="submit" class="register-submit">
           {{ section.settings.button_text | default: 'Create Account' }}
         </button>
-      {%- endform -%}
+      {% endform %}
 
-      {%- if section.settings.show_login_link -%}
+      {% if section.settings.show_login_link %}
         <div class="register-divider">
           <span>{{ section.settings.divider_text | default: 'or' }}</span>
         </div>
@@ -343,40 +343,40 @@
             {{ section.settings.login_button_text | default: 'Sign In' }}
           </a>
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
 
-    {%- comment -%} Benefits Block {%- endcomment -%}
-    {%- for block in section.blocks -%}
-      {%- case block.type -%}
-        {%- when 'benefits' -%}
+    {% comment %} Benefits Block {% endcomment %}
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'benefits' %}
           <div class="register-benefits" {{ block.shopify_attributes }} style="margin-top: var(--spacing-xl);">
-            {%- if block.settings.title != blank -%}
+            {% if block.settings.title != blank %}
               <p style="font-weight: 500; margin-bottom: var(--spacing-lg); text-align: center; color: var(--section-heading);">
                 {{ block.settings.title }}
               </p>
-            {%- endif -%}
+            {% endif %}
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
-              {%- for i in (1..4) -%}
-                {%- assign benefit_title = 'benefit_' | append: i | append: '_title' -%}
-                {%- assign benefit_text = 'benefit_' | append: i | append: '_text' -%}
-                {%- if block.settings[benefit_title] != blank -%}
+              {% for i in (1..4) %}
+                {% assign benefit_title = 'benefit_' | append: i | append: '_title' %}
+                {% assign benefit_text = 'benefit_' | append: i | append: '_text' %}
+                {% if block.settings[benefit_title] != blank %}
                   <div style="text-align: center; padding: var(--spacing-md);">
                     <p style="font-weight: 500; margin-bottom: var(--spacing-xs); color: var(--section-heading);">
                       {{ block.settings[benefit_title] }}
                     </p>
-                    {%- if block.settings[benefit_text] != blank -%}
+                    {% if block.settings[benefit_text] != blank %}
                       <p style="font-size: calc(var(--font-body-size) * 0.9375); color: var(--section-text); opacity: 0.8; margin: 0;">
                         {{ block.settings[benefit_text] }}
                       </p>
-                    {%- endif -%}
+                    {% endif %}
                   </div>
-                {%- endif -%}
-              {%- endfor -%}
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
-      {%- endcase -%}
-    {%- endfor -%}
+      {% endcase %}
+    {% endfor %}
   </div>
 </div>
 

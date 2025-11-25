@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Ingredient Snippet
   ------------------------
   Reusable ingredient item with image, name, description, and optional benefit tags.
@@ -30,9 +30,9 @@
       name: section.settings.ingredient_1_name,
       description: section.settings.ingredient_1_description
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign img_size = image_size | default: 400
   assign show_attrs = show_shopify_attributes | default: true
 
@@ -54,10 +54,10 @@
     assign ingredient_name_color = name_color
     assign ingredient_description_color = description_color
   endif
--%}
+%}
 
 <div class="block-ingredient" {% if block and show_attrs %}{{ block.shopify_attributes }}{% endif %}>
-  {%- if ingredient_image != blank -%}
+  {% if ingredient_image != blank %}
     <div class="block-ingredient__image">
       <img
         src="{{ ingredient_image | image_url: width: img_size }}"
@@ -73,7 +73,7 @@
         height="{{ ingredient_image.height }}"
       >
     </div>
-  {%- elsif ingredient_image_asset != blank -%}
+  {% elsif ingredient_image_asset != blank %}
     <div class="block-ingredient__image">
       <img
         src="{{ ingredient_image_asset | asset_url }}"
@@ -81,31 +81,31 @@
         loading="lazy"
       >
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if ingredient_name != blank -%}
+  {% if ingredient_name != blank %}
     <h3
       class="block-ingredient__name"
       {% if ingredient_name_color != blank %}style="color: {{ ingredient_name_color }};"{% endif %}
     >
       {{ ingredient_name | escape }}
     </h3>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if ingredient_description != blank -%}
+  {% if ingredient_description != blank %}
     <p
       class="block-ingredient__description"
       {% if ingredient_description_color != blank %}style="color: {{ ingredient_description_color }};"{% endif %}
     >
       {{ ingredient_description }}
     </p>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if ingredient_benefit_tags != blank -%}
+  {% if ingredient_benefit_tags != blank %}
     <div class="block-ingredient__tags">
       {{ ingredient_benefit_tags }}
     </div>
-  {%- endif -%}
+  {% endif %}
 </div>
 
 <style>

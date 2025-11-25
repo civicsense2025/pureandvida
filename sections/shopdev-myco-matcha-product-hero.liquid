@@ -201,11 +201,11 @@
 
   <!-- Hero Section -->
   <div class="relative z-10 max-w-[1054px] mx-auto px-[10px] mt-[151px] mb-[166px] md:mt-[151px] md:mb-[166px] sm:mt-[60px] sm:mb-[60px] sm:px-[20px]">
-    {%- if section.settings.hero_background_image != blank -%}
+    {% if section.settings.hero_background_image != blank %}
       <div class="absolute inset-0 z-0">
         {{ section.settings.hero_background_image | image_url: width: 1920 | image_tag: class: 'w-full h-full object-cover', loading: 'eager' }}
       </div>
-    {%- endif -%}
+    {% endif %}
     <div class="text-center relative z-10">
       <div class="flex items-start justify-center mb-[32px] sm:mb-[20px]">
         <h2 class="text-dark text-[80px] md:text-[80px] sm:text-[48px] tracking-[0.12em] uppercase">{{ section.settings.hero_title }}</h2>

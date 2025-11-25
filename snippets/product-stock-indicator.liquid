@@ -1,63 +1,63 @@
-{%- liquid
+{% liquid
   # @description Renders stock status indicator with low stock alerts
   # @param product {Product} - The product object
   # @param variant {Variant} - The variant object to check stock for
   # @param block {Block} - The block object for settings
   # @example
   #   {% render 'product-stock-indicator', product: product, variant: product.selected_or_first_available_variant, block: block %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign low_stock_threshold = block.settings.low_stock_threshold | default: 10
   assign inventory_quantity = variant.inventory_quantity
   assign inventory_policy = variant.inventory_policy
   assign inventory_management = variant.inventory_management
--%}
+%}
 
-{%- if inventory_management != null and inventory_management != '' -%}
+{% if inventory_management != null and inventory_management != '' %}
   <div class="product-stock-indicator">
-    {%- if variant.available -%}
-      {%- if inventory_quantity > 0 -%}
-        {%- if inventory_quantity <= low_stock_threshold -%}
+    {% if variant.available %}
+      {% if inventory_quantity > 0 %}
+        {% if inventory_quantity <= low_stock_threshold %}
           <div class="stock-indicator stock-indicator--low">
             <span class="stock-indicator__icon">⚠️</span>
             <span class="stock-indicator__text">
-              {%- assign low_stock_text = 'products.product.stock.low_stock' | t: count: inventory_quantity -%}
-              {%- if low_stock_text == blank or low_stock_text == 'products.product.stock.low_stock' -%}
+              {% assign low_stock_text = 'products.product.stock.low_stock' | t: count: inventory_quantity %}
+              {% if low_stock_text == blank or low_stock_text == 'products.product.stock.low_stock' %}
                 Only {{ inventory_quantity }} left in stock
-              {%- else -%}
+              {% else %}
                 {{ low_stock_text }}
-              {%- endif -%}
+              {% endif %}
             </span>
           </div>
-        {%- else -%}
+        {% else %}
           <div class="stock-indicator stock-indicator--in-stock">
             <span class="stock-indicator__icon">✓</span>
             <span class="stock-indicator__text">
               {{ 'products.product.stock.in_stock' | t | default: 'In Stock' }}
-              {%- if block.settings.show_stock_count -%}
+              {% if block.settings.show_stock_count %}
                 ({{ inventory_quantity }})
-              {%- endif -%}
+              {% endif %}
             </span>
           </div>
-        {%- endif -%}
-      {%- else -%}
+        {% endif %}
+      {% else %}
         <div class="stock-indicator stock-indicator--out-of-stock">
           <span class="stock-indicator__icon">✗</span>
           <span class="stock-indicator__text">
             {{ 'products.product.stock.out_of_stock' | t | default: 'Out of Stock' }}
           </span>
         </div>
-      {%- endif -%}
-    {%- else -%}
+      {% endif %}
+    {% else %}
       <div class="stock-indicator stock-indicator--unavailable">
         <span class="stock-indicator__text">
           {{ 'products.product.stock.unavailable' | t | default: 'Unavailable' }}
         </span>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
-{%- elsif inventory_policy == 'continue' -%}
+{% elsif inventory_policy == 'continue' %}
   <div class="product-stock-indicator">
     <div class="stock-indicator stock-indicator--available">
       <span class="stock-indicator__text">
@@ -65,7 +65,7 @@
       </span>
     </div>
   </div>
-{%- endif -%}
+{% endif %}
 
 <style>
   .product-stock-indicator {

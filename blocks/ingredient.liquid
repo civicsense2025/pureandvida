@@ -1,11 +1,11 @@
-{%- comment -%}
+{% comment %}
   Theme Block: Ingredient
   -----------------------
   Ingredient item with image, name, description, and optional benefit tags.
   Supports grouped overrides for colors, typography, and spacing.
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   # Content
   assign ingredient_image = block.settings.image
   assign ingredient_image_asset = block.settings.image_asset
@@ -39,7 +39,7 @@
   assign border_width = block.settings.border_width
   assign border_radius = block.settings.border_radius
   assign alignment = block.settings.alignment | default: 'center'
--%}
+%}
 
 <div
   class="block-ingredient block-ingredient--align-{{ alignment }}"
@@ -64,7 +64,7 @@
     {% if border_radius != blank %}--block-border-radius: {{ border_radius }}px;{% endif %}
   "
 >
-  {%- if ingredient_image != blank -%}
+  {% if ingredient_image != blank %}
     <div class="block-ingredient__image">
       <img
         src="{{ ingredient_image | image_url: width: img_size }}"
@@ -80,7 +80,7 @@
         height="{{ ingredient_image.height }}"
       >
     </div>
-  {%- elsif ingredient_image_asset != blank -%}
+  {% elsif ingredient_image_asset != blank %}
     <div class="block-ingredient__image">
       <img
         src="{{ ingredient_image_asset | asset_url }}"
@@ -88,29 +88,29 @@
         loading="lazy"
       >
     </div>
-  {%- else -%}
+  {% else %}
     <div class="block-ingredient__placeholder">
       {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if ingredient_name != blank -%}
+  {% if ingredient_name != blank %}
     <h3 class="block-ingredient__name">
       {{ ingredient_name | escape }}
     </h3>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if ingredient_description != blank -%}
+  {% if ingredient_description != blank %}
     <p class="block-ingredient__description">
       {{ ingredient_description }}
     </p>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if ingredient_benefit_tags != blank -%}
+  {% if ingredient_benefit_tags != blank %}
     <div class="block-ingredient__tags">
       {{ ingredient_benefit_tags }}
     </div>
-  {%- endif -%}
+  {% endif %}
 </div>
 
 {% stylesheet %}
@@ -276,7 +276,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Color Overrides"
+      "content": "Color Overrides"
     },
     {
       "type": "paragraph",
@@ -314,7 +314,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Typography Overrides"
+      "content": "Typography Overrides"
     },
     {
       "type": "paragraph",
@@ -364,7 +364,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing Overrides"
+      "content": "Spacing Overrides"
     },
     {
       "type": "paragraph",

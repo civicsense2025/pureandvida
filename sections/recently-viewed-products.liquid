@@ -12,17 +12,17 @@
      data-recently-viewed 
      data-products-to-show="{{ section.settings.products_to_show | default: 4 }}"
      style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
-  {%- if section.settings.heading != blank -%}
+  {% if section.settings.heading != blank %}
     <h2 class="recently-viewed-products__heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
-  {%- endif -%}
+  {% endif %}
   
   <div class="recently-viewed-products__container" data-recently-viewed-container>
-    {%- comment -%} Products will be loaded via JavaScript from LocalStorage {%- endcomment -%}
+    {% comment %} Products will be loaded via JavaScript from LocalStorage {% endcomment %}
     <div class="recently-viewed-products__loading" data-recently-viewed-loading>
       <p>{{ 'products.product.loading' | t | default: 'Loading...' }}</p>
     </div>
     <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list" data-recently-viewed-grid hidden>
-      {%- comment -%} Products will be inserted here via JavaScript {%- endcomment -%}
+      {% comment %} Products will be inserted here via JavaScript {% endcomment %}
     </ul>
   </div>
 </div>

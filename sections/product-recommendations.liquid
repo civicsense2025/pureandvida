@@ -58,50 +58,50 @@
   endcase
 %}
 
-{%- if products_list != null and products_list.size > 0 -%}
+{% if products_list != null and products_list.size > 0 %}
   <div class="product-recommendations page-width product-recommendations--{{ display_style }}" 
        data-base-url="{{ routes.product_recommendations_url }}" 
        data-product-id="{{ product.id }}" 
        data-limit="{{ products_to_show }}"
        data-recommendation-type="{{ recommendation_type }}"
        style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="product-recommendations__heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
+    {% endif %}
     
-    {%- if display_style == 'carousel' -%}
+    {% if display_style == 'carousel' %}
       <div class="product-recommendations__carousel" data-product-carousel>
         <div class="product-recommendations__carousel-track">
-          {%- for product in products_list limit: products_to_show -%}
+          {% for product in products_list limit: products_to_show %}
             <div class="product-recommendations__carousel-slide">
               {% render 'product-card', product: product %}
             </div>
-          {%- endfor -%}
+          {% endfor %}
         </div>
         <button class="product-recommendations__carousel-prev" aria-label="Previous products">‹</button>
         <button class="product-recommendations__carousel-next" aria-label="Next products">›</button>
       </div>
-    {%- else -%}
+    {% else %}
       <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
-        {%- for product in products_list limit: products_to_show -%}
+        {% for product in products_list limit: products_to_show %}
           <li class="grid__item">
             {% render 'product-card', product: product %}
           </li>
-        {%- endfor -%}
+        {% endfor %}
       </ul>
-    {%- endif -%}
+    {% endif %}
   </div>
-{%- elsif recommendation_type == 'related' -%}
-  {%- comment -%} Fallback to Shopify recommendations API {%- endcomment -%}
+{% elsif recommendation_type == 'related' %}
+  {% comment %} Fallback to Shopify recommendations API {% endcomment %}
   <div class="product-recommendations page-width" data-base-url="{{ routes.product_recommendations_url }}" data-product-id="{{ product.id }}" data-limit="{{ products_to_show }}">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="product-recommendations__heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
+    {% endif %}
     <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
-      {%- comment -%} Will be populated by JavaScript {%- endcomment -%}
+      {% comment %} Will be populated by JavaScript {% endcomment %}
     </ul>
   </div>
-{%- endif -%}
+{% endif %}
 
 <script>
   const handleIntersection = (entries, observer) => {
@@ -211,7 +211,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content"
+      "content": "Content"
     },
     {
       "type": "text",
@@ -237,7 +237,7 @@
     },
     {
       "type": "header",
-      "content": "🎯 Recommendation Logic"
+      "content": "Recommendation Logic"
     },
     {
       "type": "select",
@@ -261,7 +261,7 @@
     },
     {
       "type": "header",
-      "content": "🛒 Product Display"
+      "content": "Product Display"
     },
     {
       "type": "range",
@@ -312,7 +312,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Section Styling"
+      "content": "Section Styling"
     },
     {
       "type": "range",

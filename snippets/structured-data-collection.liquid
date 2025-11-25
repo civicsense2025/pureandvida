@@ -1,19 +1,19 @@
-{%- liquid
+{% liquid
   # @description Generates structured data specifically for collection pages
   # Includes ItemList schema for product listings and breadcrumb integration
   # @param collection {Object} - Collection object (optional, uses current collection if not provided)
   # @example
   #   {% render 'structured-data-collection', collection: collection %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign target_collection = collection | default: collections[collection.handle]
   if target_collection == blank
     assign target_collection = collection
   endif
--%}
+%}
 
-{%- if target_collection and target_collection.products.size > 0 -%}
+{% if target_collection and target_collection.products.size > 0 %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -21,15 +21,15 @@
   "name": "{{ target_collection.title | escape }}",
   "description": "{{ target_collection.description | strip_html | escape | default: target_collection.title | escape }}",
   "url": "{{ shop.url }}{{ target_collection.url }}",
-  {%- if target_collection.featured_image -%}
+  {% if target_collection.featured_image %}
   "image": "https:{{ target_collection.featured_image | image_url: width: 1200 }}",
-  {%- endif -%}
+  {% endif %}
   "mainEntity": {
     "@type": "ItemList",
     "name": "{{ target_collection.title | escape }}",
     "numberOfItems": {{ target_collection.products_count }},
     "itemListElement": [
-      {%- for product in target_collection.products limit: 20 -%}
+      {% for product in target_collection.products limit: 20 %}
       {
         "@type": "ListItem",
         "position": {{ forloop.index }},
@@ -37,15 +37,15 @@
           "@type": "Product",
           "name": "{{ product.title | escape }}",
           "url": "{{ shop.url }}{{ product.url }}",
-          {%- if product.featured_media -%}
+          {% if product.featured_media %}
           "image": "https:{{ product.featured_media | image_url: width: 1200 }}",
-          {%- endif -%}
-          {%- if product.vendor != blank -%}
+          {% endif %}
+          {% if product.vendor != blank %}
           "brand": {
             "@type": "Brand",
             "name": "{{ product.vendor | escape }}"
           },
-          {%- endif -%}
+          {% endif %}
           "offers": {
             "@type": "Offer",
             "url": "{{ shop.url }}{{ product.url }}",
@@ -56,10 +56,10 @@
           }
         }
       }{% unless forloop.last %},{% endunless %}
-      {%- endfor -%}
+      {% endfor %}
     ]
   }
 }
 </script>
-{%- endif -%}
+{% endif %}
 

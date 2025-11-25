@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Renders product media (images, videos, 3D models) with responsive sizing
   # @param media {Media} - The media object to display (image, video, model, or external_video)
   # @param loop {Boolean} - Enable video looping (default: false)
@@ -6,20 +6,20 @@
   # @param section_id {String} - Section ID for data attributes (optional)
   # @example
   #   {% render 'product-media', media: product.featured_media, loop: true, variant_image: false %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign image_alt = media.alt | escape
   assign image_ratio = media.aspect_ratio
   if image_ratio == nil
     assign image_ratio = 1
   endif
--%}
+%}
 
 <div class="product__media media media--transparent" data-media-id="{{ section.id }}-{{ media.id }}">
-  {%- case media.media_type -%}
-    {%- when 'image' -%}
-      {%- liquid
+  {% case media.media_type %}
+    {% when 'image' %}
+      {% liquid
         assign is_first_image = false
         if forloop.first or media.id == product.selected_or_first_available_variant.featured_media.id
           assign is_first_image = true
@@ -28,30 +28,30 @@
         if is_first_image
           assign loading_strategy = 'eager'
         endif
-      -%}
+      %}
       <picture>
-        {%- comment -%} WebP format with fallback {%- endcomment -%}
+        {% comment %} WebP format with fallback {% endcomment %}
         <source
           type="image/webp"
-          srcset="{%- if media.width >= 165 -%}{{ media | image_url: width: 165, format: 'webp' }} 165w,{%- endif -%}
-                  {%- if media.width >= 360 -%}{{ media | image_url: width: 360, format: 'webp' }} 360w,{%- endif -%}
-                  {%- if media.width >= 533 -%}{{ media | image_url: width: 533, format: 'webp' }} 533w,{%- endif -%}
-                  {%- if media.width >= 720 -%}{{ media | image_url: width: 720, format: 'webp' }} 720w,{%- endif -%}
-                  {%- if media.width >= 940 -%}{{ media | image_url: width: 940, format: 'webp' }} 940w,{%- endif -%}
-                  {%- if media.width >= 1066 -%}{{ media | image_url: width: 1066, format: 'webp' }} 1066w,{%- endif -%}
-                  {%- if media.width >= 1200 -%}{{ media | image_url: width: 1200, format: 'webp' }} 1200w,{%- endif -%}
-                  {%- if media.width >= 1920 -%}{{ media | image_url: width: 1920, format: 'webp' }} 1920w,{%- endif -%}"
+          srcset="{% if media.width >= 165 %}{{ media | image_url: width: 165, format: 'webp' }} 165w,{% endif %}
+                  {% if media.width >= 360 %}{{ media | image_url: width: 360, format: 'webp' }} 360w,{% endif %}
+                  {% if media.width >= 533 %}{{ media | image_url: width: 533, format: 'webp' }} 533w,{% endif %}
+                  {% if media.width >= 720 %}{{ media | image_url: width: 720, format: 'webp' }} 720w,{% endif %}
+                  {% if media.width >= 940 %}{{ media | image_url: width: 940, format: 'webp' }} 940w,{% endif %}
+                  {% if media.width >= 1066 %}{{ media | image_url: width: 1066, format: 'webp' }} 1066w,{% endif %}
+                  {% if media.width >= 1200 %}{{ media | image_url: width: 1200, format: 'webp' }} 1200w,{% endif %}
+                  {% if media.width >= 1920 %}{{ media | image_url: width: 1920, format: 'webp' }} 1920w,{% endif %}"
           sizes="(min-width: {{ settings.page_width | default: 1440 }}px) {{ settings.page_width | default: 1440 | minus: 130 | divided_by: 2 }}px, (min-width: 990px) calc((100vw - 130px) / 2), (min-width: 750px) calc((100vw - 100px) / 2), calc(100vw - 30px)"
         >
         <img
-          srcset="{%- if media.width >= 165 -%}{{ media | image_url: width: 165 }} 165w,{%- endif -%}
-                  {%- if media.width >= 360 -%}{{ media | image_url: width: 360 }} 360w,{%- endif -%}
-                  {%- if media.width >= 533 -%}{{ media | image_url: width: 533 }} 533w,{%- endif -%}
-                  {%- if media.width >= 720 -%}{{ media | image_url: width: 720 }} 720w,{%- endif -%}
-                  {%- if media.width >= 940 -%}{{ media | image_url: width: 940 }} 940w,{%- endif -%}
-                  {%- if media.width >= 1066 -%}{{ media | image_url: width: 1066 }} 1066w,{%- endif -%}
-                  {%- if media.width >= 1200 -%}{{ media | image_url: width: 1200 }} 1200w,{%- endif -%}
-                  {%- if media.width >= 1920 -%}{{ media | image_url: width: 1920 }} 1920w,{%- endif -%}
+          srcset="{% if media.width >= 165 %}{{ media | image_url: width: 165 }} 165w,{% endif %}
+                  {% if media.width >= 360 %}{{ media | image_url: width: 360 }} 360w,{% endif %}
+                  {% if media.width >= 533 %}{{ media | image_url: width: 533 }} 533w,{% endif %}
+                  {% if media.width >= 720 %}{{ media | image_url: width: 720 }} 720w,{% endif %}
+                  {% if media.width >= 940 %}{{ media | image_url: width: 940 }} 940w,{% endif %}
+                  {% if media.width >= 1066 %}{{ media | image_url: width: 1066 }} 1066w,{% endif %}
+                  {% if media.width >= 1200 %}{{ media | image_url: width: 1200 }} 1200w,{% endif %}
+                  {% if media.width >= 1920 %}{{ media | image_url: width: 1920 }} 1920w,{% endif %}
                   {{ media | image_url }} {{ media.width }}w"
           src="{{ media | image_url: width: 533 }}"
           sizes="(min-width: {{ settings.page_width | default: 1440 }}px) {{ settings.page_width | default: 1440 | minus: 130 | divided_by: 2 }}px, (min-width: 990px) calc((100vw - 130px) / 2), (min-width: 750px) calc((100vw - 100px) / 2), calc(100vw - 30px)"
@@ -61,26 +61,26 @@
           width="{{ media.width }}"
           height="{{ media.height }}"
           decoding="async"
-          {%- if is_first_image -%}
+          {% if is_first_image %}
             fetchpriority="high"
-          {%- endif -%}
+          {% endif %}
         >
       </picture>
-    {%- when 'external_video' -%}
+    {% when 'external_video' %}
       <div class="product__media media" style="padding-bottom: {{ 1 | divided_by: image_ratio | times: 100 }}%;">
         {{ media | external_video_tag: image_size: "1024x", loop: loop, muted: true, controls: true, playsinline: true }}
       </div>
-    {%- when 'video' -%}
+    {% when 'video' %}
       <div class="product__media media" style="padding-bottom: {{ 1 | divided_by: image_ratio | times: 100 }}%;">
         {{ media | video_tag: image_size: "1024x", autoplay: true, loop: loop, controls: true, muted: true, playsinline: true }}
       </div>
-    {%- when 'model' -%}
+    {% when 'model' %}
       <div class="product__media media" style="padding-bottom: 100%">
         {{ media | model_viewer_tag: image_size: "1024x", toggleable: true }}
       </div>
-    {%- else -%}
+    {% else %}
       <div class="product__media media" style="padding-bottom: 100%">
         {{ media | media_tag: class: 'media-item', image_size: "1024x" }}
       </div>
-  {%- endcase -%}
+  {% endcase %}
 </div>

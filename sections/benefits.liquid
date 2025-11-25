@@ -17,37 +17,37 @@
      {% if request.design_mode %}data-section-type="benefits" data-layout="{{ layout_style }}" data-columns="{{ section.settings.columns_desktop }}" data-items="{{ benefit_count }}"{% endif %}
      style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %} padding: {{ section.settings.section_padding }}px 0;">
 
-  {%- if request.design_mode -%}
+  {% if request.design_mode %}
     <div class="editor-controls editor-controls--benefits">
-      <span class="editor-label">✨ Benefits Section</span>
+      <span class="editor-label">Benefits Section</span>
       <span class="editor-info">{{ layout_style | capitalize }} | {% if layout_style == 'grid' %}{{ section.settings.columns_desktop }} cols{% else %}{{ section.settings.carousel_items_desktop }} per slide{% endif %} | {{ benefit_count }} items | Mode: {{ section.settings.content_mode | capitalize }}</span>
     </div>
-  {%- endif -%}
+  {% endif %}
 
   <div class="benefits-content page-width">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="benefits-heading" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %} text-align: {{ section.settings.heading_alignment }};">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
+    {% endif %}
     
-    {%- comment -%} Count benefit items {%- endcomment -%}
-    {%- assign benefit_count = 0 -%}
-    {%- if section.settings.content_mode == 'blocks' -%}
-      {%- assign benefit_count = section.blocks.size -%}
-    {%- else -%}
-      {%- for i in (1..6) -%}
-        {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
-        {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
-        {%- assign title = section.settings[title_key] -%}
-        {%- assign desc = section.settings[desc_key] -%}
-        {%- if title != blank or desc != blank -%}
-          {%- assign benefit_count = benefit_count | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endif -%}
+    {% comment %} Count benefit items {% endcomment %}
+    {% assign benefit_count = 0 %}
+    {% if section.settings.content_mode == 'blocks' %}
+      {% assign benefit_count = section.blocks.size %}
+    {% else %}
+      {% for i in (1..6) %}
+        {% assign title_key = 'benefit_' | append: i | append: '_title' %}
+        {% assign desc_key = 'benefit_' | append: i | append: '_description' %}
+        {% assign title = section.settings[title_key] %}
+        {% assign desc = section.settings[desc_key] %}
+        {% if title != blank or desc != blank %}
+          {% assign benefit_count = benefit_count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
     
-    {%- if benefit_count > 0 -%}
-      {%- if layout_style == 'carousel' -%}
-        {%- comment -%} Carousel Layout {%- endcomment -%}
+    {% if benefit_count > 0 %}
+      {% if layout_style == 'carousel' %}
+        {% comment %} Carousel Layout {% endcomment %}
         <div class="benefits-carousel__wrapper" 
              data-carousel-id="benefits-{{ section.id }}"
              data-items-desktop="{{ section.settings.carousel_items_desktop }}"
@@ -58,39 +58,39 @@
           
           <div class="benefits-carousel__container" role="region" aria-label="Benefits carousel">
             <div class="benefits-carousel__track" data-carousel-track>
-              {%- if section.settings.content_mode == 'blocks' -%}
-                {%- for block in section.blocks -%}
+              {% if section.settings.content_mode == 'blocks' %}
+                {% for block in section.blocks %}
                   <div class="benefits-carousel__slide" data-carousel-slide>
-                    {%- if block.type contains '@theme' -%}
+                    {% if block.type contains '@theme' %}
                       {{ block }}
-                    {%- else -%}
-                      {%- render 'block-benefit', block: block -%}
-                    {%- endif -%}
+                    {% else %}
+                      {% render 'block-benefit', block: block %}
+                    {% endif %}
                   </div>
-                {%- endfor -%}
-              {%- else -%}
-                {%- for i in (1..6) -%}
-                  {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
-                  {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
-                  {%- assign icon_key = 'benefit_' | append: i | append: '_icon' -%}
-                  {%- assign title = section.settings[title_key] -%}
-                  {%- assign desc = section.settings[desc_key] -%}
-                  {%- assign icon = section.settings[icon_key] -%}
-                  {%- if title != blank or desc != blank -%}
+                {% endfor %}
+              {% else %}
+                {% for i in (1..6) %}
+                  {% assign title_key = 'benefit_' | append: i | append: '_title' %}
+                  {% assign desc_key = 'benefit_' | append: i | append: '_description' %}
+                  {% assign icon_key = 'benefit_' | append: i | append: '_icon' %}
+                  {% assign title = section.settings[title_key] %}
+                  {% assign desc = section.settings[desc_key] %}
+                  {% assign icon = section.settings[icon_key] %}
+                  {% if title != blank or desc != blank %}
                     <div class="benefits-carousel__slide" data-carousel-slide>
-                      {%- render 'block-benefit',
+                      {% render 'block-benefit',
                         icon: icon,
                         title: title,
                         description: desc
-                      -%}
+                      %}
                     </div>
-                  {%- endif -%}
-                {%- endfor -%}
-              {%- endif -%}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             </div>
           </div>
 
-          {%- if section.settings.carousel_show_arrows -%}
+          {% if section.settings.carousel_show_arrows %}
             <button class="benefits-carousel__button benefits-carousel__button--prev" 
                     data-carousel-prev 
                     aria-label="Previous benefits"
@@ -103,12 +103,12 @@
                     type="button">
               <span aria-hidden="true">›</span>
             </button>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.carousel_show_dots and benefit_count > section.settings.carousel_items_desktop -%}
+          {% if section.settings.carousel_show_dots and benefit_count > section.settings.carousel_items_desktop %}
             <div class="benefits-carousel__dots" data-carousel-dots role="tablist" aria-label="Benefits navigation">
-              {%- assign total_slides = benefit_count | divided_by: section.settings.carousel_items_desktop | ceil -%}
-              {%- for i in (1..total_slides) -%}
+              {% assign total_slides = benefit_count | divided_by: section.settings.carousel_items_desktop | ceil %}
+              {% for i in (1..total_slides) %}
                 <button class="benefits-carousel__dot{% if forloop.first %} benefits-carousel__dot--active{% endif %}" 
                         data-carousel-dot 
                         data-slide-index="{{ forloop.index0 }}"
@@ -118,42 +118,42 @@
                         aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
                   <span class="visually-hidden">Slide {{ forloop.index }}</span>
                 </button>
-              {%- endfor -%}
+              {% endfor %}
             </div>
-          {%- endif -%}
+          {% endif %}
         </div>
-      {%- else -%}
-        {%- comment -%} Grid Layout {%- endcomment -%}
+      {% else %}
+        {% comment %} Grid Layout {% endcomment %}
         <div class="benefits-grid" style="display: grid; grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: {{ section.settings.item_spacing }}px;">
-          {%- if section.settings.content_mode == 'blocks' -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type contains '@theme' -%}
+          {% if section.settings.content_mode == 'blocks' %}
+            {% for block in section.blocks %}
+              {% if block.type contains '@theme' %}
                 {{ block }}
-              {%- else -%}
-                {%- render 'block-benefit', block: block -%}
-              {%- endif -%}
-            {%- endfor -%}
-          {%- else -%}
-            {%- comment -%} Settings mode - Fixed fields {%- endcomment -%}
-            {%- for i in (1..6) -%}
-              {%- assign title_key = 'benefit_' | append: i | append: '_title' -%}
-              {%- assign desc_key = 'benefit_' | append: i | append: '_description' -%}
-              {%- assign icon_key = 'benefit_' | append: i | append: '_icon' -%}
-              {%- assign title = section.settings[title_key] -%}
-              {%- assign desc = section.settings[desc_key] -%}
-              {%- assign icon = section.settings[icon_key] -%}
-              {%- if title != blank or desc != blank -%}
-                {%- render 'block-benefit',
+              {% else %}
+                {% render 'block-benefit', block: block %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            {% comment %} Settings mode - Fixed fields {% endcomment %}
+            {% for i in (1..6) %}
+              {% assign title_key = 'benefit_' | append: i | append: '_title' %}
+              {% assign desc_key = 'benefit_' | append: i | append: '_description' %}
+              {% assign icon_key = 'benefit_' | append: i | append: '_icon' %}
+              {% assign title = section.settings[title_key] %}
+              {% assign desc = section.settings[desc_key] %}
+              {% assign icon = section.settings[icon_key] %}
+              {% if title != blank or desc != blank %}
+                {% render 'block-benefit',
                   icon: icon,
                   title: title,
                   description: desc
-                -%}
-              {%- endif -%}
-            {%- endfor -%}
-          {%- endif -%}
+                %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
         </div>
-      {%- endif -%}
-    {%- endif -%}
+      {% endif %}
+    {% endif %}
   </div>
 </{{ structural_element }}>
 
@@ -422,7 +422,7 @@
 
 {% schema %}
 {
-  "name": "✨ Benefits Section",
+  "name": "Benefits Section",
   "tag": "section",
   "class": "section",
   "settings": [
@@ -432,7 +432,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content Management Mode"
+      "content": "Content Management Mode"
     },
     {
       "type": "select",
@@ -712,7 +712,7 @@
     },
     {
       "type": "benefit",
-      "name": "⭐ Benefit: {{ block.settings.title }}",
+      "name": "Benefit: {{ block.settings.title }}",
       "settings": [
         {
           "type": "paragraph",
@@ -734,7 +734,7 @@
         },
         {
           "type": "header",
-          "content": "🎨 Icon & Visuals"
+          "content": "Icon & Visuals"
         },
         {
           "type": "image_picker",
@@ -750,7 +750,7 @@
         },
         {
           "type": "header",
-          "content": "🎨 Colors"
+          "content": "Colors"
         },
         {
           "type": "color",

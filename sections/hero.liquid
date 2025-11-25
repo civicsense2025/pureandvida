@@ -13,111 +13,111 @@
 %}
 
 <section class="hero-section" {% if request.design_mode %}data-section-type="hero" data-section-id="{{ section.id }}"{% endif %} style="{% if section.settings.background_color != blank %}background-color: {{ section.settings.background_color }};{% endif %}{% if section.settings.background_image != blank %}background-image: url('{{ section.settings.background_image | image_url: width: 1920 }}'); background-size: {{ section.settings.background_size }}; background-position: {{ section.settings.background_position }};{% endif %}padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
-  {%- if section.settings.show_gradient -%}
+  {% if section.settings.show_gradient %}
     <div class="hero-gradient" style="opacity: {{ section.settings.gradient_opacity }}%;"></div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if request.design_mode -%}
+  {% if request.design_mode %}
     <div class="editor-controls">
       <span class="editor-label">Hero Section</span>
       <span class="editor-layout-indicator">Layout: {{ section.settings.image_position | replace: 'row', 'Image Left' | replace: 'row-reverse', 'Image Right' }}</span>
     </div>
-  {%- endif -%}
+  {% endif %}
   
   <div class="hero-content page-width" style="text-align: {{ section.settings.text_alignment }};">
     <div class="hero-title-section">
-      {%- if section.settings.title != blank -%}
+      {% if section.settings.title != blank %}
         <h1 class="hero-main-title" style="{% if section.settings.title_color != blank %}color: {{ section.settings.title_color }};{% endif %}">
           <span class="hero-title-line1">{{ section.settings.title | escape }}</span>
-          {%- if section.settings.show_trademark -%}
+          {% if section.settings.show_trademark %}
             <span class="hero-trademark">™</span>
-          {%- endif -%}
+          {% endif %}
         </h1>
-      {%- endif -%}
-      {%- if section.settings.show_divider -%}
+      {% endif %}
+      {% if section.settings.show_divider %}
         <div class="hero-divider">{{ section.settings.divider_text }}</div>
-      {%- endif -%}
-      {%- if section.settings.subtitle != blank -%}
+      {% endif %}
+      {% if section.settings.subtitle != blank %}
         <p class="hero-subtitle" style="{% if section.settings.subtitle_color != blank %}color: {{ section.settings.subtitle_color }};{% endif %}">{{ section.settings.subtitle | escape }}</p>
-      {%- endif -%}
+      {% endif %}
     </div>
 
     <div class="hero-product-section" style="flex-direction: {{ section.settings.image_position }};">
       <div class="hero-product-images">
-        {%- if section.settings.product_image_1 != blank -%}
+        {% if section.settings.product_image_1 != blank %}
           <img src="{{ section.settings.product_image_1 | image_url: width: 805 }}" alt="MycoMatcha Product" class="hero-product-img-1">
-        {%- else -%}
+        {% else %}
           <img src="{{ '0a5553f60213dd436dd5e60b282c6b7cbec1de3a.png' | asset_url }}" alt="MycoMatcha Product" class="hero-product-img-1">
-        {%- endif -%}
+        {% endif %}
         
-        {%- if section.settings.product_image_2 != blank -%}
+        {% if section.settings.product_image_2 != blank %}
           <img src="{{ section.settings.product_image_2 | image_url: width: 850 }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
-        {%- else -%}
+        {% else %}
           <img src="{{ 'f713d8714eed491eeccc4f7f9c3589229c1b0783.png' | asset_url }}" alt="MycoMatcha Pouch" class="hero-product-img-2">
-        {%- endif -%}
+        {% endif %}
       </div>
 
       <div class="hero-product-info">
         <div class="hero-tagline">
-          {%- if section.settings.tagline_line_1 != blank -%}
+          {% if section.settings.tagline_line_1 != blank %}
             <p class="hero-tagline-line1" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_1 | escape }}</p>
-          {%- endif -%}
-          {%- if section.settings.tagline_line_2 != blank -%}
+          {% endif %}
+          {% if section.settings.tagline_line_2 != blank %}
             <p class="hero-tagline-line2" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_2 | escape }}</p>
-          {%- endif -%}
+          {% endif %}
         </div>
 
-        {%- if section.settings.show_pricing -%}
+        {% if section.settings.show_pricing %}
           <div class="hero-pricing">
-            {%- if section.settings.show_compare_price -%}
+            {% if section.settings.show_compare_price %}
               <div class="hero-price-compare">
                 <span class="hero-price-old" style="{% if section.settings.compare_price_color != blank %}color: {{ section.settings.compare_price_color }};{% endif %}">
-                  {%- if section.settings.custom_compare_price != blank -%}
+                  {% if section.settings.custom_compare_price != blank %}
                     {{ section.settings.custom_compare_price }}
-                  {%- elsif section.settings.product != blank -%}
+                  {% elsif section.settings.product != blank %}
                     {{ section.settings.product.selected_or_first_available_variant.compare_at_price | money }}
-                  {%- else -%}
+                  {% else %}
                     $45
-                  {%- endif -%}
+                  {% endif %}
                 </span>
               </div>
-            {%- endif -%}
+            {% endif %}
             <div class="hero-price-current">
               <span class="hero-price-currency" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">$</span>
               <span class="hero-price-amount" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">
-                {%- if section.settings.custom_price != blank -%}
+                {% if section.settings.custom_price != blank %}
                   {{ section.settings.custom_price }}
-                {%- elsif section.settings.product != blank -%}
+                {% elsif section.settings.product != blank %}
                   {{ section.settings.product.selected_or_first_available_variant.price | money | remove: '$' }}
-                {%- else -%}
+                {% else %}
                   34.99
-                {%- endif -%}
+                {% endif %}
               </span>
             </div>
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if section.settings.description_paragraph_1 != blank or section.settings.description_paragraph_2 != blank -%}
+        {% if section.settings.description_paragraph_1 != blank or section.settings.description_paragraph_2 != blank %}
           <div class="hero-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}">
-            {%- if section.settings.description_paragraph_1 != blank -%}
+            {% if section.settings.description_paragraph_1 != blank %}
               <p>{{ section.settings.description_paragraph_1 }}</p>
-            {%- endif -%}
-            {%- if section.settings.description_paragraph_2 != blank -%}
+            {% endif %}
+            {% if section.settings.description_paragraph_2 != blank %}
               <p>{{ section.settings.description_paragraph_2 }}</p>
-            {%- endif -%}
+            {% endif %}
           </div>
-        {%- endif -%}
+        {% endif %}
 
         <div class="hero-cta-section">
-          {%- if section.settings.show_quantity_selector -%}
+          {% if section.settings.show_quantity_selector %}
             <div class="hero-quantity-selector">
               <button type="button" class="quantity-btn" data-action="decrease">-</button>
               <input type="number" class="quantity-input" value="{{ section.settings.default_quantity }}" min="{{ section.settings.min_quantity }}" max="{{ section.settings.max_quantity }}" id="hero-quantity">
               <button type="button" class="quantity-btn" data-action="increase">+</button>
             </div>
-          {%- endif -%}
-          {%- if section.settings.product != blank -%}
-            {%- assign featured_product = section.settings.product -%}
+          {% endif %}
+          {% if section.settings.product != blank %}
+            {% assign featured_product = section.settings.product %}
             <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="hero-add-to-cart-form">
               <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
               <input type="hidden" name="quantity" value="{{ section.settings.default_quantity }}" id="cart-quantity">
@@ -125,24 +125,24 @@
                 {{ section.settings.button_text | default: "Add to cart" }}
               </button>
             </form>
-          {%- else -%}
+          {% else %}
             <a href="{{ section.settings.button_link | default: routes.collections_url }}" class="hero-add-to-cart-btn" style="{% if section.settings.button_color != blank %}background-color: {{ section.settings.button_color }};{% endif %}{% if section.settings.button_text_color != blank %}color: {{ section.settings.button_text_color }};{% endif %} text-decoration: none; display: inline-block;">
               {{ section.settings.button_text | default: "Add to cart" }}
             </a>
-          {%- endif -%}
+          {% endif %}
         </div>
 
-        {%- if section.settings.show_payment_methods -%}
+        {% if section.settings.show_payment_methods %}
           <div class="hero-payment-methods">
             {% render 'payment-icons' %}
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if section.settings.show_discount_badge and section.settings.discount_badge_text != blank -%}
+        {% if section.settings.show_discount_badge and section.settings.discount_badge_text != blank %}
           <div class="hero-discount-badge" style="{% if section.settings.badge_background_color != blank %}background-color: {{ section.settings.badge_background_color }};{% endif %}{% if section.settings.badge_text_color != blank %}color: {{ section.settings.badge_text_color }};{% endif %}">
             {{ section.settings.discount_badge_text | escape }}
           </div>
-        {%- endif -%}
+        {% endif %}
       </div>
     </div>
   </div>
@@ -180,7 +180,7 @@
 
 <style>
   /* Hero Section Typography (from Figma) */
-  {%- liquid
+  {% liquid
     case section.settings.title_font
       when 'accent'
         assign title_font = 'var(--font-accent-family)'
@@ -215,7 +215,7 @@
       else
         assign body_font = 'var(--font-body-family)'
     endcase
-  -%}
+  %}
 
   .hero-section .hero-main-title {
     font-family: {{ title_font }};
@@ -414,7 +414,7 @@
 
 {% schema %}
 {
-  "name": "🎯 Hero Section",
+  "name": "Hero Section",
   "tag": "section",
   "class": "section",
   "settings": [
@@ -424,7 +424,7 @@
     },
     {
       "type": "header",
-      "content": "📦 Product Settings"
+      "content": "Product Settings"
     },
     {
       "type": "product",
@@ -434,7 +434,7 @@
     },
     {
       "type": "header",
-      "content": "🖼️ Images & Media"
+      "content": "Images & Media"
     },
     {
       "type": "image_picker",
@@ -602,7 +602,7 @@
     },
     {
       "type": "header",
-      "content": "💬 Tagline & Description"
+      "content": "Tagline & Description"
     },
     {
       "type": "text",
@@ -731,7 +731,7 @@
     },
     {
       "type": "header",
-      "content": "🛒 Call-to-Action Button"
+      "content": "Call-to-Action Button"
     },
     {
       "type": "text",
@@ -851,7 +851,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Background & Colors"
+      "content": "Background & Colors"
     },
     {
       "type": "color",
@@ -879,7 +879,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing & Padding"
+      "content": "Spacing & Padding"
     },
     {
       "type": "paragraph",

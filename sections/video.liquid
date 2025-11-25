@@ -23,7 +23,7 @@
   </div>
 {% endif %}
 
-{%- liquid
+{% liquid
   assign video_id = nil
   assign video_type = nil
 
@@ -42,7 +42,7 @@
       assign video_id = video_url | split: 'vimeo.com/' | last | split: '?' | first
     endif
   endif
--%}
+%}
 
 <section
   class="video-section video-section--{{ section.settings.layout }}"
@@ -55,21 +55,21 @@
   aria-label="{{ section.settings.heading | default: 'Video section' | escape }}"
 >
   <div class="video-section__container{% if section.settings.full_width == false %} page-width{% endif %}">
-    {%- if section.settings.heading != blank or section.settings.description != blank -%}
+    {% if section.settings.heading != blank or section.settings.description != blank %}
       <div class="video-section__header" style="text-align: {{ section.settings.text_alignment }};">
-        {%- if section.settings.subheading != blank -%}
+        {% if section.settings.subheading != blank %}
           <span class="video-section__subheading">{{ section.settings.subheading }}</span>
-        {%- endif -%}
-        {%- if section.settings.heading != blank -%}
+        {% endif %}
+        {% if section.settings.heading != blank %}
           <h2 class="video-section__title" style="font-size: {{ section.settings.heading_size }}px;">
             {{ section.settings.heading }}
           </h2>
-        {%- endif -%}
-        {%- if section.settings.description != blank -%}
+        {% endif %}
+        {% if section.settings.description != blank %}
           <div class="video-section__description">{{ section.settings.description }}</div>
-        {%- endif -%}
+        {% endif %}
       </div>
-    {%- endif -%}
+    {% endif %}
 
     <div
       class="video-section__wrapper"
@@ -83,7 +83,7 @@
         border-radius: {{ section.settings.border_radius }}px;
       "
     >
-      {%- if video_id != blank or section.settings.video != blank -%}
+      {% if video_id != blank or section.settings.video != blank %}
         <div
           class="video-section__player"
           data-video-type="{{ video_type }}"
@@ -92,8 +92,8 @@
           data-loop="{{ section.settings.loop }}"
           data-muted="{{ section.settings.muted }}"
         >
-          {%- comment -%} Cover Image / Poster {%- endcomment -%}
-          {%- if section.settings.cover_image != blank and section.settings.autoplay == false -%}
+          {% comment %} Cover Image / Poster {% endcomment %}
+          {% if section.settings.cover_image != blank and section.settings.autoplay == false %}
             <div class="video-section__cover" data-video-cover>
               <img
                 src="{{ section.settings.cover_image | image_url: width: 1600 }}"
@@ -123,12 +123,12 @@
                 </span>
               </button>
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- comment -%} Video Container {%- endcomment -%}
+          {% comment %} Video Container {% endcomment %}
           <div class="video-section__video-container"{% if section.settings.cover_image != blank and section.settings.autoplay == false %} hidden{% endif %} data-video-container>
-            {%- if section.settings.video != blank -%}
-              {%- comment -%} Shopify Hosted Video {%- endcomment -%}
+            {% if section.settings.video != blank %}
+              {% comment %} Shopify Hosted Video {% endcomment %}
               {{ section.settings.video | video_tag:
                 autoplay: section.settings.autoplay,
                 loop: section.settings.loop,
@@ -137,8 +137,8 @@
                 playsinline: true,
                 class: 'video-section__video'
               }}
-            {%- elsif video_type == 'youtube' -%}
-              {%- comment -%} YouTube Embed {%- endcomment -%}
+            {% elsif video_type == 'youtube' %}
+              {% comment %} YouTube Embed {% endcomment %}
               <iframe
                 src="https://www.youtube.com/embed/{{ video_id }}?{% if section.settings.autoplay %}autoplay=1&{% endif %}{% if section.settings.loop %}loop=1&playlist={{ video_id }}&{% endif %}{% if section.settings.muted %}mute=1&{% endif %}{% unless section.settings.show_controls %}controls=0&{% endunless %}rel=0&modestbranding=1&playsinline=1"
                 class="video-section__iframe"
@@ -148,8 +148,8 @@
                 loading="lazy"
                 title="{{ section.settings.heading | default: 'YouTube video' | escape }}"
               ></iframe>
-            {%- elsif video_type == 'vimeo' -%}
-              {%- comment -%} Vimeo Embed {%- endcomment -%}
+            {% elsif video_type == 'vimeo' %}
+              {% comment %} Vimeo Embed {% endcomment %}
               <iframe
                 src="https://player.vimeo.com/video/{{ video_id }}?{% if section.settings.autoplay %}autoplay=1&{% endif %}{% if section.settings.loop %}loop=1&{% endif %}{% if section.settings.muted %}muted=1&{% endif %}{% unless section.settings.show_controls %}controls=0&{% endunless %}byline=0&title=0&portrait=0"
                 class="video-section__iframe"
@@ -159,11 +159,11 @@
                 loading="lazy"
                 title="{{ section.settings.heading | default: 'Vimeo video' | escape }}"
               ></iframe>
-            {%- endif -%}
+            {% endif %}
           </div>
         </div>
-      {%- else -%}
-        {%- comment -%} Placeholder {%- endcomment -%}
+      {% else %}
+        {% comment %} Placeholder {% endcomment %}
         <div class="video-section__placeholder">
           <div class="video-section__placeholder-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -177,14 +177,14 @@
             Supports YouTube, Vimeo, or Shopify-hosted videos.
           </p>
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
 
-    {%- if section.settings.caption != blank -%}
+    {% if section.settings.caption != blank %}
       <p class="video-section__caption" style="text-align: {{ section.settings.text_alignment }};">
         {{ section.settings.caption }}
       </p>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -524,7 +524,7 @@
     },
     {
       "type": "header",
-      "content": "⚙️ Video Settings"
+      "content": "Video Settings"
     },
     {
       "type": "checkbox",
@@ -554,7 +554,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content"
+      "content": "Content"
     },
     {
       "type": "text",
@@ -684,7 +684,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",
@@ -704,7 +704,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Section Spacing"
+      "content": "Section Spacing"
     },
     {
       "type": "range",

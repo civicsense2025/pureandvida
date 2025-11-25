@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Benefit Snippet
   ---------------------
   Reusable benefit/feature item with icon image, title, and description.
@@ -29,9 +29,9 @@
       title: section.settings.benefit_1_title,
       description: section.settings.benefit_1_description
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign benefit_icon_size = icon_size | default: 80
   assign show_attrs = show_shopify_attributes | default: true
 
@@ -51,10 +51,10 @@
     assign benefit_title_color = title_color
     assign benefit_description_color = description_color
   endif
--%}
+%}
 
 <div class="block-benefit" {% if block and show_attrs %}{{ block.shopify_attributes }}{% endif %}>
-  {%- if benefit_icon != blank -%}
+  {% if benefit_icon != blank %}
     <div class="block-benefit__icon" style="--icon-max-width: {{ benefit_icon_size }}px;">
       <img
         src="{{ benefit_icon | image_url: width: 200 }}"
@@ -64,7 +64,7 @@
         height="100"
       >
     </div>
-  {%- elsif benefit_icon_asset != blank -%}
+  {% elsif benefit_icon_asset != blank %}
     <div class="block-benefit__icon" style="--icon-max-width: {{ benefit_icon_size }}px;">
       <img
         src="{{ benefit_icon_asset | asset_url }}"
@@ -72,25 +72,25 @@
         loading="lazy"
       >
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if benefit_title != blank -%}
+  {% if benefit_title != blank %}
     <h3
       class="block-benefit__title"
       {% if benefit_title_color != blank %}style="color: {{ benefit_title_color }};"{% endif %}
     >
       {{ benefit_title | escape }}
     </h3>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if benefit_description != blank -%}
+  {% if benefit_description != blank %}
     <p
       class="block-benefit__description"
       {% if benefit_description_color != blank %}style="color: {{ benefit_description_color }};"{% endif %}
     >
       {{ benefit_description }}
     </p>
-  {%- endif -%}
+  {% endif %}
 </div>
 
 <style>

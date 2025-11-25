@@ -28,21 +28,21 @@
   aria-label="{{ section.settings.title | default: 'Multi-column content' | escape }}"
 >
   <div class="multicolumn__container page-width">
-    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+    {% if section.settings.title != blank or section.settings.subtitle != blank %}
       <div class="multicolumn__header" style="text-align: {{ section.settings.header_alignment }};">
-        {%- if section.settings.subtitle != blank -%}
+        {% if section.settings.subtitle != blank %}
           <span class="multicolumn__subtitle">{{ section.settings.subtitle }}</span>
-        {%- endif -%}
-        {%- if section.settings.title != blank -%}
+        {% endif %}
+        {% if section.settings.title != blank %}
           <h2 class="multicolumn__title" style="font-size: {{ section.settings.title_size }}px;">
             {{ section.settings.title }}
           </h2>
-        {%- endif -%}
-        {%- if section.settings.description != blank -%}
+        {% endif %}
+        {% if section.settings.description != blank %}
           <div class="multicolumn__description">{{ section.settings.description }}</div>
-        {%- endif -%}
+        {% endif %}
       </div>
-    {%- endif -%}
+    {% endif %}
 
     <div
       class="multicolumn__grid"
@@ -54,19 +54,19 @@
         --row-gap: {{ section.settings.row_gap }}px;
       "
     >
-      {%- for block in section.blocks -%}
+      {% for block in section.blocks %}
         <div
           class="multicolumn__item"
           style="text-align: {{ section.settings.content_alignment }};"
           {{ block.shopify_attributes }}
         >
-          {%- if block.type contains '@theme' -%}
+          {% if block.type contains '@theme' %}
             <div class="multicolumn__card{% if section.settings.show_card_background %} multicolumn__card--has-bg{% endif %}">
               {{ block }}
             </div>
-          {%- elsif block.type == 'column' -%}
+          {% elsif block.type == 'column' %}
             <div class="multicolumn__card{% if section.settings.show_card_background %} multicolumn__card--has-bg{% endif %}">
-              {%- render 'block-column',
+              {% render 'block-column',
                 block: block,
                 image_ratio: section.settings.image_ratio,
                 image_width: section.settings.image_width,
@@ -77,20 +77,20 @@
                 button_style: section.settings.button_style,
                 heading_color: section.settings.heading_color,
                 text_color: section.settings.text_color
-              -%}
+              %}
             </div>
-          {%- endif -%}
+          {% endif %}
         </div>
-      {%- else -%}
-        {%- if request.design_mode -%}
+      {% else %}
+        {% if request.design_mode %}
           <div class="multicolumn__empty">
             <p>Add column blocks to populate this section.</p>
           </div>
-        {%- endif -%}
-      {%- endfor -%}
+        {% endif %}
+      {% endfor %}
     </div>
 
-    {%- if section.settings.button_label != blank -%}
+    {% if section.settings.button_label != blank %}
       <div class="multicolumn__footer" style="text-align: {{ section.settings.header_alignment }};">
         <a
           href="{{ section.settings.button_link }}"
@@ -100,7 +100,7 @@
           {{ section.settings.button_label }}
         </a>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -396,7 +396,7 @@
 
 {% schema %}
 {
-  "name": "📊 Multi-Column",
+  "name": "Multi-Column",
   "tag": "section",
   "class": "section-multicolumn",
   "settings": [
@@ -406,7 +406,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Section Header"
+      "content": "Section Header"
     },
     {
       "type": "text",
@@ -509,7 +509,7 @@
     },
     {
       "type": "header",
-      "content": "🖼️ Image Settings"
+      "content": "Image Settings"
     },
     {
       "type": "select",
@@ -546,7 +546,7 @@
     },
     {
       "type": "header",
-      "content": "🎯 Icon Settings"
+      "content": "Icon Settings"
     },
     {
       "type": "range",
@@ -592,7 +592,7 @@
     },
     {
       "type": "header",
-      "content": "🔗 Column Button Style"
+      "content": "Column Button Style"
     },
     {
       "type": "select",
@@ -607,7 +607,7 @@
     },
     {
       "type": "header",
-      "content": "🔗 Section Footer Button"
+      "content": "Section Footer Button"
     },
     {
       "type": "text",
@@ -631,7 +631,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",
@@ -651,7 +651,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Section Spacing"
+      "content": "Section Spacing"
     },
     {
       "type": "range",

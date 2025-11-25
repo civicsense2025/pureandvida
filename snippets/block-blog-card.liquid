@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Blog Card Snippet
   -----------------------
   Reusable blog article card for featured blog sections.
@@ -40,9 +40,9 @@
       card_border_radius: section.settings.card_border_radius,
       card_padding: section.settings.card_padding
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign card_show_image = show_image | default: true
   assign card_show_tags = show_tags | default: true
   assign card_show_excerpt = show_excerpt | default: true
@@ -62,12 +62,12 @@
   assign card_meta_color = meta_color
   assign card_tag_color = tag_color
   assign card_link_color = link_color
--%}
+%}
 
 <article class="block-blog-card" style="border-radius: {{ card_border_radius }}px;">
-  {%- if card_show_image -%}
+  {% if card_show_image %}
     <a href="{{ article.url }}" class="block-blog-card__image-link">
-      {%- if article.image != blank -%}
+      {% if article.image != blank %}
         <div class="block-blog-card__image-wrapper" style="aspect-ratio: {{ card_image_ratio }};">
           <img
             src="{{ article.image | image_url: width: 800 }}"
@@ -83,52 +83,52 @@
             style="border-radius: {{ card_border_radius }}px {{ card_border_radius }}px 0 0;"
           >
         </div>
-      {%- else -%}
+      {% else %}
         <div class="block-blog-card__image-placeholder" style="aspect-ratio: {{ card_image_ratio }};">
           {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
         </div>
-      {%- endif -%}
+      {% endif %}
     </a>
-  {%- endif -%}
+  {% endif %}
 
   <div class="block-blog-card__content" style="padding: {{ card_content_padding }}px;">
-    {%- if card_show_tags and article.tags.size > 0 -%}
+    {% if card_show_tags and article.tags.size > 0 %}
       <div class="block-blog-card__tags">
-        {%- for tag in article.tags limit: 2 -%}
+        {% for tag in article.tags limit: 2 %}
           <span
             class="block-blog-card__tag"
             {% if card_tag_color != blank %}style="background-color: {{ card_tag_color }};"{% endif %}
           >
             {{ tag }}
           </span>
-        {%- endfor -%}
+        {% endfor %}
       </div>
-    {%- endif -%}
+    {% endif %}
 
     <h3 class="block-blog-card__title" {% if card_title_color != blank %}style="color: {{ card_title_color }};"{% endif %}>
       <a href="{{ article.url }}">{{ article.title | escape }}</a>
     </h3>
 
-    {%- if card_show_excerpt and article.excerpt_or_content != blank -%}
+    {% if card_show_excerpt and article.excerpt_or_content != blank %}
       <p
         class="block-blog-card__excerpt"
         {% if card_excerpt_color != blank %}style="color: {{ card_excerpt_color }};"{% endif %}
       >
         {{ article.excerpt_or_content | strip_html | truncatewords: card_excerpt_length }}
       </p>
-    {%- endif -%}
+    {% endif %}
 
     <div class="block-blog-card__meta">
-      {%- if card_show_author -%}
+      {% if card_show_author %}
         <span class="block-blog-card__author" {% if card_meta_color != blank %}style="color: {{ card_meta_color }};"{% endif %}>
           {{ article.author }}
         </span>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if card_show_date -%}
-        {%- if card_show_author -%}
+      {% if card_show_date %}
+        {% if card_show_author %}
           <span class="block-blog-card__separator" aria-hidden="true">|</span>
-        {%- endif -%}
+        {% endif %}
         <time
           datetime="{{ article.published_at | date: '%Y-%m-%d' }}"
           class="block-blog-card__date"
@@ -136,10 +136,10 @@
         >
           {{ article.published_at | date: card_date_format }}
         </time>
-      {%- endif -%}
+      {% endif %}
     </div>
 
-    {%- if card_show_read_more -%}
+    {% if card_show_read_more %}
       <a
         href="{{ article.url }}"
         class="block-blog-card__read-more"
@@ -148,7 +148,7 @@
         {{ card_read_more_text }}
         <span aria-hidden="true">&rarr;</span>
       </a>
-    {%- endif -%}
+    {% endif %}
   </div>
 </article>
 

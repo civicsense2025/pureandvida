@@ -24,7 +24,7 @@
   </div>
 {% endif %}
 
-{%- if announcement_count > 0 -%}
+{% if announcement_count > 0 %}
   <div
     class="announcement-bar{% if section.settings.sticky %} announcement-bar--sticky{% endif %}"
     id="announcement-bar-{{ section.id }}"
@@ -40,7 +40,7 @@
     data-rotation-speed="{{ section.settings.rotation_speed }}"
   >
     <div class="announcement-bar__content page-width">
-      {%- if announcement_count > 1 and section.settings.show_arrows -%}
+      {% if announcement_count > 1 and section.settings.show_arrows %}
         <button
           class="announcement-bar__arrow announcement-bar__arrow--prev"
           type="button"
@@ -49,10 +49,10 @@
         >
           <span aria-hidden="true">&#8249;</span>
         </button>
-      {%- endif -%}
+      {% endif %}
 
       <div class="announcement-bar__slider" data-announcement-slider>
-        {%- for block in section.blocks -%}
+        {% for block in section.blocks %}
           <div
             class="announcement-bar__slide{% if forloop.first %} announcement-bar__slide--active{% endif %}"
             {{ block.shopify_attributes }}
@@ -66,29 +66,29 @@
               {% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}
             "
           >
-            {%- if block.settings.icon != blank -%}
+            {% if block.settings.icon != blank %}
               <span class="announcement-bar__icon" aria-hidden="true">{{ block.settings.icon }}</span>
-            {%- endif -%}
+            {% endif %}
 
-            {%- if block.settings.link != blank -%}
+            {% if block.settings.link != blank %}
               <a
                 href="{{ block.settings.link }}"
                 class="announcement-bar__link"
                 {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
               >
                 <span class="announcement-bar__text">{{ block.settings.text }}</span>
-                {%- if block.settings.show_link_arrow -%}
+                {% if block.settings.show_link_arrow %}
                   <span class="announcement-bar__link-arrow" aria-hidden="true">&rarr;</span>
-                {%- endif -%}
+                {% endif %}
               </a>
-            {%- else -%}
+            {% else %}
               <span class="announcement-bar__text">{{ block.settings.text }}</span>
-            {%- endif -%}
+            {% endif %}
           </div>
-        {%- endfor -%}
+        {% endfor %}
       </div>
 
-      {%- if announcement_count > 1 and section.settings.show_arrows -%}
+      {% if announcement_count > 1 and section.settings.show_arrows %}
         <button
           class="announcement-bar__arrow announcement-bar__arrow--next"
           type="button"
@@ -97,9 +97,9 @@
         >
           <span aria-hidden="true">&#8250;</span>
         </button>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.show_close_button -%}
+      {% if section.settings.show_close_button %}
         <button
           class="announcement-bar__close"
           type="button"
@@ -108,12 +108,12 @@
         >
           <span aria-hidden="true">&times;</span>
         </button>
-      {%- endif -%}
+      {% endif %}
     </div>
 
-    {%- if announcement_count > 1 and section.settings.show_dots -%}
+    {% if announcement_count > 1 and section.settings.show_dots %}
       <div class="announcement-bar__dots" role="tablist" aria-label="Announcement navigation">
-        {%- for block in section.blocks -%}
+        {% for block in section.blocks %}
           <button
             class="announcement-bar__dot{% if forloop.first %} announcement-bar__dot--active{% endif %}"
             type="button"
@@ -125,11 +125,11 @@
           >
             <span class="visually-hidden">Announcement {{ forloop.index }}</span>
           </button>
-        {%- endfor -%}
+        {% endfor %}
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
-{%- endif -%}
+{% endif %}
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -489,7 +489,7 @@
     },
     {
       "type": "header",
-      "content": "⚙️ Behavior"
+      "content": "Behavior"
     },
     {
       "type": "checkbox",
@@ -543,7 +543,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Styling"
+      "content": "Styling"
     },
     {
       "type": "color",
@@ -612,7 +612,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",
@@ -662,8 +662,7 @@
           "type": "text",
           "id": "icon",
           "label": "Icon (Emoji or Symbol)",
-          "placeholder": "🚚",
-          "info": "Optional icon displayed before text (e.g., 🎉, 🚚, ⭐)"
+          "info": "Optional icon displayed before text"
         },
         {
           "type": "url",
@@ -686,7 +685,7 @@
         },
         {
           "type": "header",
-          "content": "🎨 Custom Colors (Optional)"
+          "content": "Custom Colors (Optional)"
         },
         {
           "type": "color",
@@ -716,8 +715,7 @@
         {
           "type": "announcement",
           "settings": {
-            "text": "Free shipping on all orders over $50!",
-            "icon": "🚚"
+            "text": "Free shipping on all orders over $50!"
           }
         }
       ]
@@ -735,15 +733,13 @@
         {
           "type": "announcement",
           "settings": {
-            "text": "Free shipping on orders over $50!",
-            "icon": "🚚"
+            "text": "Free shipping on orders over $50!"
           }
         },
         {
           "type": "announcement",
           "settings": {
             "text": "New arrivals just dropped!",
-            "icon": "✨",
             "link": "/collections/new-arrivals",
             "show_link_arrow": true
           }
@@ -751,8 +747,7 @@
         {
           "type": "announcement",
           "settings": {
-            "text": "Sign up for 10% off your first order",
-            "icon": "💌"
+            "text": "Sign up for 10% off your first order"
           }
         }
       ]

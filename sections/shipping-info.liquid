@@ -7,23 +7,23 @@
 <section class="shipping-info-section" style="background-color: {{ section.settings.background_color }}; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0;">
   <div class="page-width" style="max-width: {{ section.settings.max_width }}px; margin: 0 auto;">
 
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h2 class="shipping-info__heading" style="color: {{ section.settings.heading_color }}; font-size: {{ section.settings.heading_size }}px; text-align: {{ section.settings.heading_alignment }}; margin-bottom: {{ section.settings.heading_spacing }}px;">
         {{ section.settings.heading | escape }}
       </h2>
-    {%- endif -%}
+    {% endif %}
 
     <div class="shipping-info__content">
-      {%- if section.settings.layout == 'accordion' -%}
-        {%- comment -%} Accordion Layout {%- endcomment -%}
+      {% if section.settings.layout == 'accordion' %}
+        {% comment %} Accordion Layout {% endcomment %}
         <div class="shipping-info__accordion">
-          {%- for block in section.blocks -%}
+          {% for block in section.blocks %}
             <details class="shipping-info__item" {% if section.settings.first_open and forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
               <summary class="shipping-info__summary" style="background-color: {{ section.settings.item_bg_color }}; color: {{ section.settings.item_heading_color }}; padding: {{ section.settings.item_padding }}px;">
                 <span class="shipping-info__item-title">
-                  {%- if block.settings.icon != blank -%}
+                  {% if block.settings.icon != blank %}
                     <span class="shipping-info__icon">{{ block.settings.icon }}</span>
-                  {%- endif -%}
+                  {% endif %}
                   {{ block.settings.title | escape }}
                 </span>
                 <span class="shipping-info__toggle" style="color: {{ section.settings.toggle_color }};">{{ section.settings.toggle_icon | default: '+' }}</span>
@@ -32,38 +32,38 @@
                 {{ block.settings.content }}
               </div>
             </details>
-          {%- endfor -%}
+          {% endfor %}
         </div>
 
-      {%- else -%}
-        {%- comment -%} Grid/Cards Layout {%- endcomment -%}
+      {% else %}
+        {% comment %} Grid/Cards Layout {% endcomment %}
         <div class="shipping-info__grid" style="grid-template-columns: repeat({{ section.settings.columns }}, 1fr); gap: {{ section.settings.grid_gap }}px;">
-          {%- for block in section.blocks -%}
+          {% for block in section.blocks %}
             <div class="shipping-info__card" style="background-color: {{ section.settings.item_bg_color }}; border-radius: {{ section.settings.card_radius }}px; padding: {{ section.settings.card_padding }}px;" {{ block.shopify_attributes }}>
-              {%- if block.settings.icon != blank -%}
+              {% if block.settings.icon != blank %}
                 <div class="shipping-info__card-icon" style="color: {{ section.settings.icon_color }}; font-size: {{ section.settings.icon_size }}px;">
                   {{ block.settings.icon }}
                 </div>
-              {%- endif -%}
-              {%- if block.settings.title != blank -%}
+              {% endif %}
+              {% if block.settings.title != blank %}
                 <h3 class="shipping-info__card-title" style="color: {{ section.settings.item_heading_color }};">
                   {{ block.settings.title | escape }}
                 </h3>
-              {%- endif -%}
+              {% endif %}
               <div class="shipping-info__card-content" style="color: {{ section.settings.content_color }};">
                 {{ block.settings.content }}
               </div>
             </div>
-          {%- endfor -%}
+          {% endfor %}
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- comment -%} Rich Text Content (Alternative to blocks) {%- endcomment -%}
-      {%- if section.settings.rich_content != blank -%}
+      {% comment %} Rich Text Content (Alternative to blocks) {% endcomment %}
+      {% if section.settings.rich_content != blank %}
         <div class="shipping-info__rich-content" style="color: {{ section.settings.content_color }};">
           {{ section.settings.rich_content }}
         </div>
-      {%- endif -%}
+      {% endif %}
 
     </div>
   </div>
@@ -530,7 +530,7 @@
         {
           "type": "info_block",
           "settings": {
-            "icon": "📦",
+            "icon": "",
             "title": "Processing & Delivery",
             "content": "<p>Orders ship within 1-2 business days. Expect delivery within 2-4 business days after shipping. Free shipping on all orders with full tracking provided.</p>"
           }
@@ -538,7 +538,7 @@
         {
           "type": "info_block",
           "settings": {
-            "icon": "💯",
+            "icon": "",
             "title": "60-Day Money-Back Guarantee",
             "content": "<p>Not fully satisfied? Return your product within 60 days for a full refund, risk-free.</p>"
           }
@@ -546,7 +546,7 @@
         {
           "type": "info_block",
           "settings": {
-            "icon": "↩️",
+            "icon": "",
             "title": "Easy Returns Process",
             "content": "<p>Reach out to our support team. We'll guide you through the return process. Your satisfaction is our top priority.</p>"
           }
@@ -564,7 +564,7 @@
         {
           "type": "info_block",
           "settings": {
-            "icon": "🚚",
+            "icon": "",
             "title": "Free Shipping",
             "content": "<p>Free shipping on all orders. Ships within 1-2 business days.</p>"
           }
@@ -572,7 +572,7 @@
         {
           "type": "info_block",
           "settings": {
-            "icon": "✓",
+            "icon": "",
             "title": "Money-Back Guarantee",
             "content": "<p>60-day hassle-free returns. Full refund guaranteed.</p>"
           }
@@ -580,7 +580,7 @@
         {
           "type": "info_block",
           "settings": {
-            "icon": "💬",
+            "icon": "",
             "title": "Support",
             "content": "<p>Questions? Contact us anytime for assistance.</p>"
           }

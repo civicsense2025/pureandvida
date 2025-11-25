@@ -30,30 +30,30 @@
   "
 >
   <div class="contact-form-section__container page-width">
-    {%- if section.settings.layout == 'split' -%}
+    {% if section.settings.layout == 'split' %}
       <div class="contact-form-section__grid">
         <div class="contact-form-section__info-column">
-          {%- if section.settings.info_heading != blank -%}
+          {% if section.settings.info_heading != blank %}
             <h2
               class="contact-form-section__info-heading"
               style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %}"
             >
               {{ section.settings.info_heading | escape }}
             </h2>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.info_text != blank -%}
+          {% if section.settings.info_text != blank %}
             <div
               class="contact-form-section__info-text rte"
               style="{% if section.settings.text_color != blank %}color: {{ section.settings.text_color }};{% endif %}"
             >
               {{ section.settings.info_text }}
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.show_address or section.settings.show_email or section.settings.show_phone_number -%}
+          {% if section.settings.show_address or section.settings.show_email or section.settings.show_phone_number %}
             <div class="contact-form-section__contact-info">
-              {%- if section.settings.show_address and shop.address != blank -%}
+              {% if section.settings.show_address and shop.address != blank %}
                 <div class="contact-info__item">
                   <span class="contact-info__icon" aria-hidden="true">📍</span>
                   <div class="contact-info__content">
@@ -63,9 +63,9 @@
                     {{ shop.address.country }}</p>
                   </div>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
-              {%- if section.settings.show_email and shop.email != blank -%}
+              {% if section.settings.show_email and shop.email != blank %}
                 <div class="contact-info__item">
                   <span class="contact-info__icon" aria-hidden="true">📧</span>
                   <div class="contact-info__content">
@@ -73,9 +73,9 @@
                     <a href="mailto:{{ shop.email }}">{{ shop.email }}</a>
                   </div>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
-              {%- if section.settings.show_phone_number and section.settings.phone_number != blank -%}
+              {% if section.settings.show_phone_number and section.settings.phone_number != blank %}
                 <div class="contact-info__item">
                   <span class="contact-info__icon" aria-hidden="true">📞</span>
                   <div class="contact-info__content">
@@ -83,21 +83,21 @@
                     <a href="tel:{{ section.settings.phone_number | remove: ' ' | remove: '-' }}">{{ section.settings.phone_number }}</a>
                   </div>
                 </div>
-              {%- endif -%}
+              {% endif %}
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.show_hours and section.settings.business_hours != blank -%}
+          {% if section.settings.show_hours and section.settings.business_hours != blank %}
             <div class="contact-form-section__hours">
               <strong>{{ 'contact.form.hours' | t | default: 'Business Hours' }}</strong>
               <div class="rte">{{ section.settings.business_hours }}</div>
             </div>
-          {%- endif -%}
+          {% endif %}
         </div>
         <div class="contact-form-section__form-column">
-    {%- endif -%}
+    {% endif %}
 
-    {%- if section.settings.heading != blank and section.settings.layout != 'split' -%}
+    {% if section.settings.heading != blank and section.settings.layout != 'split' %}
       <h2
         class="contact-form-section__heading"
         style="
@@ -109,9 +109,9 @@
       >
         {{ section.settings.heading | escape }}
       </h2>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if section.settings.description != blank and section.settings.layout != 'split' -%}
+    {% if section.settings.description != blank and section.settings.layout != 'split' %}
       <p
         class="contact-form-section__description"
         style="
@@ -122,30 +122,30 @@
       >
         {{ section.settings.description }}
       </p>
-    {%- endif -%}
+    {% endif %}
 
     <div class="contact-form-wrapper" style="max-width: {{ section.settings.form_width }}px; margin: 0 auto;">
-      {%- form 'contact', id: form_id, class: 'contact-form' -%}
-        {%- if form.posted_successfully? -%}
+      {% form 'contact', id: form_id, class: 'contact-form' %}
+        {% if form.posted_successfully? %}
           <div class="contact-form__success" role="alert">
             <span class="success-icon" aria-hidden="true">✓</span>
             <p>{{ 'contact.form.post_success' | t | default: 'Thank you for your message! We will get back to you shortly.' }}</p>
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if form.errors -%}
+        {% if form.errors %}
           <div class="contact-form__errors" role="alert">
             <p>{{ 'contact.form.error_heading' | t | default: 'Please correct the following errors:' }}</p>
             <ul>
-              {%- for field in form.errors -%}
+              {% for field in form.errors %}
                 <li>{{ field | capitalize }} {{ form.errors.messages[field] }}</li>
-              {%- endfor -%}
+              {% endfor %}
             </ul>
           </div>
-        {%- endif -%}
+        {% endif %}
 
         <div class="contact-form__fields">
-          {%- comment -%} Name Field {%- endcomment -%}
+          {% comment %} Name Field {% endcomment %}
           <div class="contact-form__field contact-form__field--half">
             <label for="{{ form_id }}-name" class="contact-form__label{% if section.settings.show_labels == false %} visually-hidden{% endif %}">
               {{ 'contact.form.name' | t | default: 'Name' }}
@@ -164,7 +164,7 @@
             >
           </div>
 
-          {%- comment -%} Email Field {%- endcomment -%}
+          {% comment %} Email Field {% endcomment %}
           <div class="contact-form__field contact-form__field--half">
             <label for="{{ form_id }}-email" class="contact-form__label{% if section.settings.show_labels == false %} visually-hidden{% endif %}">
               {{ 'contact.form.email' | t | default: 'Email' }}
@@ -184,12 +184,12 @@
             >
           </div>
 
-          {%- comment -%} Phone Field (Optional) {%- endcomment -%}
-          {%- if section.settings.show_phone_field -%}
+          {% comment %} Phone Field (Optional) {% endcomment %}
+          {% if section.settings.show_phone_field %}
             <div class="contact-form__field{% if section.settings.show_subject %} contact-form__field--half{% else %} contact-form__field--full{% endif %}">
               <label for="{{ form_id }}-phone" class="contact-form__label{% if section.settings.show_labels == false %} visually-hidden{% endif %}">
                 {{ 'contact.form.phone' | t | default: 'Phone' }}
-                {%- if section.settings.phone_required -%}<span class="required" aria-hidden="true">*</span>{%- endif -%}
+                {% if section.settings.phone_required %}<span class="required" aria-hidden="true">*</span>{% endif %}
               </label>
               <input
                 type="tel"
@@ -203,10 +203,10 @@
                 style="{% if section.settings.input_background != blank %}background-color: {{ section.settings.input_background }};{% endif %}"
               >
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- comment -%} Subject Dropdown (Optional) {%- endcomment -%}
-          {%- if section.settings.show_subject -%}
+          {% comment %} Subject Dropdown (Optional) {% endcomment %}
+          {% if section.settings.show_subject %}
             <div class="contact-form__field{% if section.settings.show_phone_field %} contact-form__field--half{% else %} contact-form__field--full{% endif %}">
               <label for="{{ form_id }}-subject" class="contact-form__label{% if section.settings.show_labels == false %} visually-hidden{% endif %}">
                 {{ 'contact.form.subject' | t | default: 'Subject' }}
@@ -220,22 +220,22 @@
                 style="{% if section.settings.input_background != blank %}background-color: {{ section.settings.input_background }};{% endif %}"
               >
                 <option value="">{{ 'contact.form.select_subject' | t | default: 'Select a subject' }}</option>
-                {%- assign subjects = section.settings.subject_options | split: ',' -%}
-                {%- for subject in subjects -%}
+                {% assign subjects = section.settings.subject_options | split: ',' %}
+                {% for subject in subjects %}
                   <option value="{{ subject | strip | escape }}">{{ subject | strip }}</option>
-                {%- endfor -%}
+                {% endfor %}
               </select>
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- comment -%} Custom Fields from Blocks {%- endcomment -%}
-          {%- for block in section.blocks -%}
-            {%- case block.type -%}
-              {%- when 'text_field' -%}
+          {% comment %} Custom Fields from Blocks {% endcomment %}
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'text_field' %}
                 <div class="contact-form__field{% if block.settings.half_width %} contact-form__field--half{% else %} contact-form__field--full{% endif %}" {{ block.shopify_attributes }}>
                   <label for="{{ form_id }}-custom-{{ forloop.index }}" class="contact-form__label{% if section.settings.show_labels == false %} visually-hidden{% endif %}">
                     {{ block.settings.label }}
-                    {%- if block.settings.required -%}<span class="required" aria-hidden="true">*</span>{%- endif -%}
+                    {% if block.settings.required %}<span class="required" aria-hidden="true">*</span>{% endif %}
                   </label>
                   <input
                     type="text"
@@ -248,11 +248,11 @@
                   >
                 </div>
 
-              {%- when 'dropdown' -%}
+              {% when 'dropdown' %}
                 <div class="contact-form__field{% if block.settings.half_width %} contact-form__field--half{% else %} contact-form__field--full{% endif %}" {{ block.shopify_attributes }}>
                   <label for="{{ form_id }}-custom-{{ forloop.index }}" class="contact-form__label{% if section.settings.show_labels == false %} visually-hidden{% endif %}">
                     {{ block.settings.label }}
-                    {%- if block.settings.required -%}<span class="required" aria-hidden="true">*</span>{%- endif -%}
+                    {% if block.settings.required %}<span class="required" aria-hidden="true">*</span>{% endif %}
                   </label>
                   <select
                     id="{{ form_id }}-custom-{{ forloop.index }}"
@@ -262,14 +262,14 @@
                     style="{% if section.settings.input_background != blank %}background-color: {{ section.settings.input_background }};{% endif %}"
                   >
                     <option value="">{{ block.settings.placeholder | default: 'Select an option' }}</option>
-                    {%- assign options = block.settings.options | split: ',' -%}
-                    {%- for option in options -%}
+                    {% assign options = block.settings.options | split: ',' %}
+                    {% for option in options %}
                       <option value="{{ option | strip | escape }}">{{ option | strip }}</option>
-                    {%- endfor -%}
+                    {% endfor %}
                   </select>
                 </div>
 
-              {%- when 'checkbox' -%}
+              {% when 'checkbox' %}
                 <div class="contact-form__field contact-form__field--full contact-form__field--checkbox" {{ block.shopify_attributes }}>
                   <label class="contact-form__checkbox-label">
                     <input
@@ -280,13 +280,13 @@
                       class="contact-form__checkbox"
                     >
                     <span>{{ block.settings.label }}</span>
-                    {%- if block.settings.required -%}<span class="required" aria-hidden="true">*</span>{%- endif -%}
+                    {% if block.settings.required %}<span class="required" aria-hidden="true">*</span>{% endif %}
                   </label>
                 </div>
-            {%- endcase -%}
-          {%- endfor -%}
+            {% endcase %}
+          {% endfor %}
 
-          {%- comment -%} Message Field {%- endcomment -%}
+          {% comment %} Message Field {% endcomment %}
           <div class="contact-form__field contact-form__field--full">
             <label for="{{ form_id }}-message" class="contact-form__label{% if section.settings.show_labels == false %} visually-hidden{% endif %}">
               {{ 'contact.form.message' | t | default: 'Message' }}
@@ -303,7 +303,7 @@
             >{{ form.body }}</textarea>
           </div>
 
-          {%- comment -%} Submit Button {%- endcomment -%}
+          {% comment %} Submit Button {% endcomment %}
           <div class="contact-form__field contact-form__field--full contact-form__field--submit">
             <button
               type="submit"
@@ -318,13 +318,13 @@
             </button>
           </div>
         </div>
-      {%- endform -%}
+      {% endform %}
     </div>
 
-    {%- if section.settings.layout == 'split' -%}
+    {% if section.settings.layout == 'split' %}
         </div>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -811,7 +811,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Form Fields"
+      "content": "Form Fields"
     },
     {
       "type": "checkbox",
@@ -861,7 +861,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Input Styling"
+      "content": "Input Styling"
     },
     {
       "type": "range",
@@ -950,7 +950,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Section Styling"
+      "content": "Section Styling"
     },
     {
       "type": "color",
@@ -959,7 +959,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",
@@ -985,7 +985,7 @@
   "blocks": [
     {
       "type": "text_field",
-      "name": "📝 Text Field",
+      "name": "Text Field",
       "settings": [
         {
           "type": "text",

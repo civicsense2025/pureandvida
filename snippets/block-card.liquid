@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Card Snippet
   ------------------
   Generic card wrapper with configurable background, padding, and border radius.
@@ -30,15 +30,15 @@
       <p>Content</p>
     {% endcapture %}
     {% render 'block-card', content: card_content, show_background: true %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign card_bg = show_background | default: false
   assign card_bg_color = background_color | default: '#f9f9f9'
   assign card_padding = padding | default: '24px'
   assign card_radius = border_radius | default: 12
   assign card_align = text_align | default: 'inherit'
--%}
+%}
 
 <div
   class="block-card{% if card_bg %} block-card--has-bg{% endif %}{% if class %} {{ class }}{% endif %}"

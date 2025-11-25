@@ -4,11 +4,11 @@
   # Supports multiple layouts, social sharing, comments, and related articles
 %}
 
-{%- render 'visibility-classes',
+{% render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,
   show_on_desktop: section.settings.show_on_desktop,
   section_id: section.id
--%}
+%}
 
 <article
   id="{{ section.id }}"
@@ -28,38 +28,38 @@
 
     /* Hero Section */
     #{{ section.id }} .article-hero {
-      {%- if section.settings.hero_layout == 'full-width' -%}
+      {% if section.settings.hero_layout == 'full-width' %}
         margin-left: calc(-50vw + 50%);
         margin-right: calc(-50vw + 50%);
         margin-bottom: var(--spacing-xl);
-      {%- elsif section.settings.hero_layout == 'contained' -%}
+      {% elsif section.settings.hero_layout == 'contained' %}
         margin-bottom: var(--spacing-xl);
         border-radius: {{ section.settings.image_border_radius }}px;
         overflow: hidden;
-      {%- endif -%}
+      {% endif %}
     }
 
     #{{ section.id }} .article-hero-image {
       width: 100%;
       height: auto;
-      {%- if section.settings.hero_layout == 'full-width' -%}
+      {% if section.settings.hero_layout == 'full-width' %}
         max-height: {{ section.settings.hero_height }}vh;
         object-fit: cover;
-      {%- else -%}
+      {% else %}
         aspect-ratio: {{ section.settings.image_ratio }};
         object-fit: cover;
-      {%- endif -%}
+      {% endif %}
     }
 
     /* Article Header */
     #{{ section.id }} .article-header {
       text-align: {{ section.settings.header_alignment }};
       margin-bottom: var(--spacing-xl);
-      {%- if section.settings.header_alignment == 'center' -%}
+      {% if section.settings.header_alignment == 'center' %}
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
-      {%- endif -%}
+      {% endif %}
     }
 
     #{{ section.id }} .article-tags {
@@ -67,9 +67,9 @@
       flex-wrap: wrap;
       gap: var(--spacing-xs);
       margin-bottom: var(--spacing-md);
-      {%- if section.settings.header_alignment == 'center' -%}
+      {% if section.settings.header_alignment == 'center' %}
         justify-content: center;
-      {%- endif -%}
+      {% endif %}
     }
 
     #{{ section.id }} .article-tag {
@@ -102,9 +102,9 @@
       flex-wrap: wrap;
       gap: var(--spacing-sm);
       align-items: center;
-      {%- if section.settings.header_alignment == 'center' -%}
+      {% if section.settings.header_alignment == 'center' %}
         justify-content: center;
-      {%- endif -%}
+      {% endif %}
       font-size: calc(var(--font-body-size) * 0.9375);
       color: var(--section-text, var(--color-text));
       opacity: 0.7;
@@ -135,11 +135,11 @@
     #{{ section.id }} .article-content-wrapper {
       display: grid;
       gap: var(--spacing-xl);
-      {%- if section.settings.layout == 'sidebar' -%}
+      {% if section.settings.layout == 'sidebar' %}
         grid-template-columns: 1fr 280px;
-      {%- else -%}
+      {% else %}
         grid-template-columns: 1fr;
-      {%- endif -%}
+      {% endif %}
     }
 
     @media screen and (max-width: 989px) {
@@ -149,10 +149,10 @@
     }
 
     #{{ section.id }} .article-content {
-      {%- if section.settings.layout == 'centered' -%}
+      {% if section.settings.layout == 'centered' %}
         max-width: {{ section.settings.content_width }}px;
         margin: 0 auto;
-      {%- endif -%}
+      {% endif %}
     }
 
     #{{ section.id }} .article-body {
@@ -236,9 +236,9 @@
       display: flex;
       flex-wrap: wrap;
       gap: var(--spacing-sm);
-      {%- if section.settings.header_alignment == 'center' -%}
+      {% if section.settings.header_alignment == 'center' %}
         justify-content: center;
-      {%- endif -%}
+      {% endif %}
       margin: var(--spacing-xl) 0;
       padding: var(--spacing-lg) 0;
       border-top: 1px solid var(--section-border, rgba(0,0,0,0.1));
@@ -476,8 +476,8 @@
   </style>
 
   <div class="article-container">
-    {%- comment -%} Featured Image {%- endcomment -%}
-    {%- if article.image != blank and section.settings.show_featured_image -%}
+    {% comment %} Featured Image {% endcomment %}
+    {% if article.image != blank and section.settings.show_featured_image %}
       <div class="article-hero">
         <img
           src="{{ article.image | image_url: width: 1600 }}"
@@ -491,60 +491,60 @@
           itemprop="image"
         >
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- comment -%} Article Header {%- endcomment -%}
+    {% comment %} Article Header {% endcomment %}
     <header class="article-header">
-      {%- if section.settings.show_tags and article.tags.size > 0 -%}
+      {% if section.settings.show_tags and article.tags.size > 0 %}
         <div class="article-tags">
-          {%- for tag in article.tags -%}
+          {% for tag in article.tags %}
             <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag">{{ tag }}</a>
-          {%- endfor -%}
+          {% endfor %}
         </div>
-      {%- endif -%}
+      {% endif %}
 
       <h1 class="article-title" itemprop="headline">{{ article.title | escape }}</h1>
 
-      {%- if section.settings.show_meta -%}
+      {% if section.settings.show_meta %}
         <div class="article-meta">
-          {%- if section.settings.show_author -%}
+          {% if section.settings.show_author %}
             <span class="article-author" itemprop="author" itemscope itemtype="http://schema.org/Person">
               <span itemprop="name">{{ article.author }}</span>
             </span>
-            {%- if section.settings.show_date -%}
+            {% if section.settings.show_date %}
               <span class="article-meta-divider"></span>
-            {%- endif -%}
-          {%- endif -%}
+            {% endif %}
+          {% endif %}
 
-          {%- if section.settings.show_date -%}
+          {% if section.settings.show_date %}
             <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" itemprop="datePublished">
               {{ article.published_at | date: section.settings.date_format }}
             </time>
-          {%- endif -%}
+          {% endif %}
 
-          {%- if section.settings.show_reading_time -%}
-            {%- assign words = article.content | strip_html | split: ' ' | size -%}
-            {%- assign minutes = words | divided_by: 200 | at_least: 1 -%}
+          {% if section.settings.show_reading_time %}
+            {% assign words = article.content | strip_html | split: ' ' | size %}
+            {% assign minutes = words | divided_by: 200 | at_least: 1 %}
             <span class="article-meta-divider"></span>
             <span>{{ minutes }} min read</span>
-          {%- endif -%}
+          {% endif %}
         </div>
-      {%- endif -%}
+      {% endif %}
     </header>
 
-    {%- comment -%} Content Wrapper {%- endcomment -%}
+    {% comment %} Content Wrapper {% endcomment %}
     <div class="article-content-wrapper">
       <div class="article-content">
-        {%- comment -%} Article Body {%- endcomment -%}
+        {% comment %} Article Body {% endcomment %}
         <div class="article-body" itemprop="articleBody">
           {{ article.content }}
         </div>
 
-        {%- comment -%} Social Sharing {%- endcomment -%}
-        {%- if section.settings.show_share -%}
+        {% comment %} Social Sharing {% endcomment %}
+        {% if section.settings.show_share %}
           <div class="article-share">
             <span class="share-label">{{ section.settings.share_label | default: 'Share:' }}</span>
-            {%- if section.settings.share_facebook -%}
+            {% if section.settings.share_facebook %}
               <a
                 href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ article.url }}"
                 target="_blank"
@@ -556,8 +556,8 @@
                   <path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z"/>
                 </svg>
               </a>
-            {%- endif -%}
-            {%- if section.settings.share_twitter -%}
+            {% endif %}
+            {% if section.settings.share_twitter %}
               <a
                 href="https://twitter.com/intent/tweet?text={{ article.title | url_encode }}&url={{ shop.url }}{{ article.url }}"
                 target="_blank"
@@ -569,8 +569,8 @@
                   <path d="M23.44 4.83c-.8.37-1.5.38-2.22.02.93-.56.98-.96 1.32-2.02-.88.52-1.86.9-2.9 1.1-.82-.88-2-1.43-3.3-1.43-2.5 0-4.55 2.04-4.55 4.54 0 .36.03.7.1 1.04-3.77-.2-7.12-2-9.36-4.75-.4.67-.6 1.45-.6 2.3 0 1.56.8 2.95 2 3.77-.74-.03-1.44-.23-2.05-.57v.06c0 2.2 1.56 4.03 3.64 4.44-.67.2-1.37.2-2.06.08.58 1.8 2.26 3.12 4.25 3.16C5.78 18.1 3.37 18.74 1 18.46c2 1.3 4.4 2.04 6.97 2.04 8.35 0 12.92-6.92 12.92-12.93 0-.2 0-.4-.02-.6.9-.63 1.96-1.22 2.56-2.14z"/>
                 </svg>
               </a>
-            {%- endif -%}
-            {%- if section.settings.share_pinterest -%}
+            {% endif %}
+            {% if section.settings.share_pinterest %}
               <a
                 href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ article.url }}&media={{ article.image | image_url: width: 1200 }}&description={{ article.title | url_encode }}"
                 target="_blank"
@@ -582,8 +582,8 @@
                   <path d="M12.14.5C5.86.5 2.7 5 2.7 8.75c0 2.27.86 4.3 2.7 5.05.3.12.57 0 .66-.33l.27-1.06c.1-.32.06-.44-.2-.73-.52-.62-.86-1.44-.86-2.6 0-3.33 2.5-6.32 6.5-6.32 3.55 0 5.5 2.17 5.5 5.07 0 3.8-1.7 7.02-4.2 7.02-1.37 0-2.4-1.14-2.07-2.54.4-1.68 1.16-3.48 1.16-4.7 0-1.07-.58-1.98-1.78-1.98-1.4 0-2.55 1.47-2.55 3.42 0 1.25.43 2.1.43 2.1l-1.7 7.2c-.5 2.13-.08 4.75-.04 5 .02.17.22.2.3.1.14-.18 1.82-2.26 2.4-4.33.16-.58.93-3.63.93-3.63.45.9 1.8 1.66 3.22 1.66 4.25 0 7.13-3.87 7.13-9.05C20.5 4.15 17.18.5 12.14.5z"/>
                 </svg>
               </a>
-            {%- endif -%}
-            {%- if section.settings.share_linkedin -%}
+            {% endif %}
+            {% if section.settings.share_linkedin %}
               <a
                 href="https://www.linkedin.com/shareArticle?mini=true&url={{ shop.url }}{{ article.url }}&title={{ article.title | url_encode }}"
                 target="_blank"
@@ -595,8 +595,8 @@
                   <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43c-1.14 0-2.07-.93-2.07-2.07 0-1.14.93-2.07 2.07-2.07 1.14 0 2.07.93 2.07 2.07 0 1.14-.93 2.07-2.07 2.07zm1.78 13.02H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0z"/>
                 </svg>
               </a>
-            {%- endif -%}
-            {%- if section.settings.share_email -%}
+            {% endif %}
+            {% if section.settings.share_email %}
               <a
                 href="mailto:?subject={{ article.title | url_encode }}&body={{ shop.url }}{{ article.url }}"
                 class="share-link"
@@ -607,17 +607,17 @@
                   <path d="m22 7-10 5L2 7"/>
                 </svg>
               </a>
-            {%- endif -%}
+            {% endif %}
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- comment -%} Article Footer {%- endcomment -%}
+        {% comment %} Article Footer {% endcomment %}
         <footer class="article-footer">
-          {%- comment -%} Author Bio Block {%- endcomment -%}
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'author_bio' -%}
+          {% comment %} Author Bio Block {% endcomment %}
+          {% for block in section.blocks %}
+            {% if block.type == 'author_bio' %}
               <div class="author-bio" {{ block.shopify_attributes }}>
-                {%- if block.settings.author_image != blank -%}
+                {% if block.settings.author_image != blank %}
                   <img
                     src="{{ block.settings.author_image | image_url: width: 160 }}"
                     alt="{{ article.author }}"
@@ -625,26 +625,26 @@
                     width="80"
                     height="80"
                   >
-                {%- endif -%}
+                {% endif %}
                 <div class="author-bio-content">
                   <p class="author-bio-name">{{ block.settings.author_name | default: article.author }}</p>
                   <p class="author-bio-text">{{ block.settings.author_text }}</p>
                 </div>
               </div>
-            {%- endif -%}
-          {%- endfor -%}
+            {% endif %}
+          {% endfor %}
 
-          {%- comment -%} Navigation {%- endcomment -%}
-          {%- if section.settings.show_navigation -%}
+          {% comment %} Navigation {% endcomment %}
+          {% if section.settings.show_navigation %}
             <nav class="article-navigation" aria-label="Article navigation">
-              {%- if blog.previous_article -%}
+              {% if blog.previous_article %}
                 <a href="{{ blog.previous_article.url }}" class="nav-link nav-link--prev">
                   <span class="nav-label">← Previous</span>
                   <span class="nav-title">{{ blog.previous_article.title | truncate: 50 }}</span>
                 </a>
-              {%- else -%}
+              {% else %}
                 <span></span>
-              {%- endif -%}
+              {% endif %}
 
               <a href="{{ blog.url }}" class="nav-back">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -656,28 +656,28 @@
                 {{ section.settings.back_text | default: 'All articles' }}
               </a>
 
-              {%- if blog.next_article -%}
+              {% if blog.next_article %}
                 <a href="{{ blog.next_article.url }}" class="nav-link nav-link--next">
                   <span class="nav-label">Next →</span>
                   <span class="nav-title">{{ blog.next_article.title | truncate: 50 }}</span>
                 </a>
-              {%- else -%}
+              {% else %}
                 <span></span>
-              {%- endif -%}
+              {% endif %}
             </nav>
-          {%- endif -%}
+          {% endif %}
         </footer>
 
-        {%- comment -%} Comments {%- endcomment -%}
-        {%- if blog.comments_enabled? and section.settings.show_comments -%}
+        {% comment %} Comments {% endcomment %}
+        {% if blog.comments_enabled? and section.settings.show_comments %}
           <div class="article-comments" id="comments">
-            {%- if article.comments_count > 0 -%}
+            {% if article.comments_count > 0 %}
               <h2 class="comments-title">
                 {{ article.comments_count }} {{ article.comments_count | pluralize: 'Comment', 'Comments' }}
               </h2>
 
-              {%- paginate article.comments by section.settings.comments_per_page -%}
-                {%- for comment in article.comments -%}
+              {% paginate article.comments by section.settings.comments_per_page %}
+                {% for comment in article.comments %}
                   <div class="comment">
                     <div class="comment-meta">
                       <span class="comment-author">{{ comment.author }}</span>
@@ -685,31 +685,31 @@
                     </div>
                     <div class="comment-body">{{ comment.content }}</div>
                   </div>
-                {%- endfor -%}
+                {% endfor %}
 
-                {%- if paginate.pages > 1 -%}
+                {% if paginate.pages > 1 %}
                   <nav class="search-pagination" aria-label="Comments pagination">
-                    {%- if paginate.previous -%}
+                    {% if paginate.previous %}
                       <a href="{{ paginate.previous.url }}#comments" class="pagination-link">← Previous</a>
-                    {%- endif -%}
-                    {%- if paginate.next -%}
+                    {% endif %}
+                    {% if paginate.next %}
                       <a href="{{ paginate.next.url }}#comments" class="pagination-link">Next →</a>
-                    {%- endif -%}
+                    {% endif %}
                   </nav>
-                {%- endif -%}
-              {%- endpaginate -%}
-            {%- endif -%}
+                {% endif %}
+              {% endpaginate %}
+            {% endif %}
 
-            {%- comment -%} Comment Form {%- endcomment -%}
+            {% comment %} Comment Form {% endcomment %}
             <div class="comment-form">
               <h3 class="comment-form-title">{{ section.settings.comment_form_title | default: 'Leave a comment' }}</h3>
               {% form 'new_comment', article %}
                 <div class="comment-form-fields">
-                  {%- if form.errors -%}
+                  {% if form.errors %}
                     <div class="form-error" role="alert">
                       {{ form.errors | default_errors }}
                     </div>
-                  {%- endif -%}
+                  {% endif %}
 
                   <div class="comment-form-row">
                     {% render 'form-field',
@@ -747,38 +747,38 @@
               {% endform %}
             </div>
           </div>
-        {%- endif -%}
+        {% endif %}
       </div>
 
-      {%- comment -%} Sidebar {%- endcomment -%}
-      {%- if section.settings.layout == 'sidebar' -%}
+      {% comment %} Sidebar {% endcomment %}
+      {% if section.settings.layout == 'sidebar' %}
         <aside class="article-sidebar">
-          {%- for block in section.blocks -%}
-            {%- case block.type -%}
-              {%- when 'table_of_contents' -%}
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'table_of_contents' %}
                 <div class="sidebar-section" {{ block.shopify_attributes }}>
                   <h3 class="sidebar-title">{{ block.settings.title | default: 'In this article' }}</h3>
                   <div id="toc-{{ section.id }}"></div>
                 </div>
 
-              {%- when 'related_articles' -%}
+              {% when 'related_articles' %}
                 <div class="sidebar-section" {{ block.shopify_attributes }}>
                   <h3 class="sidebar-title">{{ block.settings.title | default: 'Related articles' }}</h3>
-                  {%- assign related_count = block.settings.articles_count -%}
-                  {%- assign shown = 0 -%}
-                  {%- for related in blog.articles limit: related_count -%}
-                    {%- if related.id != article.id and shown < related_count -%}
+                  {% assign related_count = block.settings.articles_count %}
+                  {% assign shown = 0 %}
+                  {% for related in blog.articles limit: related_count %}
+                    {% if related.id != article.id and shown < related_count %}
                       <a href="{{ related.url }}" style="display: block; margin-bottom: var(--spacing-md); text-decoration: none; color: var(--section-text);">
                         <span style="font-size: calc(var(--font-body-size) * 0.9375); line-height: 1.4;">{{ related.title }}</span>
                       </a>
-                      {%- assign shown = shown | plus: 1 -%}
-                    {%- endif -%}
-                  {%- endfor -%}
+                      {% assign shown = shown | plus: 1 %}
+                    {% endif %}
+                  {% endfor %}
                 </div>
-            {%- endcase -%}
-          {%- endfor -%}
+            {% endcase %}
+          {% endfor %}
         </aside>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 
@@ -788,9 +788,9 @@
       "@type": "BlogPosting",
       "headline": {{ article.title | json }},
       "articleBody": {{ article.content | strip_html | json }},
-      {%- if article.image -%}
+      {% if article.image %}
         "image": {{ article.image | image_url: width: 1200 | json }},
-      {%- endif -%}
+      {% endif %}
       "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
       "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
       "author": {

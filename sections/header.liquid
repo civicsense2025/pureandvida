@@ -1,14 +1,8 @@
 {% liquid
-  # @description Header section with navigation, logo, and cart functionality
-  # Supports sticky header, transparent header, custom logo, menu navigation, and cart button
-  # @settings logo_image {Image} - Logo image (optional, falls back to text logo)
-  # @settings logo_text {String} - Logo text if no image provided
-  # @settings menu {LinkList} - Main navigation menu
+  # @description Modular header section with draggable blocks
+  # Blocks: logo, navigation, cart_button, search, account, custom_link
   # @settings sticky_header {Boolean} - Enable sticky header on scroll
   # @settings transparent_header {Boolean} - Make header transparent
-  # @settings show_cart {Boolean} - Display cart button
-  # @example
-  #   Section is automatically included in theme.liquid layout
 
   # Extract style logic into variables
   assign header_bg_style = ''
@@ -16,19 +10,6 @@
     assign header_bg_style = 'background-color: transparent;'
   elsif section.settings.background_color != blank
     assign header_bg_style = 'background-color: ' | append: section.settings.background_color | append: ';'
-  endif
-
-  assign menu_text_style = ''
-  if section.settings.menu_text_color != blank
-    assign menu_text_style = 'color: ' | append: section.settings.menu_text_color | append: ';'
-  endif
-
-  assign cart_button_style = ''
-  if section.settings.cart_button_color != blank
-    assign cart_button_style = 'background-color: ' | append: section.settings.cart_button_color | append: ';'
-  endif
-  if section.settings.cart_button_text_color != blank
-    assign cart_button_style = cart_button_style | append: 'color: ' | append: section.settings.cart_button_text_color | append: ';'
   endif
 %}
 
@@ -38,30 +19,15 @@
     <span class="editor-info">
       {% if section.settings.sticky_header %}Sticky{% endif %}
       {% if section.settings.transparent_header %}Transparent{% endif %}
-      | {{ section.settings.menu.links.size }} menu items
-      {% if section.settings.show_cart %}| Cart button{% endif %}
+      | {{ section.blocks.size }} blocks
     </span>
   </div>
 {% endif %}
 
 <header class="header-wrapper pure-vida-header{% if section.settings.sticky_header %} sticky-header{% endif %}"{% if header_bg_style != blank %} style="{{ header_bg_style }}"{% endif %}>
   <div class="header page-width" style="height: {{ section.settings.header_height }}px;">
-    {%- if section.settings.logo_image != blank or section.settings.logo_text != blank -%}
-      <div class="header__logo">
-        {% render 'logo',
-          logo_image: section.settings.logo_image,
-          logo_text: section.settings.logo_text,
-          logo_width: section.settings.logo_width,
-          logo_height: section.settings.logo_height,
-          logo_text_size: section.settings.logo_text_size,
-          logo_text_color: section.settings.logo_text_color,
-          show_plus: section.settings.show_plus,
-          class_name: 'header'
-        %}
-      </div>
-    {%- endif -%}
 
-    {%- comment -%} Mobile Hamburger Menu Button {%- endcomment -%}
+    {% comment %} Mobile Hamburger Menu Button {% endcomment %}
     <button class="header__hamburger"
             type="button"
             aria-label="{{ 'accessibility.navigation' | t | default: 'Open menu' }}"
@@ -73,75 +39,71 @@
       <span class="hamburger__line"></span>
     </button>
 
-    {%- comment -%} Desktop Navigation {%- endcomment -%}
-    <nav class="header__inline-menu header__inline-menu--desktop">
-      {%- if section.settings.menu != blank -%}
-        <ul class="list-menu list-menu--inline" role="list">
-          {%- for link in section.settings.menu.links -%}
-            <li>
-              <a href="{{ link.url }}" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ link.title | escape }}</a>
-            </li>
-          {%- endfor -%}
-        </ul>
-      {%- else -%}
-        <ul class="list-menu list-menu--inline" role="list">
-          <li>
-            <a href="{{ routes.collections_url }}" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.collections' | t | default: 'Shop' }}</a>
-          </li>
-          <li>
-            <a href="{{ routes.root_url }}/pages/about" class="header__menu-item"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.about' | t | default: 'About' }}</a>
-          </li>
-        </ul>
-      {%- endif -%}
+    {% comment %} Desktop Header - Render Blocks {% endcomment %}
+    <div class="header__left">
+      {% for block in section.blocks %}
+        {% if block.settings.position == 'left' %}
+          {% render 'block-header-item', block: block, section: section %}
+        {% endif %}
+      {% endfor %}
+    </div>
 
-      {%- if section.settings.show_cart and section.settings.cart_button_text != blank -%}
-        <a href="{{ routes.cart_url }}" class="header__cta-button"{% if cart_button_style != blank %} style="{{ cart_button_style }}"{% endif %}>
-          {{ section.settings.cart_button_text }}
-          {%- if section.settings.show_cart_count and cart.item_count > 0 -%}
-            <span class="header__cart-count">({{ cart.item_count }})</span>
-          {%- endif -%}
-        </a>
-      {%- endif -%}
+    <nav class="header__center">
+      {% for block in section.blocks %}
+        {% if block.settings.position == 'center' %}
+          {% render 'block-header-item', block: block, section: section %}
+        {% endif %}
+      {% endfor %}
     </nav>
 
-    {%- comment -%} Mobile Navigation Drawer {%- endcomment -%}
-    <nav id="mobile-menu-{{ section.id }}" class="header__mobile-menu" aria-label="{{ 'accessibility.navigation' | t | default: 'Mobile navigation' }}">
-      <div class="mobile-menu__inner">
-        {%- if section.settings.menu != blank -%}
-          <ul class="mobile-menu__list" role="list">
-            {%- for link in section.settings.menu.links -%}
-              <li>
-                <a href="{{ link.url }}" class="mobile-menu__link"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ link.title | escape }}</a>
-              </li>
-            {%- endfor -%}
-          </ul>
-        {%- else -%}
-          <ul class="mobile-menu__list" role="list">
-            <li>
-              <a href="{{ routes.collections_url }}" class="mobile-menu__link"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.collections' | t | default: 'Shop' }}</a>
-            </li>
-            <li>
-              <a href="{{ routes.root_url }}/pages/about" class="mobile-menu__link"{% if menu_text_style != blank %} style="{{ menu_text_style }}"{% endif %}>{{ 'general.navigation.about' | t | default: 'About' }}</a>
-            </li>
-          </ul>
-        {%- endif -%}
-
-        {%- if section.settings.show_cart -%}
-          <a href="{{ routes.cart_url }}" class="mobile-menu__cart-button"{% if cart_button_style != blank %} style="{{ cart_button_style }}"{% endif %}>
-            {{ section.settings.cart_button_text | default: 'Cart' }}
-            {%- if cart.item_count > 0 -%}
-              <span>({{ cart.item_count }})</span>
-            {%- endif -%}
-          </a>
-        {%- endif -%}
-      </div>
-    </nav>
+    <div class="header__right">
+      {% for block in section.blocks %}
+        {% if block.settings.position == 'right' %}
+          {% render 'block-header-item', block: block, section: section %}
+        {% endif %}
+      {% endfor %}
+    </div>
   </div>
+
+  {% comment %} Mobile Navigation Drawer {% endcomment %}
+  <nav id="mobile-menu-{{ section.id }}" class="header__mobile-menu" aria-label="{{ 'accessibility.navigation' | t | default: 'Mobile navigation' }}">
+    <div class="mobile-menu__inner">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'navigation' %}
+            {% if block.settings.menu != blank %}
+              <ul class="mobile-menu__list" role="list">
+                {% for link in block.settings.menu.links %}
+                  <li>
+                    <a href="{{ link.url }}" class="mobile-menu__link"{% if block.settings.text_color != blank %} style="color: {{ block.settings.text_color }};"{% endif %}>
+                      {{ link.title | escape }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% when 'cart_button' %}
+            <a href="{{ routes.cart_url }}" class="mobile-menu__cart-button"{% if block.settings.background_color != blank or block.settings.text_color != blank %} style="{% if block.settings.background_color != blank %}background-color: {{ block.settings.background_color }};{% endif %}{% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}"{% endif %}>
+              {{ block.settings.text | default: 'Cart' }}
+              {% if cart.item_count > 0 %}
+                <span>({{ cart.item_count }})</span>
+              {% endif %}
+            </a>
+          {% when 'custom_link' %}
+            {% if block.settings.show_on_mobile %}
+              <a href="{{ block.settings.url | default: '#' }}" class="mobile-menu__link"{% if block.settings.text_color != blank %} style="color: {{ block.settings.text_color }};"{% endif %}>
+                {{ block.settings.text | escape }}
+              </a>
+            {% endif %}
+        {% endcase %}
+      {% endfor %}
+    </div>
+  </nav>
 </header>
 
 <style>
-  /* Header Typography (from Figma) */
-  {%- liquid
+  {% liquid
+    # Typography settings
     case section.settings.logo_font
       when 'nohemi'
         assign logo_font = 'Nohemi, sans-serif'
@@ -163,7 +125,7 @@
       else
         assign menu_font = 'var(--font-body-family)'
     endcase
-  -%}
+  %}
 
   .header__logo .logo,
   .header__logo .logo__text {
@@ -174,7 +136,7 @@
   .header__menu-item,
   .mobile-menu__link {
     font-family: {{ menu_font }};
-    font-size: {{ section.settings.menu_font_size | default: 24 }}px;
+    font-size: {{ section.settings.menu_font_size | default: 20 }}px;
     letter-spacing: {{ section.settings.menu_letter_spacing | default: 6 | divided_by: 100.0 }}em;
   }
 
@@ -184,16 +146,155 @@
     letter-spacing: var(--letter-spacing-button, 0.12em);
   }
 
-  /* Header Responsive Layout */
+  /* Header Layout */
   .header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .header__left {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 1.5rem;
+    justify-content: flex-start;
+  }
+
+  .header__center {
+    display: flex;
+    align-items: center;
     gap: 2rem;
+    justify-content: center;
+  }
+
+  .header__right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    justify-content: flex-end;
   }
 
   .header__logo {
     flex-shrink: 0;
+  }
+
+  /* Navigation Menu */
+  .header__nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .header__nav-list {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__menu-item {
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .header__menu-item:hover {
+    opacity: 0.7;
+  }
+
+  /* CTA / Cart Button */
+  .header__cta-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header__cta-button:hover {
+    opacity: 0.9;
+  }
+
+  /* Search */
+  .header__search {
+    display: flex;
+    align-items: center;
+  }
+
+  .header__search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .header__search-button svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Account */
+  .header__account {
+    display: flex;
+    align-items: center;
+  }
+
+  .header__account-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    min-width: 44px;
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  .header__account-link svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Custom Link */
+  .header__custom-link {
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__custom-link:hover {
+    opacity: 0.7;
+  }
+
+  .header__custom-link--button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+  }
+
+  /* Cart Count Badge */
+  .header__cart-count {
+    background: var(--color-accent, #E8983B);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
   }
 
   /* Hamburger Button - Hidden on Desktop */
@@ -210,18 +311,18 @@
     border: none;
     cursor: pointer;
     z-index: 1001;
+    order: -1;
   }
 
   .hamburger__line {
     display: block;
     width: 24px;
     height: 2px;
-    background-color: {{ section.settings.menu_text_color | default: 'var(--color-text)' }};
+    background-color: {{ section.settings.hamburger_color | default: 'var(--color-text)' }};
     border-radius: 2px;
     transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
-  /* Hamburger Animation when Open */
   .header__hamburger[aria-expanded="true"] .hamburger__line:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
   }
@@ -234,64 +335,12 @@
     transform: translateY(-7px) rotate(-45deg);
   }
 
-  /* Desktop Navigation */
-  .header__inline-menu--desktop {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    flex: 1;
-    justify-content: flex-end;
-  }
-
-  .header__inline-menu .list-menu {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .header__inline-menu .list-menu li {
-    margin: 0;
-  }
-
-  .header__menu-item {
-    text-decoration: none;
-    font-size: 1rem;
-    transition: opacity 0.2s ease;
-  }
-
-  .header__menu-item:hover {
-    opacity: 0.7;
-  }
-
-  .header__cta-button {
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 500;
-    white-space: nowrap;
-    transition: opacity 0.2s ease;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  .header__cta-button:hover {
-    opacity: 0.9;
-  }
-
-  .header__cart-count {
-    margin-left: 0.25rem;
-  }
-
-  /* Mobile Menu Drawer - Hidden by Default */
+  /* Mobile Menu Drawer */
   .header__mobile-menu {
     position: fixed;
     top: 0;
     right: -100%;
-    width: min(300px, 80vw);
+    width: min(320px, 85vw);
     height: 100vh;
     background: {{ section.settings.background_color | default: 'var(--color-background)' }};
     z-index: 1000;
@@ -341,7 +390,7 @@
     justify-content: center;
     padding: 16px 24px;
     margin-top: 20px;
-    border-radius: 8px;
+    border-radius: 50px;
     text-decoration: none;
     font-weight: 600;
     font-size: 1rem;
@@ -359,7 +408,6 @@
     overflow: hidden;
   }
 
-  /* Mobile Menu Overlay */
   body.mobile-menu-open::before {
     content: '';
     position: fixed;
@@ -371,37 +419,41 @@
     z-index: 999;
   }
 
-  {%- if section.settings.sticky_header -%}
+  {% if section.settings.sticky_header %}
     .sticky-header {
       position: sticky;
       top: 0;
       z-index: 1000;
     }
-  {%- endif -%}
+  {% endif %}
 
-  /* Mobile Breakpoint - Show Hamburger, Hide Desktop Menu */
+  /* Mobile Breakpoint */
   @media screen and (max-width: {{ section.settings.mobile_breakpoint | default: 768 }}px) {
     .header__hamburger {
       display: flex;
     }
 
-    .header__inline-menu--desktop {
+    .header {
+      grid-template-columns: auto 1fr auto;
+    }
+
+    .header__center {
+      display: none;
+    }
+
+    .header__left,
+    .header__right {
+      gap: 0.5rem;
+    }
+
+    /* Hide certain blocks on mobile */
+    .header__nav,
+    .header__search,
+    .header__account {
       display: none;
     }
   }
 
-  /* Tablet Responsive */
-  @media screen and (min-width: 769px) and (max-width: 1023px) {
-    .header__inline-menu .list-menu {
-      gap: 1.5rem;
-    }
-
-    .header__menu-item {
-      font-size: 0.95rem;
-    }
-  }
-
-  /* Desktop - Hide Mobile Menu */
   @media screen and (min-width: {{ section.settings.mobile_breakpoint | default: 768 | plus: 1 }}px) {
     .header__mobile-menu {
       display: none;
@@ -409,7 +461,6 @@
   }
 
   {% if request.design_mode %}
-    /* Header Editor Visual Indicators */
     .header-wrapper.pure-vida-header {
       position: relative;
       outline: 2px dashed rgba(96, 125, 139, 0.3);
@@ -432,18 +483,12 @@
       pointer-events: none;
     }
 
-    .header__logo {
+    .header__left,
+    .header__center,
+    .header__right {
       outline: 1px dashed rgba(96, 125, 139, 0.2);
       padding: 4px;
-    }
-
-    .header__inline-menu .list-menu li {
-      outline: 1px dashed rgba(96, 125, 139, 0.15);
-      padding: 2px;
-    }
-
-    .header__cta-button {
-      outline: 1px solid rgba(96, 125, 139, 0.3);
+      min-height: 40px;
     }
 
     .editor-controls--header {
@@ -483,134 +528,103 @@
 
 {% schema %}
 {
-  "name": "⬆️ Header",
+  "name": "Header",
   "tag": "header",
   "class": "section-header",
   "settings": [
     {
       "type": "paragraph",
-      "content": "**Page Builder Controls:** Create a professional site header with logo, navigation menu, and cart button. Supports sticky positioning, transparent overlays, and complete visual customization. This header appears at the top of every page."
+      "content": "**Modular Header:** Add blocks for logo, navigation, cart, search, and account. Position each block left, center, or right."
     },
     {
       "type": "header",
-      "content": "🎨 Logo & Branding"
-    },
-    {
-      "type": "image_picker",
-      "id": "logo_image",
-      "label": "Logo Image",
-      "info": "Upload a logo image for your header (optional, will use text logo if not provided)"
-    },
-    {
-      "type": "range",
-      "id": "logo_width",
-      "label": "Logo Width",
-      "min": 50,
-      "max": 500,
-      "step": 10,
-      "unit": "px",
-      "default": 200,
-      "info": "Maximum width of the logo image (50-500px)"
-    },
-    {
-      "type": "range",
-      "id": "logo_height",
-      "label": "Logo Height",
-      "min": 20,
-      "max": 200,
-      "step": 5,
-      "unit": "px",
-      "default": 50,
-      "info": "Maximum height of the logo image (20-200px)"
-    },
-    {
-      "type": "text",
-      "id": "logo_text",
-      "label": "Logo Text",
-      "default": "Pure + Vida",
-      "info": "Text-based logo displayed if no image uploaded (leave empty to hide logo)"
-    },
-    {
-      "type": "range",
-      "id": "logo_text_size",
-      "label": "Logo Text Size",
-      "min": 12,
-      "max": 72,
-      "step": 2,
-      "unit": "px",
-      "default": 24,
-      "info": "Font size for text-based logo (12-72px)"
-    },
-    {
-      "type": "color",
-      "id": "logo_text_color",
-      "label": "Logo Text Color",
-      "info": "Custom color for text-based logo"
+      "content": "Header Behavior"
     },
     {
       "type": "checkbox",
-      "id": "show_plus",
-      "label": "Show Plus Sign (+)",
-      "default": true,
-      "info": "Display the + symbol in the logo design"
+      "id": "sticky_header",
+      "label": "Enable Sticky Header",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header",
+      "label": "Transparent Background",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "header_height",
+      "label": "Header Height",
+      "min": 50,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80
     },
     {
       "type": "header",
-      "content": "🔤 Typography Settings"
+      "content": "Colors"
     },
     {
-      "type": "paragraph",
-      "content": "Figma design uses Nohemi Light for logo, Nohemi Regular/SemiBold for navigation."
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "color",
+      "id": "hamburger_color",
+      "label": "Mobile Menu Icon Color"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
     },
     {
       "type": "select",
       "id": "logo_font",
-      "label": "Logo Font Family",
+      "label": "Logo Font",
       "options": [
-        { "value": "theme", "label": "Use Theme Setting" },
-        { "value": "nohemi", "label": "Nohemi (Figma)" },
+        { "value": "theme", "label": "Theme Default" },
+        { "value": "nohemi", "label": "Nohemi" },
         { "value": "versailles", "label": "Versailles" },
         { "value": "myriad", "label": "Myriad Pro" }
       ],
-      "default": "nohemi",
-      "info": "Font for the text logo. Figma uses Nohemi Light."
+      "default": "nohemi"
     },
     {
       "type": "select",
       "id": "logo_font_weight",
       "label": "Logo Font Weight",
       "options": [
-        { "value": "300", "label": "Light (Figma)" },
+        { "value": "300", "label": "Light" },
         { "value": "400", "label": "Regular" },
         { "value": "500", "label": "Medium" },
         { "value": "600", "label": "Semi-Bold" }
       ],
-      "default": "300",
-      "info": "Figma uses Light (300) weight for header logo."
+      "default": "300"
     },
     {
       "type": "select",
       "id": "menu_font",
-      "label": "Menu Font Family",
+      "label": "Menu Font",
       "options": [
-        { "value": "theme", "label": "Use Theme Setting" },
-        { "value": "nohemi", "label": "Nohemi (Figma)" },
+        { "value": "theme", "label": "Theme Default" },
+        { "value": "nohemi", "label": "Nohemi" },
         { "value": "versailles", "label": "Versailles" },
         { "value": "myriad", "label": "Myriad Pro" }
       ],
-      "default": "nohemi",
-      "info": "Font for navigation menu items. Figma uses Nohemi."
+      "default": "nohemi"
     },
     {
       "type": "range",
       "id": "menu_font_size",
       "label": "Menu Font Size",
       "min": 12,
-      "max": 32,
+      "max": 28,
       "step": 1,
-      "default": 24,
       "unit": "px",
-      "info": "Figma uses 24px for navigation."
+      "default": 20
     },
     {
       "type": "range",
@@ -619,98 +633,11 @@
       "min": 0,
       "max": 15,
       "step": 1,
-      "default": 6,
-      "info": "Figma uses 6% letter spacing for navigation."
+      "default": 6
     },
     {
       "type": "header",
-      "content": "🧭 Navigation Menu"
-    },
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "Menu",
-      "default": "main-menu",
-      "info": "Select which menu to display in the header (configure menus in Navigation settings)"
-    },
-    {
-      "type": "color",
-      "id": "menu_text_color",
-      "label": "Menu Link Color",
-      "info": "Custom color for navigation menu links"
-    },
-    {
-      "type": "header",
-      "content": "🛒 Cart Button"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_cart",
-      "label": "Show Cart Button",
-      "default": true,
-      "info": "Display a cart/checkout button in the header"
-    },
-    {
-      "type": "text",
-      "id": "cart_button_text",
-      "label": "Cart Button Text",
-      "default": "Cart",
-      "info": "Text displayed on the cart button"
-    },
-    {
-      "type": "color",
-      "id": "cart_button_color",
-      "label": "Cart Button Background",
-      "info": "Background color for the cart button"
-    },
-    {
-      "type": "color",
-      "id": "cart_button_text_color",
-      "label": "Cart Button Text Color",
-      "info": "Text color for the cart button"
-    },
-    {
-      "type": "header",
-      "content": "⚙️ Header Behavior"
-    },
-    {
-      "type": "checkbox",
-      "id": "sticky_header",
-      "label": "Enable Sticky Header",
-      "default": false,
-      "info": "Header stays fixed at top of screen when scrolling down the page"
-    },
-    {
-      "type": "checkbox",
-      "id": "transparent_header",
-      "label": "Transparent Background",
-      "default": false,
-      "info": "Make header background transparent (useful for overlaying hero images)"
-    },
-    {
-      "type": "range",
-      "id": "header_height",
-      "label": "Header Height",
-      "min": 40,
-      "max": 150,
-      "step": 5,
-      "unit": "px",
-      "default": 80,
-      "info": "Total height of the header section (40-150px)"
-    },
-    {
-      "type": "header",
-      "content": "🎨 Section Styling"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Background Color",
-      "info": "Background color for the header (ignored if transparent header is enabled)"
-    },
-    {
-      "type": "header",
-      "content": "📱 Mobile Settings"
+      "content": "Mobile Settings"
     },
     {
       "type": "range",
@@ -720,67 +647,383 @@
       "max": 1024,
       "step": 64,
       "unit": "px",
-      "default": 768,
-      "info": "Screen width below which hamburger menu appears (480-1024px)"
+      "default": 768
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Logo Image"
+        },
+        {
+          "type": "range",
+          "id": "logo_width",
+          "label": "Logo Width",
+          "min": 50,
+          "max": 300,
+          "step": 10,
+          "unit": "px",
+          "default": 150
+        },
+        {
+          "type": "text",
+          "id": "logo_text",
+          "label": "Logo Text",
+          "default": "Pure + Vida"
+        },
+        {
+          "type": "range",
+          "id": "logo_text_size",
+          "label": "Logo Text Size",
+          "min": 16,
+          "max": 48,
+          "step": 2,
+          "unit": "px",
+          "default": 28
+        },
+        {
+          "type": "color",
+          "id": "logo_text_color",
+          "label": "Logo Text Color"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_plus",
+          "label": "Show Plus Sign (+)",
+          "default": true
+        }
+      ]
     },
     {
-      "type": "checkbox",
-      "id": "show_cart_count",
-      "label": "Show Cart Item Count",
-      "default": true,
-      "info": "Display number of items in cart on the button"
+      "type": "navigation",
+      "name": "Navigation Menu",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "main-menu"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Link Color"
+        },
+        {
+          "type": "color",
+          "id": "hover_color",
+          "label": "Hover Color"
+        }
+      ]
     },
     {
-      "type": "range",
-      "id": "mobile_header_height",
-      "label": "Mobile Header Height",
-      "min": 50,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "default": 60,
-      "info": "Header height on mobile devices (50-100px)"
+      "type": "cart_button",
+      "name": "Cart Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Button Style",
+          "options": [
+            { "value": "button", "label": "Filled Button" },
+            { "value": "outline", "label": "Outline Button" },
+            { "value": "text", "label": "Text Only" },
+            { "value": "icon", "label": "Icon Only" }
+          ],
+          "default": "button"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Button Text",
+          "default": "SHOP NOW"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_count",
+          "label": "Show Cart Count",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color"
+        },
+        {
+          "type": "color",
+          "id": "border_color",
+          "label": "Border Color"
+        }
+      ]
+    },
+    {
+      "type": "search",
+      "name": "Search",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "icon", "label": "Icon Only" },
+            { "value": "bar", "label": "Search Bar" }
+          ],
+          "default": "icon"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon Color"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder Text",
+          "default": "Search..."
+        }
+      ]
+    },
+    {
+      "type": "account",
+      "name": "Account",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "icon", "label": "Icon Only" },
+            { "value": "text", "label": "Text Only" },
+            { "value": "both", "label": "Icon + Text" }
+          ],
+          "default": "icon"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Account"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon Color"
+        }
+      ]
+    },
+    {
+      "type": "custom_link",
+      "name": "Custom Link",
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Link Text",
+          "default": "Link"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link URL"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "link", "label": "Text Link" },
+            { "value": "button", "label": "Button" }
+          ],
+          "default": "link"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color (button only)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_on_mobile",
+          "label": "Show in Mobile Menu",
+          "default": true
+        }
+      ]
     }
   ],
   "presets": [
     {
       "name": "Header",
-      "settings": {
-        "sticky_header": false,
-        "transparent_header": false,
-        "show_cart": true,
-        "cart_button_text": "Cart",
-        "header_height": 80
-      }
+      "blocks": [
+        {
+          "type": "logo",
+          "settings": {
+            "position": "left",
+            "logo_text": "Pure + Vida"
+          }
+        },
+        {
+          "type": "navigation",
+          "settings": {
+            "position": "center"
+          }
+        },
+        {
+          "type": "cart_button",
+          "settings": {
+            "position": "right",
+            "text": "SHOP NOW",
+            "style": "button"
+          }
+        }
+      ]
     },
     {
-      "name": "Sticky Header",
-      "settings": {
-        "sticky_header": true,
-        "transparent_header": false,
-        "show_cart": true,
-        "cart_button_text": "Cart",
-        "header_height": 70
-      }
+      "name": "Header with Search",
+      "blocks": [
+        {
+          "type": "logo",
+          "settings": {
+            "position": "left"
+          }
+        },
+        {
+          "type": "navigation",
+          "settings": {
+            "position": "center"
+          }
+        },
+        {
+          "type": "search",
+          "settings": {
+            "position": "right",
+            "style": "icon"
+          }
+        },
+        {
+          "type": "account",
+          "settings": {
+            "position": "right",
+            "style": "icon"
+          }
+        },
+        {
+          "type": "cart_button",
+          "settings": {
+            "position": "right",
+            "style": "icon"
+          }
+        }
+      ]
     },
     {
-      "name": "Transparent Header",
-      "settings": {
-        "sticky_header": false,
-        "transparent_header": true,
-        "show_cart": true,
-        "cart_button_text": "Shop",
-        "header_height": 80
-      }
-    },
-    {
-      "name": "Minimal Header",
-      "settings": {
-        "sticky_header": false,
-        "transparent_header": false,
-        "show_cart": false,
-        "header_height": 60
-      }
+      "name": "Centered Logo Header",
+      "blocks": [
+        {
+          "type": "navigation",
+          "settings": {
+            "position": "left"
+          }
+        },
+        {
+          "type": "logo",
+          "settings": {
+            "position": "center"
+          }
+        },
+        {
+          "type": "cart_button",
+          "settings": {
+            "position": "right",
+            "style": "icon"
+          }
+        }
+      ]
     }
   ]
 }

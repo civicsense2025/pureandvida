@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Collection Item Snippet
   -----------------------------
   Reusable collection card for collection list sections.
@@ -27,9 +27,9 @@
       title_color: section.settings.title_color,
       count_color: section.settings.count_color
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign item_aspect_ratio = image_aspect_ratio | default: '4/3'
   assign item_show_title = show_title | default: true
   assign item_show_count = show_product_count | default: false
@@ -44,11 +44,11 @@
   else
     assign display_image = blank
   endif
--%}
+%}
 
 <div class="block-collection-item" {% if block %}{{ block.shopify_attributes }}{% endif %}>
   <a href="{{ collection.url }}" class="block-collection-item__link">
-    {%- if display_image != blank -%}
+    {% if display_image != blank %}
       <div class="block-collection-item__image" style="aspect-ratio: {{ item_aspect_ratio }};">
         <img
           src="{{ display_image | image_url: width: 600 }}"
@@ -63,32 +63,32 @@
           class="block-collection-item__img"
         >
       </div>
-    {%- else -%}
+    {% else %}
       <div class="block-collection-item__placeholder" style="aspect-ratio: {{ item_aspect_ratio }};">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 525" fill="none">
           <rect width="525" height="525" fill="#E8E8E8"/>
           <path d="M262.5 312.5C295.637 312.5 322.5 285.637 322.5 252.5C322.5 219.363 295.637 192.5 262.5 192.5C229.363 192.5 202.5 219.363 202.5 252.5C202.5 285.637 229.363 312.5 262.5 312.5Z" stroke="#CACACA" stroke-width="8"/>
         </svg>
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if item_show_title -%}
+    {% if item_show_title %}
       <h3
         class="block-collection-item__title"
         {% if item_title_color != blank %}style="color: {{ item_title_color }};"{% endif %}
       >
         {{ collection.title | escape }}
       </h3>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if item_show_count -%}
+    {% if item_show_count %}
       <p
         class="block-collection-item__count"
         {% if item_count_color != blank %}style="color: {{ item_count_color }};"{% endif %}
       >
         {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
       </p>
-    {%- endif -%}
+    {% endif %}
   </a>
 </div>
 

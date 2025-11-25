@@ -34,16 +34,16 @@
 <div class="customer-order page-width"{% if section_bg_style != blank %} style="{{ section_bg_style }} padding: {{ section.settings.section_padding }}px 0;"{% else %} style="padding: {{ section.settings.section_padding }}px 0;"{% endif %}>
   <div class="customer-order__container" style="max-width: {{ section.settings.content_width }}px; margin: 0 auto;">
     
-    {%- if order -%}
-      {%- comment -%} Order Header {%- endcomment -%}
+    {% if order %}
+      {% comment %} Order Header {% endcomment %}
       <div class="customer-order__header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
         <div>
           <h1 class="customer-order__heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>
-            {%- if section.settings.heading != blank -%}
+            {% if section.settings.heading != blank %}
               {{ section.settings.heading | replace: '[order_number]', order.name }}
-            {%- else -%}
+            {% else %}
               Order {{ order.name }}
-            {%- endif -%}
+            {% endif %}
           </h1>
           <p class="customer-order__date"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
             Placed on {{ order.created_at | date: "%B %d, %Y at %I:%M %p" }}
@@ -52,19 +52,19 @@
             <span class="customer-order__status" style="display: inline-block; padding: 0.375rem 0.75rem; border-radius: 4px; background: {% if order.financial_status == 'paid' %}#059669{% else %}#D97706{% endif %}; color: white; font-size: 0.875rem; font-weight: 500;">
               {{ order.financial_status_label }}
             </span>
-            {%- if order.fulfillment_status_label != blank -%}
+            {% if order.fulfillment_status_label != blank %}
               <span class="customer-order__fulfillment-status" style="display: inline-block; padding: 0.375rem 0.75rem; border-radius: 4px; background: #3B82F6; color: white; font-size: 0.875rem; font-weight: 500; margin-left: 0.5rem;">
                 {{ order.fulfillment_status_label }}
               </span>
-            {%- endif -%}
+            {% endif %}
           </div>
         </div>
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          {%- if section.settings.show_print_button -%}
+          {% if section.settings.show_print_button %}
             <button type="button" onclick="window.print()" class="customer-order__print-button" style="padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; background: transparent; cursor: pointer; font-size: 0.875rem;"{% if text_style != blank %} style="{{ text_style }} padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; background: transparent; cursor: pointer; font-size: 0.875rem;"{% endif %}>
               Print Order
             </button>
-          {%- endif -%}
+          {% endif %}
           <a href="{{ routes.account_url }}" class="customer-order__back-link" style="padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; text-decoration: none; display: inline-block; font-size: 0.875rem;"{% if text_style != blank %} style="{{ text_style }} padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; text-decoration: none; display: inline-block; font-size: 0.875rem;"{% endif %}>
             Back to Orders
           </a>
@@ -72,27 +72,27 @@
       </div>
 
       <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-        {%- comment -%} Order Items {%- endcomment -%}
+        {% comment %} Order Items {% endcomment %}
         <div class="customer-order__items" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px;">
           <h2 class="customer-order__subheading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Order Items</h2>
           
           <div class="customer-order__items-list" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
-            {%- for line_item in order.line_items -%}
+            {% for line_item in order.line_items %}
               <div class="customer-order__item" style="display: flex; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                {%- if line_item.image -%}
+                {% if line_item.image %}
                   <div class="customer-order__item-image" style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 4px; overflow: hidden;">
                     <img src="{{ line_item.image | image_url: width: 160 }}" alt="{{ line_item.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
                   </div>
-                {%- endif -%}
+                {% endif %}
                 <div style="flex: 1;">
                   <h3 class="customer-order__item-title"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>
                     {{ line_item.title }}
                   </h3>
-                  {%- if line_item.variant.title != 'Default Title' -%}
+                  {% if line_item.variant.title != 'Default Title' %}
                     <p class="customer-order__item-variant"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
                       {{ line_item.variant.title }}
                     </p>
-                  {%- endif -%}
+                  {% endif %}
                   <p class="customer-order__item-quantity"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
                     Quantity: {{ line_item.quantity }}
                   </p>
@@ -101,40 +101,40 @@
                   <p class="customer-order__item-price"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>
                     {{ line_item.final_line_price | money }}
                   </p>
-                  {%- if line_item.original_line_price != line_item.final_line_price -%}
+                  {% if line_item.original_line_price != line_item.final_line_price %}
                     <p class="customer-order__item-original-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.875rem;"{% if text_style != blank %} style="{{ text_style }} text-decoration: line-through; opacity: 0.6; font-size: 0.875rem;"{% endif %}>
                       {{ line_item.original_line_price | money }}
                     </p>
-                  {%- endif -%}
+                  {% endif %}
                 </div>
               </div>
-            {%- endfor -%}
+            {% endfor %}
           </div>
         </div>
 
-        {%- comment -%} Order Summary {%- endcomment -%}
+        {% comment %} Order Summary {% endcomment %}
         <div>
-          {%- comment -%} Shipping Address {%- endcomment -%}
-          {%- if order.shipping_address -%}
+          {% comment %} Shipping Address {% endcomment %}
+          {% if order.shipping_address %}
             <div class="customer-order__address-card" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px; margin-bottom: 1.5rem;">
               <h3 class="customer-order__address-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Shipping Address</h3>
               <div class="customer-order__address-content"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
                 {{ order.shipping_address | format_address }}
               </div>
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- comment -%} Billing Address {%- endcomment -%}
-          {%- if order.billing_address -%}
+          {% comment %} Billing Address {% endcomment %}
+          {% if order.billing_address %}
             <div class="customer-order__address-card" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px; margin-bottom: 1.5rem;">
               <h3 class="customer-order__address-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Billing Address</h3>
               <div class="customer-order__address-content"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
                 {{ order.billing_address | format_address }}
               </div>
             </div>
-          {%- endif -%}
+          {% endif %}
 
-          {%- comment -%} Order Totals {%- endcomment -%}
+          {% comment %} Order Totals {% endcomment %}
           <div class="customer-order__totals" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px;">
             <h3 class="customer-order__totals-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Order Summary</h3>
             
@@ -144,26 +144,26 @@
                 <span>{{ order.subtotal_price | money }}</span>
               </div>
               
-              {%- if order.shipping_price > 0 -%}
+              {% if order.shipping_price > 0 %}
                 <div style="display: flex; justify-content: space-between;"{% if text_style != blank %} style="{{ text_style }} display: flex; justify-content: space-between;"{% endif %}>
                   <span>Shipping</span>
                   <span>{{ order.shipping_price | money }}</span>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
-              {%- if order.tax_price > 0 -%}
+              {% if order.tax_price > 0 %}
                 <div style="display: flex; justify-content: space-between;"{% if text_style != blank %} style="{{ text_style }} display: flex; justify-content: space-between;"{% endif %}>
                   <span>Tax</span>
                   <span>{{ order.tax_price | money }}</span>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
-              {%- if order.total_discounts > 0 -%}
+              {% if order.total_discounts > 0 %}
                 <div style="display: flex; justify-content: space-between; color: #059669;"{% if text_style != blank %} style="{{ text_style }} display: flex; justify-content: space-between; color: #059669;"{% endif %}>
                   <span>Discount</span>
                   <span>-{{ order.total_discounts | money }}</span>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
               <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid rgba(0,0,0,0.1); font-weight: 600; font-size: 1.125rem;"{% if heading_style != blank %} style="{{ heading_style }} display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid rgba(0,0,0,0.1); font-weight: 600; font-size: 1.125rem;"{% endif %}>
                 <span>Total</span>
@@ -172,52 +172,52 @@
             </div>
           </div>
 
-          {%- comment -%} Reorder Button {%- endcomment -%}
-          {%- if section.settings.show_reorder_button -%}
+          {% comment %} Reorder Button {% endcomment %}
+          {% if section.settings.show_reorder_button %}
             <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" style="margin-top: 1.5rem;">
-              {%- for line_item in order.line_items -%}
+              {% for line_item in order.line_items %}
                 <input type="hidden" name="id" value="{{ line_item.variant_id }}">
                 <input type="hidden" name="quantity" value="{{ line_item.quantity }}">
-              {%- endfor -%}
+              {% endfor %}
               <button type="submit" class="customer-order__reorder-button"{% if button_style != blank %} style="{{ button_style }} width: 100%; padding: 0.875rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% else %} style="width: 100%; padding: 0.875rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% endif %}>
-                {%- if section.settings.reorder_button_text != blank -%}
+                {% if section.settings.reorder_button_text != blank %}
                   {{ section.settings.reorder_button_text }}
-                {%- else -%}
+                {% else %}
                   Reorder Items
-                {%- endif -%}
+                {% endif %}
               </button>
             </form>
-          {%- endif -%}
+          {% endif %}
         </div>
       </div>
 
-      {%- comment -%} Tracking Information {%- endcomment -%}
-      {%- if order.fulfillments.size > 0 -%}
+      {% comment %} Tracking Information {% endcomment %}
+      {% if order.fulfillments.size > 0 %}
         <div class="customer-order__tracking" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px;">
           <h2 class="customer-order__subheading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Tracking Information</h2>
-          {%- for fulfillment in order.fulfillments -%}
+          {% for fulfillment in order.fulfillments %}
             <div style="margin-top: 1rem;">
-              {%- if fulfillment.tracking_number -%}
+              {% if fulfillment.tracking_number %}
                 <p{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
                   <strong>Tracking Number:</strong> 
-                  {%- if fulfillment.tracking_url -%}
+                  {% if fulfillment.tracking_url %}
                     <a href="{{ fulfillment.tracking_url }}" target="_blank" style="text-decoration: underline;">{{ fulfillment.tracking_number }}</a>
-                  {%- else -%}
+                  {% else %}
                     {{ fulfillment.tracking_number }}
-                  {%- endif -%}
+                  {% endif %}
                 </p>
-              {%- endif -%}
-              {%- if fulfillment.tracking_company -%}
+              {% endif %}
+              {% if fulfillment.tracking_company %}
                 <p{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
                   <strong>Carrier:</strong> {{ fulfillment.tracking_company }}
                 </p>
-              {%- endif -%}
+              {% endif %}
             </div>
-          {%- endfor -%}
+          {% endfor %}
         </div>
-      {%- endif -%}
+      {% endif %}
 
-    {%- else -%}
+    {% else %}
       <div class="customer-order__not-found" style="text-align: center; padding: 3rem 1rem;">
         <p class="customer-order__not-found-text"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
           Order not found.
@@ -226,7 +226,7 @@
           Back to Orders
         </a>
       </div>
-    {%- endif -%}
+    {% endif %}
 
   </div>
 </div>

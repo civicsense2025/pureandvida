@@ -1,10 +1,10 @@
-{%- liquid
+{% liquid
   # @description Renders an error/warning icon SVG (circle with exclamation mark)
   # @param class {String} - Additional CSS classes (optional)
   # @param size {Number} - Icon size in pixels (optional, default: 13)
   # @example
   #   {% render 'icon-error', class: 'form-error-icon', size: 16 %}
--%}
+%}
 <svg aria-hidden="true" focusable="false" class="icon icon-error{% if class != blank %} {{ class }}{% endif %}" viewBox="0 0 13 13" fill="none"{% if size != blank %} width="{{ size }}" height="{{ size }}"{% endif %}>
   <circle cx="6.5" cy="6.50049" r="5.5" stroke="currentColor" stroke-width="2"/>
   <circle cx="6.5" cy="6.5" r="4.5" fill="currentColor"/>

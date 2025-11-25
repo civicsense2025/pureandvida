@@ -39,25 +39,25 @@
     
     <div class="customer-activate__form-wrapper"{% if form_bg_style != blank %} style="{{ form_bg_style }} padding: {{ section.settings.form_padding }}px; border-radius: {{ section.settings.form_border_radius }}px;"{% else %} style="padding: {{ section.settings.form_padding }}px; border-radius: {{ section.settings.form_border_radius }}px;"{% endif %}>
       <h1 class="customer-activate__heading" style="text-align: center;"{% if heading_style != blank %} style="{{ heading_style }} text-align: center;"{% endif %}>
-        {%- if section.settings.heading != blank -%}
+        {% if section.settings.heading != blank %}
           {{ section.settings.heading }}
-        {%- else -%}
+        {% else %}
           Activate Account
-        {%- endif -%}
+        {% endif %}
       </h1>
       
-      {%- if section.settings.description != blank -%}
+      {% if section.settings.description != blank %}
         <p class="customer-activate__description" style="text-align: center; margin-bottom: 2rem;"{% if text_style != blank %} style="{{ text_style }} text-align: center; margin-bottom: 2rem;"{% endif %}>
           {{ section.settings.description }}
         </p>
-      {%- endif -%}
+      {% endif %}
 
-      {%- form 'activate_customer_password', class: 'customer-activate__form' -%}
-        {%- if form.errors -%}
+      {% form 'activate_customer_password', class: 'customer-activate__form' %}
+        {% if form.errors %}
           <div class="customer-activate__errors" style="background: #fee; border: 1px solid #fcc; border-radius: 4px; padding: 1rem; margin-bottom: 1rem;">
             {{ form.errors | default_errors }}
           </div>
-        {%- endif -%}
+        {% endif %}
 
         <div class="customer-activate__field" style="margin-bottom: 1rem;">
           <label for="CustomerPassword" class="customer-activate__label"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
@@ -92,23 +92,23 @@
         </div>
 
         <button type="submit" class="customer-activate__submit"{% if button_style != blank %} style="{{ button_style }} width: 100%; padding: 0.875rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s;"{% else %} style="width: 100%; padding: 0.875rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s;"{% endif %}>
-          {%- if section.settings.button_text != blank -%}
+          {% if section.settings.button_text != blank %}
             {{ section.settings.button_text }}
-          {%- else -%}
+          {% else %}
             Activate Account
-          {%- endif -%}
+          {% endif %}
         </button>
 
         <div style="text-align: center; margin-top: 1.5rem;">
           <button type="submit" name="decline" formaction="{{ routes.account_register_url }}" class="customer-activate__decline" style="background: transparent; border: none; text-decoration: underline; cursor: pointer; font-size: 0.875rem;"{% if text_style != blank %} style="{{ text_style }} background: transparent; border: none; text-decoration: underline; cursor: pointer; font-size: 0.875rem;"{% endif %}>
-            {%- if section.settings.decline_text != blank -%}
+            {% if section.settings.decline_text != blank %}
               {{ section.settings.decline_text }}
-            {%- else -%}
+            {% else %}
               Decline invitation
-            {%- endif -%}
+            {% endif %}
           </button>
         </div>
-      {%- endform -%}
+      {% endform %}
     </div>
 
   </div>

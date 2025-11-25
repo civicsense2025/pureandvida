@@ -35,34 +35,34 @@
     
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
       <h1 class="customer-addresses__heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>
-        {%- if section.settings.heading != blank -%}
+        {% if section.settings.heading != blank %}
           {{ section.settings.heading }}
-        {%- else -%}
+        {% else %}
           Addresses
-        {%- endif -%}
+        {% endif %}
       </h1>
       
-      {%- if section.settings.show_add_address_button -%}
+      {% if section.settings.show_add_address_button %}
         <button type="button" class="customer-addresses__add-button" onclick="document.getElementById('AddAddress').classList.remove('hidden')"{% if button_style != blank %} style="{{ button_style }} padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% else %} style="padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% endif %}>
-          {%- if section.settings.add_button_text != blank -%}
+          {% if section.settings.add_button_text != blank %}
             {{ section.settings.add_button_text }}
-          {%- else -%}
+          {% else %}
             Add New Address
-          {%- endif -%}
+          {% endif %}
         </button>
-      {%- endif -%}
+      {% endif %}
     </div>
 
-    {%- paginate customer.addresses by 5 -%}
-      {%- if customer.addresses.size > 0 -%}
+    {% paginate customer.addresses by 5 %}
+      {% if customer.addresses.size > 0 %}
         <div class="customer-addresses__list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: {{ section.settings.address_spacing }}px; margin-bottom: 2rem;">
-          {%- for address in customer.addresses -%}
+          {% for address in customer.addresses %}
             <div class="customer-addresses__card" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px; position: relative;">
-              {%- if address == customer.default_address -%}
+              {% if address == customer.default_address %}
                 <div class="customer-addresses__default-badge" style="position: absolute; top: 1rem; right: 1rem; background: #059669; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">
                   Default
                 </div>
-              {%- endif -%}
+              {% endif %}
               
               <div class="customer-addresses__address-content"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
                 {{ address | format_address }}
@@ -78,7 +78,7 @@
                     Delete
                   </button>
                 </form>
-                {%- unless address == customer.default_address -%}
+                {% unless address == customer.default_address %}
                   <form method="post" action="{{ address.url }}" style="flex: 1 1 100%; margin-top: 0.5rem;">
                     <input type="hidden" name="_method" value="put">
                     <input type="hidden" name="address[default]" value="1">
@@ -86,29 +86,29 @@
                       Set as Default
                     </button>
                   </form>
-                {%- endunless -%}
+                {% endunless %}
               </div>
             </div>
-          {%- endfor -%}
+          {% endfor %}
         </div>
-      {%- else -%}
+      {% else %}
         <div class="customer-addresses__empty" style="text-align: center; padding: 3rem 1rem;">
           <p class="customer-addresses__empty-text"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>
-            {%- if section.settings.empty_text != blank -%}
+            {% if section.settings.empty_text != blank %}
               {{ section.settings.empty_text }}
-            {%- else -%}
+            {% else %}
               You haven't saved any addresses yet.
-            {%- endif -%}
+            {% endif %}
           </p>
         </div>
-      {%- endif -%}
-    {%- endpaginate -%}
+      {% endif %}
+    {% endpaginate %}
 
-    {%- comment -%} Add Address Form {%- endcomment -%}
+    {% comment %} Add Address Form {% endcomment %}
     <div id="AddAddress" class="customer-addresses__form-wrapper hidden" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px; margin-top: 2rem;">
       <h2 class="customer-addresses__form-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Add New Address</h2>
       
-      {%- form 'customer_address', customer.new_address -%}
+      {% form 'customer_address', customer.new_address %}
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
           <div>
             <label for="AddressFirstNameNew" class="customer-addresses__label"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>First Name</label>
@@ -168,15 +168,15 @@
           <button type="submit" class="customer-addresses__submit"{% if button_style != blank %} style="{{ button_style }} padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% else %} style="padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% endif %}>Add Address</button>
           <button type="button" class="customer-addresses__cancel" onclick="document.getElementById('AddAddress').classList.add('hidden')" style="padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; background: transparent; cursor: pointer; font-size: 1rem;">Cancel</button>
         </div>
-      {%- endform -%}
+      {% endform %}
     </div>
 
-    {%- comment -%} Edit Address Forms (hidden by default) {%- endcomment -%}
-    {%- for address in customer.addresses -%}
+    {% comment %} Edit Address Forms (hidden by default) {% endcomment %}
+    {% for address in customer.addresses %}
       <div id="EditAddress_{{ address.id }}" class="customer-addresses__form-wrapper hidden" style="border: 1px solid rgba(0,0,0,0.1); border-radius: {{ section.settings.card_border_radius }}px; padding: {{ section.settings.card_padding }}px; margin-top: 2rem;">
         <h2 class="customer-addresses__form-heading"{% if heading_style != blank %} style="{{ heading_style }}"{% endif %}>Edit Address</h2>
         
-        {%- form 'customer_address', address -%}
+        {% form 'customer_address', address %}
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
             <div>
               <label for="AddressFirstName_{{ address.id }}" class="customer-addresses__label"{% if text_style != blank %} style="{{ text_style }}"{% endif %}>First Name</label>
@@ -236,9 +236,9 @@
             <button type="submit" class="customer-addresses__submit"{% if button_style != blank %} style="{{ button_style }} padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% else %} style="padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"{% endif %}>Update Address</button>
             <button type="button" class="customer-addresses__cancel" onclick="document.getElementById('EditAddress_{{ address.id }}').classList.add('hidden')" style="padding: 0.75rem 1.5rem; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; background: transparent; cursor: pointer; font-size: 1rem;">Cancel</button>
           </div>
-        {%- endform -%}
+        {% endform %}
       </div>
-    {%- endfor -%}
+    {% endfor %}
 
   </div>
 </div>

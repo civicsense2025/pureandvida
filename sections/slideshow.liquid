@@ -35,20 +35,20 @@
   role="region"
 >
   <div class="slideshow__container">
-    {%- if section.blocks.size > 0 -%}
+    {% if section.blocks.size > 0 %}
       <div class="slideshow__slides" role="list">
-        {%- for block in section.blocks -%}
+        {% for block in section.blocks %}
           {% render 'block-slide',
             block: block,
             is_first: forloop.first,
             slide_index: forloop.index0
           %}
-        {%- endfor -%}
+        {% endfor %}
       </div>
 
-      {%- comment -%} Navigation {%- endcomment -%}
-      {%- if section.blocks.size > 1 -%}
-        {%- if section.settings.show_arrows -%}
+      {% comment %} Navigation {% endcomment %}
+      {% if section.blocks.size > 1 %}
+        {% if section.settings.show_arrows %}
           <div class="slideshow__navigation">
             <button
               type="button"
@@ -71,11 +71,11 @@
               </svg>
             </button>
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if section.settings.show_pagination -%}
+        {% if section.settings.show_pagination %}
           <div class="slideshow__pagination" role="tablist" aria-label="Slide pagination">
-            {%- for block in section.blocks -%}
+            {% for block in section.blocks %}
               <button
                 type="button"
                 class="slideshow__dot{% if forloop.first %} slideshow__dot--active{% endif %}"
@@ -87,12 +87,12 @@
               >
                 <span class="visually-hidden">Slide {{ forloop.index }}</span>
               </button>
-            {%- endfor -%}
+            {% endfor %}
           </div>
-        {%- endif -%}
-      {%- endif -%}
-    {%- else -%}
-      {%- if request.design_mode -%}
+        {% endif %}
+      {% endif %}
+    {% else %}
+      {% if request.design_mode %}
         <div class="slideshow__empty">
           <div class="slideshow__empty-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -104,8 +104,8 @@
           <h3>Slideshow</h3>
           <p>Add slide blocks to create your slideshow.</p>
         </div>
-      {%- endif -%}
-    {%- endif -%}
+      {% endif %}
+    {% endif %}
   </div>
 </section>
 
@@ -829,7 +829,7 @@
       "settings": [
         {
           "type": "header",
-          "content": "🖼️ Image"
+          "content": "Image"
         },
         {
           "type": "image_picker",
@@ -861,7 +861,7 @@
         },
         {
           "type": "header",
-          "content": "📝 Content"
+          "content": "Content"
         },
         {
           "type": "text",
@@ -939,7 +939,7 @@
         },
         {
           "type": "header",
-          "content": "🔗 Primary Button"
+          "content": "Primary Button"
         },
         {
           "type": "text",
@@ -966,7 +966,7 @@
         },
         {
           "type": "header",
-          "content": "🔗 Secondary Button"
+          "content": "Secondary Button"
         },
         {
           "type": "text",

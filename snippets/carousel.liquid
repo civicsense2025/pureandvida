@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Reusable carousel component with navigation, dots, and responsive settings
   # @param carousel_id {String} - Unique ID for this carousel instance
   # @param items {Array} - Array of items to display in carousel
@@ -12,17 +12,17 @@
   # @param class_name {String} - Additional CSS classes
   # @example
   #   {% render 'carousel', carousel_id: 'testimonials-1', items: section.blocks, items_per_slide_desktop: 3, items_per_slide_mobile: 1 %}
--%}
+%}
 
-{%- assign carousel_id = carousel_id | default: 'carousel-' | append: section.id -%}
-{%- assign items_per_slide_desktop = items_per_slide_desktop | default: 3 -%}
-{%- assign items_per_slide_mobile = items_per_slide_mobile | default: 1 -%}
-{%- assign show_arrows = show_arrows | default: true -%}
-{%- assign show_dots = show_dots | default: true -%}
-{%- assign autoplay = autoplay | default: false -%}
-{%- assign autoplay_speed = autoplay_speed | default: 5000 -%}
-{%- assign gap = gap | default: 30 -%}
-{%- assign class_name = class_name | default: 'carousel' -%}
+{% assign carousel_id = carousel_id | default: 'carousel-' | append: section.id %}
+{% assign items_per_slide_desktop = items_per_slide_desktop | default: 3 %}
+{% assign items_per_slide_mobile = items_per_slide_mobile | default: 1 %}
+{% assign show_arrows = show_arrows | default: true %}
+{% assign show_dots = show_dots | default: true %}
+{% assign autoplay = autoplay | default: false %}
+{% assign autoplay_speed = autoplay_speed | default: 5000 %}
+{% assign gap = gap | default: 30 %}
+{% assign class_name = class_name | default: 'carousel' %}
 
 <div class="{{ class_name }}__wrapper" 
      data-carousel-id="{{ carousel_id }}"
@@ -34,15 +34,15 @@
   
   <div class="{{ class_name }}__container" role="region" aria-label="Carousel">
     <div class="{{ class_name }}__track" data-carousel-track>
-      {%- for item in items -%}
+      {% for item in items %}
         <div class="{{ class_name }}__slide" data-carousel-slide>
           {{ item }}
         </div>
-      {%- endfor -%}
+      {% endfor %}
     </div>
   </div>
 
-  {%- if show_arrows -%}
+  {% if show_arrows %}
     <button class="{{ class_name }}__button {{ class_name }}__button--prev" 
             data-carousel-prev 
             aria-label="Previous slide"
@@ -55,12 +55,12 @@
             type="button">
       <span aria-hidden="true">›</span>
     </button>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if show_dots and items.size > items_per_slide_desktop -%}
+  {% if show_dots and items.size > items_per_slide_desktop %}
     <div class="{{ class_name }}__dots" data-carousel-dots role="tablist" aria-label="Carousel navigation">
-      {%- assign total_slides = items.size | divided_by: items_per_slide_desktop | ceil -%}
-      {%- for i in (1..total_slides) -%}
+      {% assign total_slides = items.size | divided_by: items_per_slide_desktop | ceil %}
+      {% for i in (1..total_slides) %}
         <button class="{{ class_name }}__dot{% if forloop.first %} {{ class_name }}__dot--active{% endif %}" 
                 data-carousel-dot 
                 data-slide-index="{{ forloop.index0 }}"
@@ -70,8 +70,8 @@
                 aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
           <span class="visually-hidden">Slide {{ forloop.index }}</span>
         </button>
-      {%- endfor -%}
+      {% endfor %}
     </div>
-  {%- endif -%}
+  {% endif %}
 </div>
 

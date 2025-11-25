@@ -27,25 +27,25 @@
   aria-label="{{ section.settings.title | default: 'Multi-row content' | escape }}"
 >
   <div class="multirow__container page-width">
-    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+    {% if section.settings.title != blank or section.settings.subtitle != blank %}
       <div class="multirow__header" style="text-align: {{ section.settings.header_alignment }};">
-        {%- if section.settings.subtitle != blank -%}
+        {% if section.settings.subtitle != blank %}
           <span class="multirow__subtitle">{{ section.settings.subtitle }}</span>
-        {%- endif -%}
-        {%- if section.settings.title != blank -%}
+        {% endif %}
+        {% if section.settings.title != blank %}
           <h2 class="multirow__title" style="font-size: {{ section.settings.title_size }}px;">
             {{ section.settings.title }}
           </h2>
-        {%- endif -%}
-        {%- if section.settings.description != blank -%}
+        {% endif %}
+        {% if section.settings.description != blank %}
           <div class="multirow__description">{{ section.settings.description }}</div>
-        {%- endif -%}
+        {% endif %}
       </div>
-    {%- endif -%}
+    {% endif %}
 
     <div class="multirow__rows">
-      {%- for block in section.blocks -%}
-        {%- liquid
+      {% for block in section.blocks %}
+        {% liquid
           assign is_even = forloop.index | modulo: 2
           if section.settings.alternate_layout
             if is_even == 0
@@ -56,7 +56,7 @@
           else
             assign image_position = section.settings.default_image_position
           endif
-        -%}
+        %}
 
         {% render 'block-multirow-item',
           block: block,
@@ -81,16 +81,16 @@
           text_color: section.settings.text_color,
           button_style: section.settings.button_style
         %}
-      {%- else -%}
-        {%- if request.design_mode -%}
+      {% else %}
+        {% if request.design_mode %}
           <div class="multirow__empty">
             <p>Add row blocks to populate this section.</p>
           </div>
-        {%- endif -%}
-      {%- endfor -%}
+        {% endif %}
+      {% endfor %}
     </div>
 
-    {%- if section.settings.footer_button_label != blank -%}
+    {% if section.settings.footer_button_label != blank %}
       <div class="multirow__footer" style="text-align: {{ section.settings.header_alignment }};">
         <a
           href="{{ section.settings.footer_button_link }}"
@@ -100,7 +100,7 @@
           {{ section.settings.footer_button_label }}
         </a>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -476,7 +476,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Section Header"
+      "content": "Section Header"
     },
     {
       "type": "text",
@@ -634,7 +634,7 @@
     },
     {
       "type": "header",
-      "content": "🖼️ Image Settings"
+      "content": "Image Settings"
     },
     {
       "type": "select",
@@ -661,7 +661,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Row Content"
+      "content": "Row Content"
     },
     {
       "type": "range",
@@ -686,7 +686,7 @@
     },
     {
       "type": "header",
-      "content": "📱 Mobile Settings"
+      "content": "Mobile Settings"
     },
     {
       "type": "checkbox",
@@ -706,7 +706,7 @@
     },
     {
       "type": "header",
-      "content": "🔗 Footer Button"
+      "content": "Footer Button"
     },
     {
       "type": "text",
@@ -730,7 +730,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",
@@ -750,7 +750,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Section Spacing"
+      "content": "Section Spacing"
     },
     {
       "type": "range",

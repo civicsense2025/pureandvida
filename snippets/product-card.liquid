@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Renders a product card component for displaying products in grids and collections
   # @param product {Product} - The product object to display
   # @param show_vendor {Boolean} - Display product vendor (default: true)
@@ -6,33 +6,33 @@
   # @param show_badges {Boolean} - Display product badges like sale/new (default: true)
   # @example
   #   {% render 'product-card', product: product, show_vendor: true, show_price: true %}
--%}
+%}
 
 <div class="card-wrapper">
   <div class="card card--media" style="--ratio-percent: {{ 1 | divided_by: product.featured_media.aspect_ratio | times: 100 }}%;">
     <div class="card__inner">
-      {%- if product.featured_media -%}
+      {% if product.featured_media %}
         <div class="card__media">
           <a href="{{ product.url }}" class="card__media-full-spacer">
             <picture>
-              {%- comment -%} WebP format with fallback {%- endcomment -%}
+              {% comment %} WebP format with fallback {% endcomment %}
               <source
                 type="image/webp"
-                srcset="{%- if product.featured_media.width >= 165 -%}{{ product.featured_media | image_url: width: 165, format: 'webp' }} 165w,{%- endif -%}
-                        {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360, format: 'webp' }} 360w,{%- endif -%}
-                        {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533, format: 'webp' }} 533w,{%- endif -%}
-                        {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720, format: 'webp' }} 720w,{%- endif -%}
-                        {%- if product.featured_media.width >= 940 -%}{{ product.featured_media | image_url: width: 940, format: 'webp' }} 940w,{%- endif -%}
-                        {%- if product.featured_media.width >= 1066 -%}{{ product.featured_media | image_url: width: 1066, format: 'webp' }} 1066w,{%- endif -%}"
+                srcset="{% if product.featured_media.width >= 165 %}{{ product.featured_media | image_url: width: 165, format: 'webp' }} 165w,{% endif %}
+                        {% if product.featured_media.width >= 360 %}{{ product.featured_media | image_url: width: 360, format: 'webp' }} 360w,{% endif %}
+                        {% if product.featured_media.width >= 533 %}{{ product.featured_media | image_url: width: 533, format: 'webp' }} 533w,{% endif %}
+                        {% if product.featured_media.width >= 720 %}{{ product.featured_media | image_url: width: 720, format: 'webp' }} 720w,{% endif %}
+                        {% if product.featured_media.width >= 940 %}{{ product.featured_media | image_url: width: 940, format: 'webp' }} 940w,{% endif %}
+                        {% if product.featured_media.width >= 1066 %}{{ product.featured_media | image_url: width: 1066, format: 'webp' }} 1066w,{% endif %}"
                 sizes="(min-width: {{ settings.page_width | default: 1440 }}px) {{ settings.page_width | default: 1440 | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 100px) / 3), calc((100vw - 30px) / 2)"
               >
               <img
-                srcset="{%- if product.featured_media.width >= 165 -%}{{ product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
-                        {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
-                        {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
-                        {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
-                        {%- if product.featured_media.width >= 940 -%}{{ product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
-                        {%- if product.featured_media.width >= 1066 -%}{{ product.featured_media | image_url: width: 1066 }} 1066w,{%- endif -%}
+                srcset="{% if product.featured_media.width >= 165 %}{{ product.featured_media | image_url: width: 165 }} 165w,{% endif %}
+                        {% if product.featured_media.width >= 360 %}{{ product.featured_media | image_url: width: 360 }} 360w,{% endif %}
+                        {% if product.featured_media.width >= 533 %}{{ product.featured_media | image_url: width: 533 }} 533w,{% endif %}
+                        {% if product.featured_media.width >= 720 %}{{ product.featured_media | image_url: width: 720 }} 720w,{% endif %}
+                        {% if product.featured_media.width >= 940 %}{{ product.featured_media | image_url: width: 940 }} 940w,{% endif %}
+                        {% if product.featured_media.width >= 1066 %}{{ product.featured_media | image_url: width: 1066 }} 1066w,{% endif %}
                         {{ product.featured_media | image_url }} {{ product.featured_media.width }}w"
                 src="{{ product.featured_media | image_url: width: 533 }}"
                 sizes="(min-width: {{ settings.page_width | default: 1440 }}px) {{ settings.page_width | default: 1440 | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 100px) / 3), calc((100vw - 30px) / 2)"
@@ -46,7 +46,7 @@
             </picture>
           </a>
         </div>
-      {%- endif -%}
+      {% endif %}
       <div class="card__content">
         <div class="card__information">
           <h3 class="card__heading">
@@ -64,7 +64,7 @@
                     {{ product.price | money }}
                   </span>
                 </div>
-                {%- if product.compare_at_price > product.price -%}
+                {% if product.compare_at_price > product.price %}
                   <div class="price__sale">
                     <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
                     <span>
@@ -77,7 +77,7 @@
                       {{ product.price | money }}
                     </span>
                   </div>
-                {%- endif -%}
+                {% endif %}
               </div>
             </div>
           </div>

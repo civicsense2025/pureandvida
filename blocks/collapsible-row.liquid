@@ -1,11 +1,11 @@
-{%- comment -%}
+{% comment %}
   Theme Block: Collapsible Row
   ----------------------------
   Accordion-style collapsible content with icon, title, rich content, and optional button.
   Supports grouped override settings for colors, typography, and spacing.
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   # Content
   assign row_heading = block.settings.heading
   assign row_content = block.settings.row_content
@@ -39,7 +39,7 @@
   assign content_padding = block.settings.content_padding
   assign border_radius = block.settings.border_radius
   assign border_width = block.settings.border_width
--%}
+%}
 
 <details
   class="block-collapsible-row"
@@ -63,9 +63,9 @@
     "
   >
     <div class="block-collapsible-row__header-content">
-      {%- if row_icon != blank -%}
+      {% if row_icon != blank %}
         <span class="block-collapsible-row__icon" aria-hidden="true">{{ row_icon }}</span>
-      {%- elsif row_icon_image != blank -%}
+      {% elsif row_icon_image != blank %}
         <img
           src="{{ row_icon_image | image_url: width: 48 }}"
           alt=""
@@ -73,7 +73,7 @@
           width="24"
           height="24"
         >
-      {%- endif -%}
+      {% endif %}
       <span class="block-collapsible-row__title">
         {{ row_heading | escape }}
       </span>
@@ -92,19 +92,19 @@
       {% if content_line_height != blank %}--block-content-line-height: {{ content_line_height }};{% endif %}
     "
   >
-    {%- if row_content != blank -%}
+    {% if row_content != blank %}
       <div class="block-collapsible-row__richtext rte">
         {{ row_content }}
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if row_page != blank -%}
+    {% if row_page != blank %}
       <div class="block-collapsible-row__page-content rte">
         {{ row_page.content }}
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if btn_text != blank and btn_link != blank -%}
+    {% if btn_text != blank and btn_link != blank %}
       <a
         href="{{ btn_link }}"
         class="block-collapsible-row__button button"
@@ -115,7 +115,7 @@
       >
         {{ btn_text }}
       </a>
-    {%- endif -%}
+    {% endif %}
   </div>
 </details>
 
@@ -301,7 +301,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Color Overrides"
+      "content": "Color Overrides"
     },
     {
       "type": "paragraph",
@@ -339,7 +339,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Typography Overrides"
+      "content": "Typography Overrides"
     },
     {
       "type": "paragraph",
@@ -389,7 +389,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing Overrides"
+      "content": "Spacing Overrides"
     },
     {
       "type": "paragraph",

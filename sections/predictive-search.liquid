@@ -28,16 +28,16 @@
   data-section-id="{{ section.id }}"
 >
   <div class="predictive-search__container{% if section.settings.use_page_width %} page-width{% endif %}">
-    {%- if section.settings.show_heading -%}
+    {% if section.settings.show_heading %}
       <div class="predictive-search__header" style="text-align: {{ section.settings.text_alignment }};">
-        {%- if section.settings.heading != blank -%}
+        {% if section.settings.heading != blank %}
           <h2 class="predictive-search__title">{{ section.settings.heading }}</h2>
-        {%- endif -%}
-        {%- if section.settings.description != blank -%}
+        {% endif %}
+        {% if section.settings.description != blank %}
           <p class="predictive-search__description">{{ section.settings.description }}</p>
-        {%- endif -%}
+        {% endif %}
       </div>
-    {%- endif -%}
+    {% endif %}
 
     <div class="predictive-search__form-wrapper">
       <form
@@ -87,22 +87,22 @@
             </svg>
           </button>
 
-          {%- if section.settings.show_search_button -%}
+          {% if section.settings.show_search_button %}
             <button type="submit" class="predictive-search__submit button button--{{ section.settings.button_style }}">
-              {%- if section.settings.button_label != blank -%}
+              {% if section.settings.button_label != blank %}
                 {{ section.settings.button_label }}
-              {%- else -%}
+              {% else %}
                 {{ 'general.search.search' | t | default: 'Search' }}
-              {%- endif -%}
+              {% endif %}
             </button>
-          {%- endif -%}
+          {% endif %}
         </div>
 
         <input type="hidden" name="type" value="{{ section.settings.search_type }}">
         <input type="hidden" name="options[prefix]" value="last">
       </form>
 
-      {%- comment -%} Results container {%- endcomment -%}
+      {% comment %} Results container {% endcomment %}
       <div
         id="predictive-search-results-{{ section.id }}"
         class="predictive-search__results"
@@ -117,7 +117,7 @@
         </div>
 
         <div class="predictive-search__results-content" data-predictive-search-results-content>
-          {%- comment -%} Results will be populated via JavaScript {%- endcomment -%}
+          {% comment %} Results will be populated via JavaScript {% endcomment %}
         </div>
 
         <div class="predictive-search__no-results" hidden data-predictive-search-no-results>
@@ -127,22 +127,22 @@
       </div>
     </div>
 
-    {%- if section.settings.show_popular_searches and section.settings.popular_searches != blank -%}
+    {% if section.settings.show_popular_searches and section.settings.popular_searches != blank %}
       <div class="predictive-search__popular">
         <span class="predictive-search__popular-label">{{ section.settings.popular_label | default: 'Popular searches:' }}</span>
         <div class="predictive-search__popular-links">
-          {%- assign popular_terms = section.settings.popular_searches | split: ',' -%}
-          {%- for term in popular_terms -%}
-            {%- assign trimmed_term = term | strip -%}
-            {%- if trimmed_term != blank -%}
+          {% assign popular_terms = section.settings.popular_searches | split: ',' %}
+          {% for term in popular_terms %}
+            {% assign trimmed_term = term | strip %}
+            {% if trimmed_term != blank %}
               <a href="{{ routes.search_url }}?q={{ trimmed_term | url_encode }}" class="predictive-search__popular-link">
                 {{ trimmed_term }}
               </a>
-            {%- endif -%}
-          {%- endfor -%}
+            {% endif %}
+          {% endfor %}
         </div>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </div>
 
@@ -767,7 +767,7 @@
 
 {% schema %}
 {
-  "name": "🔍 Predictive Search",
+  "name": "Predictive Search",
   "tag": "section",
   "class": "section-predictive-search",
   "settings": [
@@ -777,7 +777,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Content"
+      "content": "Content"
     },
     {
       "type": "checkbox",
@@ -808,7 +808,7 @@
     },
     {
       "type": "header",
-      "content": "🔍 Search Settings"
+      "content": "Search Settings"
     },
     {
       "type": "text",
@@ -892,7 +892,7 @@
     },
     {
       "type": "header",
-      "content": "⭐ Popular Searches"
+      "content": "Popular Searches"
     },
     {
       "type": "checkbox",
@@ -945,7 +945,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Input Styling"
+      "content": "Input Styling"
     },
     {
       "type": "color",
@@ -981,7 +981,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",
@@ -1001,7 +1001,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Section Spacing"
+      "content": "Section Spacing"
     },
     {
       "type": "range",

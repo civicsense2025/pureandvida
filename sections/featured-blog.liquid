@@ -33,7 +33,7 @@
   "
 >
   <div class="featured-blog-section__container page-width">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <div class="featured-blog-section__header" style="text-align: {{ section.settings.heading_alignment }};">
         <h2
           class="featured-blog-section__heading"
@@ -47,18 +47,18 @@
           {{ section.settings.heading | escape }}
         </h2>
 
-        {%- if section.settings.description != blank -%}
+        {% if section.settings.description != blank %}
           <p
             class="featured-blog-section__description"
             style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}"
           >
             {{ section.settings.description }}
           </p>
-        {%- endif -%}
+        {% endif %}
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if selected_blog != blank and selected_blog.articles.size > 0 -%}
+    {% if selected_blog != blank and selected_blog.articles.size > 0 %}
       <div
         class="featured-blog-section__grid"
         style="
@@ -66,7 +66,7 @@
           gap: {{ section.settings.grid_gap }}px;
         "
       >
-        {%- for article in selected_blog.articles limit: post_count -%}
+        {% for article in selected_blog.articles limit: post_count %}
           {% render 'block-blog-card',
             article: article,
             show_image: section.settings.show_image,
@@ -87,10 +87,10 @@
             tag_color: section.settings.tag_color,
             link_color: section.settings.link_color
           %}
-        {%- endfor -%}
+        {% endfor %}
       </div>
 
-      {%- if section.settings.show_view_all and selected_blog.articles.size > post_count -%}
+      {% if section.settings.show_view_all and selected_blog.articles.size > post_count %}
         <div class="featured-blog-section__view-all" style="text-align: center; margin-top: 40px;">
           <a
             href="{{ selected_blog.url }}"
@@ -103,12 +103,12 @@
             {{ section.settings.view_all_text | default: 'View all posts' }}
           </a>
         </div>
-      {%- endif -%}
-    {%- elsif request.design_mode -%}
+      {% endif %}
+    {% elsif request.design_mode %}
       <div class="featured-blog-section__placeholder">
         <p>Select a blog in the section settings to display articles</p>
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -381,7 +381,7 @@
 
 {% schema %}
 {
-  "name": "📝 Featured Blog",
+  "name": "Featured Blog",
   "tag": "section",
   "class": "section-featured-blog",
   "settings": [
@@ -576,7 +576,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Card Styling"
+      "content": "Card Styling"
     },
     {
       "type": "color",
@@ -632,7 +632,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Colors"
+      "content": "Colors"
     },
     {
       "type": "color",
@@ -661,7 +661,7 @@
     },
     {
       "type": "header",
-      "content": "🔗 View All Link"
+      "content": "View All Link"
     },
     {
       "type": "checkbox",
@@ -687,7 +687,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Section Styling"
+      "content": "Section Styling"
     },
     {
       "type": "color",
@@ -696,7 +696,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",

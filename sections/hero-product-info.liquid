@@ -11,65 +11,65 @@
   <div class="hero-product-info-wrapper page-width">
     <div class="hero-product-info">
       <div class="hero-tagline">
-        {%- if section.settings.tagline_line_1 != blank -%}
+        {% if section.settings.tagline_line_1 != blank %}
           <p class="hero-tagline-line1" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_1 | escape }}</p>
-        {%- endif -%}
-        {%- if section.settings.tagline_line_2 != blank -%}
+        {% endif %}
+        {% if section.settings.tagline_line_2 != blank %}
           <p class="hero-tagline-line2" style="{% if section.settings.tagline_color != blank %}color: {{ section.settings.tagline_color }};{% endif %}">{{ section.settings.tagline_line_2 | escape }}</p>
-        {%- endif -%}
+        {% endif %}
       </div>
 
-      {%- if section.settings.show_pricing -%}
+      {% if section.settings.show_pricing %}
         <div class="hero-pricing">
-          {%- if section.settings.show_compare_price -%}
+          {% if section.settings.show_compare_price %}
             <div class="hero-price-compare">
               <span class="hero-price-old" style="{% if section.settings.compare_price_color != blank %}color: {{ section.settings.compare_price_color }};{% endif %}">
-                {%- if section.settings.custom_compare_price != blank -%}
+                {% if section.settings.custom_compare_price != blank %}
                   {{ section.settings.custom_compare_price }}
-                {%- elsif section.settings.product != blank -%}
+                {% elsif section.settings.product != blank %}
                   {{ section.settings.product.selected_or_first_available_variant.compare_at_price | money }}
-                {%- else -%}
+                {% else %}
                   $45
-                {%- endif -%}
+                {% endif %}
               </span>
             </div>
-          {%- endif -%}
+          {% endif %}
           <div class="hero-price-current">
             <span class="hero-price-currency" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">$</span>
             <span class="hero-price-amount" style="{% if section.settings.price_color != blank %}color: {{ section.settings.price_color }};{% endif %}">
-              {%- if section.settings.custom_price != blank -%}
+              {% if section.settings.custom_price != blank %}
                 {{ section.settings.custom_price }}
-              {%- elsif section.settings.product != blank -%}
+              {% elsif section.settings.product != blank %}
                 {{ section.settings.product.selected_or_first_available_variant.price | money | remove: '$' }}
-              {%- else -%}
+              {% else %}
                 34.99
-              {%- endif -%}
+              {% endif %}
             </span>
           </div>
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.description_paragraph_1 != blank or section.settings.description_paragraph_2 != blank -%}
+      {% if section.settings.description_paragraph_1 != blank or section.settings.description_paragraph_2 != blank %}
         <div class="hero-description" style="{% if section.settings.description_color != blank %}color: {{ section.settings.description_color }};{% endif %}">
-          {%- if section.settings.description_paragraph_1 != blank -%}
+          {% if section.settings.description_paragraph_1 != blank %}
             <p>{{ section.settings.description_paragraph_1 }}</p>
-          {%- endif -%}
-          {%- if section.settings.description_paragraph_2 != blank -%}
+          {% endif %}
+          {% if section.settings.description_paragraph_2 != blank %}
             <p>{{ section.settings.description_paragraph_2 }}</p>
-          {%- endif -%}
+          {% endif %}
         </div>
-      {%- endif -%}
+      {% endif %}
 
       <div class="hero-cta-section">
-        {%- if section.settings.show_quantity_selector -%}
+        {% if section.settings.show_quantity_selector %}
           <div class="hero-quantity-selector">
             <button type="button" class="quantity-btn" data-action="decrease">-</button>
             <input type="number" class="quantity-input" value="{{ section.settings.default_quantity }}" min="{{ section.settings.min_quantity }}" max="{{ section.settings.max_quantity }}" id="hero-quantity-{{ section.id }}">
             <button type="button" class="quantity-btn" data-action="increase">+</button>
           </div>
-        {%- endif -%}
-        {%- if section.settings.product != blank -%}
-          {%- assign featured_product = section.settings.product -%}
+        {% endif %}
+        {% if section.settings.product != blank %}
+          {% assign featured_product = section.settings.product %}
           <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="hero-add-to-cart-form">
             <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
             <input type="hidden" name="quantity" value="{{ section.settings.default_quantity }}" id="cart-quantity-{{ section.id }}">
@@ -77,24 +77,24 @@
               {{ section.settings.button_text | default: "Add to cart" }}
             </button>
           </form>
-        {%- else -%}
+        {% else %}
           <a href="{{ section.settings.button_link | default: routes.collections_url }}" class="hero-add-to-cart-btn" style="{% if section.settings.button_color != blank %}background-color: {{ section.settings.button_color }};{% endif %}{% if section.settings.button_text_color != blank %}color: {{ section.settings.button_text_color }};{% endif %} text-decoration: none; display: inline-block;">
             {{ section.settings.button_text | default: "Add to cart" }}
           </a>
-        {%- endif -%}
+        {% endif %}
       </div>
 
-      {%- if section.settings.show_payment_methods -%}
+      {% if section.settings.show_payment_methods %}
         <div class="hero-payment-methods">
           {% render 'payment-icons' %}
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.show_discount_badge and section.settings.discount_badge_text != blank -%}
+      {% if section.settings.show_discount_badge and section.settings.discount_badge_text != blank %}
         <div class="hero-discount-badge" style="{% if section.settings.badge_background_color != blank %}background-color: {{ section.settings.badge_background_color }};{% endif %}{% if section.settings.badge_text_color != blank %}color: {{ section.settings.badge_text_color }};{% endif %}">
           {{ section.settings.discount_badge_text | escape }}
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 </{{ structural_element }}>

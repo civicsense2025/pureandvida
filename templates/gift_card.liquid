@@ -8,20 +8,20 @@
     <meta name="theme-color" content="{{ settings.color_primary }}">
     <meta name="robots" content="noindex, nofollow">
 
-    {%- if settings.favicon != blank -%}
+    {% if settings.favicon != blank %}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
-    {%- endif -%}
+    {% endif %}
 
     <title>{{ 'gift_cards.issued.title' | t: value: gift_card.initial_value | format_address }} - {{ shop.name }}</title>
 
     {{ content_for_header }}
 
-    {%- liquid
+    {% liquid
       assign nohemi_regular = 'Nohemi-Regular.otf' | asset_url
       assign nohemi_semibold = 'Nohemi-SemiBold.otf' | asset_url
       assign versailles = 'Jen Wagner Co. - Versailles Regular.ttf' | asset_url
       assign myriad = 'MyriadPro-Regular.otf' | asset_url
-    -%}
+    %}
 
     {% style %}
       @font-face {
@@ -309,9 +309,9 @@
 
       <main>
         <div class="gift-card__image-wrapper">
-          {%- if gift_card.expired -%}
+          {% if gift_card.expired %}
             <span class="gift-card__badge">{{ 'gift_cards.issued.expired' | t }}</span>
-          {%- endif -%}
+          {% endif %}
           <img
             class="gift-card__image"
             src="{{ 'gift-card/card.svg' | shopify_asset_url }}"
@@ -326,11 +326,11 @@
           {{ gift_card.balance | money }}
         </div>
 
-        {%- if gift_card.balance != gift_card.initial_value -%}
+        {% if gift_card.balance != gift_card.initial_value %}
           <p class="gift-card__balance-text">
             {{ 'gift_cards.issued.initial_value' | t }}: {{ gift_card.initial_value | money }}
           </p>
-        {%- endif -%}
+        {% endif %}
 
         <div class="gift-card__code-wrapper">
           <p class="gift-card__code-label">{{ 'gift_cards.issued.gift_card_code' | t }}</p>
@@ -356,7 +356,7 @@
           </a>
         </div>
 
-        {%- if gift_card.pass_url -%}
+        {% if gift_card.pass_url %}
           <div class="gift-card__apple-wallet">
             <a href="{{ gift_card.pass_url }}">
               <img
@@ -368,13 +368,13 @@
               >
             </a>
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- if gift_card.expires_on -%}
+        {% if gift_card.expires_on %}
           <p class="gift-card__expiry">
             {{ 'gift_cards.issued.expiration_notice' | t: expires_on: gift_card.expires_on | date: format: 'date' }}
           </p>
-        {%- endif -%}
+        {% endif %}
 
         <div class="gift-card__print">
           <a href="#" onclick="window.print(); return false;">

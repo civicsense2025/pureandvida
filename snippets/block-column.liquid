@@ -1,4 +1,4 @@
-{%- comment -%}
+{% comment %}
   Block Column Snippet
   --------------------
   Reusable column block with icon/image, title, description, and optional link.
@@ -40,9 +40,9 @@
       heading_color: section.settings.heading_color,
       text_color: section.settings.text_color
     %}
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign col_image_ratio = image_ratio | default: 'square'
   assign col_image_width = image_width | default: 100
   assign col_image_radius = image_border_radius | default: 8
@@ -52,11 +52,11 @@
   assign col_button_style = button_style | default: 'link'
   assign col_heading_color = heading_color | default: 'var(--color-text, #333)'
   assign col_text_color = text_color | default: 'var(--color-text, #666)'
--%}
+%}
 
 <div class="block-column" {{ block.shopify_attributes }}>
-  {%- comment -%} Media (Image or Icon) {%- endcomment -%}
-  {%- if block.settings.image != blank -%}
+  {% comment %} Media (Image or Icon) {% endcomment %}
+  {% if block.settings.image != blank %}
     <div
       class="block-column__media"
       style="
@@ -88,7 +88,7 @@
         class="block-column__image"
       >
     </div>
-  {%- elsif block.settings.icon != blank and block.settings.icon != 'none' -%}
+  {% elsif block.settings.icon != blank and block.settings.icon != 'none' %}
     <div
       class="block-column__icon"
       style="
@@ -100,34 +100,34 @@
     >
       {% render 'render-icon', icon: block.settings.icon, size: col_icon_size, color: col_icon_color %}
     </div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- comment -%} Content {%- endcomment -%}
+  {% comment %} Content {% endcomment %}
   <div class="block-column__content">
-    {%- if block.settings.title != blank -%}
+    {% if block.settings.title != blank %}
       <h3 class="block-column__title" style="color: {{ col_heading_color }};">
         {{ block.settings.title }}
       </h3>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if block.settings.text != blank -%}
+    {% if block.settings.text != blank %}
       <div class="block-column__text rte" style="color: {{ col_text_color }};">
         {{ block.settings.text }}
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if block.settings.link_label != blank -%}
+    {% if block.settings.link_label != blank %}
       <a
         href="{{ block.settings.link }}"
         class="block-column__link{% if col_button_style != 'link' %} button button--{{ col_button_style }}{% endif %}"
         {% if block.settings.link == blank %}aria-disabled="true"{% endif %}
       >
         {{ block.settings.link_label }}
-        {%- if col_button_style == 'link' -%}
+        {% if col_button_style == 'link' %}
           {% render 'render-icon', icon: 'arrow-right', size: 16 %}
-        {%- endif -%}
+        {% endif %}
       </a>
-    {%- endif -%}
+    {% endif %}
   </div>
 </div>
 

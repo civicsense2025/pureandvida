@@ -1,11 +1,11 @@
-{%- comment -%}
+{% comment %}
   Theme Block: Card
   -----------------
   Generic card wrapper with configurable content, background, padding, and styling.
   Supports grouped override settings for colors, typography, and spacing.
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   # Content
   assign card_heading = block.settings.heading
   assign card_content = block.settings.content
@@ -35,7 +35,7 @@
   assign gap = block.settings.internal_gap
   assign border_width = block.settings.border_width
   assign border_radius = block.settings.border_radius | default: 12
--%}
+%}
 
 <div
   class="block-card{% if show_bg %} block-card--has-bg{% endif %} block-card--align-{{ alignment }}"
@@ -57,15 +57,15 @@
     {% if border_width != blank %}--block-border-width: {{ border_width }}px;{% endif %}
   "
 >
-  {%- if card_heading != blank -%}
+  {% if card_heading != blank %}
     <h3 class="block-card__heading">{{ card_heading | escape }}</h3>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if card_content != blank -%}
+  {% if card_content != blank %}
     <div class="block-card__content rte">{{ card_content }}</div>
-  {%- endif -%}
+  {% endif %}
 
-  {%- if btn_text != blank and btn_link != blank -%}
+  {% if btn_text != blank and btn_link != blank %}
     <a
       href="{{ btn_link }}"
       class="block-card__button button"
@@ -76,7 +76,7 @@
     >
       {{ btn_text | escape }}
     </a>
-  {%- endif -%}
+  {% endif %}
 </div>
 
 {% stylesheet %}
@@ -203,7 +203,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Color Overrides"
+      "content": "Color Overrides"
     },
     {
       "type": "paragraph",
@@ -232,7 +232,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Typography Overrides"
+      "content": "Typography Overrides"
     },
     {
       "type": "paragraph",
@@ -282,7 +282,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing Overrides"
+      "content": "Spacing Overrides"
     },
     {
       "type": "paragraph",

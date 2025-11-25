@@ -1,11 +1,11 @@
-{%- comment -%}
+{% comment %}
   Theme Block: FAQ Item
   ---------------------
   Accordion-style FAQ item using details/summary pattern.
   Question/answer format with grouped override settings.
-{%- endcomment -%}
+{% endcomment %}
 
-{%- liquid
+{% liquid
   # Content
   assign faq_question = block.settings.question
   assign faq_answer = block.settings.answer
@@ -32,7 +32,7 @@
   assign answer_padding = block.settings.answer_padding
   assign border_radius = block.settings.border_radius
   assign border_width = block.settings.border_width
--%}
+%}
 
 <details
   class="block-faq-item"
@@ -72,9 +72,9 @@
     "
   >
     <div class="block-faq-item__answer-content rte">
-      {%- if faq_answer != blank -%}
+      {% if faq_answer != blank %}
         {{ faq_answer }}
-      {%- endif -%}
+      {% endif %}
     </div>
   </div>
 </details>
@@ -200,7 +200,7 @@
     },
     {
       "type": "header",
-      "content": "🎨 Color Overrides"
+      "content": "Color Overrides"
     },
     {
       "type": "paragraph",
@@ -238,7 +238,7 @@
     },
     {
       "type": "header",
-      "content": "📝 Typography Overrides"
+      "content": "Typography Overrides"
     },
     {
       "type": "paragraph",
@@ -298,7 +298,7 @@
     },
     {
       "type": "header",
-      "content": "📏 Spacing Overrides"
+      "content": "Spacing Overrides"
     },
     {
       "type": "paragraph",

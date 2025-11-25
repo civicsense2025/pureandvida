@@ -1,0 +1,154 @@
+{% comment %}
+  Renders individual header blocks
+  Accepts:
+  - block: {Object} Block object
+  - section: {Object} Section object
+{% endcomment %}
+
+{% case block.type %}
+
+  {% when 'logo' %}
+    <div class="header__logo" {{ block.shopify_attributes }}>
+      <a href="{{ routes.root_url }}" class="logo-link">
+        {% if block.settings.logo_image != blank %}
+          {{ block.settings.logo_image | image_url: width: block.settings.logo_width | image_tag:
+            class: 'logo logo--image',
+            widths: '100, 150, 200, 250, 300',
+            loading: 'eager',
+            style: 'max-width: ' | append: block.settings.logo_width | append: 'px;'
+          }}
+        {% elsif block.settings.logo_text != blank %}
+          <span class="logo logo__text" style="font-size: {{ block.settings.logo_text_size | default: 28 }}px;{% if block.settings.logo_text_color != blank %} color: {{ block.settings.logo_text_color }};{% endif %}">
+            {% if block.settings.show_plus %}
+              {% assign logo_parts = block.settings.logo_text | split: '+' %}
+              {% if logo_parts.size > 1 %}
+                {{ logo_parts[0] }}<span class="logo__plus">+</span>{{ logo_parts[1] }}
+              {% else %}
+                {{ block.settings.logo_text }}
+              {% endif %}
+            {% else %}
+              {{ block.settings.logo_text | replace: '+', '' }}
+            {% endif %}
+          </span>
+        {% endif %}
+      </a>
+    </div>
+
+  {% when 'navigation' %}
+    <nav class="header__nav" {{ block.shopify_attributes }}>
+      {% if block.settings.menu != blank %}
+        <ul class="header__nav-list" role="list">
+          {% for link in block.settings.menu.links %}
+            <li>
+              <a href="{{ link.url }}" class="header__menu-item"{% if block.settings.text_color != blank %} style="color: {{ block.settings.text_color }};"{% endif %}>
+                {{ link.title | escape }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </nav>
+
+  {% when 'cart_button' %}
+    {% liquid
+      assign button_style = ''
+      if block.settings.background_color != blank
+        assign button_style = button_style | append: 'background-color: ' | append: block.settings.background_color | append: ';'
+      endif
+      if block.settings.text_color != blank
+        assign button_style = button_style | append: 'color: ' | append: block.settings.text_color | append: ';'
+      endif
+      if block.settings.border_color != blank
+        assign button_style = button_style | append: 'border: 1px solid ' | append: block.settings.border_color | append: ';'
+      endif
+    %}
+    <div class="header__cart" {{ block.shopify_attributes }}>
+      {% case block.settings.style %}
+        {% when 'button' %}
+          <a href="{{ routes.cart_url }}" class="header__cta-button header__cta-button--filled"{% if button_style != blank %} style="{{ button_style }}"{% endif %}>
+            {{ block.settings.text | default: 'Cart' }}
+            {% if block.settings.show_count and cart.item_count > 0 %}
+              <span class="header__cart-count">{{ cart.item_count }}</span>
+            {% endif %}
+          </a>
+        {% when 'outline' %}
+          <a href="{{ routes.cart_url }}" class="header__cta-button header__cta-button--outline"{% if button_style != blank %} style="{{ button_style }}"{% endif %}>
+            {{ block.settings.text | default: 'Cart' }}
+            {% if block.settings.show_count and cart.item_count > 0 %}
+              <span class="header__cart-count">{{ cart.item_count }}</span>
+            {% endif %}
+          </a>
+        {% when 'text' %}
+          <a href="{{ routes.cart_url }}" class="header__menu-item"{% if block.settings.text_color != blank %} style="color: {{ block.settings.text_color }};"{% endif %}>
+            {{ block.settings.text | default: 'Cart' }}
+            {% if block.settings.show_count and cart.item_count > 0 %}
+              ({{ cart.item_count }})
+            {% endif %}
+          </a>
+        {% when 'icon' %}
+          <a href="{{ routes.cart_url }}" class="header__cart-icon"{% if block.settings.text_color != blank %} style="color: {{ block.settings.text_color }};"{% endif %} aria-label="{{ 'cart.general.title' | t | default: 'Cart' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            {% if block.settings.show_count and cart.item_count > 0 %}
+              <span class="header__cart-count">{{ cart.item_count }}</span>
+            {% endif %}
+          </a>
+      {% endcase %}
+    </div>
+
+  {% when 'search' %}
+    <div class="header__search" {{ block.shopify_attributes }}>
+      {% case block.settings.style %}
+        {% when 'icon' %}
+          <button type="button" class="header__search-button" aria-label="{{ 'general.search.search' | t | default: 'Search' }}"{% if block.settings.icon_color != blank %} style="color: {{ block.settings.icon_color }};"{% endif %} onclick="window.location.href='{{ routes.search_url }}'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+        {% when 'bar' %}
+          <form action="{{ routes.search_url }}" method="get" class="header__search-form" role="search">
+            <input type="search" name="q" placeholder="{{ block.settings.placeholder | default: 'Search...' }}" class="header__search-input" aria-label="{{ 'general.search.search' | t | default: 'Search' }}">
+            <button type="submit" class="header__search-submit"{% if block.settings.icon_color != blank %} style="color: {{ block.settings.icon_color }};"{% endif %}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </button>
+          </form>
+      {% endcase %}
+    </div>
+
+  {% when 'account' %}
+    <div class="header__account" {{ block.shopify_attributes }}>
+      <a href="{{ routes.account_url }}" class="header__account-link"{% if block.settings.icon_color != blank %} style="color: {{ block.settings.icon_color }};"{% endif %}>
+        {% if block.settings.style == 'icon' or block.settings.style == 'both' %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        {% endif %}
+        {% if block.settings.style == 'text' or block.settings.style == 'both' %}
+          <span class="header__account-text">{{ block.settings.text | default: 'Account' }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+  {% when 'custom_link' %}
+    {% liquid
+      assign link_style = ''
+      if block.settings.text_color != blank
+        assign link_style = link_style | append: 'color: ' | append: block.settings.text_color | append: ';'
+      endif
+      if block.settings.style == 'button' and block.settings.background_color != blank
+        assign link_style = link_style | append: 'background-color: ' | append: block.settings.background_color | append: ';'
+      endif
+    %}
+    <a href="{{ block.settings.url | default: '#' }}" class="header__custom-link{% if block.settings.style == 'button' %} header__custom-link--button{% endif %}"{% if link_style != blank %} style="{{ link_style }}"{% endif %} {{ block.shopify_attributes }}>
+      {{ block.settings.text | escape }}
+    </a>
+
+{% endcase %}

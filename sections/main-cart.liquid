@@ -6,11 +6,11 @@
   assign layout = section.settings.layout | default: 'standard'
 %}
 
-{%- render 'visibility-classes',
+{% render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,
   show_on_desktop: section.settings.show_on_desktop,
   section_id: section.id
--%}
+%}
 
 <style>
   #shopify-section-{{ section.id }} {
@@ -135,10 +135,10 @@
     padding: var(--spacing-lg);
     border-radius: var(--radius-md);
     height: fit-content;
-    {%- if section.settings.sidebar_sticky -%}
+    {% if section.settings.sidebar_sticky %}
       position: sticky;
       top: calc(var(--header-height-desktop) + var(--spacing-md));
-    {%- endif -%}
+    {% endif %}
   }
 
   #{{ section.id }} .cart-footer {
@@ -295,75 +295,75 @@
 
 <div id="{{ section.id }}" class="cart-section">
   <div class="cart-container">
-    {%- if section.settings.heading != blank -%}
+    {% if section.settings.heading != blank %}
       <h1 class="cart-heading">{{ section.settings.heading }}</h1>
-    {%- else -%}
+    {% else %}
       <h1 class="cart-heading">{{ 'cart.general.title' | t }}</h1>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if cart.item_count > 0 -%}
+    {% if cart.item_count > 0 %}
       <form action="{{ routes.cart_url }}" method="post" novalidate>
         <div class="cart-layout{% if layout == 'two-column' %} cart-layout--two-column{% endif %}">
-          {%- comment -%} Cart Items {%- endcomment -%}
+          {% comment %} Cart Items {% endcomment %}
           <div class="cart-items-wrapper">
-            {%- comment -%} Shipping Bar Block {%- endcomment -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'shipping_bar' -%}
-                {%- liquid
+            {% comment %} Shipping Bar Block {% endcomment %}
+            {% for block in section.blocks %}
+              {% if block.type == 'shipping_bar' %}
+                {% liquid
                   assign threshold = block.settings.threshold | times: 100
                   assign remaining = threshold | minus: cart.total_price
                   assign progress = cart.total_price | times: 100 | divided_by: threshold
                   if progress > 100
                     assign progress = 100
                   endif
-                -%}
+                %}
                 <div class="shipping-bar" {{ block.shopify_attributes }}>
-                  {%- if remaining > 0 -%}
+                  {% if remaining > 0 %}
                     <p class="shipping-bar__text">
                       {{ block.settings.message_below | replace: '[amount]', remaining | money }}
                     </p>
-                  {%- else -%}
+                  {% else %}
                     <p class="shipping-bar__text" style="color: var(--form-success-color);">
                       {{ block.settings.message_reached }}
                     </p>
-                  {%- endif -%}
+                  {% endif %}
                   <div class="shipping-bar__progress">
                     <div class="shipping-bar__fill" style="width: {{ progress }}%;"></div>
                   </div>
                 </div>
-              {%- endif -%}
-            {%- endfor -%}
+              {% endif %}
+            {% endfor %}
 
             <div class="cart-items">
-              {%- for item in cart.items -%}
+              {% for item in cart.items %}
                 <div class="cart-item">
-                  {%- if section.settings.show_thumbnails -%}
+                  {% if section.settings.show_thumbnails %}
                     <div class="cart-item__image-wrapper">
-                      {%- if section.settings.link_thumbnails -%}
+                      {% if section.settings.link_thumbnails %}
                         <a href="{{ item.url }}">
-                      {%- endif -%}
+                      {% endif %}
                         <img
                           class="cart-item__image"
                           src="{{ item.image | image_url: width: 200 }}"
                           alt="{{ item.title | escape }}"
                           loading="lazy"
                         >
-                      {%- if section.settings.link_thumbnails -%}
+                      {% if section.settings.link_thumbnails %}
                         </a>
-                      {%- endif -%}
+                      {% endif %}
                     </div>
-                  {%- endif -%}
+                  {% endif %}
 
                   <div class="cart-item__details">
                     <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title | escape }}</a>
 
-                    {%- if item.variant.title != 'Default Title' -%}
+                    {% if item.variant.title != 'Default Title' %}
                       <p class="cart-item__variant">{{ item.variant.title }}</p>
-                    {%- endif -%}
+                    {% endif %}
 
-                    {%- if section.settings.show_vendor and item.vendor -%}
+                    {% if section.settings.show_vendor and item.vendor %}
                       <p class="cart-item__variant">{{ item.vendor }}</p>
-                    {%- endif -%}
+                    {% endif %}
 
                     <div class="cart-item__quantity">
                       <input
@@ -389,14 +389,14 @@
                     </a>
                   </div>
                 </div>
-              {%- endfor -%}
+              {% endfor %}
             </div>
           </div>
 
-          {%- comment -%} Cart Sidebar/Footer {%- endcomment -%}
+          {% comment %} Cart Sidebar/Footer {% endcomment %}
           <div class="{% if layout == 'two-column' %}cart-sidebar{% else %}cart-footer{% endif %}">
-            {%- comment -%} Cart Note {%- endcomment -%}
-            {%- if section.settings.show_cart_note -%}
+            {% comment %} Cart Note {% endcomment %}
+            {% if section.settings.show_cart_note %}
               <div class="cart-note">
                 <label class="cart-note__label" for="cart-note">{{ section.settings.cart_note_label | default: 'Order Notes' }}</label>
                 <textarea
@@ -406,11 +406,11 @@
                   placeholder="{{ section.settings.cart_note_placeholder }}"
                 >{{ cart.note }}</textarea>
               </div>
-            {%- endif -%}
+            {% endif %}
 
-            {%- comment -%} Promo Code Block {%- endcomment -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'promo_code' -%}
+            {% comment %} Promo Code Block {% endcomment %}
+            {% for block in section.blocks %}
+              {% if block.type == 'promo_code' %}
                 <div class="cart-block" {{ block.shopify_attributes }}>
                   <label class="cart-note__label">{{ block.settings.label | default: 'Promo Code' }}</label>
                   <div class="promo-code">
@@ -423,37 +423,37 @@
                     {% render 'button', text: block.settings.button_text | default: 'Apply', style: 'secondary', type: 'button' %}
                   </div>
                 </div>
-              {%- endif -%}
-            {%- endfor -%}
+              {% endif %}
+            {% endfor %}
 
-            {%- comment -%} Cart Totals {%- endcomment -%}
+            {% comment %} Cart Totals {% endcomment %}
             <div class="cart-totals">
-              {%- if section.settings.show_item_count -%}
+              {% if section.settings.show_item_count %}
                 <div class="cart-totals__row">
                   <span class="cart-totals__label">{{ 'cart.label.items' | t }}</span>
                   <span class="cart-totals__value">{{ cart.item_count }}</span>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
-              {%- if section.settings.show_taxes_notice and cart.taxes_included -%}
+              {% if section.settings.show_taxes_notice and cart.taxes_included %}
                 <div class="cart-totals__row">
                   <span class="cart-totals__label">{{ 'cart.general.taxes_included' | t }}</span>
                 </div>
-              {%- endif -%}
+              {% endif %}
 
               <div class="cart-totals__row cart-totals__subtotal">
                 <span class="cart-totals__label">{{ 'cart.general.subtotal' | t }}</span>
                 <span class="cart-totals__value">{{ cart.total_price | money }}</span>
               </div>
 
-              {%- if section.settings.subtotal_note != blank -%}
+              {% if section.settings.subtotal_note != blank %}
                 <p style="font-size: 0.875rem; color: var(--section-text); opacity: 0.7;">
                   {{ section.settings.subtotal_note }}
                 </p>
-              {%- endif -%}
+              {% endif %}
             </div>
 
-            {%- comment -%} Cart Buttons {%- endcomment -%}
+            {% comment %} Cart Buttons {% endcomment %}
             <div class="cart-buttons">
               {% render 'button',
                 text: section.settings.checkout_text | default: 'Checkout',
@@ -463,62 +463,62 @@
                 class: 'cart-checkout-btn'
               %}
 
-              {%- if section.settings.show_update_button -%}
+              {% if section.settings.show_update_button %}
                 {% render 'button',
                   text: section.settings.update_text | default: 'Update Cart',
                   type: 'submit',
                   style: 'secondary',
                   full_width: true
                 %}
-              {%- endif -%}
+              {% endif %}
 
-              {%- if section.settings.show_continue_shopping -%}
+              {% if section.settings.show_continue_shopping %}
                 {% render 'button',
                   text: section.settings.continue_shopping_text | default: 'Continue Shopping',
                   url: routes.all_products_collection_url,
                   style: 'link',
                   full_width: true
                 %}
-              {%- endif -%}
+              {% endif %}
             </div>
 
-            {%- comment -%} Trust Badges Block {%- endcomment -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'trust_badges' -%}
+            {% comment %} Trust Badges Block {% endcomment %}
+            {% for block in section.blocks %}
+              {% if block.type == 'trust_badges' %}
                 <div class="cart-block trust-badges" {{ block.shopify_attributes }}>
-                  {%- if block.settings.badge_1 != blank -%}
+                  {% if block.settings.badge_1 != blank %}
                     <div class="trust-badge">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                       <span>{{ block.settings.badge_1 }}</span>
                     </div>
-                  {%- endif -%}
-                  {%- if block.settings.badge_2 != blank -%}
+                  {% endif %}
+                  {% if block.settings.badge_2 != blank %}
                     <div class="trust-badge">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                       <span>{{ block.settings.badge_2 }}</span>
                     </div>
-                  {%- endif -%}
-                  {%- if block.settings.badge_3 != blank -%}
+                  {% endif %}
+                  {% if block.settings.badge_3 != blank %}
                     <div class="trust-badge">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                       <span>{{ block.settings.badge_3 }}</span>
                     </div>
-                  {%- endif -%}
+                  {% endif %}
                 </div>
-              {%- endif -%}
-            {%- endfor -%}
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
       </form>
 
-      {%- comment -%} Upsell Block {%- endcomment -%}
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'cart_upsell' -%}
-          {%- if block.settings.collection != blank -%}
+      {% comment %} Upsell Block {% endcomment %}
+      {% for block in section.blocks %}
+        {% if block.type == 'cart_upsell' %}
+          {% if block.settings.collection != blank %}
             <div class="cart-block" {{ block.shopify_attributes }}>
               <h3 style="margin-bottom: var(--spacing-md);">{{ block.settings.heading | default: 'You may also like' }}</h3>
               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--spacing-md);">
-                {%- for product in block.settings.collection.products limit: block.settings.products_count -%}
+                {% for product in block.settings.collection.products limit: block.settings.products_count %}
                   <div style="text-align: center;">
                     <a href="{{ product.url }}">
                       <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title | escape }}" style="width: 100%; border-radius: var(--radius-sm);">
@@ -526,32 +526,32 @@
                     <p style="margin-top: var(--spacing-xs); font-size: 0.875rem;">{{ product.title }}</p>
                     <p style="font-weight: 600;">{{ product.price | money }}</p>
                   </div>
-                {%- endfor -%}
+                {% endfor %}
               </div>
             </div>
-          {%- endif -%}
-        {%- endif -%}
-      {%- endfor -%}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
 
-    {%- else -%}
-      {%- comment -%} Empty Cart {%- endcomment -%}
+    {% else %}
+      {% comment %} Empty Cart {% endcomment %}
       <div class="cart-empty">
-        {%- if section.settings.empty_cart_image != blank -%}
+        {% if section.settings.empty_cart_image != blank %}
           <img
             class="cart-empty__image"
             src="{{ section.settings.empty_cart_image | image_url: width: 400 }}"
             alt=""
             loading="lazy"
           >
-        {%- endif -%}
+        {% endif %}
 
         <h2 class="cart-empty__heading">
           {{ section.settings.empty_cart_heading | default: 'Your cart is empty' }}
         </h2>
 
-        {%- if section.settings.empty_cart_text != blank -%}
+        {% if section.settings.empty_cart_text != blank %}
           <p class="cart-empty__text">{{ section.settings.empty_cart_text }}</p>
-        {%- endif -%}
+        {% endif %}
 
         {% render 'button',
           text: section.settings.empty_cart_button_text | default: 'Continue Shopping',
@@ -559,13 +559,13 @@
           style: 'primary'
         %}
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "🛒 Cart",
+  "name": "Cart",
   "tag": "section",
   "class": "section section--cart",
   "settings": [

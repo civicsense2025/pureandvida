@@ -3,11 +3,11 @@
   # Displays login form with customizable styling, layout, and messaging
 %}
 
-{%- render 'visibility-classes',
+{% render 'visibility-classes',
   show_on_mobile: section.settings.show_on_mobile,
   show_on_desktop: section.settings.show_on_desktop,
   section_id: section.id
--%}
+%}
 
 <div
   id="{{ section.id }}"
@@ -49,17 +49,17 @@
 
     /* Form Card */
     #{{ section.id }} .login-card {
-      {%- if section.settings.card_style != 'none' -%}
+      {% if section.settings.card_style != 'none' %}
         padding: var(--spacing-xl);
         background: {% if section.settings.card_style == 'filled' %}rgba(0,0,0,0.03){% else %}var(--section-bg, #fff){% endif %};
         border-radius: {{ section.settings.card_border_radius }}px;
-        {%- if section.settings.card_style == 'outlined' or section.settings.card_style == 'elevated' -%}
+        {% if section.settings.card_style == 'outlined' or section.settings.card_style == 'elevated' %}
           border: 1px solid var(--section-border, rgba(0,0,0,0.1));
-        {%- endif -%}
-        {%- if section.settings.card_style == 'elevated' -%}
+        {% endif %}
+        {% if section.settings.card_style == 'elevated' %}
           box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-        {%- endif -%}
-      {%- endif -%}
+        {% endif %}
+      {% endif %}
     }
 
     /* Form Elements */
@@ -237,22 +237,22 @@
   </style>
 
   <div class="login-container">
-    {%- comment -%} Header {%- endcomment -%}
+    {% comment %} Header {% endcomment %}
     <header class="login-header">
       <h1 class="login-title">{{ section.settings.title | default: 'Login' }}</h1>
-      {%- if section.settings.subtitle != blank -%}
+      {% if section.settings.subtitle != blank %}
         <p class="login-subtitle">{{ section.settings.subtitle }}</p>
-      {%- endif -%}
+      {% endif %}
     </header>
 
-    {%- comment -%} Login Card {%- endcomment -%}
+    {% comment %} Login Card {% endcomment %}
     <div class="login-card">
-      {%- form 'customer_login', novalidate: 'novalidate', class: 'login-form' -%}
-        {%- if form.errors -%}
+      {% form 'customer_login', novalidate: 'novalidate', class: 'login-form' %}
+        {% if form.errors %}
           <div class="form-error" role="alert">
             {{ form.errors | default_errors }}
           </div>
-        {%- endif -%}
+        {% endif %}
 
         <div class="form-field">
           <label for="customer_email" class="form-label">
@@ -288,20 +288,20 @@
           >
         </div>
 
-        {%- if section.settings.show_forgot_password -%}
+        {% if section.settings.show_forgot_password %}
           <div class="forgot-password">
             <a href="{{ routes.account_recover_url }}">
               {{ section.settings.forgot_password_text | default: 'Forgot password?' }}
             </a>
           </div>
-        {%- endif -%}
+        {% endif %}
 
         <button type="submit" class="login-submit">
           {{ section.settings.button_text | default: 'Sign In' }}
         </button>
-      {%- endform -%}
+      {% endform %}
 
-      {%- if section.settings.show_register_link -%}
+      {% if section.settings.show_register_link %}
         <div class="login-divider">
           <span>{{ section.settings.divider_text | default: 'or' }}</span>
         </div>
@@ -312,42 +312,42 @@
             {{ section.settings.register_button_text | default: 'Create Account' }}
           </a>
         </div>
-      {%- endif -%}
+      {% endif %}
 
-      {%- if section.settings.show_guest_checkout and checkout.guest_login -%}
+      {% if section.settings.show_guest_checkout and checkout.guest_login %}
         <div class="guest-checkout">
           <a href="{{ routes.root_url }}">{{ section.settings.guest_checkout_text | default: 'Continue as guest' }}</a>
         </div>
-      {%- endif -%}
+      {% endif %}
     </div>
 
-    {%- comment -%} Additional Blocks {%- endcomment -%}
-    {%- for block in section.blocks -%}
-      {%- case block.type -%}
-        {%- when 'benefits' -%}
+    {% comment %} Additional Blocks {% endcomment %}
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'benefits' %}
           <div class="login-benefits" {{ block.shopify_attributes }} style="margin-top: var(--spacing-xl); text-align: center;">
-            {%- if block.settings.title != blank -%}
+            {% if block.settings.title != blank %}
               <p style="font-weight: 500; margin-bottom: var(--spacing-md); color: var(--section-heading);">
                 {{ block.settings.title }}
               </p>
-            {%- endif -%}
+            {% endif %}
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-lg);">
-              {%- for i in (1..3) -%}
-                {%- assign benefit_key = 'benefit_' | append: i -%}
-                {%- assign benefit = block.settings[benefit_key] -%}
-                {%- if benefit != blank -%}
+              {% for i in (1..3) %}
+                {% assign benefit_key = 'benefit_' | append: i %}
+                {% assign benefit = block.settings[benefit_key] %}
+                {% if benefit != blank %}
                   <div style="display: flex; align-items: center; gap: var(--spacing-xs); font-size: calc(var(--font-body-size) * 0.9375); color: var(--section-text);">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                     {{ benefit }}
                   </div>
-                {%- endif -%}
-              {%- endfor -%}
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
-      {%- endcase -%}
-    {%- endfor -%}
+      {% endcase %}
+    {% endfor %}
   </div>
 </div>
 

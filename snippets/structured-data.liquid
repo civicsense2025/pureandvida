@@ -1,4 +1,4 @@
-{%- liquid
+{% liquid
   # @description Generates comprehensive JSON-LD structured data for SEO
   # Includes Organization, Website, BreadcrumbList, and template-specific schemas
   # @param include_organization {Boolean} - Include Organization schema (default: true)
@@ -6,60 +6,60 @@
   # @param include_breadcrumbs {Boolean} - Include BreadcrumbList schema (default: true)
   # @example
   #   {% render 'structured-data' %}
--%}
+%}
 
-{%- liquid
+{% liquid
   assign include_organization = include_organization | default: true
   assign include_website = include_website | default: true
   assign include_breadcrumbs = include_breadcrumbs | default: true
--%}
+%}
 
-{%- comment -%} Organization Schema {%- endcomment -%}
-{%- if include_organization -%}
+{% comment %} Organization Schema {% endcomment %}
+{% if include_organization %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "{{ shop.name | escape }}",
   "url": "{{ shop.url }}",
-  {%- if shop.description != blank -%}
+  {% if shop.description != blank %}
   "description": "{{ shop.description | strip_html | escape }}",
-  {%- endif -%}
-  {%- if settings.seo_organization_logo != blank -%}
+  {% endif %}
+  {% if settings.seo_organization_logo != blank %}
   "logo": "https:{{ settings.seo_organization_logo | image_url: width: 600 }}",
-  {%- elsif shop.brand.logo != blank -%}
+  {% elsif shop.brand.logo != blank %}
   "logo": "https:{{ shop.brand.logo | image_url: width: 600 }}",
-  {%- endif -%}
+  {% endif %}
   "sameAs": [
-    {%- if settings.social_facebook_link != blank -%}"{{ settings.social_facebook_link }}"{%- endif -%}
-    {%- if settings.social_instagram_link != blank -%}{% if settings.social_facebook_link != blank %},{% endif %}"{{ settings.social_instagram_link }}"{%- endif -%}
-    {%- if settings.social_twitter_link != blank -%}{% if settings.social_facebook_link != blank or settings.social_instagram_link != blank %},{% endif %}"{{ settings.social_twitter_link }}"{%- endif -%}
-    {%- if settings.social_pinterest_link != blank -%}{% if settings.social_facebook_link != blank or settings.social_instagram_link != blank or settings.social_twitter_link != blank %},{% endif %}"{{ settings.social_pinterest_link }}"{%- endif -%}
-    {%- if settings.social_youtube_link != blank -%}{% if settings.social_facebook_link != blank or settings.social_instagram_link != blank or settings.social_twitter_link != blank or settings.social_pinterest_link != blank %},{% endif %}"{{ settings.social_youtube_link }}"{%- endif -%}
+    {% if settings.social_facebook_link != blank %}"{{ settings.social_facebook_link }}"{% endif %}
+    {% if settings.social_instagram_link != blank %}{% if settings.social_facebook_link != blank %},{% endif %}"{{ settings.social_instagram_link }}"{% endif %}
+    {% if settings.social_twitter_link != blank %}{% if settings.social_facebook_link != blank or settings.social_instagram_link != blank %},{% endif %}"{{ settings.social_twitter_link }}"{% endif %}
+    {% if settings.social_pinterest_link != blank %}{% if settings.social_facebook_link != blank or settings.social_instagram_link != blank or settings.social_twitter_link != blank %},{% endif %}"{{ settings.social_pinterest_link }}"{% endif %}
+    {% if settings.social_youtube_link != blank %}{% if settings.social_facebook_link != blank or settings.social_instagram_link != blank or settings.social_twitter_link != blank or settings.social_pinterest_link != blank %},{% endif %}"{{ settings.social_youtube_link }}"{% endif %}
   ]
-  {%- if settings.seo_organization_contact_point != blank -%}
+  {% if settings.seo_organization_contact_point != blank %}
   ,
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer service",
     "email": "{{ settings.seo_organization_contact_point }}"
   }
-  {%- endif -%}
+  {% endif %}
 }
 </script>
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Website Schema with SearchAction {%- endcomment -%}
-{%- if include_website -%}
+{% comment %} Website Schema with SearchAction {% endcomment %}
+{% if include_website %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "{{ shop.name | escape }}",
   "url": "{{ shop.url }}",
-  {%- if shop.description != blank -%}
+  {% if shop.description != blank %}
   "description": "{{ shop.description | strip_html | escape }}",
-  {%- endif -%}
+  {% endif %}
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
@@ -70,11 +70,11 @@
   }
 }
 </script>
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} BreadcrumbList Schema {%- endcomment -%}
-{%- if include_breadcrumbs -%}
-  {%- if template.name == 'product' or template.name == 'collection' or template.name == 'article' or template.name == 'page' -%}
+{% comment %} BreadcrumbList Schema {% endcomment %}
+{% if include_breadcrumbs %}
+  {% if template.name == 'product' or template.name == 'collection' or template.name == 'article' or template.name == 'page' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -86,59 +86,59 @@
       "name": "Home",
       "item": "{{ shop.url }}"
     }
-    {%- if template.name == 'product' -%}
-      {%- if collection -%}
+    {% if template.name == 'product' %}
+      {% if collection %}
       ,{
         "@type": "ListItem",
         "position": 2,
         "name": "{{ collection.title | escape }}",
         "item": "{{ shop.url }}{{ collection.url }}"
       }
-      {%- endif -%}
+      {% endif %}
       ,{
         "@type": "ListItem",
         "position": {% if collection %}3{% else %}2{% endif %},
         "name": "{{ product.title | escape }}",
         "item": "{{ shop.url }}{{ product.url }}"
       }
-    {%- elsif template.name == 'collection' -%}
+    {% elsif template.name == 'collection' %}
       ,{
         "@type": "ListItem",
         "position": 2,
         "name": "{{ collection.title | escape }}",
         "item": "{{ shop.url }}{{ collection.url }}"
       }
-    {%- elsif template.name == 'article' -%}
-      {%- if blog -%}
+    {% elsif template.name == 'article' %}
+      {% if blog %}
       ,{
         "@type": "ListItem",
         "position": 2,
         "name": "{{ blog.title | escape }}",
         "item": "{{ shop.url }}{{ blog.url }}"
       }
-      {%- endif -%}
+      {% endif %}
       ,{
         "@type": "ListItem",
         "position": {% if blog %}3{% else %}2{% endif %},
         "name": "{{ article.title | escape }}",
         "item": "{{ shop.url }}{{ article.url }}"
       }
-    {%- elsif template.name == 'page' -%}
+    {% elsif template.name == 'page' %}
       ,{
         "@type": "ListItem",
         "position": 2,
         "name": "{{ page.title | escape }}",
         "item": "{{ shop.url }}{{ page.url }}"
       }
-    {%- endif -%}
+    {% endif %}
   ]
 }
 </script>
-  {%- endif -%}
-{%- endif -%}
+  {% endif %}
+{% endif %}
 
-{%- comment -%} Collection Schema (ItemList) {%- endcomment -%}
-{%- if template.name == 'collection' and collection.products.size > 0 -%}
+{% comment %} Collection Schema (ItemList) {% endcomment %}
+{% if template.name == 'collection' and collection.products.size > 0 %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -148,7 +148,7 @@
   "url": "{{ shop.url }}{{ collection.url }}",
   "numberOfItems": {{ collection.products_count }},
   "itemListElement": [
-    {%- for product in collection.products limit: 20 -%}
+    {% for product in collection.products limit: 20 %}
     {
       "@type": "ListItem",
       "position": {{ forloop.index }},
@@ -156,9 +156,9 @@
         "@type": "Product",
         "name": "{{ product.title | escape }}",
         "url": "{{ shop.url }}{{ product.url }}",
-        {%- if product.featured_media -%}
+        {% if product.featured_media %}
         "image": "https:{{ product.featured_media | image_url: width: 1200 }}",
-        {%- endif -%}
+        {% endif %}
         "offers": {
           "@type": "Offer",
           "priceCurrency": "{{ cart.currency.iso_code }}",
@@ -167,70 +167,70 @@
         }
       }
     }{% unless forloop.last %},{% endunless %}
-    {%- endfor -%}
+    {% endfor %}
   ]
 }
 </script>
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} Article Schema {%- endcomment -%}
-{%- if template.name == 'article' -%}
+{% comment %} Article Schema {% endcomment %}
+{% if template.name == 'article' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": "{{ article.title | escape }}",
   "url": "{{ shop.url }}{{ article.url }}",
-  {%- if article.image -%}
+  {% if article.image %}
   "image": [
     "https:{{ article.image | image_url: width: 1200 }}"
   ],
-  {%- endif -%}
+  {% endif %}
   "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
   "dateModified": "{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
-  {%- if article.author != blank -%}
+  {% if article.author != blank %}
   "author": {
     "@type": "Person",
     "name": "{{ article.author | escape }}"
   },
-  {%- endif -%}
+  {% endif %}
   "publisher": {
     "@type": "Organization",
     "name": "{{ shop.name | escape }}",
-    {%- if settings.seo_organization_logo != blank -%}
+    {% if settings.seo_organization_logo != blank %}
     "logo": {
       "@type": "ImageObject",
       "url": "https:{{ settings.seo_organization_logo | image_url: width: 600 }}"
     }
-    {%- endif -%}
+    {% endif %}
   },
-  {%- if article.excerpt != blank -%}
+  {% if article.excerpt != blank %}
   "description": "{{ article.excerpt | strip_html | escape }}",
-  {%- elsif article.content != blank -%}
+  {% elsif article.content != blank %}
   "description": "{{ article.content | strip_html | truncate: 160 | escape }}",
-  {%- endif -%}
+  {% endif %}
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": "{{ shop.url }}{{ article.url }}"
   }
-  {%- if article.tags.size > 0 -%}
+  {% if article.tags.size > 0 %}
   ,
   "keywords": "{{ article.tags | join: ', ' | escape }}"
-  {%- endif -%}
+  {% endif %}
 }
 </script>
-{%- endif -%}
+{% endif %}
 
-{%- comment -%} FAQ Schema {%- endcomment -%}
-{%- if template.name == 'page' and page.metafields.seo.faq != blank -%}
-  {%- assign faq_items = page.metafields.seo.faq.value -%}
-  {%- if faq_items.size > 0 -%}
+{% comment %} FAQ Schema {% endcomment %}
+{% if template.name == 'page' and page.metafields.seo.faq != blank %}
+  {% assign faq_items = page.metafields.seo.faq.value %}
+  {% if faq_items.size > 0 %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {%- for item in faq_items -%}
+    {% for item in faq_items %}
     {
       "@type": "Question",
       "name": "{{ item.question | escape }}",
@@ -239,49 +239,49 @@
         "text": "{{ item.answer | strip_html | escape }}"
       }
     }{% unless forloop.last %},{% endunless %}
-    {%- endfor -%}
+    {% endfor %}
   ]
 }
 </script>
-  {%- endif -%}
-{%- endif -%}
+  {% endif %}
+{% endif %}
 
-{%- comment -%} LocalBusiness Schema (if applicable) {%- endcomment -%}
-{%- if settings.seo_enable_local_business and settings.seo_local_business_name != blank -%}
+{% comment %} LocalBusiness Schema (if applicable) {% endcomment %}
+{% if settings.seo_enable_local_business and settings.seo_local_business_name != blank %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": "{{ settings.seo_local_business_name | escape }}",
-  {%- if settings.seo_local_business_image != blank -%}
+  {% if settings.seo_local_business_image != blank %}
   "image": "https:{{ settings.seo_local_business_image | image_url: width: 1200 }}",
-  {%- endif -%}
-  {%- if settings.seo_local_business_description != blank -%}
+  {% endif %}
+  {% if settings.seo_local_business_description != blank %}
   "description": "{{ settings.seo_local_business_description | escape }}",
-  {%- endif -%}
-  {%- if settings.seo_local_business_address != blank -%}
+  {% endif %}
+  {% if settings.seo_local_business_address != blank %}
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "{{ settings.seo_local_business_address | escape }}",
-    {%- if settings.seo_local_business_city != blank -%}
+    {% if settings.seo_local_business_city != blank %}
     "addressLocality": "{{ settings.seo_local_business_city | escape }}",
-    {%- endif -%}
-    {%- if settings.seo_local_business_state != blank -%}
+    {% endif %}
+    {% if settings.seo_local_business_state != blank %}
     "addressRegion": "{{ settings.seo_local_business_state | escape }}",
-    {%- endif -%}
-    {%- if settings.seo_local_business_postal_code != blank -%}
+    {% endif %}
+    {% if settings.seo_local_business_postal_code != blank %}
     "postalCode": "{{ settings.seo_local_business_postal_code | escape }}",
-    {%- endif -%}
-    {%- if settings.seo_local_business_country != blank -%}
+    {% endif %}
+    {% if settings.seo_local_business_country != blank %}
     "addressCountry": "{{ settings.seo_local_business_country | escape }}"
-    {%- endif -%}
+    {% endif %}
   },
-  {%- endif -%}
-  {%- if settings.seo_local_business_phone != blank -%}
+  {% endif %}
+  {% if settings.seo_local_business_phone != blank %}
   "telephone": "{{ settings.seo_local_business_phone | escape }}",
-  {%- endif -%}
+  {% endif %}
   "url": "{{ shop.url }}"
 }
 </script>
-{%- endif -%}
+{% endif %}
 

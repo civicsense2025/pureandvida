@@ -105,8 +105,8 @@
       sizes="{{ image_sizes }}"
       {% endif %}
       alt="{{ image_alt | escape }}"
-      {% if image_width != blank %}width="{{ image_width }}"{% endif %}
-      {% if image_height != blank %}height="{{ image_height }}"{% endif %}
+      width="{{ image_width | default: 1200 }}"
+      height="{{ image_height | default: image_width | default: 1200 }}"
       {% if lazy_loading %}loading="lazy" decoding="async"{% else %}loading="eager"{% endif %}
       {% if image_classes != blank %}class="{{ image_classes | strip }}"{% endif %}
       {% if image.focal_point != blank %}style="object-position: {{ image.focal_point }}"{% endif %}
@@ -120,8 +120,8 @@
     sizes="{{ image_sizes }}"
     {% endif %}
     alt="{{ image_alt | escape }}"
-    {% if image_width != blank %}width="{{ image_width }}"{% endif %}
-    {% if image_height != blank %}height="{{ image_height }}"{% endif %}
+    width="{{ image_width | default: 1200 }}"
+    height="{{ image_height | default: image_width | default: 1200 }}"
     {% if lazy_loading %}loading="lazy" decoding="async"{% else %}loading="eager"{% endif %}
     {% if image_classes != blank %}class="{{ image_classes | strip }}"{% endif %}
     {% if image.focal_point != blank %}style="object-position: {{ image.focal_point }}"{% endif %}

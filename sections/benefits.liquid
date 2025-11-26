@@ -11,6 +11,22 @@
   #   Use blocks mode for dynamic add/remove, settings mode for fixed 6-item layout
   assign structural_element = section.settings.structural_element | default: 'section'
   assign layout_style = section.settings.layout_style | default: 'grid'
+
+  # Count benefit items early so it's available for data attributes
+  assign benefit_count = 0
+  if section.settings.content_mode == 'blocks'
+    assign benefit_count = section.blocks.size
+  else
+    for i in (1..6)
+      assign title_key = 'benefit_' | append: i | append: '_title'
+      assign desc_key = 'benefit_' | append: i | append: '_description'
+      assign title = section.settings[title_key]
+      assign desc = section.settings[desc_key]
+      if title != blank or desc != blank
+        assign benefit_count = benefit_count | plus: 1
+      endif
+    endfor
+  endif
 %}
 
 <{{ structural_element }} class="benefits-section{% if layout_style == 'carousel' %} benefits-section--carousel{% endif %}"
@@ -32,23 +48,7 @@
       heading_color: section.settings.heading_color,
       section_id: section.id
     %}
-    
-    {% comment %} Count benefit items {% endcomment %}
-    {% assign benefit_count = 0 %}
-    {% if section.settings.content_mode == 'blocks' %}
-      {% assign benefit_count = section.blocks.size %}
-    {% else %}
-      {% for i in (1..6) %}
-        {% assign title_key = 'benefit_' | append: i | append: '_title' %}
-        {% assign desc_key = 'benefit_' | append: i | append: '_description' %}
-        {% assign title = section.settings[title_key] %}
-        {% assign desc = section.settings[desc_key] %}
-        {% if title != blank or desc != blank %}
-          {% assign benefit_count = benefit_count | plus: 1 %}
-        {% endif %}
-      {% endfor %}
-    {% endif %}
-    
+
     {% if benefit_count > 0 %}
       {% if layout_style == 'carousel' %}
         {% comment %} Carousel Layout {% endcomment %}

@@ -11,27 +11,122 @@
   "name": "Footer Group",
   "type": "footer",
   "sections": {
+    "176452823281ce54a6": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_56c05fb_ReJY4h": {
+          "type": "ai_gen_block_56c05fb",
+          "settings": {
+            "columns_desktop": 4,
+            "columns_tablet": 2,
+            "columns_mobile": "1",
+            "column_gap": 40,
+            "container_width": 1200,
+            "custom_font_file": "",
+            "font_family": "assistant_n4",
+            "heading_size": 16,
+            "heading_transform": "uppercase",
+            "link_size": 14,
+            "text_size": 14,
+            "copyright_size": 12,
+            "background_color": "#000000",
+            "text_color": "#ffffff",
+            "heading_color": "#ffffff",
+            "link_color": "#cccccc",
+            "link_hover_color": "#ffffff",
+            "border_color": "#333333",
+            "padding_top": 60,
+            "padding_bottom": 40,
+            "section_spacing": 40,
+            "bottom_padding_top": 30,
+            "show_column_1": true,
+            "column_1_heading": "Shop",
+            "column_1_menu": "",
+            "column_1_text": "",
+            "show_column_2": true,
+            "column_2_heading": "Support",
+            "column_2_menu": "",
+            "column_2_text": "",
+            "show_column_3": true,
+            "column_3_heading": "About",
+            "column_3_menu": "",
+            "column_3_text": "",
+            "show_column_4": true,
+            "column_4_heading": "Follow us",
+            "column_4_menu": "",
+            "column_4_text": "",
+            "show_social": true,
+            "social_facebook": "",
+            "social_instagram": "",
+            "social_twitter": "",
+            "social_youtube": "",
+            "social_icon_size": 24,
+            "show_payment_icons": true,
+            "payment_icon_size": 50,
+            "payment_icon_gap": 10,
+            "copyright_text": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_56c05fb_ReJY4h"
+      ],
+      "settings": {}
+    },
     "footer": {
       "type": "footer",
       "blocks": {
         "link_list_shop": {
           "type": "link_list",
           "settings": {
+            "position": "center",
             "heading": "Shop",
             "heading_color": "",
+            "heading_size": 14,
+            "heading_weight": "600",
+            "heading_transform": "uppercase",
+            "heading_spacing": 12,
             "menu": "customer-account-main-menu",
             "custom_links": "",
-            "link_color": "#ffffff"
+            "link_color": "#ffffff",
+            "link_hover_color": "",
+            "link_size": 14,
+            "link_weight": "400",
+            "link_transform": "none",
+            "link_letter_spacing": 0,
+            "link_spacing": 8,
+            "link_underline": "hover",
+            "column_width": 140,
+            "column_background": "",
+            "column_padding": 0,
+            "column_radius": 0
           }
         },
         "link_list_about": {
           "type": "link_list",
           "settings": {
+            "position": "center",
             "heading": "About",
             "heading_color": "",
+            "heading_size": 14,
+            "heading_weight": "600",
+            "heading_transform": "uppercase",
+            "heading_spacing": 12,
             "menu": "footer",
             "custom_links": "",
-            "link_color": "#ffffff"
+            "link_color": "#ffffff",
+            "link_hover_color": "",
+            "link_size": 14,
+            "link_weight": "400",
+            "link_transform": "none",
+            "link_letter_spacing": 0,
+            "link_spacing": 8,
+            "link_underline": "hover",
+            "column_width": 140,
+            "column_background": "",
+            "column_padding": 0,
+            "column_radius": 0
           }
         }
       },
@@ -49,6 +144,7 @@
     }
   },
   "order": [
+    "176452823281ce54a6",
     "footer"
   ]
 }
